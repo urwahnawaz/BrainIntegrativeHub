@@ -1,35 +1,24 @@
-from pyliftover import LiftOver #TODO: use https://pypi.org/project/segment-liftover/ for segments
-
 from circrange import CircRange
+from abstractliftoveriter import AbstractLiftoverIter
 
-#TODO make sure unconverted/accurate coordinate is first so it is used for comparisons
 class CircRangeGroup:
-    required = ["hg19", "hg38"]
-    cached = {}
-
-    def __init__(self, ch, start, end, strand, ref, slength=-1):
+    def __init__(self, ch, strand, versions):
         self.ch = ch
         self.strand = strand
-        self.versions = []
-
-        for newRef in CircRangeGroup.required:
-            if(ref == newRef):
-                self.versions.append(CircRange(start, end, ref, slength))
-            else: 
-                lo = CircRangeGroup.cached.get(ref + newRef, None)
-                if(lo == None):
-                    lo = CircRangeGroup.cached[ref + newRef] = LiftOver(ref, newRef)
-                newStart = lo.convert_coordinate("chr" + str(ch), start, strand)
-                newEnd = lo.convert_coordinate("chr" + str(ch), end, strand)
-                
-                self.versions.append(CircRange(newStart[0][1] if newStart else -1, newEnd[0][1] if newEnd else -1, newRef))
+        self.versions = versions
 
     def toArray(self):
-        ret = ["chr" + str(self.ch)]
+        ret = [str(self.ch)]
         for r in self:
-            ret.extend((str(r.start), str(r.end)))
+                ret.extend((str(r.start) if r else '', str(r.end) if r else ''))
         ret.extend(self.strand)
         return ret
+
+    def toBrowserFormat(self):
+        for i in range(len(AbstractLiftoverIter.required)):
+            if(self.versions[i]):
+                return "%s:%d-%d|%s|%s" % (self.ch, self.versions[i].start, self.versions[i].end, self.strand, str(i))
+        return None
     
     def __iter__(self):
         return self.versions.__iter__()
@@ -40,29 +29,38 @@ class CircRangeGroup:
     def __lt__(self, other):
         if not isinstance(other, CircRangeGroup):
             return NotImplemented
-
-        selfCh = self.ch if isinstance(self.ch, int) else 23 + len(self.ch) + ord(self.ch[0])
-        otherCh = other.ch if isinstance(other.ch, int) else 23 + len(other.ch) + ord(other.ch[0])
-
-        return (selfCh, self.versions[0]) < (otherCh, other.versions[0])
-
+        for i in range(len(self.versions)):
+            if(self.versions[i] and other.versions[i]):
+                return (self.ch, self.versions[i]) < (other.ch, other.versions[i])
+        return False
+        
     def __gt__(self, other):
         if not isinstance(other, CircRangeGroup):
             return NotImplemented
-
-        selfCh = self.ch if isinstance(self.ch, int) else 23 + len(self.ch) + ord(self.ch[0])
-        otherCh = other.ch if isinstance(other.ch, int) else 23 + len(other.ch) + ord(other.ch[0])
-
-        return (selfCh, self.versions[0]) > (otherCh, other.versions[0])
+        for i in range(len(self.versions)):
+            if(self.versions[i] and other.versions[i]):
+                return (self.ch, self.versions[i]) > (other.ch, other.versions[i])
+        return False
 
     def __eq__(self, other):
         if not isinstance(other, CircRangeGroup):
             return NotImplemented
-
-        selfCh = self.ch if isinstance(self.ch, int) else 23 + len(self.ch) + ord(self.ch[0])
-        otherCh = other.ch if isinstance(other.ch, int) else 23 + len(other.ch) + ord(other.ch[0])
-
-        return (selfCh, self.versions[0], self.strand) == (otherCh, other.versions[0], other.strand)
+        for i in range(len(self.versions)):
+            if(self.versions[i] and other.versions[i]):
+                return (self.ch, self.versions[i], self.strand) == (other.ch, other.versions[i], other.strand)
+        return False
+    
+    def nearEqual(self, other, dist):
+        if not isinstance(other, CircRangeGroup):
+            return NotImplemented
+        for i in range(len(self.versions)):
+            if(self.versions[i] and other.versions[i]):
+                return self.ch == other.ch and self.strand == other.strand and abs(self.versions[i].start - other.versions[i].start) <= dist and abs(self.versions[i].end - other.versions[i].end) <= dist
+        return False
 
     def __hash__(self):
-        return hash(self.ch) ^ hash(self.versions[0]) ^ hash(self.strand)
+        ret =  hash(self.ch) ^ hash(self.strand)
+        for i in range(len(self.versions)):
+            if(self.versions[i]):
+                return ret ^ hash(self.versions[i]) ^ hash(AbstractLiftoverIter.required[i])
+        return ret

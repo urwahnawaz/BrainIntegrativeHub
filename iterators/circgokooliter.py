@@ -1,58 +1,53 @@
 import csv, re, circrow, os
 import pandas as pd
 
-from circid import CircID
-from circidgroup import CircIDGroup
+from abstractliftoveriter import AbstractLiftoverIter
+from circhsa import CircHSA
+from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 from expression import Expression
 
-class CircGokoolIter:
-    sheets = ["A.DS1_annot.csv"]#, "B.DS2_annot"] #Note B.DS2 are replicates and will hence all be merged
+class CircGokoolIter(AbstractLiftoverIter):
+    name = "Gokool"
+    hasMeta = True
 
     def __init__(self, directory):
-        self.directory = directory
+        super().__init__(directory)
+
         self.currSheet = 0
         self.fileName = os.path.join(directory, "SupplementalTables/SupplementalTable_S3.xlsx")
-        self.read_obj = pd.read_excel(self.fileName, sheet_name=CircGokoolIter.sheets[self.currSheet]).itertuples()
+        self.read_file = pd.read_excel(self.fileName, sheet_name="A.DS1_annot.csv") #TODO: Fix incorrect date parsing e.g. gene sep-7 in excel
+        self.read_obj = self.read_file.itertuples()
+
+        self.meta_index = -1
+        self._updateLiftover(os.path.getmtime(self.fileName), "hg19")
 
     def __iter__(self):
         return self
 
     def __next__(self):
         while(True):
-            try:
-                line = next(self.read_obj)
-            except StopIteration:
-                self.currSheet += 1
-                if(self.currSheet < len(CircGokoolIter.sheets)):
-                    self.read_obj = pd.read_excel(self.fileName, sheet_name=CircGokoolIter.sheets[self.currSheet]).itertuples()
-                else:
-                    raise StopIteration
-                line = next(self.read_obj)
+            line = next(self.read_obj)
 
-            if not str(line[0+1]).startswith("ch") or line[8+1] == ".":
-                continue
+            if not str(line[0+1]).startswith("ch"): continue
+            self.meta_index += 1
+            if line[8+1] == ".": continue
 
-            match = re.search(r'chr([^_]+)', line[2+1])
-            ch = None
-            try: ch = int(match.group(1))
-            except: ch = match.group(1)
-
-            ids = CircIDGroup()
-            
-            ids.addCircID(CircID("Gokool", line[0]))
+            ids = CircHSAGroup()
+            ids.addCircHSA(CircHSA("Gokool", line[0]))
             if(line[25+1] == "circBase"): 
-                ids.addCircID(CircID("circBase", line[26+1]))
+                ids.addCircHSA(CircHSA("circBase", line[26+1]))
 
-            group = CircRangeGroup(ch=ch, start=int(line[3+1]), end=int(line[4+1]), strand=line[8+1], ref="hg19")
-            ret = circrow.CircRow(group=group, hsa=ids, gene="." if line[6+1] == "nan" else line[6+1])
+            group = CircRangeGroup(ch=line[2+1], strand=line[8+1], versions=super().__next__())
+            ret = circrow.CircRow(group=group, hsa=ids, gene="." if  pd.isna(line[6+1]) else line[6+1], db_id=self.id, meta_index=self.meta_index)
 
-            brainRelated = True
-
-            ret.addExpression(Expression("CTX", "Gokool", int(line[20+1])))
-            ret.addExpression(Expression("CB", "Gokool", int(line[21+1])))
-
-            if not brainRelated:
-                continue
+            
+            ret.addExpression(Expression(self.matcher.getTissueFromSynonym("CTX").name, "Gokool", int(line[20+1])))
+            ret.addExpression(Expression(self.matcher.getTissueFromSynonym("CB").name, "Gokool", int(line[21+1])))
 
             return ret
+    def _toBedFile(self, fileFrom):
+        for line in self.read_file.itertuples():
+            if not str(line[0+1]).startswith("ch") or line[8+1] == ".": continue
+            fileFrom.write(line[2+1] + '\t' + str(line[3+1]) + '\t' + str(line[4+1]) + '\t' + line[8+1] + '\n')
+            

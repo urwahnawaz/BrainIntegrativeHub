@@ -2,17 +2,26 @@
 #Could adopt this approach by separating out tables to avoid duplicate information (refer to a single unique circrna)
 #But then would need to standardize which tissues are present
 
-import csv, re, circrow, os
+import csv, re, os
 
-from circid import CircID
-from circidgroup import CircIDGroup
+from abstractliftoveriter import AbstractLiftoverIter
+from circrow import CircRow
+from circhsa import CircHSA
+from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 from expression import Expression
 
-class CircRicIter:
+class CircRicIter(AbstractLiftoverIter):
+    name = "CircRic"
+
     def __init__(self, directory):
-        self.directory = directory
-        self.read_obj = csv.reader(open(os.path.join(directory, "circRNA_expression.csv"), 'r'), delimiter=',')
+        super().__init__(directory)
+
+        self.read_file = open(os.path.join(directory, "circRNA_expression.csv"), 'r')
+        self.read_obj = csv.reader(self.read_file, delimiter=',')
+
+        self._updateLiftover(os.path.getmtime(self.read_file.name), "hg19")
+
         next(self.read_obj)
 
     def __iter__(self):
@@ -25,13 +34,17 @@ class CircRicIter:
             if line[3] != "LGG": continue
 
             match = re.search(r'([^_]+)_(\d+)_(\d+)', line[0])
-            ch = None
-            try: ch = int(match.group(1))
-            except: ch = match.group(1)
 
-            ids = CircIDGroup()
+            ids = CircHSAGroup()
 
-            group = CircRangeGroup(ch=ch, start=int(match.group(2)), end=int(match.group(3)), strand='+', ref="hg19")
-            ret = circrow.CircRow(group=group, hsa=ids, gene=line[5])
+            group = CircRangeGroup(ch="chr" + str(match.group(1)), strand='+', versions=super().__next__())
+            ret = CircRow(group=group, hsa=ids, gene=line[5], db_id = self.id)
             ret.addExpression(Expression("Brain", "CircRic", int(line[4])))
             return ret
+
+    def _toBedFile(self, fileFrom):
+        next(self.read_obj)
+        for line in self.read_obj:
+            match = re.search(r'([^_]+)_(\d+)_(\d+)', line[0])
+            fileFrom.write("chr" + match.group(1) + '\t' + match.group(2) + '\t' + match.group(3) + '\t' + '+' + '\n')
+        self.read_file.seek(0)

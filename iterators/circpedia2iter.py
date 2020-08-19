@@ -1,14 +1,22 @@
-import csv, re, circrow, os
+import csv, re, os
 
-from circid import CircID
-from circidgroup import CircIDGroup
+from abstractliftoveriter import AbstractLiftoverIter
+from circrow import CircRow
+from circhsa import CircHSA
+from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 from expression import Expression
 
-class Circpedia2Iter:
+class Circpedia2Iter(AbstractLiftoverIter):
+    name = "Circpedia2"
+
     def __init__(self, directory):
-        self.directory = directory
-        self.read_obj = csv.reader(open(os.path.join(directory, "human_hg38_All_circRNA.csv"), 'r'), delimiter=',')
+        super().__init__(directory)
+
+        self.read_file = open(os.path.join(directory, "human_hg38_All_circRNA.csv"), 'r')
+        self.read_obj = csv.reader(self.read_file, delimiter=',')
+
+        self._updateLiftover(os.path.getmtime(self.read_file.name), "hg38")
 
     def __iter__(self):
         return self
@@ -16,25 +24,20 @@ class Circpedia2Iter:
     def __next__(self):
         while(True):
             line = next(self.read_obj)
-            #if re.match(r'(Cerebellum|Cortex|Diencephalon|Forebrain|Occipital|Parietal|Temporal)', line[9]) is None: continue
 
-            posMatch = re.search(r'chr([^:]+):(\d+)-(\d+)', line[4]) #chr10:92909426-93014267
-            ch = None
-            try: ch = int(posMatch.group(1))
-            except: ch = posMatch.group(1)
+            match = re.search(r'(chr[^:]+):(\d+)-(\d+)', line[4]) #chr10:92909426-93014267
 
-            ids = CircIDGroup()
-            ids.addCircID(CircID("Circpedia2", line[0]))
+            ids = CircHSAGroup()
+            ids.addCircHSA(CircHSA("Circpedia2", line[0]))
             
-            group = CircRangeGroup(ch=ch, start=int(posMatch.group(2)), end=int(posMatch.group(3)), strand=line[5], ref="hg38")
-            
-            brainRelated = True
-
-            ret = circrow.CircRow(group=group, hsa=ids, gene=line[2])
-
+            group = CircRangeGroup(ch=match.group(1), strand=line[5], versions=super().__next__())
+            ret = CircRow(group=group, hsa=ids, gene=line[2], db_id = self.id)
             ret.addExpression(Expression(line[9].lower(), "Circpedia2", float(line[6])))
-
-            if not brainRelated:
-                continue
-
             return ret
+
+    def _toBedFile(self, fileFrom):
+        for line in self.read_obj:
+            bed = self._browserToBedHelper(line[4], line[5])
+            if bed:
+                fileFrom.write(bed)
+        self.read_file.seek(0)

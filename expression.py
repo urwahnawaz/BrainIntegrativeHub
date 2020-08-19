@@ -1,3 +1,5 @@
+from circtissuematcher import CircTissueMatcher
+
 class Expression:
     def __init__(self, tissueId, studyId, reads=-1):
         self.tissueId = tissueId

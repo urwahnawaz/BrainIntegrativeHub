@@ -1,9 +1,11 @@
 class CircRange:
-    def __init__(self, start, end, ref, slength=-1):
+    def __init__(self, start, end, slength=-1):
         self.start = start
         self.end = end
-        self.ref = ref
         self.slength = slength
+
+    def __str__(self):
+        return '(' + str(self.start) + '-' + str(self.end) + ')'
     
     def __len__(self):
         return self.end - self.start

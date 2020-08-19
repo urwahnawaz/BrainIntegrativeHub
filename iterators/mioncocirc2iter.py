@@ -1,17 +1,24 @@
-import csv, re, circrow, os
+import csv, re, os
 
-from circid import CircID
-from circidgroup import CircIDGroup
+from abstractliftoveriter import AbstractLiftoverIter
+from circrow import CircRow
+from circhsa import CircHSA
+from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 from expression import Expression
 
-class MiOncoCirc2Iter:
+class MiOncoCirc2Iter(AbstractLiftoverIter):
+    name = "MiOncoCirc2"
     tissues = ["ACC","BLCA","BRCA","CHOL","COLO","ESCA","GBM","HCC","HNSC","KDNY","LUNG","MBL","NRBL","OV","PAAD","PRAD","SARC","SECR","SKCM"]
 
     def __init__(self, directory):
-        self.currFile = 0
-        self.directory = directory
-        self.read_obj = csv.reader(open(os.path.join(self.directory, "v0.1.release.txt"), 'r'), delimiter='\t')
+        super().__init__(directory)
+
+        self.read_file = open(os.path.join(self.directory, "v0.1.release.txt"), 'r')
+        self.read_obj = csv.reader(self.read_file, delimiter='\t')
+
+        self._updateLiftover(os.path.getmtime(self.read_file.name), "hg38")
+
         next(self.read_obj)
 
     def __iter__(self):
@@ -21,16 +28,18 @@ class MiOncoCirc2Iter:
         while(True):
             line = next(self.read_obj)
 
-            ch = None
-            try: ch = int(line[0])
-            except: ch = line[0]
 
-            ids = CircIDGroup()
+            ids = CircHSAGroup()
 
-            group = CircRangeGroup(ch=ch, start=int(line[1]), end=int(line[2]), strand='+', ref="hg38")
-            ret = circrow.CircRow(group=group, hsa=ids, gene=line[4])
-
+            group = CircRangeGroup(ch="chr" + line[0], strand='+', versions=super().__next__())
+            ret = CircRow(group=group, hsa=ids, gene=line[4], db_id = self.id)
 
             ret.addExpression(Expression("Human", "MiOncoCirc2", int(line[3])))
             
             return ret
+
+    def _toBedFile(self, fileFrom):
+        next(self.read_obj)
+        for line in self.read_obj:
+            fileFrom.write("chr" + line[0] + '\t' + line[1] + '\t' + line[2] + '\t' + '+' + '\n')
+        self.read_file.seek(0)

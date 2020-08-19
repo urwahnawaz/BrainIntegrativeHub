@@ -1,12 +1,18 @@
 
+from abstractdb import AbstractDB
 from sortedcontainers import SortedSet
 
 class CircRow:
-    def __init__(self, group, hsa, gene):
+    META_INDEX_CIRC_NOT_IN_DB = -2
+    META_INDEX_NO_METADATA = -1
+
+    def __init__(self, group, hsa, gene, db_id, meta_index=META_INDEX_NO_METADATA):
         self.group = group
         self.hsa = hsa
         self.gene = gene
         self.expressions = SortedSet()
+        self._meta = [CircRow.META_INDEX_CIRC_NOT_IN_DB] * (AbstractDB.id_max + 1)
+        self._meta[db_id] = meta_index
 
     def merge(self, other):
         #Add other tissues/studies, transfer reads to existing if undefined
@@ -17,41 +23,14 @@ class CircRow:
                     self.expressions[pos].reads = val.reads
             else:
                 self.addExpression(val)
-           
+        for i in range(len(other._meta)): self._meta[i] = max(self._meta[i], other._meta[i])
         self.hsa.merge(other.hsa)
     
     def addExpression(self, value):
         self.expressions.add(value)
 
-    def writeRow(self, id, writeObj, writeObjHeader=None):
-        prefix = [id] + self.group.toArray() + self.hsa.toArray() + [self.gene]
-
-        if writeObjHeader:
-            writeObjHeader.writerow(prefix)
-            for exp in self.expressions:
-                writeObj.writerow([id] + exp.toArray())
-        else:
-            for exp in self.expressions:
-                writeObj.writerow(prefix + exp.toArray())
-
-    def writeHTMLRow(self, id, writeObj):
-        #Writing parent section
-        out = '<tbody><tr class="parent">'
-        for val in ([id] + self.group.toArray() + self.hsa.toArray() + [self.gene] + [len(self.expressions)]):
-            out += "<td>%s</td>" % (val)
-        out += '<td><i class="fa fa-chevron-down"></i></td>'
-
-        #Writing child section
-        out += '<tr class="cchild"><td>Tissue</td><td>Study</td><td>Reads</td></tr>'
-        for exp in self.expressions:
-            out += '<tr class="cchild">'
-            for val in exp.toArray():
-                out += "<td>%s</td>" % (val)
-            out += '</tr>'
-        
-        out += '</tr></tbody>'
-        writeObj.write(out)
-
+    def toArray(self):
+        return ["NA"] + self.group.toArray() + [self.gene]
 
     def __str__(self):
         return ("chr%s:%d-%d %s" % (str(self.group.ch), self.group.versions[0].start, self.group.versions[0].end, self.gene))
