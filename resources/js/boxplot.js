@@ -3,7 +3,7 @@ class Boxplot {
         element.innerHTML = this._generateHTML();
 
         // set the dimensions and margins of the graph
-        var margin = { top: 10, right: 30, bottom: 30, left: 100 },
+        var margin = { top: 10, right: 30, bottom: 100, left: 100 },
             width = 650 - margin.left - margin.right,
             height = 400 - margin.top - margin.bottom;
 
@@ -30,13 +30,16 @@ class Boxplot {
         $('#measureSelect').on('change', function () {
             self.setData(self.data);
         });
+
+        this.cachedJitter = [];
     }
 
     setData(data, yName = "Expression", resetHeadings = false) {
         var svg = this.svg;
+        var self = this;
 
         // set the dimensions and margins of the graph
-        var margin = { top: 10, right: 30, bottom: 30, left: 100 },
+        var margin = { top: 10, right: 30, bottom: 100, left: 100 },
             width = 650 - margin.left - margin.right,
             height = 400 - margin.top - margin.bottom;
 
@@ -44,6 +47,7 @@ class Boxplot {
         else d3.selectAll("#myDistroChart > svg > g > *").remove();
 
         this.data = data;
+        var jitterWidth = 50;
 
         let currMeasure = $('#measureSelect').find(":selected").text();
         if(currMeasure == "ZScore") {
@@ -74,33 +78,18 @@ class Boxplot {
         let categoryNames = Object.keys(categories);
 
         let currScale = $('#scaleSelect').find(":selected").text();
-        var superscript = "⁰¹²³⁴⁵⁶⁷⁸⁹", formatPower = function(d) {return (d >= 0 ? "" : "⁻") + (d + "").split("").map(function(c) { return superscript[c]; }).join(""); };
-        var y = undefined;
-        if(currScale == "Linear") { //Linear
-            y = d3.scaleLinear()
+
+        if(currScale == "Log e") {
+            for(let i=0; i<data.length; ++i) data[i].plotValue = Math.log(0.1 + data[i].plotValue);
+        } else if(currScale == "Log 10"){
+            for(let i=0; i<data.length; ++i) data[i].plotValue = Math.log10(0.1 + data[i].plotValue);
+        }
+
+        var y = d3.scaleLinear()
                 .domain(d3.extent(data, d => d.plotValue))
                 .range([height, 0])
             svg.append("g")
                 .call(d3.axisLeft(y))
-        } else if(currScale == "Log e") { //Log e
-            y = d3.scaleLog()
-                .base(Math.E)
-                .domain(d3.extent(data, d => d.plotValue))
-                .range([height, 0]);
-            svg.append("g")
-                .call(d3.axisLeft(y).tickFormat(function(d) { return "e" + formatPower(Math.round(Math.log(d))); }));
-                //;
-        } else { //Log 10
-            y = d3.scaleLog()
-                .base(10)
-                .domain(d3.extent(data, d => d.plotValue))
-                .range([height, 0]);
-            svg.append("g")
-                .call(d3.axisLeft(y).tickFormat(function(d) { return "10" + formatPower(Math.round(Math.log10(d))); }));
-        }
-
-
-        
 
         // Show the Y label
         svg.append("text")
@@ -109,10 +98,20 @@ class Boxplot {
         .attr("x",0 - (height / 2))
         .attr("dy", "1em")
         .style("text-anchor", "middle")
-        .text("CPM");      
+        .text(currMeasure + (currScale == "Linear" ? "" : " (" + currScale + ")"));   
+        
+        // Show the X label
+        svg.append("text")             
+        .attr("transform",
+                "translate(" + (width/2) + " ," + 
+                            (height + margin.top + margin.bottom/2) + ")")
+        .style("text-anchor", "middle")
+        .text(categoryName);
 
         let myVar = data[0][categoryName];
         if (typeof myVar === 'string' || myVar instanceof String) {
+            while(this.cachedJitter.length < this.data.length) this.cachedJitter.push(- jitterWidth / 2 + Math.random() * jitterWidth)
+
             // Compute quartiles, median, inter quantile range min and max --> these info are then used to draw the box.
             var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
                 .key(function (d) { return d[categoryName]; })
@@ -144,7 +143,7 @@ class Boxplot {
                 .append("line")
                 .attr("x1", function (d) { return (x(d.key)) })
                 .attr("x2", function (d) { return (x(d.key)) })
-                .attr("y1", function (d) { return (y(Math.max(0, d.value.min))) })
+                .attr("y1", function (d) { return (Math.min(height, y(d.value.min))) })
                 .attr("y2", function (d) { return (y(d.value.max)) })
                 .attr("stroke", "black")
                 .style("width", 40)
@@ -176,12 +175,11 @@ class Boxplot {
                 .style("width", 80)
 
             // Add individual points with jitter
-            var jitterWidth = 50
             svg.selectAll("indPoints")
                 .data(data)
                 .enter()
                 .append("circle")
-                .attr("cx", function (d) { return (x(d[categoryName]) - jitterWidth / 2 + Math.random() * jitterWidth) })
+                .attr("cx", function(d, i) {return (x(d[categoryName]) + self.cachedJitter[i])})
                 .attr("cy", function (d) { return (y(d.plotValue)) })
                 .attr("r", 4)
                 .style("fill", "white")

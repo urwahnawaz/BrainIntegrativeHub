@@ -5,11 +5,11 @@ async function loadDB(success) {
     });
 
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', window.location.href + "resources/data/out.db", true);
+    xhr.open('GET', window.location.href + "resources/data/outSmall.db.gz", true);
     xhr.responseType = 'arraybuffer';
 
     xhr.onload = function(e) {
-        var uInt8Array = new Uint8Array(this.response);
+        var uInt8Array = pako.inflate(this.response);
         success(new SQL.Database(uInt8Array));
     }
     xhr.send();

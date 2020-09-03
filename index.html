@@ -8,6 +8,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
+    <script type="text/javascript" src="/vendors/pako/js/pako.min.js"></script>
     <script language="javascript" src="https://www.biodalliance.org/release-0.13/dalliance-compiled.js"></script>
 
     <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
@@ -28,10 +29,9 @@
 </head>
 
 <body>
-
     <!-- Loading Animation -->
     <div id="my_loading" class="d-flex flex-row justify-content-center align-items-center" style="height: 100%">
-        <div class="spinner-border" role="status">
+        <div class="loader">
             <span class="sr-only">Loading...</span>
         </div>
     </div>
@@ -98,32 +98,40 @@
         </div>
     </div>
 
-    <div class="jumbotron">
-        <div class="container">
-        <h1>NeuroCirc</h1>
-        <p>Developed by Voineagu Lab, contains Gokool et al. circular RNAs cross-referenced with other tissue studies.</p>
+    <!-- Main Body -->
+    <div style="display:none;" id="myDiv">
+        <div class="jumbotron">
+            <div class="container">
+            <h1>NeuroCirc</h1>
+            <p>Developed by Voineagu Lab, contains Gokool et al. circular RNAs cross-referenced with other tissue studies.</p>
+            </div>
+        </div>
+    
+        <div class="container-fluid "> <!--class animate-bottom-->
+            <input type="search" autocomplete="off" id="myInput" placeholder="Search for circ_id or gene.." title="Type in an ID">
+    
+            <!-- Main Table -->
+            <table class="table table-hover" style="width:100%" id="my_table"></table>
         </div>
     </div>
 
-    <div class="container-fluid">
-        <input type="text" id="myInput" placeholder="Search for circ_id.." title="Type in an ID">
-
-        <!-- Main Table -->
-        <table class="table table-hover" style="width:100%" id="my_table"></table>
-    </div>
-
-
-
     <script>
-        var mapping, samples, database = undefined;
+        var mapping, samples, database, genomebrowser, boxplot, heatmap = undefined;
+
+        //TODO convert to promises. Very hacky 
+        var awaitAll = 0;
+        function incAwaitAll() {
+            if(++awaitAll == 2) {
+                hideLoading();
+            }
+        }
 
         window.onload = function () {
             loadDB((db) => {
-                hideLoading()
                 database = db
                 var contents = database.exec("SELECT * FROM circrna LIMIT 25")[0];
                 makeTable(contents, "my_table")
-
+                incAwaitAll();
             });
             genomebrowser = new GenomeBrowser("myGenomeBrowser");
             boxplot = new Boxplot(document.getElementById("myViolin1"));
@@ -132,15 +140,21 @@
                 console.log("getting csv");
                 mapping = await loadCSV("resources/data/GokoolMetaMapping.csv")
                 samples = await loadCSV("resources/data/GokoolMetaSamples.csv")
+                incAwaitAll();
             })();
         }
 
         $("#myInput").keyup(function (event) {
             if (event.keyCode === 13) {
-                var contents = database.exec("SELECT * FROM circrna WHERE circ_id LIKE \'%" + $("#myInput").val() + "%\' LIMIT 25")[0];
+                var contents = database.exec("SELECT * FROM circrna WHERE circ_id LIKE \'%" + $("#myInput").val() + "%\' OR gene LIKE \'%" + $("#myInput").val() + "%\' LIMIT 25")[0];
                 if(contents) makeTable(contents, "my_table");
             }
         });
+
+        /*$("#myInput").on('change keydown paste input', function () {
+            var contents = database.exec("SELECT * FROM circrna WHERE circ_id LIKE \'%" + $("#myInput").val() + "%\' OR gene LIKE \'%" + $("#myInput").val() + "%\' LIMIT 25")[0];
+            if(contents) makeTable(contents, "my_table");
+        });*/
 
         function loadCSV(path) {
             return new Promise(function (complete, error) {
@@ -156,9 +170,8 @@
         }
 
         function hideLoading() {
-            let loading = document.getElementById("my_loading")
-            loading.style.visibility = 'hidden';
-            loading.style.height = "0%";
+            document.getElementById("my_loading").style.display = "none";
+            document.getElementById("myDiv").style.display = "block";
         }
 
         function makeTable(contents, tableId) {
