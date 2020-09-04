@@ -37,7 +37,7 @@ class CircFunBaseIter(AbstractLiftoverIter):
 
             group = CircRangeGroup(ch=match.group(1), strand='+', versions=super().__next__())
             ret = CircRow(group=group, hsa=ids, gene=line[3], db_id = self.id)
-            ret.addExpression(Expression("Brain", line[5]))
+            ret.addExpression(Expression(self.matcher.getTissueFromSynonym("Brain").name, line[5]))
             return ret
     def _toBedFile(self, fileFrom):
         next(self.read_obj)

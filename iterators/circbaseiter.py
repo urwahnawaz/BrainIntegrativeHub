@@ -51,7 +51,7 @@ class CircBaseIter(AbstractLiftoverIter):
                 if expressions[i] == "NA":
                     continue
                 expression = float(expressions[i])
-                ret.addExpression(Expression(tissue, CircBaseIter.studies[self.currFile], expression))
+                ret.addExpression(Expression(self.matcher.getTissueFromSynonym(tissue).name, CircBaseIter.studies[self.currFile], expression))
 
             return ret
 

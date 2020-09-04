@@ -19,7 +19,7 @@ class CircAtlas2BrowserIter(AbstractLiftoverIter):
         self.read_file_main_json = json.load(self.read_file_main)["data"]
         self.read_obj_main = self.read_file_main_json.__iter__()
 
-        self._updateLiftover(os.path.getmtime(self.read_file_main.name), "hg19")
+        self._updateLiftover(os.path.getmtime(self.read_file_main.name), "hg38")
 
     def __iter__(self):
         return self
@@ -38,8 +38,9 @@ class CircAtlas2BrowserIter(AbstractLiftoverIter):
             group = CircRangeGroup(ch=match.group(1), strand=line["strand"], versions=super().__next__())
             ret = CircRow(group=group, hsa=ids, gene=gene, db_id = self.id)
 
-            tissue = CircAtlas2BrowserIter.tissues[int(line["ntis"]) - 1]
-            ret.addExpression(Expression(tissue, "circAtlas", float(line["score"])))
+            #Ntis isn't actually a tissue ID, need to make individual calls to get this info
+            #tissue = CircAtlas2BrowserIter.tissues[int(line["ntis"]) - 1]
+            #ret.addExpression(Expression(self.matcher.getTissueFromSynonym(tissue).name, "circAtlas", float(line["score"])))
             return ret
     
     def _toBedFile(self, fileFrom):

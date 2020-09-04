@@ -30,6 +30,7 @@ from iterators.mioncocirc2iter import MiOncoCirc2Iter
 nmDist = 10 #Maximum difference in coordinates to be considered a near match
 
 def containsBrain(circ):
+    if(circ._meta[2] == CircRow.META_INDEX_CIRC_NOT_IN_DB): return False #TODO temporarily remove everything not in Gokool
     for exp in circ.expressions:
         if re.search(r'Brain|CBX|CTX|Cerebellum|Cortex|Diencephalon|Forebrain|Occipital|Parietal|Temporal', exp.tissueId, flags=re.IGNORECASE):
             return True
@@ -138,13 +139,13 @@ def writeSqlite(circIters, ss, outFile="out.db"):
 if __name__ == '__main__':
     circIters = [
         CircLiuIter("./data/Liu"),
-        #CircAtlas2BrowserIter("./data/circAtlas2"),
+        #CircAtlas2BrowserIter("./data/circAtlas2"), #No tissue info without individual php calls
         #CircAtlas2Iter("./data/circAtlas2"), #No strand info
         CircGokoolIter("./data/Gokool"),
-        #Circpedia2Iter("./data/CIRCpedia2"), 
-        #CircBaseIter("./data/Circbase"), 
-        #CircRNADbIter("./data/circRNADb"), 
-        #CircFunBaseIter("./data/CircFunBase"),
+        Circpedia2Iter("./data/CIRCpedia2"), 
+        CircBaseIter("./data/Circbase"), 
+        CircRNADbIter("./data/circRNADb"), 
+        CircFunBaseIter("./data/CircFunBase"),
         #CircRicIter("./data/CircRic"), #No strand info
         #MiOncoCirc2Iter("./data/MiOncoCirc2") #No strand or tissue info
     ]

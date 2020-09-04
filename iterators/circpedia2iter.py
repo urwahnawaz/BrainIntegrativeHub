@@ -32,7 +32,7 @@ class Circpedia2Iter(AbstractLiftoverIter):
             
             group = CircRangeGroup(ch=match.group(1), strand=line[5], versions=super().__next__())
             ret = CircRow(group=group, hsa=ids, gene=line[2], db_id = self.id)
-            ret.addExpression(Expression(line[9].lower(), "Circpedia2", float(line[6])))
+            ret.addExpression(Expression(self.matcher.getTissueFromSynonym(line[9].lower()).name, "Circpedia2", float(line[6])))
             return ret
 
     def _toBedFile(self, fileFrom):

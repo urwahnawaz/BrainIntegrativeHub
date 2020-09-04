@@ -11,9 +11,12 @@ class CircTissueMatcher:
 
         for line in self.read_file.itertuples():
             synonyms = line[0+1].split(", ")
-            tissue = CircTissue(line[1+1], pd.isna(line[2+1]), pd.isna(line[3+1]), pd.isna(line[4+1]), pd.isna(line[5+1]), pd.isna(line[6+1]), line[7+1])
+            tissue = CircTissue(str(line[1+1]), pd.isna(line[2+1]), pd.isna(line[3+1]), pd.isna(line[4+1]), pd.isna(line[5+1]), pd.isna(line[6+1]), line[7+1])
             for s in synonyms:
                 self.tissues[s] = tissue
 
     def getTissueFromSynonym(self, synonym):
-        return self.tissues[synonym]
+        ret = self.tissues[synonym]
+        if not ret:
+            raise "Could not match tissue " + synonym
+        return ret

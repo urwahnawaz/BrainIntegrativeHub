@@ -17,7 +17,7 @@ class CircRangeGroup:
     def toBrowserFormat(self):
         for i in range(len(AbstractLiftoverIter.required)):
             if(self.versions[i]):
-                return "%s:%d-%d|%s|%s" % (self.ch, self.versions[i].start, self.versions[i].end, self.strand, str(i))
+                return "%s_%d_%d_%s_%s" % (self.ch, self.versions[i].start, self.versions[i].end, self.strand, str(i))
         return None
     
     def __iter__(self):
