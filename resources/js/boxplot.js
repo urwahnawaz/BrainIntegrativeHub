@@ -31,6 +31,10 @@ class Boxplot {
             self.setData(self.data);
         });
 
+        $('#metadataSelect2').on('change', function () {
+            self.setData(self.data);
+        });
+
         this.cachedJitter = [];
     }
 
@@ -69,9 +73,20 @@ class Boxplot {
                 }
             }
             $('#metadataSelect').prop('selectedIndex', 2);
+
+            $('#metadataSelect2').empty();
+            $('#metadataSelect2').append('<option value="None">None</option>');
+            for (let k of Object.keys(data[0])) {
+                if ((typeof data[0][k] === 'string' || data[0][k] instanceof String) && k != yName && k != "plotValue") {
+                    $('#metadataSelect2').append('<option value="' + k + '">' + k + '</option>');
+                }
+            }
         }
 
         let categoryName = $('#metadataSelect').find(":selected").text();
+        let categoryName2 = $('#metadataSelect2').find(":selected").text();
+
+        $('#metadataSelect2').prop('disabled', (typeof data[0][categoryName] === 'string' || data[0][categoryName] instanceof String));
 
         let categories = {}
         for (let d of data) categories[d[categoryName]] = true
@@ -110,6 +125,7 @@ class Boxplot {
 
         let myVar = data[0][categoryName];
         if (typeof myVar === 'string' || myVar instanceof String) {
+
             while(this.cachedJitter.length < this.data.length) this.cachedJitter.push(- jitterWidth / 2 + Math.random() * jitterWidth)
 
             // Compute quartiles, median, inter quantile range min and max --> these info are then used to draw the box.
@@ -193,7 +209,13 @@ class Boxplot {
                 .attr("transform", "translate(0," + height + ")")
                 .call(d3.axisBottom(x))
 
+            var pointColorScale = d3.scaleOrdinal()
+                .domain(data.map(d => d[categoryName2]))
+                .range(colorbrewer.RdBu[9]);
+
             // Show scatter plot
+            console.log(categoryName2);
+            console.log(pointColorScale(data[0][categoryName2]));
             svg.selectAll("indPoints")
                 .data(data)
                 .enter()
@@ -201,7 +223,7 @@ class Boxplot {
                 .attr("cx", function (d) { return (x(d[categoryName])) })
                 .attr("cy", function (d) { return (y(d.plotValue)) })
                 .attr("r", 4)
-                .style("fill", "white")
+                .style("fill", function (d) { return categoryName2 == "None" ? "white" : (pointColorScale(d[categoryName2])) })
                 .attr("stroke", "black")
         }
     }
@@ -217,9 +239,6 @@ class Boxplot {
                 <br><br>
                 <div>Select Metadata Variable</div>
                 <select id="metadataSelect" class="selectpicker">
-                    <option>Detailed.Diagnosis</option>
-                    <option>Age</option>
-                    <option>Sex</option>
                 </select>
                 <br><br>
                 <div>Select Expression Type</div>
@@ -233,6 +252,10 @@ class Boxplot {
                     <option>Linear</option>
                     <option>Log e</option>
                     <option>Log 10</option>
+                </select>
+                <br><br>
+                <div>Select Second Metadata Variable</div>
+                <select id="metadataSelect2" class="selectpicker">
                 </select>
             </div>
             <div class="col-md-6 col-md-offset-1">
