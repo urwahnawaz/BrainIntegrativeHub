@@ -9,7 +9,7 @@ from expression import Expression
 
 class CircAtlas2BrowserIter(AbstractLiftoverIter):
     name = "CircAtlas2Browser"
-    tissues = ['Bone Marrow','Brain','Colon','Heart','Kidney','Liver','Lung','Placental','Prostate','Skeletal Muscle','Small Intestine','Spleen','Spinal Cord','Stomach','Testis','Thymus','Uterus','Pancreas','Retina']
+    #tissues = ['Bone Marrow','Brain','Colon','Heart','Kidney','Liver','Lung','Placental','Prostate','Skeletal Muscle','Small Intestine','Spleen','Spinal Cord','Stomach','Testis','Thymus','Uterus','Pancreas','Retina']
 
     def __init__(self, directory):
         super().__init__(directory)
@@ -19,6 +19,7 @@ class CircAtlas2BrowserIter(AbstractLiftoverIter):
         self.read_file_main_json = json.load(self.read_file_main)["data"]
         self.read_obj_main = self.read_file_main_json.__iter__()
 
+        self.meta_index = -1
         self._updateLiftover(os.path.getmtime(self.read_file_main.name), "hg38")
 
     def __iter__(self):
@@ -29,6 +30,8 @@ class CircAtlas2BrowserIter(AbstractLiftoverIter):
             line = next(self.read_obj_main) 
             match = re.search(r'(chr[^:]+)', line["pos"])
             if not match: continue
+
+            self.meta_index += 1
 
             gene = re.search(r'-([^_]+)', line["name"]).group(1)
 

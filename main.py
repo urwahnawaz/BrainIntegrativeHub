@@ -181,16 +181,16 @@ if __name__ == '__main__':
     
     circIters = [
         CircLiuIter("./data/Liu"),
-        #CircAtlas2BrowserIter("./data/circAtlas2"), #No tissue info without individual php calls
         #CircAtlas2Iter("./data/circAtlas2"), #No strand info
         CircGokoolIter("./data/Gokool"),
         ESC_FBNIter("./data/ESC_FBN/Processed"),
         OrgIter("./data/ORG/Processed"),
         SY5YIter("./data/SY5Y/Processed"),
-        #Circpedia2Iter("./data/CIRCpedia2"), 
-        #CircBaseIter("./data/Circbase"), 
+        Circpedia2Iter("./data/CIRCpedia2"), 
+        CircBaseIter("./data/Circbase"), 
         CircRNADbIter("./data/circRNADb"), 
-        CircFunBaseIter("./data/CircFunBase")
+        CircFunBaseIter("./data/CircFunBase"),
+        CircAtlas2BrowserIter("./data/circAtlas2"), #No tissue info without individual php calls
         #CircRicIter("./data/CircRic"), #No strand info
         #MiOncoCirc2Iter("./data/MiOncoCirc2") #No strand or tissue info
     ]
