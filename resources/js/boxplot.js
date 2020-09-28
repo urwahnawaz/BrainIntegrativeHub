@@ -45,7 +45,7 @@ class Boxplot {
             });
         }
 
-        await fetch(dir + "_meta.json").then(r => r.json()).then(async function (obj) {
+        await fetch(dir + "meta.json").then(r => r.json()).then(async function (obj) {
             self.metaIndexObj = obj;
 
             //Download all files
