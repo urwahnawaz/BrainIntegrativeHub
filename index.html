@@ -2,7 +2,7 @@
 <meta charset="utf-8">
 
 <head>
-    <link href="resources/data/outSmall.db.gz"/>
+    <link href="resources/data/out.db.gz"/>
     <link href="resources/data/GokoolMetaMapping.csv"/>
     <link href="resources/data/GokoolMetaSamples.csv"/>
 
@@ -117,7 +117,7 @@
     </div>
 
     <script>
-        var mapping, samples, database, genomebrowser, boxplot, heatmap = undefined;
+        var database, genomebrowser, boxplot, heatmap = undefined;
 
         //TODO convert to promises. Very hacky 
         var awaitAll = 0;
@@ -137,10 +137,9 @@
             genomebrowser = new GenomeBrowser("myGenomeBrowser");
             boxplot = new Boxplot(document.getElementById("myViolin1"));
             heatmap = new Heatmap(document.getElementById("myHeatmap"));
+
             (async () => {
-                console.log("getting csv");
-                mapping = await loadCSV("resources/data/GokoolMetaMapping.csv")
-                samples = await loadCSV("resources/data/GokoolMetaSamples.csv")
+                await boxplot.initData();
                 incAwaitAll();
             })();
         }
@@ -176,50 +175,41 @@
         }
 
         function makeTable(contents, tableId) {
-            let headings = contents.columns
-            let values = contents.values
-            console.log(contents)
+            let headings = contents.columns;
+            let values = contents.values;
 
-            let tableContents = ""
-            tableContents += '<thead>'
-            tableContents += "<tr>"
-            for (let h of headings) tableContents += "<th>" + h + "</th>"
-            tableContents += "</tr>"
-            tableContents += "</thead>"
+            let tableContents = "";
+            tableContents += '<thead>';
+            tableContents += "<tr>";
+            for (let h of headings) tableContents += "<th>" + h.replace('_meta','') + "</th>";
+            tableContents += "</tr>";
+            tableContents += "</thead>";
 
-            tableContents += '<tbody>'
+            tableContents += '<tbody>';
+            
             for (let v of values) {
-                tableContents += "<tr>"
-                for (let e of v) tableContents += "<td>" + e + "</td>"
-                tableContents += "</tr>"
+                tableContents += "<tr>";
+                let i=0;
+                for (let e of v) tableContents += "<td>" + (headings[i++].endsWith("_meta") ? (e > -1 ? "yes" : "") : e) + "</td>";
+                tableContents += "</tr>";
             }
-            tableContents += '</tbody>'
-            document.getElementById(tableId).innerHTML = tableContents
+            tableContents += '</tbody>';
+            document.getElementById(tableId).innerHTML = tableContents;
 
             $("tbody > tr").click(function (arg) {
                 let circ = arg.currentTarget.firstChild.textContent;
-                console.log(arg)
-                $("#myModalTitle").text("CircRNA: " + circ)
-                $("#myModal").modal('toggle')
-                genomebrowser.setPosition(arg.currentTarget.children[1].textContent, parseInt(arg.currentTarget.children[2].textContent), parseInt(arg.currentTarget.children[3].textContent))
+                var details = database.exec(/*sql*/`SELECT * FROM circrna WHERE circ_id='${circ}' LIMIT 100`)[0];
 
-                let meta_index = parseInt(arg.currentTarget.children[7].textContent);
-                let plotData = []
-                if (meta_index >= 0) {
-                    //Get all samples containing this circrna
-                    let circsamples = mapping[meta_index + 1];
-                    for (let i = 1; i < circsamples.length; ++i) {
-                        if (circsamples[i] > 0) {
-                            //Find entry in samples table
-                            let ret = { Expression: circsamples[i] }
-                            for (let j = 1; j < samples.length; ++j) {
-                                ret[samples[0][j]] = samples[i][j]
-                            }
-                            plotData.push(ret)
-                        }
-                    }
+                //Convert single result to nicer format
+                var detailObj = {};
+                for(let i=0; i<details.columns.length; ++i) {
+                    detailObj[details.columns[i]] = details.values[0][i];
                 }
-                boxplot.setData(plotData);
+
+                $("#myModalTitle").text("CircRNA: " + detailObj.circ_id)
+                $("#myModal").modal('toggle')
+                genomebrowser.setPosition(detailObj.chr, parseInt(detailObj.start_hg19), parseInt(detailObj.end_hg19))
+                boxplot.setCircID(detailObj)
 
                 //Get expression db
                 var contents = database.exec(/*sql*/`SELECT * FROM expression WHERE circ_id='${circ}' LIMIT 100`)[0];

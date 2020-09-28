@@ -1,0 +1,145 @@
+Sample,BrainID,ASD.CTL,RegionID,Detailed.Diagnosis,Age,Sex,RIN,SeqBatch,BrainBank,PMI,BroadRegionID
+AN00142_BA9_AN00142_ba9_3rd_combined,AN00142,CTL,ba9,No Known Disorder,44,M,6.2,batch2,ATP,24.61,CTX
+AN02987_ba41_42_22_1st,AN02987,ASD,ba41-42-22,Autism - suspected; seeking records,15,M,8.6,batch1,ATP,30.8,CTX
+AN02987_vermis_1st,AN02987,ASD,vermis,Autism - suspected; seeking records,15,M,8.2,batch1,ATP,30.8,CB
+AN03345_ba9_79,AN03345,ASD,ba9,Autism - confirmed by ADI-R,2,M,6.9,batch1,ATP,4,CTX
+AN03632_ba41_42_22_1st,AN03632,ASD,ba41-42-22,Autism - suspected; no confirmation,49,F,8.1,batch1,ATP,21.08,CTX
+AN03632_ba9_2nd,AN03632,ASD,ba9,Autism - suspected; no confirmation,49,F,8,batch1,ATP,21.08,CTX
+AN03632_vermis_1st,AN03632,ASD,vermis,Autism - suspected; no confirmation,49,F,6.7,batch1,ATP,21.08,CB
+AN03935_ba41_42_22_1st,AN03935,ASD,ba41-42-22,Chromosome 15q Duplication Syndrome,20,M,7.9,batch1,ATP,28.08,CTX
+AN03935_ba9_2nd,AN03935,ASD,ba9,Chromosome 15q Duplication Syndrome,20,M,8,batch1,ATP,28.08,CTX
+AN04682_ba41_42_22_1st,AN04682,ASD,ba41-42-22,Autism - suspected; seeking records,15,M,8.2,batch1,ATP,23.23,CTX
+AN04682_ba9_1st,AN04682,ASD,ba9,Autism - suspected; seeking records,15,M,7.8,batch1,ATP,23.23,CTX
+AN04682_vermis_2nd,AN04682,ASD,vermis,Autism - suspected; seeking records,15,M,8,batch1,ATP,23.23,CB
+AN05983_ba41_42_22_1st,AN05983,ASD,ba41-42-22,Chromosome 15q Duplication Syndrome,24,M,8.7,batch1,ATP,36.36,CTX
+AN05983_BA9_AN05983_ba9_3rd_combined,AN05983,ASD,ba9,Chromosome 15q Duplication Syndrome,24,M,7.8,batch2,ATP,36.36,CTX
+AN05983_vermis_1st,AN05983,ASD,vermis,Chromosome 15q Duplication Syndrome,24,M,7.9,batch1,ATP,36.36,CB
+AN06365_ba41_42_22_1st,AN06365,ASD,ba41-42-22,Chromosome 15q Duplication Syndrome,10,M,8,batch1,ATP,17.7,CTX
+AN07444_ba41_42_22_1st,AN07444,CTL,ba41-42-22,No Known Disorder,17,M,8.2,batch1,ATP,30.75,CTX
+AN07444_vermis_2nd,AN07444,CTL,vermis,No Known Disorder,17,M,8.3,batch1,ATP,30.75,CB
+AN08043_ba41_42_22_1st,AN08043,ASD,ba41-42-22,Autism - confirmed by ADI-R,52,F,7.8,batch1,ATP,39.15,CTX
+AN08043_ba9_1st,AN08043,ASD,ba9,Autism - confirmed by ADI-R,52,F,7.7,batch1,ATP,39.15,CTX
+AN08043_vermis_1st,AN08043,ASD,vermis,Autism - confirmed by ADI-R,52,F,8.2,batch1,ATP,39.15,CB
+AN08161_ba9_1st,AN08161,CTL,ba9,No Known Disorder,36,F,8.1,batch1,ATP,23.83,CTX
+AN08161_vermis,AN08161,CTL,vermis,No Known Disorder,36,F,7,batch3,ATP,23.83,CB
+AN08161_vermis_2nd,AN08161,CTL,vermis,No Known Disorder,36,F,7,batch3,ATP,23.83,CB
+AN08166_ba41_42_22_86,AN08166,ASD,ba41-42-22,Autism - confirmed by ADI-R,29,M,6.4,batch1,ATP,43.25,CTX
+AN08677_ba41_42_22_1st,AN08677,CTL,ba41-42-22,No Known Disorder,38,M,8,batch1,ATP,25.47,CTX
+AN08677_vermis_2nd,AN08677,CTL,vermis,No Known Disorder,38,M,8.3,batch1,ATP,25.47,CB
+AN09402_ba41_42_22_1st,AN09402,ASD,ba41-42-22,Chromosome 15q Duplication Syndrome,11,M,7.5,batch1,ATP,10.5,CTX
+AN09402_BA9_AN09402_ba9_3rd_combined,AN09402,ASD,ba9,Chromosome 15q Duplication Syndrome,11,M,6.7,batch2,ATP,10.5,CTX
+AN09402_vermis_1st,AN09402,ASD,vermis,Chromosome 15q Duplication Syndrome,11,M,8,batch1,ATP,10.5,CB
+AN09714_ba41_42_22_1st,AN09714,ASD,ba41-42-22,Autism - confirmed by ADI-R,60,M,7.2,batch1,ATP,26.5,CTX
+AN09714_ba9_1st,AN09714,ASD,ba9,Autism - confirmed by ADI-R,60,M,7.6,batch1,ATP,26.5,CTX
+AN09714_vermis_1st,AN09714,ASD,vermis,Autism - confirmed by ADI-R,60,M,6.4,batch1,ATP,26.5,CB
+AN10679_ba41_42_22_2nd,AN10679,CTL,ba41-42-22,No Known Disorder,41,F,8.4,batch1,ATP,14,CTX
+AN10679_ba9_1st,AN10679,CTL,ba9,No Known Disorder,41,F,8.4,batch1,ATP,14,CTX
+AN10679_vermis_2nd,AN10679,CTL,vermis,No Known Disorder,41,F,8.2,batch1,ATP,14,CB
+AN10723_ba41_42_22_1st,AN10723,CTL,ba41-42-22,No Known Disorder,60,M,8.7,batch1,ATP,24.23,CTX
+AN10723_ba9_1st,AN10723,CTL,ba9,No Known Disorder,60,M,8.3,batch1,ATP,24.23,CTX
+AN10723_vermis_2nd,AN10723,CTL,vermis,No Known Disorder,60,M,8.2,batch1,ATP,24.23,CB
+AN11864_BA41_42_22_AN11864_ba41_42_22_3rd_combined,AN11864,CTL,ba41-42-22,No Known Disorder,57,M,5.4,batch2,ATP,22.33,CTX
+AN11864_BA9_AN11864_ba9_3rd_combined,AN11864,CTL,ba9,No Known Disorder,57,M,7.3,batch2,ATP,22.33,CTX
+AN11931_ba41_42_22_1st,AN11931,ASD,ba41-42-22,Chromosome 15q Duplication Syndrome,39,F,8.5,batch1,ATP,32.83,CTX
+AN13295_ba41_42_22_89,AN13295,CTL,ba41-42-22,No Known Disorder,56,M,6.3,batch1,ATP,22.12,CTX
+AN13295_ba9_88,AN13295,CTL,ba9,No Known Disorder,56,M,6.3,batch1,ATP,22.12,CTX
+AN13295_vermis_90,AN13295,CTL,vermis,No Known Disorder,56,M,8.3,batch1,ATP,22.12,CB
+AN13872_ba41_42_22_50,AN13872,ASD,ba41-42-22,Autism - confirmed by ADI-R,5,F,6.9,batch1,ATP,33,CTX
+AN13872_ba9_49,AN13872,ASD,ba9,Autism - confirmed by ADI-R,5,F,6.9,batch1,ATP,33,CTX
+AN13872_vermis_51,AN13872,ASD,vermis,Autism - confirmed by ADI-R,5,F,7.8,batch1,ATP,33,CB
+AN14762_ba41_42_22_1st,AN14762,ASD,ba41-42-22,Chromosome 15q Duplication Syndrome,9,M,8.6,batch1,ATP,13.63,CTX
+AN14762_ba9_1st,AN14762,ASD,ba9,Chromosome 15q Duplication Syndrome,9,M,8.6,batch1,ATP,13.63,CTX
+AN14762_vermis_1st,AN14762,ASD,vermis,Chromosome 15q Duplication Syndrome,9,M,8.5,batch1,ATP,13.63,CB
+AN14829_ba41_42_22_1st,AN14829,ASD,ba41-42-22,Chromosome 15q Duplication Syndrome,26,F,6.2,batch1,ATP,28.67,CTX
+AN14829_vermis,AN14829,ASD,vermis,Chromosome 15q Duplication Syndrome,26,F,5.7,batch3,ATP,28.67,CB
+AN15088_ba9_1st,AN15088,CTL,ba9,No Known Disorder,52,F,7.7,batch1,ATP,17.88,CTX
+AN15451_vermis,AN15451,ASD,vermis,Chromosome 15q Duplication Syndrome,16,M,6.3,batch3,ATP,39.91,CB
+AN17515_ba9_1st,AN17515,ASD,ba9,Autism - confirmed by ADI-R,54,M,8.1,batch1,ATP,28.25,CTX
+AN17515_vermis_1st,AN17515,ASD,vermis,Autism - confirmed by ADI-R,54,M,8.1,batch1,ATP,28.25,CB
+AN17678_vermis_1st,AN17678,ASD,vermis,Autism - confirmed by ADI-R,11,M,8.4,batch1,ATP,NA,CB
+AN19442_ba41_42_22,AN19442,CTL,ba41-42-22,No Known Disorder,50,M,5.5,batch3,ATP,20.4,CTX
+UMB1376_BA41_42_22_UMB1376_ba41_42_22_3rd_combined,UMB1376,CTL,ba41-42-22,No Known Disorder,37,M,5,batch2,NICHD,12,CTX
+UMB1376_vermis_2nd,UMB1376,CTL,vermis,No Known Disorder,37,M,8.3,batch1,NICHD,12,CB
+UMB1407_ba9,UMB1407,CTL,ba9,No known disorder,9,F,6.7,batch3,NICHD,20,CTX
+UMB1499_ba41_42_22,UMB1499,CTL,ba41-42-22,No known disorder,4,F,5.9,batch3,NICHD,21,CTX
+UMB1499_ba9,UMB1499,CTL,ba9,No known disorder,4,F,6.7,batch3,NICHD,21,CTX
+UMB1578_ba41_42_22_1st,UMB1578,CTL,ba41-42-22,No Known Disorder,53,M,8.1,batch1,NICHD,17,CTX
+UMB1578_ba9_2nd,UMB1578,CTL,ba9,No Known Disorder,53,M,8.1,batch1,NICHD,17,CTX
+UMB1578_vermis_1st,UMB1578,CTL,vermis,No Known Disorder,53,M,8,batch1,NICHD,17,CB
+UMB1670_vermis,UMB1670,CTL,vermis,No known disorder,13,M,6.1,batch3,NICHD,5,CB
+UMB1714_vermis,UMB1714,CTL,vermis,No known disorder,12,M,6.3,batch3,NICHD,22,CB
+UMB1793_vermis,UMB1793,CTL,vermis,No known disorder,12,M,6.2,batch3,NICHD,19,CB
+UMB1860_vermis,UMB1860,CTL,vermis,No known disorder,8,M,7,batch3,NICHD,5,CB
+UMB1908_ba41_42_22,UMB1908,CTL,ba41-42-22,No known disorder,14,M,6.5,batch3,NICHD,13,CTX
+UMB1908_vermis,UMB1908,CTL,vermis,No known disorder,14,M,6.4,batch3,NICHD,13,CB
+UMB4334_ba9,UMB4334,ASD,ba9,Autism - confirmed by ADI-R,11,M,9.1,batch3,NICHD,27,CTX
+UMB4334_ba9_1st,UMB4334,ASD,ba9,Autism - confirmed by ADI-R,11,M,9.1,batch3,NICHD,27,CTX
+UMB4334_vermis,UMB4334,ASD,vermis,Autism - confirmed by ADI-R,11,M,9.1,batch3,NICHD,27,CB
+UMB4337_BA9_UMB4337_ba9_3rd_combined,UMB4337,CTL,ba9,No Known Disorder,8,M,5.8,batch2,NICHD,16,CTX
+UMB4337_vermis_2nd,UMB4337,CTL,vermis,No Known Disorder,8,M,8.6,batch1,NICHD,16,CB
+UMB4590_ba41_42_22_2nd,UMB4590,CTL,ba41-42-22,No Known Disorder,20,M,8.3,batch1,NICHD,19,CTX
+UMB4590_ba9_1st,UMB4590,CTL,ba9,No Known Disorder,20,M,8.3,batch1,NICHD,19,CTX
+UMB4590_vermis_2nd,UMB4590,CTL,vermis,No Known Disorder,20,M,8.5,batch1,NICHD,19,CB
+UMB4670_ba9,UMB4670,CTL,ba9,No known disorder,5,M,6.3,batch3,NICHD,17,CTX
+UMB4670_vermis,UMB4670,CTL,vermis,No known disorder,5,M,6.4,batch3,NICHD,17,CB
+UMB4787_ba41_42_22,UMB4787,CTL,ba41-42-22,No known disorder,13,M,6.1,batch3,NICHD,15,CTX
+UMB4787_ba9,UMB4787,CTL,ba9,No known disorder,13,M,6.7,batch3,NICHD,15,CTX
+UMB4787_vermis,UMB4787,CTL,vermis,No known disorder,13,M,6.1,batch3,NICHD,15,CB
+UMB4842_ba41_42_22_2nd,UMB4842,CTL,ba41-42-22,No Known Disorder,47,M,8.1,batch1,NICHD,12,CTX
+UMB4842_ba9_2nd,UMB4842,CTL,ba9,No Known Disorder,47,M,7.9,batch1,NICHD,12,CTX
+UMB4849_ba9_2nd,UMB4849,ASD,ba9,Autism - confirmed by ADI-R,7,M,7.4,batch1,NICHD,20,CTX
+UMB4849_vermis_1st,UMB4849,ASD,vermis,Autism - confirmed by ADI-R,7,M,8.1,batch1,NICHD,20,CB
+UMB4999_ba41_42_22_2nd,UMB4999,ASD,ba41-42-22,Autism - Suspected,21,M,8.4,batch1,NICHD,14,CTX
+UMB4999_ba9_2nd,UMB4999,ASD,ba9,Autism - Suspected,21,M,8.2,batch1,NICHD,14,CTX
+UMB4999_vermis_2nd,UMB4999,ASD,vermis,Autism - Suspected,21,M,8.4,batch1,NICHD,14,CB
+UMB5023_ba41_42_22,UMB5023,ASD,ba41-42-22,Autism - suspected; diagnosis made in childhood,46,M,6.6,batch3,NICHD,19,CTX
+UMB5023_ba9,UMB5023,ASD,ba9,Autism - suspected; diagnosis made in childhood,46,M,6.1,batch3,NICHD,19,CTX
+UMB5023_vermis,UMB5023,ASD,vermis,Autism - suspected; diagnosis made in childhood,46,M,7.4,batch3,NICHD,19,CB
+UMB5027_ba41_42_22_2nd,UMB5027,ASD,ba41-42-22,Autism - Suspected,38,M,8.5,batch1,NICHD,26,CTX
+UMB5027_vermis_2nd,UMB5027,ASD,vermis,Autism - Suspected,38,M,8.1,batch1,NICHD,26,CB
+UMB5079_ba41_42_22_1st,UMB5079,CTL,ba41-42-22,No Known Disorder,33,M,7.9,batch1,NICHD,16,CTX
+UMB5079_ba9_2nd,UMB5079,CTL,ba9,No Known Disorder,33,M,7.8,batch1,NICHD,16,CTX
+UMB5079_vermis_1st,UMB5079,CTL,vermis,No Known Disorder,33,M,8.3,batch1,NICHD,16,CB
+UMB5115_ba41_42_22_2nd,UMB5115,ASD,ba41-42-22,Autism - confirmed by ADI-R,46,M,8.2,batch1,NICHD,29,CTX
+UMB5115_ba9_2nd,UMB5115,ASD,ba9,Autism - confirmed by ADI-R,46,M,6.2,batch1,NICHD,29,CTX
+UMB5115_vermis_1st,UMB5115,ASD,vermis,Autism - confirmed by ADI-R,46,M,8.1,batch1,NICHD,29,CB
+UMB5144_ba41_42_22_2nd,UMB5144,ASD,ba41-42-22,Autism - confirmed by ADI-R,7,M,7.7,batch1,NICHD,3,CTX
+UMB5144_ba9_2nd,UMB5144,ASD,ba9,Autism - confirmed by ADI-R,7,M,8,batch1,NICHD,3,CTX
+UMB5144_vermis_2nd,UMB5144,ASD,vermis,Autism - confirmed by ADI-R,7,M,8.2,batch1,NICHD,3,CB
+UMB5163_ba41_42_22_1st,UMB5163,CTL,ba41-42-22,No Known Disorder,15,M,8.1,batch1,NICHD,12,CTX
+UMB5163_ba9_2nd,UMB5163,CTL,ba9,No Known Disorder,15,M,6.7,batch1,NICHD,12,CTX
+UMB5163_vermis_2nd,UMB5163,CTL,vermis,No Known Disorder,15,M,6.5,batch1,NICHD,12,CB
+UMB5168_ba41_42_22_1st,UMB5168,CTL,ba41-42-22,No Known Disorder,16,F,7,batch1,NICHD,0,CTX
+UMB5168_ba9_2nd,UMB5168,CTL,ba9,No Known Disorder,16,F,7.3,batch1,NICHD,0,CTX
+UMB5168_vermis_2nd,UMB5168,CTL,vermis,No Known Disorder,16,F,7.4,batch1,NICHD,0,CB
+UMB5176_BA41_42_22_UMB5176_ba41_42_22_3rd_combined,UMB5176,ASD,ba41-42-22,Autism - confirmed by ADI-R,22,M,5.3,batch2,NICHD,18,CTX
+UMB5176_ba9,UMB5176,ASD,ba9,Autism - confirmed by ADI-R,23,M,7.2,batch3,NICHD,18,CTX
+UMB5176_vermis_2nd,UMB5176,ASD,vermis,Autism - confirmed by ADI-R,23,M,8.1,batch1,NICHD,18,CB
+UMB5242_ba41_42_22_1st,UMB5242,CTL,ba41-42-22,No Known Disorder,15,M,8.1,batch1,NICHD,9,CTX
+UMB5242_ba9_1st,UMB5242,CTL,ba9,No Known Disorder,15,M,8.4,batch1,NICHD,9,CTX
+UMB5242_vermis,UMB5242,CTL,vermis,No Known Disorder,15,M,6.2,batch3,NICHD,9,CB
+UMB5242_vermis_2nd,UMB5242,CTL,vermis,No Known Disorder,15,M,6.2,batch3,NICHD,9,CB
+UMB5278_ba41_42_22_1st,UMB5278,ASD,ba41-42-22,Autism - confirmed by ADI-R,16,F,7.8,batch1,NICHD,13,CTX
+UMB5278_ba9_1st,UMB5278,ASD,ba9,Autism - confirmed by ADI-R,16,F,8.3,batch1,NICHD,13,CTX
+UMB5278_vermis_1st,UMB5278,ASD,vermis,Autism - confirmed by ADI-R,16,F,8.2,batch1,NICHD,13,CB
+UMB5297_ba41_42_22_1st,UMB5297,ASD,ba41-42-22,Autism - Suspected,33,M,6.7,batch1,NICHD,50,CTX
+UMB5297_ba9_1st,UMB5297,ASD,ba9,Autism - Suspected,33,M,5.6,batch1,NICHD,50,CTX
+UMB5297_vermis,UMB5297,ASD,vermis,Autism - Suspected,33,M,5,batch3,NICHD,50,CB
+UMB5297_vermis_2nd,UMB5297,ASD,vermis,Autism - Suspected,33,M,5,batch3,NICHD,50,CB
+UMB5303_ba41_42_22_2nd,UMB5303,ASD,ba41-42-22,Autism - supported by records,67,M,8.5,batch1,NICHD,16,CTX
+UMB5303_ba9,UMB5303,ASD,ba9,Autism - supported by records,67,M,7.4,batch3,NICHD,16,CTX
+UMB5308_ba41_42_22,UMB5308,ASD,ba41-42-22,Autism - confirmed by ADI-R,5,M,6.5,batch3,NICHD,21,CTX
+UMB5308_ba41_42_22_1st,UMB5308,ASD,ba41-42-22,Autism - confirmed by ADI-R,5,M,6.5,batch3,NICHD,21,CTX
+UMB5308_ba9_2nd,UMB5308,ASD,ba9,Autism - confirmed by ADI-R,4,M,7.9,batch1,NICHD,21,CTX
+UMB5308_vermis_1st,UMB5308,ASD,vermis,Autism - confirmed by ADI-R,4,M,8.3,batch1,NICHD,21,CB
+UMB5309_ba41_42_22,UMB5309,CTL,ba41-42-22,No known disorder,14,F,6.6,batch3,NICHD,8,CTX
+UMB5309_ba9,UMB5309,CTL,ba9,No known disorder,14,F,5.9,batch3,NICHD,8,CTX
+UMB5309_vermis,UMB5309,CTL,vermis,No known disorder,14,F,5.1,batch3,NICHD,8,CB
+UMB5340_ba41_42_22_2nd,UMB5340,ASD,ba41-42-22,Autism - confirmed by ADI-R,53,M,8.2,batch1,NICHD,NA,CTX
+UMB5340_ba9_2nd,UMB5340,ASD,ba9,Autism - confirmed by ADI-R,53,M,8.4,batch1,NICHD,NA,CTX
+UMB5340_vermis_1st,UMB5340,ASD,vermis,Autism - confirmed by ADI-R,53,M,8.1,batch1,NICHD,NA,CB
+UMB5342_ba41_42_22_1st,UMB5342,CTL,ba41-42-22,No Known Disorder,23,M,7.7,batch1,NICHD,14,CTX
+UMB5342_ba9_2nd,UMB5342,CTL,ba9,No Known Disorder,23,M,7.9,batch1,NICHD,14,CTX
+UMB5342_vermis_1st,UMB5342,CTL,vermis,No Known Disorder,23,M,7.7,batch1,NICHD,14,CB
+UMB5391_ba9,UMB5391,CTL,ba9,No known disorder,9,M,6.6,batch3,NICHD,12,CTX
+UMB5391_vermis,UMB5391,CTL,vermis,No known disorder,9,M,7.1,batch3,NICHD,12,CB

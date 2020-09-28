@@ -16,45 +16,156 @@ class Boxplot {
             .attr("transform",
                 "translate(" + margin.left + "," + margin.top + ")");
 
-        // Read the data and compute summary statistics for each specie
         var self = this;
-
-        $('#metadataSelect').on('change', function () {
-            self.setData(self.data);
-        });
-
-        $('#scaleSelect').on('change', function () {
-            self.setData(self.data);
-        });
-
-        $('#measureSelect').on('change', function () {
-            self.setData(self.data);
-        });
-
-        $('#metadataSelect2').on('change', function () {
-            self.setData(self.data);
-        });
+        $('#datasetSelect').on('change', () => self.updateDataset());
+        $('#measureSelect').on('change', () => self.updateMeasure());
+        $('#metadataSelect').on('change', () => self.updateGraph());
+        $('#scaleSelect').on('change', () => self.updateGraph());
+        $('#metadataSelect2').on('change', () => self.updateGraph());
+        $('#zscore').on('change', () => self.updateGraph());
 
         this.cachedJitter = [];
     }
 
-    setData(data, yName = "Expression", resetHeadings = false) {
+    async initData() {
+        let self = this;
+        let dir = window.location.href + "resources/data/";
+
+        //Inline function to parse CSV files
+        function loadCSV(path) {
+            return new Promise(function (complete, error) {
+                fetch(path).then(r => r.blob()).then(function (file) {
+                    Papa.parse(file, {
+                        dynamicTyping: true,
+                        complete: function (results) {
+                            complete(results.data)
+                        }
+                    });
+                });
+            });
+        }
+
+        await fetch(dir + "_meta.json").then(r => r.json()).then(async function (obj) {
+            self.metaIndexObj = obj;
+
+            //Download all files
+            let promises = [];
+            for(let entry of Object.keys(obj)) {
+                console.log(entry);
+                promises.push(loadCSV(dir + obj[entry].metadata).then(o => obj[entry].metadataObj = o));
+                for(let matrix of Object.keys(obj[entry].matrices)) {
+                    console.log(matrix);
+                    promises.push(loadCSV(dir + obj[entry].matrices[matrix]).then(o => obj[entry].matrices[(matrix + "Obj")] = o));
+                }
+            }
+            await Promise.all(promises);
+
+            //Set dataset selection dropdown options here
+            for (let k of Object.keys(obj)) {
+                $('#datasetSelect').append('<option value="' + k + '">' + k + '</option>');
+            }
+            $('#datasetSelect').prop('selectedIndex', 0);
+            self.updateDataset();
+        });
+    }
+
+    updateDataset() {
+        this.currentDataset = $('#datasetSelect').find(":selected").text();
+        this.metadata = this.metaIndexObj[this.currentDataset].metadataObj;
+
+        //Reset measure dropdown
+        $('#measureSelect').empty();
+        for (let k of Object.keys(this.metaIndexObj[this.currentDataset].matrices)) {
+            if(k.endsWith("Obj")) continue;
+            $('#measureSelect').append('<option value="' + k + '">' + k + '</option>');
+        }
+        $('#measureSelect').prop('selectedIndex', 0);
+
+        //Reset metadata dropdown
+        $('#metadataSelect').empty();
+        for(let k of this.metadata[0].slice(1)) {
+            $('#metadataSelect').append('<option value="' + k + '">' + k + '</option>');
+        }
+        $('#metadataSelect').prop('selectedIndex', 0);
+
+        //Reset metadata2 dropdown
+        $('#metadataSelect2').empty();
+        $('#metadataSelect2').append('<option value="None">None</option>');
+        for(let i=1; i<this.metadata[0].length; ++i) {
+            if ((typeof this.metadata[1][i] === 'string' || this.metadata[1][i] instanceof String) && this.metadata[0][i] != $('#metadataSelect').find(":selected").text()) {
+                $('#metadataSelect2').append('<option value="' + this.metadata[0][i] + '">' + this.metadata[0][i] + '</option>');
+            }
+        }
+        $('#metadataSelect2').prop('selectedIndex', 0);
+        this.updateMeasure();
+    }
+
+    updateMeasure() {
+        this.currentMeasure = $('#measureSelect').find(":selected").text();
+        this.data = this.metaIndexObj[this.currentDataset].matrices[this.currentMeasure + "Obj"];
+        this.updateCircID();
+    }
+
+    setCircID(detailsObj) {
+        this.detailsObj = detailsObj;
+        this.updateCircID();
+    }
+
+    updateCircID() {
+        if(this.detailsObj) {
+            let meta_index = this.detailsObj[this.metaIndexObj[this.currentDataset].db_index_col];
+
+            //Get data specific to this circrna
+            this.plotData = []
+            if (meta_index >= 0) {
+                //Get all samples containing this circrna
+                let circsamples = this.data[meta_index + 1];
+                for (let i = 1; i < circsamples.length; ++i) {
+                    if (circsamples[i] > 0) {
+                        //Find entry in samples table
+                        let ret = { Expression: circsamples[i] }
+                        for (let j = 1; j < this.metadata[0].length; ++j) {
+                            ret[this.metadata[0][j]] = this.metadata[i][j]
+                        }
+                        this.plotData.push(ret);
+                    }
+                }
+            } else {
+                this.plotData = undefined;
+            }
+        }
+        this.updateGraph();
+    }
+
+    updateGraph() {
+        this.clearGraph();
+        if(this.plotData) {
+            this.createGraph();
+        }
+    }
+
+    clearGraph() {
+        d3.selectAll("#myDistroChart > svg > g > *").remove();
+    }
+
+    createGraph() {
         var svg = this.svg;
         var self = this;
+        var data = this.plotData;
+        var yName = "Expression";
+
+        
 
         // set the dimensions and margins of the graph
         var margin = { top: 10, right: 30, bottom: 100, left: 100 },
             width = 650 - margin.left - margin.right,
             height = 400 - margin.top - margin.bottom;
 
-        if (!this.data) resetHeadings = true;
-        else d3.selectAll("#myDistroChart > svg > g > *").remove();
-
-        this.data = data;
+        
         var jitterWidth = 50;
 
         let currMeasure = $('#measureSelect').find(":selected").text();
-        if(currMeasure == "ZScore") {
+        if($('#zscore').prop('checked')) {
             let sd = d3.deviation(data, d => d[yName]);
             let mean = d3.mean(data, d => d[yName]);
             $('#scaleSelect').prop('disabled', true);
@@ -65,26 +176,11 @@ class Boxplot {
             $('#scaleSelect').prop('disabled', false);
         }
 
-        if (resetHeadings) {
-            $('#metadataSelect').empty();
-            for (let k of Object.keys(data[0])) {
-                if (k != yName && k != "plotValue") {
-                    $('#metadataSelect').append('<option value="' + k + '">' + k + '</option>');
-                }
-            }
-            $('#metadataSelect').prop('selectedIndex', 2);
-
-            $('#metadataSelect2').empty();
-            $('#metadataSelect2').append('<option value="None">None</option>');
-            for (let k of Object.keys(data[0])) {
-                if ((typeof data[0][k] === 'string' || data[0][k] instanceof String) && k != yName && k != "plotValue") {
-                    $('#metadataSelect2').append('<option value="' + k + '">' + k + '</option>');
-                }
-            }
-        }
-
         let categoryName = $('#metadataSelect').find(":selected").text();
         let categoryName2 = $('#metadataSelect2').find(":selected").text();
+
+        console.log(data);
+        console.log(categoryName);
 
         $('#metadataSelect2').prop('disabled', (typeof data[0][categoryName] === 'string' || data[0][categoryName] instanceof String));
 
@@ -233,18 +329,18 @@ class Boxplot {
         <div class="row">
             <div class="col-md-2">
                 <div>Select Dataset</div>
-                <select class="selectpicker">
-                    <option>Gokool</option>
+                <select id="datasetSelect" class="selectpicker">
                 </select>
+                <br><br>
+                <div>Select Measure</div>
+                <select id="measureSelect" class="selectpicker">
+                </select>
+                <br><br>
+                <input type="checkbox" id="zscore" name="zscore" value="zscore">
+                <label for="zscore">ZScore Transformation</label>
                 <br><br>
                 <div>Select Metadata Variable</div>
                 <select id="metadataSelect" class="selectpicker">
-                </select>
-                <br><br>
-                <div>Select Expression Type</div>
-                <select id="measureSelect" class="selectpicker">
-                    <option>CPM</option>
-                    <option>ZScore</option>
                 </select>
                 <br><br>
                 <div>Select Scale</div>

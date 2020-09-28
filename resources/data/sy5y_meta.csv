@@ -1,0 +1,8 @@
+Sample,description,total reads,rRNA%,non-rRNA reads,bowtie2genome%,"#splice site
+detection reads",cell_type,replicate,day.diff
+SY5Y_exp1_D0,"SH-SY5Y, experiment 1, day 0",49166392,5.07,46675034,71.61,13248800,SH-SY5Y,experiment 1,0
+SY5Y_exp1_D2,"SH-SY5Y, experiment 1, day 2",40882700,5.34,38699169,70.41,11451903,SH-SY5Y,experiment 1,2
+SY5Y_exp1_D4,"SH-SY5Y, experiment 1, day 4",42468741,9.39,38482967,73.99,10008537,SH-SY5Y,experiment 1,4
+SY5Y_exp2_D0,"SH-SY5Y, experiment 2, day 0",58859118,3.11,57026293,87.24,7279389,SH-SY5Y,experiment 2,0
+SY5Y_exp2_D4,"SH-SY5Y, experiment 2, day 4",49774578,1.08,49237431,87.39,6208972,SH-SY5Y,experiment 2,4
+SY5Y_exp2_D8,"SH-SY5Y, experiment 2, day 8",49290747,6.48,46094356,87.95,5556204,SH-SY5Y,experiment 2,8

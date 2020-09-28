@@ -1,0 +1,32 @@
+{
+    "esc_fbn": {
+      "db_index_col": "esc_fbn_meta",
+      "matrices": {
+          "CPM": "esc_fbn_cpm.csv"
+      },
+      "metadata": "esc_fbn_meta.csv"
+    },
+    "gokool": {
+      "db_index_col": "gokool_meta",
+      "matrices": {
+          "CPM": "gok_circ_cpm.csv",
+          "CI": "gok_ci.csv",
+          "SJ": "gok_sj_cpm.csv"
+      },
+      "metadata": "gok_meta.csv"
+    },
+    "org": {
+      "db_index_col": "org_meta",
+      "matrices": {
+          "CPM": "org_cpm.csv"
+      },
+      "metadata": "org_meta.csv"
+    },
+    "sy5y": {
+      "db_index_col": "sy5y_meta",
+      "matrices": {
+          "CPM": "sy5y_cpm.csv"
+      },
+      "metadata": "sy5y_meta.csv"
+    }
+  }
