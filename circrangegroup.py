@@ -14,11 +14,13 @@ class CircRangeGroup:
         ret.extend(self.strand)
         return ret
 
-    def toBrowserFormat(self):
-        for i in range(len(AbstractLiftoverIter.required)):
-            if(self.versions[i]):
-                return "%s_%d_%d_%s_%s" % (self.ch, self.versions[i].start, self.versions[i].end, self.strand, str(i))
+    def toId(self):
+        if self.versions[1]:
+            return "%s_%d_%d_%s" % (self.ch, self.versions[1].start, self.versions[1].end, self.strand)
         return None
+
+    def hasId(self):
+        return bool(self.versions[1])
     
     def __iter__(self):
         return self.versions.__iter__()
@@ -55,7 +57,7 @@ class CircRangeGroup:
             return NotImplemented
         for i in range(len(self.versions)):
             if(self.versions[i] and other.versions[i]):
-                return self.ch == other.ch and self.strand == other.strand and abs(self.versions[i].start - other.versions[i].start) <= dist and abs(self.versions[i].end - other.versions[i].end) <= dist
+                return self.ch == other.ch and (self.strand == other.strand or self.strand == '.' or other.strand == '.') and abs(self.versions[i].start - other.versions[i].start) <= dist and abs(self.versions[i].end - other.versions[i].end) <= dist
         return False
 
     def __hash__(self):

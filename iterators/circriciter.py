@@ -20,6 +20,7 @@ class CircRicIter(AbstractLiftoverIter):
         self.read_file = open(os.path.join(directory, "circRNA_expression.csv"), 'r')
         self.read_obj = csv.reader(self.read_file, delimiter=',')
 
+        self.meta_index = -1
         self._updateLiftover(os.path.getmtime(self.read_file.name), "hg19")
 
         next(self.read_obj)
@@ -32,13 +33,14 @@ class CircRicIter(AbstractLiftoverIter):
             line = next(self.read_obj)
 
             if line[3] != "LGG": continue
+            self.meta_index += 1
 
             match = re.search(r'([^_]+)_(\d+)_(\d+)', line[0])
 
             ids = CircHSAGroup()
 
             group = CircRangeGroup(ch="chr" + str(match.group(1)), strand='+', versions=super().__next__())
-            ret = CircRow(group=group, hsa=ids, gene=line[5], db_id = self.id)
+            ret = CircRow(group=group, hsa=ids, gene=line[5], db_id = self.id, meta_index=self.meta_index)
             ret.addExpression(Expression("Brain", "CircRic", int(line[4])))
             return ret
 

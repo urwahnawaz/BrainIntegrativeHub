@@ -16,6 +16,7 @@ class CircRNADbIter(AbstractLiftoverIter):
         self.read_file = open(os.path.join(directory, "circRNA_dataset.txt"), 'r')
         self.read_obj = csv.reader(self.read_file, delimiter='\t')
 
+        self.meta_index = -1
         self._updateLiftover(os.path.getmtime(self.read_file.name), "hg19")
 
     def __iter__(self):
@@ -24,15 +25,15 @@ class CircRNADbIter(AbstractLiftoverIter):
     def __next__(self):
         while(True):
             line = next(self.read_obj)
-            if "normal brain tissue" not in line[13]: continue
+            self.meta_index += 1
 
-            line = next(self.read_obj)
+            if "normal brain tissue" not in line[13]: continue
 
             ids = CircHSAGroup()
             ids.addCircHSA(CircHSA("circRNADb", line[0]))
 
             group = CircRangeGroup(ch=line[1], strand=line[4], versions=super().__next__())
-            ret = CircRow(group=group, hsa=ids, gene=line[5], db_id = self.id)
+            ret = CircRow(group=group, hsa=ids, gene=line[5], db_id = self.id, meta_index=self.meta_index)
             ret.addExpression(Expression(self.matcher.getTissueFromSynonym("Brain").name, "CircRNADb"))
             return ret
 

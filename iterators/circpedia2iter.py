@@ -16,6 +16,7 @@ class Circpedia2Iter(AbstractLiftoverIter):
         self.read_file = open(os.path.join(directory, "human_hg38_All_circRNA.csv"), 'r')
         self.read_obj = csv.reader(self.read_file, delimiter=',')
 
+        self.meta_index = -1
         self._updateLiftover(os.path.getmtime(self.read_file.name), "hg38")
 
     def __iter__(self):
@@ -24,6 +25,7 @@ class Circpedia2Iter(AbstractLiftoverIter):
     def __next__(self):
         while(True):
             line = next(self.read_obj)
+            self.meta_index += 1
 
             match = re.search(r'(chr[^:]+):(\d+)-(\d+)', line[4]) #chr10:92909426-93014267
 
@@ -31,7 +33,7 @@ class Circpedia2Iter(AbstractLiftoverIter):
             ids.addCircHSA(CircHSA("Circpedia2", line[0]))
             
             group = CircRangeGroup(ch=match.group(1), strand=line[5], versions=super().__next__())
-            ret = CircRow(group=group, hsa=ids, gene=line[2], db_id = self.id)
+            ret = CircRow(group=group, hsa=ids, gene=line[2], db_id = self.id, meta_index=self.meta_index)
             ret.addExpression(Expression(self.matcher.getTissueFromSynonym(line[9].lower()).name, "Circpedia2", float(line[6])))
             return ret
 

@@ -41,7 +41,7 @@ class CircAtlas2Iter(AbstractDB):
             group = CircRangeGroup(ch=hg19Match.group(1) if hg19Match else hg38Match.group(1), strand='+', versions=[hg19, hg38])
 
             gene = re.search(r'-([^_]+)', line[1])
-            ret = CircRow(group=group, hsa=ids, gene=gene.group(1) if gene else None, db_id = self.id)
+            ret = CircRow(group=group, hsa=ids, gene=gene.group(1) if gene else None, db_id = self.id, meta_index=self.meta_index)
             return ret
 
             #I think it might be the strand that is preventing merges

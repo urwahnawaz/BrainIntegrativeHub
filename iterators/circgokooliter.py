@@ -9,7 +9,6 @@ from expression import Expression
 
 class CircGokoolIter(AbstractLiftoverIter):
     name = "Gokool"
-    hasMeta = True
 
     def __init__(self, directory):
         super().__init__(directory)
@@ -39,7 +38,7 @@ class CircGokoolIter(AbstractLiftoverIter):
                 ids.addCircHSA(CircHSA("circBase", line[26+1]))
 
             group = CircRangeGroup(ch=line[2+1], strand=line[8+1], versions=super().__next__())
-            ret = circrow.CircRow(group=group, hsa=ids, gene="." if  pd.isna(line[6+1]) else line[6+1], db_id=self.id, meta_index=self.meta_index)
+            ret = circrow.CircRow(group=group, hsa=ids, gene="" if  pd.isna(line[6+1]) else line[6+1], db_id=self.id, meta_index=self.meta_index)
 
             
             ret.addExpression(Expression(self.matcher.getTissueFromSynonym("CTX").name, "Gokool", int(line[20+1])))

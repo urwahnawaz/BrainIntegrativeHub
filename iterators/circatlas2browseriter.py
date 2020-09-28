@@ -36,7 +36,7 @@ class CircAtlas2BrowserIter(AbstractLiftoverIter):
             ids.addCircHSA(CircHSA("circAltas", line["name"]))
 
             group = CircRangeGroup(ch=match.group(1), strand=line["strand"], versions=super().__next__())
-            ret = CircRow(group=group, hsa=ids, gene=gene, db_id = self.id)
+            ret = CircRow(group=group, hsa=ids, gene=gene, db_id = self.id, meta_index=self.meta_index)
 
             #Ntis isn't actually a tissue ID, need to make individual calls to get this info
             #tissue = CircAtlas2BrowserIter.tissues[int(line["ntis"]) - 1]

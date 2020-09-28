@@ -16,6 +16,7 @@ class CircFunBaseIter(AbstractLiftoverIter):
         self.read_file = open(os.path.join(directory, "Homo_sapiens_circ.txt"), 'r')
         self.read_obj = csv.reader(self.read_file, delimiter='\t')
 
+        self.meta_index = -1
         self._updateLiftover(os.path.getmtime(self.read_file.name), "hg19")
 
         self.read_file.seek(0)
@@ -28,22 +29,26 @@ class CircFunBaseIter(AbstractLiftoverIter):
         while(True):
             line = next(self.read_obj)
             if line[1] == "-": continue
-            if "brain" not in line[2]: continue #TODO: Shouldn't filter here
+            self.meta_index += 1
             
             ids = CircHSAGroup()
             ids.addCircHSA(CircHSA("CircFunBase", line[0]))
 
             match = re.search(r'(chr[^:]+):(\d+)-(\d+)', line[1])
 
-            group = CircRangeGroup(ch=match.group(1), strand='+', versions=super().__next__())
-            ret = CircRow(group=group, hsa=ids, gene=line[3], db_id = self.id)
-            ret.addExpression(Expression(self.matcher.getTissueFromSynonym("Brain").name, line[5]))
+            if not match: continue
+
+            group = CircRangeGroup(ch=match.group(1), strand='.', versions=super().__next__())
+            ret = CircRow(group=group, hsa=ids, gene=line[3], db_id = self.id, meta_index = self.meta_index)
+
+            if "brain" in line[2]:
+                ret.addExpression(Expression(self.matcher.getTissueFromSynonym("Brain").name, line[5]))
             return ret
     def _toBedFile(self, fileFrom):
         next(self.read_obj)
         for line in self.read_obj:
             if line[1] == "-": continue
-            bed = self._browserToBedHelper(line[1], '+')
+            bed = self._browserToBedHelper(line[1], '.')
             if bed:
                 fileFrom.write(bed)
         self.read_file.seek(0)

@@ -3,7 +3,6 @@ from circtissuematcher import CircTissueMatcher
 
 class AbstractDB:
     name = "Unknown"
-    hasMeta = False
 
     matcher = CircTissueMatcher("./data")
 

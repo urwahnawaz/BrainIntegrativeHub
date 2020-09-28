@@ -22,6 +22,7 @@ class AbstractLiftoverIter(AbstractDB):
         return self
 
     def __next__(self):
+        #TODO we no longer nead to read unmap files, just read BED name field
         #Update reference first
         self.curr_version[self.refGenomeIndex] = self._getCircRangeFromBed(next(self.read_obj_lift[self.refGenomeIndex]))
 
@@ -61,11 +62,12 @@ class AbstractLiftoverIter(AbstractDB):
 
         #Create all other maps and unmaps
         for i in range(len(AbstractLiftoverIter.required)):
-            if((os.path.getsize(self.read_file_lift[i].name) <= 0 and lastModified >= os.path.getmtime(self.read_file_lift[i].name))):
+            if((os.path.getsize(self.read_file_lift[i].name) <= 0 or lastModified >= os.path.getmtime(self.read_file_lift[i].name))):
                 liftTo = AbstractLiftoverIter.required[i]
                 if(liftTo != refGenome):
                     #Perform liftover
-                    check_call(["./utility/liftOver", nameFrom, self._getChainLocation(refGenome, liftTo), self.read_file_lift[i].name, self.read_file_lift[i].name + ".unmap"], stdout=DEVNULL, stderr=STDOUT) #liftOver oldFile map.chain newFile unMapped
+                    proc = subprocess.run(["./utility/liftOver", nameFrom, self._getChainLocation(refGenome, liftTo), self.read_file_lift[i].name, self.read_file_lift[i].name + ".unmap"], stdout=DEVNULL, stderr=STDOUT) #liftOver oldFile map.chain newFile unMapped
+                    print("Running liftover: " + ' '.join(proc.args))
 
             unmapName = self.read_file_lift[i].name + ".unmap"
             self.read_file_lift[i] = open(self.read_file_lift[i].name, 'r')
@@ -83,8 +85,11 @@ class AbstractLiftoverIter(AbstractDB):
 
     def _browserToBedHelper(self, line, strand):
         match = re.search(r'(chr[^:]+):(\d+)\-(\d+)', line)
-        return (match.group(1) + '\t' + match.group(2) + '\t' + match.group(3) + '\t' + strand + '\n') if match else None
+        return self._browserArgsToBedHelper(match.group(1), match.group(2), match.group(3), strand) if match else None
 
+    def _browserArgsToBedHelper(self, chr, start, end, strand):
+        return ("%s\t%s\t%s\t%s\t%s:%s-%s_%s\n" % (chr, start, end, strand, chr, start, end, strand))
+    
     def _getChainLocation(self, fromName, toName):
         ret = os.path.join('data', fromName + "To" + toName.title() + ".over.chain.gz")
         if not os.path.isfile(ret):

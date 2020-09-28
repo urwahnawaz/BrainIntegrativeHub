@@ -3,16 +3,16 @@ from abstractdb import AbstractDB
 from sortedcontainers import SortedSet
 
 class CircRow:
-    META_INDEX_CIRC_NOT_IN_DB = -2
-    META_INDEX_NO_METADATA = -1
+    META_INDEX_CIRC_NOT_IN_DB = -1
 
-    def __init__(self, group, hsa, gene, db_id, meta_index=META_INDEX_NO_METADATA):
+    def __init__(self, group, hsa, gene, db_id, meta_index):
         self.group = group
         self.hsa = hsa
         self.gene = gene
         self.expressions = SortedSet()
         self._meta = [CircRow.META_INDEX_CIRC_NOT_IN_DB] * (AbstractDB.id_max + 1)
         self._meta[db_id] = meta_index
+        self.geneId = ""
 
     def merge(self, other):
         #Add other tissues/studies, transfer reads to existing if undefined

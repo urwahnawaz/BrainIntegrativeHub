@@ -18,6 +18,7 @@ class CircLiuIter(AbstractLiftoverIter):
         self.read_file = pd.read_excel(self.fileName, sheet_name="Table S2")
         self.read_obj = self.read_file.itertuples()
 
+        self.meta_index = -1
         self._updateLiftover(os.path.getmtime(self.fileName), "hg19")
 
     def __iter__(self):
@@ -28,12 +29,13 @@ class CircLiuIter(AbstractLiftoverIter):
             line = next(self.read_obj)
 
             if not str(line[0+1]).startswith("chr"): continue
+            self.meta_index += 1
 
             match = re.search(r'(chr[^:]+):(\d+)\|(\d+)', line[0+1])
 
             ids = CircHSAGroup()
             group = CircRangeGroup(ch=match.group(1), strand=line[1+1], versions=super().__next__())
-            ret = CircRow(group=group, hsa=ids, gene="." if line[3+1] == "n.a." else line[3+1], db_id = self.id)
+            ret = CircRow(group=group, hsa=ids, gene="" if line[3+1] == "n.a." else line[3+1], db_id = self.id, meta_index=self.meta_index)
             ret.addExpression(Expression(self.matcher.getTissueFromSynonym("Brain").name, "Liu", int(line[4+1])))
             return ret
 
