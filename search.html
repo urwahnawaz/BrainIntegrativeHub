@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+    <link href="resources/data/out.db.gz"/>
+    <link href="resources/data/meta.json"/>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <script src="vendors/pako/js/pako.min.js"></script>
+    <script language="javascript" src="https://www.biodalliance.org/release-0.13/dalliance-compiled.js"></script>
+
+    <script src="https://d3js.org/colorbrewer.v1.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+    <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.3.0/dist/sql-asm.js"></script>
+    <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.2.0/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="vendors/distroChart/css/distrochart.css"/>
+    <script src="vendors/distroChart/js/distrochart.js"></script>
+
+    <script src="resources/js/loadDB.js"></script>
+    <script src="resources/js/loadMetadata.js"></script>
+
+    <script src="resources/js/circviewer.js"></script>
+    <script src="resources/js/genomebrowser.js"></script>
+
+    <script src="resources/js/panelHeatmap.js"></script>
+    <script src="resources/js/panelBoxScatter.js"></script>
+    <script src="resources/js/panelScatter.js"></script>
+
+
+    <link rel="stylesheet" href="resources/css/style.css"/>
+</head>
+
+<body>
+    <!-- Loading Animation -->
+    <div id="my_loading" class="d-flex flex-row justify-content-center align-items-center" style="height: 100%">
+        <div class="loader">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog modal-xl" style="width: 80%">
+            <div class="modal-content" style="padding: 10px">
+                <div class="modal-header">
+                    <h4 id="myModalTitle" class="modal-title">Modal Header</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div id="myModalBody" class="modal-body">
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#collapse1" style="color: inherit">Genome browser
+                                        view</a>
+                                </h4>
+                            </div>
+                            <div id="collapse1" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                    <div id="myGenomeBrowser"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#collapse3" style="color: inherit">Neuronal Regions</a>
+                                </h4>
+                            </div>
+                            <div id="collapse3" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                    <div id="myViolin1"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#collapse4" style="color: inherit">Neuronal Maturation</a>
+                                </h4>
+                            </div>
+                            <div id="collapse4" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                    <div id="myViolin2"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#collapse5" style="color: inherit">Variant Expression Comparison</a>
+                                </h4>
+                            </div>
+                            <div id="collapse5" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                    <div id="myViolin3"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Body -->
+    <div>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container-fluid">
+              <div class="navbar-header">
+                <a class="navbar-brand">NeuroCirc</a>
+              </div>
+              <ul class="nav navbar-nav">
+                <li><a href="/index.html">About</a></li>
+                <li class="active"><a href="/search.html">Search</a></li>
+              </ul>
+            </div>
+          </nav> 
+    
+        <div id="myDiv" style="display:none;" class="container-fluid"> <!--class animate-bottom-->
+            <br>
+            <br>
+            <br>
+            <br>
+            <input type="search" autocomplete="off" id="myInput" placeholder="Search for circ_id or gene.." title="Type in an ID">
+    
+            <!-- Main Table -->
+            <table class="table table-hover" style="width:100%" id="my_table"></table>
+        </div>
+    </div>
+
+    <script>
+        var database, genomebrowser, boxplot, heatmap, metadata = undefined;
+
+        //TODO convert to promises. Very hacky 
+        var awaitAll = 0;
+        function incAwaitAll() {
+            if(++awaitAll == 2) {
+                hideLoading();
+            }
+        }
+
+        window.onload = function () {
+            loadDB((db) => {
+                database = db
+                var contents = database.exec("SELECT * FROM circrna LIMIT 25")[0];
+                makeTable(contents, "my_table")
+                incAwaitAll();
+            });
+            genomebrowser = new GenomeBrowser("myGenomeBrowser");
+            //heatmap = new PanelHeatmap(document.getElementById("myHeatmap"));
+
+            (async () => {
+                metadata = await loadMetadata();
+                boxplot1 = new PanelBoxScatter(document.getElementById("myViolin1"), metadata.group1);
+                boxplot2 = new PanelBoxScatter(document.getElementById("myViolin2"), metadata.group2);
+                scatterplot1 = new PanelScatter(document.getElementById("myViolin3"), metadata.group1);
+                incAwaitAll();
+            })();
+        }
+
+        $("#myInput").keyup(function (event) {
+            if (event.keyCode === 13) {
+                var contents = database.exec("SELECT * FROM circrna WHERE circ_id LIKE \'%" + $("#myInput").val() + "%\' OR gene LIKE \'%" + $("#myInput").val() + "%\' LIMIT 25")[0];
+                if(contents) makeTable(contents, "my_table");
+            }
+        });
+
+        /*$("#myInput").on('change keydown paste input', function () {
+            var contents = database.exec("SELECT * FROM circrna WHERE circ_id LIKE \'%" + $("#myInput").val() + "%\' OR gene LIKE \'%" + $("#myInput").val() + "%\' LIMIT 25")[0];
+            if(contents) makeTable(contents, "my_table");
+        });*/
+
+        function hideLoading() {
+            document.getElementById("my_loading").style.display = "none";
+            document.getElementById("myDiv").style.display = "block";
+        }
+
+        function makeTable(contents, tableId) {
+            let headings = contents.columns;
+            let values = contents.values;
+
+            let tableContents = "";
+            tableContents += '<thead>';
+            tableContents += "<tr>";
+            for (let h of headings) tableContents += "<th>" + h.replace('_meta','') + "</th>";
+            tableContents += "</tr>";
+            tableContents += "</thead>";
+
+            tableContents += '<tbody>';
+            
+            for (let v of values) {
+                tableContents += "<tr>";
+                let i=0;
+                for (let e of v) {
+                    if(headings[i++].endsWith("_meta")) {
+                        tableContents += '<td class="' + (e > -1 ? 'bool yes' : 'bool no') + '"></td>';
+                    } else {
+                        tableContents += '<td>' + e + "</td>";
+                    }
+                }
+                tableContents += "</tr>";
+            }
+            tableContents += '</tbody>';
+            document.getElementById(tableId).innerHTML = tableContents;
+
+            $("tbody > tr").click(function (arg) {
+                let circ = arg.currentTarget.firstChild.textContent;
+                var details = database.exec(/*sql*/`SELECT * FROM circrna WHERE circ_id='${circ}' LIMIT 100`)[0];
+
+                //Convert single result to nicer format
+                var detailObj = {};
+                for(let i=0; i<details.columns.length; ++i) {
+                    detailObj[details.columns[i]] = details.values[0][i];
+                }
+
+                $("#myModalTitle").text("CircRNA: " + detailObj.circ_id)
+                $("#myModal").modal('toggle')
+                genomebrowser.setPosition(detailObj.chr, parseInt(detailObj.start_hg19), parseInt(detailObj.end_hg19));
+
+                boxplot1.setCircID(detailObj, () => $('#collapse3').collapse("show"), () => $('#collapse3').collapse("hide"));
+                boxplot2.setCircID(detailObj, () => $('#collapse4').collapse("show"), () => $('#collapse4').collapse("hide"));
+                scatterplot1.setCircID(detailObj, () => $('#collapse5').collapse("show"), () => $('#collapse5').collapse("hide"));
+
+                //Get expression db
+                //var contents = database.exec(/*sql*/`SELECT * FROM expression WHERE circ_id='${circ}' LIMIT 100`)[0];
+                /*
+                heatData = {}
+                for (let v of contents.values) {
+                    heatData[v[1]] = Math.max(heatData[v[1]] || 0, parseInt(v[3]))
+                }
+                heatmap.setData(heatData);*/
+            });
+        }
+    </script>
+</body>

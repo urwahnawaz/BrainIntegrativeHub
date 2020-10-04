@@ -8,7 +8,7 @@ html, body {margin:0;padding:0;height:100%}
     width: 100%;
 }
 
-.jumbotron {
+.navbar-inverse {
     background-color: #1C3448;
     color: white;
 }
@@ -58,4 +58,20 @@ html, body {margin:0;padding:0;height:100%}
   @keyframes animatebottom { 
     from{ bottom:-100px; opacity:0 } 
     to{ bottom:0; opacity:1 }
+  }
+
+  td.bool {
+    width: 100px;
+    border-color: white;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 2.5px;
+  }
+
+  td.bool.no {
+    background-color: whitesmoke ;
+  }
+
+  td.bool.yes {
+    background-color: #69b3a2;
   }
