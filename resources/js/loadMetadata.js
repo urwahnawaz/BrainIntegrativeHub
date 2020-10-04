@@ -1,6 +1,6 @@
 async function loadMetadata() {
     var metaIndexObj = undefined;
-    let dir = window.location.origin + "/resources/data/";
+    let dir = window.location.href + "/resources/data/";
 
     //Inline function to parse CSV files
     function loadCSV(path) {

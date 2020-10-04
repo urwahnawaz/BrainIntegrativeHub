@@ -5,7 +5,7 @@ async function loadDB(success) {
     });
 
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', window.location.origin + "/resources/data/out.db.gz", true);
+    xhr.open('GET', window.location.href + "/resources/data/out.db.gz", true);
     xhr.responseType = 'arraybuffer';
 
     xhr.onload = function(e) {
