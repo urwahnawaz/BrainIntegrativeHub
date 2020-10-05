@@ -7,6 +7,9 @@ from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 from expression import Expression
 
+#TODO: can generate link using id e.g. http://www.circbase.org/cgi-bin/singlerecord.cgi?id=hsa_circ_0114324
+#Can also generate link using position
+
 class CircBaseIter(AbstractLiftoverIter):
     name = "CircBase"
     files = ["Rybak2015.txt", "Maass2017.txt"]

@@ -8,7 +8,7 @@ from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 
 class CircAtlas2Iter(AbstractDB):
-    name = "CircAtlas2"
+    name = "CircAtlas2DL"
 
     def __init__(self, directory):
         super().__init__()

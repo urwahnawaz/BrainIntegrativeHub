@@ -8,7 +8,7 @@ from circrangegroup import CircRangeGroup
 from expression import Expression
 
 class CircAtlas2BrowserIter(AbstractLiftoverIter):
-    name = "CircAtlas2Browser"
+    name = "CircAtlas2"
     #tissues = ['Bone Marrow','Brain','Colon','Heart','Kidney','Liver','Lung','Placental','Prostate','Skeletal Muscle','Small Intestine','Spleen','Spinal Cord','Stomach','Testis','Thymus','Uterus','Pancreas','Retina']
 
     def __init__(self, directory):

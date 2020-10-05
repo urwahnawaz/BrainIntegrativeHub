@@ -7,6 +7,9 @@ from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 from expression import Expression
 
+#TODO Can generate link from name e.g. http://bis.zju.edu.cn/CircFunBase/detail.php?name=circ_000458
+#Can also search by position using cgi form only
+
 class CircFunBaseIter(AbstractLiftoverIter):
     name = "CircFunBase"
 

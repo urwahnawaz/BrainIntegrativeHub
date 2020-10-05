@@ -30,12 +30,21 @@ from iterators.sy5yiter import SY5YIter
 
 nmDist = 10 #Maximum difference in coordinates to be considered a near match
 
+def isInNovelDataset(circ):
+    return ((circ._meta[0] != CircRow.META_INDEX_CIRC_NOT_IN_DB) or
+        (circ._meta[1] != CircRow.META_INDEX_CIRC_NOT_IN_DB) or
+        (circ._meta[2] != CircRow.META_INDEX_CIRC_NOT_IN_DB) or
+        (circ._meta[3] != CircRow.META_INDEX_CIRC_NOT_IN_DB) or
+        (circ._meta[4] != CircRow.META_INDEX_CIRC_NOT_IN_DB))
+
 def containsBrain(circ):
-    #if(circ._meta[1] == CircRow.META_INDEX_CIRC_NOT_IN_DB): return False #TODO temporarily remove everything not in Gokool
     for exp in circ.expressions:
         if re.search(r'Brain|CBX|CTX|Cerebellum|Cortex|Diencephalon|Forebrain|Occipital|Parietal|Temporal', exp.tissueId, flags=re.IGNORECASE):
             return True
     return False
+
+def shouldInclude(circ):
+    return containsBrain(circ) and isInNovelDataset(circ)
 
 def generateOutput(inputIterators):
     nmCount = 0
@@ -64,7 +73,7 @@ def generateOutput(inputIterators):
 def writeIntersectionPlot(inputIterators, ss):
     contents = {}
     for circIter in inputIterators:
-        contents[circIter.name] = [c for c in ss if (c._meta[circIter.id] != CircRow.META_INDEX_CIRC_NOT_IN_DB) and containsBrain(c)]
+        contents[circIter.name] = [c for c in ss if (c._meta[circIter.id] != CircRow.META_INDEX_CIRC_NOT_IN_DB) and shouldInclude(c)]
     
     df = from_contents(contents)
     plot(df, facecolor="red", sort_by="cardinality", show_counts='%d')
@@ -92,9 +101,9 @@ def writeSqlite(circIters, ss, outFile="out.db"):
             "chr TEXT NOT NULL,",
             *["start_%s INTEGER,\nend_%s INTEGER," % (ref, ref) for ref in AbstractLiftoverIter.required],
             "strand TEXT NOT NULL,",
-            *["%s_meta INTEGER," % (it.name.lower()) for it in circIters],
-            "gene TEXT,",
-            "geneID TEXT",
+            "gene_symbol TEXT,",
+            "ensembl_id TEXT,",
+            '\n'.join(["%s_meta INTEGER," % (it.name.lower()) for it in circIters])[:-1],
         ");"
     ]))
 
@@ -105,13 +114,13 @@ def writeSqlite(circIters, ss, outFile="out.db"):
             "chr,",
             *["start_%s,\nend_%s," % (ref, ref) for ref in AbstractLiftoverIter.required],
             "strand,",
-            *["%s_meta," % (it.name.lower()) for it in circIters],
-            "gene,",
-            "geneID",
+            "gene_symbol,",
+            "ensembl_id,",
+            '\n'.join(["%s_meta," % (it.name.lower()) for it in circIters])[:-1],
         f") values(?, ?,{' ?,' * ((2 * len(AbstractLiftoverIter.required)) + len(circIters))} ?, ?, ?)"
     ])
 
-    con.executemany(cmd, [tuple([circ.group.toId()] + circ.group.toArray() + [circ._meta[i] for i in range(len(circ._meta))] + [circ.gene, circ.geneId]) for circ in ss if (containsBrain(circ) and circ.group.hasId())])
+    con.executemany(cmd, [tuple([circ.group.toId()] + circ.group.toArray() + [circ.gene, circ.geneId] + [circ._meta[i] for i in range(len(circ._meta))]) for circ in ss if (shouldInclude(circ) and circ.group.hasId())])
 
     #Create expression table
     con.execute("""
@@ -141,7 +150,7 @@ def writeSqlite(circIters, ss, outFile="out.db"):
         if not hid:
             countExcluded38 += 1
         
-        if cb and hid:
+        if shouldInclude(circ) and hid:
             count +=1
             vals = [tuple([circ.group.toId()] + exp.toArray()) for exp in circ.expressions]
             con.executemany(cmd, vals)

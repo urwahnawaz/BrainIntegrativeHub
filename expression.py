@@ -2,6 +2,9 @@ from circtissuematcher import CircTissueMatcher
 
 class Expression:
     def __init__(self, tissueId, studyId, reads=-1):
+        if not tissueId:
+            raise "None value where tissueId expected"
+
         self.tissueId = tissueId
         self.studyId = studyId
         self.reads = reads
