@@ -158,7 +158,7 @@
         window.onload = function () {
             loadDB(windowPath, (db) => {
                 database = db
-                var contents = database.exec("SELECT * FROM circrna LIMIT 25")[0];
+                var contents = database.exec("SELECT * FROM circrna LIMIT 50")[0];
                 makeTable(contents, "my_table")
                 incAwaitAll();
             });
@@ -176,7 +176,7 @@
 
         $("#myInput").keyup(function (event) {
             if (event.keyCode === 13) {
-                var contents = database.exec("SELECT * FROM circrna WHERE circ_id LIKE \'%" + $("#myInput").val() + "%\' OR gene_symbol LIKE \'%" + $("#myInput").val() + "%\' LIMIT 25")[0];
+                var contents = database.exec("SELECT * FROM circrna WHERE circ_id LIKE \'%" + $("#myInput").val() + "%\' OR gene_symbol LIKE \'%" + $("#myInput").val() + "%\' LIMIT 50")[0];
                 if(contents) makeTable(contents, "my_table");
             }
         });
