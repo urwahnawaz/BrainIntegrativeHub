@@ -1,12 +1,5 @@
 {
   "group1": {
-    "esc_fbn": {
-      "db_index_col": "esc_fbn_meta",
-      "matrices": {
-          "CPM": "esc_fbn_cpm.csv"
-      },
-      "metadata": "esc_fbn_meta.csv"
-    },
     "gokool": {
       "db_index_col": "gokool_meta",
       "matrices": {
@@ -15,15 +8,22 @@
           "SJ": "gok_sj_cpm.csv"
       },
       "metadata": "gok_meta.csv"
-    }
-  },
-  "group2": {
+    },
     "org": {
       "db_index_col": "org_meta",
       "matrices": {
           "CPM": "org_cpm.csv"
       },
       "metadata": "org_meta.csv"
+    }
+  },
+  "group2": {
+    "esc_fbn": {
+      "db_index_col": "esc_fbn_meta",
+      "matrices": {
+          "CPM": "esc_fbn_cpm.csv"
+      },
+      "metadata": "esc_fbn_meta.csv"
     },
     "sy5y": {
       "db_index_col": "sy5y_meta",

@@ -6,8 +6,8 @@ class PanelBoxScatter {
         element.innerHTML = this._generateHTML();
 
         // set the dimensions and margins of the graph
-        this.margin = { top: 10, right: 30, bottom: 100, left: 100 }
-        this.width = 650 - self.margin.left - self.margin.right,
+        this.margin = { top: 10, right: 200, bottom: 100, left: 100 }
+        this.width = 800 - self.margin.left - self.margin.right,
         this.height = 400 - self.margin.top - self.margin.bottom;
 
         // append the svg object to the body of the page
@@ -201,7 +201,7 @@ class PanelBoxScatter {
         let myVar = data[0][categoryName];
         if (typeof myVar === 'string' || myVar instanceof String) {
 
-            while(this.cachedJitter.length < this.data.length) this.cachedJitter.push(- jitterWidth / 2 + Math.random() * jitterWidth)
+            while(this.cachedJitter.length < data.length) this.cachedJitter.push(- jitterWidth / 2 + Math.random() * jitterWidth)
 
             // Compute quartiles, median, inter quantile range min and max --> these info are then used to draw the box.
             var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
@@ -270,7 +270,7 @@ class PanelBoxScatter {
                 .data(data)
                 .enter()
                 .append("circle")
-                .attr("cx", function(d, i) {return (x(d[categoryName]) + self.cachedJitter[i])})
+                .attr("cx", function(d, i) {return (x(d[categoryName]) + (data.length <=1 ? 0 : self.cachedJitter[i]))})
                 .attr("cy", function (d) { return (y(d.plotValue)) })
                 .attr("r", 4)
                 .style("fill", "white")
@@ -284,9 +284,35 @@ class PanelBoxScatter {
                 .attr("transform", "translate(0," + self.height + ")")
                 .call(d3.axisBottom(x))
 
-            var pointColorScale = d3.scaleOrdinal()
+            var pointColorScale = undefined;
+
+            if(categoryName2 != "None") {
+                let categories2 = {}
+                for (let d of data) categories2[d[categoryName2]] = true
+                let categoryNames2 = Object.keys(categories2);
+
+                pointColorScale = d3.scaleOrdinal()
                 .domain(data.map(d => d[categoryName2]))
                 .range(colorbrewer.RdBu[9]);
+
+
+                var legend = svg.selectAll("legend")
+                    .data(categoryNames2)
+                    .enter()
+                    .append("g")
+                    .attr("transform", function(d, i) { return "translate(" + (self.width + 20) + "," + (self.margin.top + (28 * i)) + ")"; });
+
+                legend.append("circle")
+                    .style("fill", function (d, i){ return pointColorScale(d); })
+                    .attr("stroke", "black")
+                    .attr("r", 6)
+
+                legend.append("text")
+                    .attr("text-anchor", "start")
+                    .attr("font-size", "8px")
+                    .attr("x", 20)
+                    .text(function(d){return d});  
+            }
 
             // Show scatter plot
             svg.selectAll("indPoints")

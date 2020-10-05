@@ -91,8 +91,9 @@ class PanelScatter {
         var self = this;
 
         var y = d3.scaleLinear()
-                .domain(d3.extent(self.plotData, d => d.Expression1))
                 .range([self.height, 0])
+                .domain(d3.extent(self.plotData, d => d.Expression1))
+                
         this.svg.append("g")
                 .call(d3.axisLeft(y))
 
