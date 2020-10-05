@@ -4,6 +4,8 @@ async function loadDB(success) {
         locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.1.0/dist/${file}`
     });
 
+    console.log(window.location);
+
     var xhr = new XMLHttpRequest();
     xhr.open('GET', window.location.href + "/resources/data/out.db.gz", true);
     xhr.responseType = 'arraybuffer';
