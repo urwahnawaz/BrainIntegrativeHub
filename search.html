@@ -153,8 +153,10 @@
             }
         }
 
+        let windowPath = window.location.href.substring(0,  window.location.href.lastIndexOf('/'));
+
         window.onload = function () {
-            loadDB((db) => {
+            loadDB(windowPath, (db) => {
                 database = db
                 var contents = database.exec("SELECT * FROM circrna LIMIT 25")[0];
                 makeTable(contents, "my_table")
@@ -164,7 +166,7 @@
             //heatmap = new PanelHeatmap(document.getElementById("myHeatmap"));
 
             (async () => {
-                metadata = await loadMetadata();
+                metadata = await loadMetadata(windowPath);
                 boxplot1 = new PanelBoxScatter(document.getElementById("myViolin1"), metadata.group1);
                 boxplot2 = new PanelBoxScatter(document.getElementById("myViolin2"), metadata.group2);
                 scatterplot1 = new PanelScatter(document.getElementById("myViolin3"), metadata.group1);
