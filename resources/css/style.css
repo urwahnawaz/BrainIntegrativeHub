@@ -60,18 +60,27 @@ html, body {margin:0;padding:0;height:100%}
     to{ bottom:0; opacity:1 }
   }
 
-  td.bool {
-    width: 100px;
+  .bool {
+    width: 35px;
+  }
+
+  .table > thead > tr > th.bool {
+    writing-mode: vertical-rl;
+    transform: scale(-1);
+    vertical-align: top;
+  }
+
+  table > tbody > tr > td.bool {
     border-color: white;
     border-width: 2px;
     border-style: solid;
     border-radius: 2.5px;
   }
 
-  td.bool.no {
+  table > tbody > tr > td.bool.no {
     background-color: whitesmoke ;
   }
 
-  td.bool.yes {
+  table > tbody > tr > td.yes {
     background-color: #69b3a2;
   }

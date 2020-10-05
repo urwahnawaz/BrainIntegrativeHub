@@ -198,7 +198,13 @@
             let tableContents = "";
             tableContents += '<thead>';
             tableContents += "<tr>";
-            for (let h of headings) tableContents += "<th>" + h.replace('_meta','') + "</th>";
+            for (let h of headings) {
+                if(h.endsWith("_meta")) {
+                    tableContents += '<th class="bool">' + h.replace('_meta','') + "</th>";
+                } else {
+                    tableContents += "<th>" + h + "</th>";
+                }
+            }
             tableContents += "</tr>";
             tableContents += "</thead>";
 
