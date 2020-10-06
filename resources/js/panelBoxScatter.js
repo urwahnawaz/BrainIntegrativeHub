@@ -291,9 +291,10 @@ class PanelBoxScatter {
                 for (let d of data) categories2[d[categoryName2]] = true
                 let categoryNames2 = Object.keys(categories2);
 
+                
                 pointColorScale = d3.scaleOrdinal()
                 .domain(data.map(d => d[categoryName2]))
-                .range(colorbrewer.RdBu[9]);
+                .range(colorbrewer["RdBu"][Math.max(3, categoryNames2.length)]);
 
 
                 var legend = svg.selectAll("legend")

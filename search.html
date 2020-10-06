@@ -70,7 +70,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
-                                    <a data-toggle="collapse" href="#collapse3" style="color: inherit">Neuronal Regions</a>
+                                    <a data-toggle="collapse" href="#collapse3" style="color: inherit">CircRNA expression in human brain tissue</a>
                                 </h4>
                             </div>
                             <div id="collapse3" class="panel-collapse collapse in">
@@ -84,7 +84,21 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
-                                    <a data-toggle="collapse" href="#collapse4" style="color: inherit">Neuronal Maturation</a>
+                                    <a data-toggle="collapse" href="#collapse3b" style="color: inherit">Circular vs. linear RNA expression</a>
+                                </h4>
+                            </div>
+                            <div id="collapse3b" class="panel-collapse collapse in">
+                                <div class="panel-body">
+                                    <div id="myViolin1b"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#collapse4" style="color: inherit">Neuronal cell differentiation</a>
                                 </h4>
                             </div>
                             <div id="collapse4" class="panel-collapse collapse in">
@@ -98,7 +112,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
-                                    <a data-toggle="collapse" href="#collapse5" style="color: inherit">Circular vs. linear RNA expression</a>
+                                    <a data-toggle="collapse" href="#collapse5" style="color: inherit">Cellular Maturation</a>
                                 </h4>
                             </div>
                             <div id="collapse5" class="panel-collapse collapse in">
@@ -168,8 +182,11 @@
             (async () => {
                 metadata = await loadMetadata(windowPath);
                 boxplot1 = new PanelBoxScatter(document.getElementById("myViolin1"), metadata.group1);
+                scatterplot1 = new PanelScatter(document.getElementById("myViolin1b"), metadata.group1);
+
                 boxplot2 = new PanelBoxScatter(document.getElementById("myViolin2"), metadata.group2);
-                scatterplot1 = new PanelScatter(document.getElementById("myViolin3"), metadata.group1);
+                boxplot3 = new PanelBoxScatter(document.getElementById("myViolin3"), metadata.group3);
+                
                 incAwaitAll();
             })();
         }
@@ -247,7 +264,8 @@
 
                 boxplot1.setCircID(detailObj, () => $('#collapse3').collapse("show"), () => $('#collapse3').collapse("hide"));
                 boxplot2.setCircID(detailObj, () => $('#collapse4').collapse("show"), () => $('#collapse4').collapse("hide"));
-                scatterplot1.setCircID(detailObj, () => $('#collapse5').collapse("show"), () => $('#collapse5').collapse("hide"));
+                boxplot3.setCircID(detailObj, () => $('#collapse5').collapse("show"), () => $('#collapse5').collapse("hide"));
+                scatterplot1.setCircID(detailObj, () => $('#collapse3b').collapse("show"), () => $('#collapse3b').collapse("hide"));
 
                 //Get expression db
                 //var contents = database.exec(/*sql*/`SELECT * FROM expression WHERE circ_id='${circ}' LIMIT 100`)[0];

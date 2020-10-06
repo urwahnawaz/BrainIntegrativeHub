@@ -8,13 +8,6 @@
           "SJ": "gok_sj_cpm.csv"
       },
       "metadata": "gok_meta.csv"
-    },
-    "org": {
-      "db_index_col": "org_meta",
-      "matrices": {
-          "CPM": "org_cpm.csv"
-      },
-      "metadata": "org_meta.csv"
     }
   },
   "group2": {
@@ -31,6 +24,15 @@
           "CPM": "sy5y_cpm.csv"
       },
       "metadata": "sy5y_meta.csv"
+    }
+  },
+  "group3": {
+    "org": {
+      "db_index_col": "org_meta",
+      "matrices": {
+          "CPM": "org_cpm.csv"
+      },
+      "metadata": "org_meta.csv"
     }
   }
 }
