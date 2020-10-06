@@ -66,7 +66,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group">
+                    <div id="panel1" class="panel-group">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
@@ -75,26 +75,25 @@
                             </div>
                             <div id="collapse3" class="panel-collapse collapse in">
                                 <div class="panel-body">
-                                    <div id="myViolin1"></div>
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <div id="myControls1a"></div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div id="myPlot1a"></div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div id="myPlot1b"></div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div id="myControls1b"></div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">
-                                    <a data-toggle="collapse" href="#collapse3b" style="color: inherit">Circular vs. linear RNA expression</a>
-                                </h4>
-                            </div>
-                            <div id="collapse3b" class="panel-collapse collapse in">
-                                <div class="panel-body">
-                                    <div id="myViolin1b"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="panel-group">
+                    <div id="panel2" class="panel-group">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
@@ -103,12 +102,17 @@
                             </div>
                             <div id="collapse4" class="panel-collapse collapse in">
                                 <div class="panel-body">
-                                    <div id="myViolin2"></div>
+                                    <div class="col-md-2">
+                                        <div id="myControls2"></div>
+                                    </div>
+                                    <div class="col-md-6 col-md-offset-1">
+                                        <div id="myPlot2"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="panel-group">
+                    <div id="panel3" class="panel-group">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
@@ -117,7 +121,12 @@
                             </div>
                             <div id="collapse5" class="panel-collapse collapse in">
                                 <div class="panel-body">
-                                    <div id="myViolin3"></div>
+                                    <div class="col-md-2">
+                                        <div id="myControls3"></div>
+                                    </div>
+                                    <div class="col-md-6 col-md-offset-1">
+                                        <div id="myPlot3"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -181,11 +190,11 @@
 
             (async () => {
                 metadata = await loadMetadata(windowPath);
-                boxplot1 = new PanelBoxScatter(document.getElementById("myViolin1"), metadata.group1);
-                scatterplot1 = new PanelScatter(document.getElementById("myViolin1b"), metadata.group1);
+                boxplot1 = new PanelBoxScatter("myPlot1a", "myControls1a", metadata.group1, 500);
+                scatterplot1 = new PanelScatter("myPlot1b", "myControls1b", metadata.group1, 500, "Circular vs. linear RNA expression");
 
-                boxplot2 = new PanelBoxScatter(document.getElementById("myViolin2"), metadata.group2);
-                boxplot3 = new PanelBoxScatter(document.getElementById("myViolin3"), metadata.group3);
+                boxplot2 = new PanelBoxScatter("myPlot2", "myControls2", metadata.group2, 800);
+                boxplot3 = new PanelBoxScatter("myPlot3", "myControls3", metadata.group3, 800);
                 
                 incAwaitAll();
             })();
@@ -262,10 +271,10 @@
                 $("#myModal").modal('toggle')
                 genomebrowser.setPosition(detailObj.chr, parseInt(detailObj.start_hg19), parseInt(detailObj.end_hg19));
 
-                boxplot1.setCircID(detailObj, () => $('#collapse3').collapse("show"), () => $('#collapse3').collapse("hide"));
-                boxplot2.setCircID(detailObj, () => $('#collapse4').collapse("show"), () => $('#collapse4').collapse("hide"));
-                boxplot3.setCircID(detailObj, () => $('#collapse5').collapse("show"), () => $('#collapse5').collapse("hide"));
-                scatterplot1.setCircID(detailObj, () => $('#collapse3b').collapse("show"), () => $('#collapse3b').collapse("hide"));
+                boxplot1.setCircID(detailObj, () => $('#panel1').show(), () => $('#panel1').hide());
+                boxplot2.setCircID(detailObj, () => $('#panel2').show(), () => $('#panel2').hide());
+                boxplot3.setCircID(detailObj, () => $('#panel3').show(), () => $('#panel3').hide());
+                scatterplot1.setCircID(detailObj, () => $('#panel1').show(), () => $('#panel1').hide());
 
                 //Get expression db
                 //var contents = database.exec(/*sql*/`SELECT * FROM expression WHERE circ_id='${circ}' LIMIT 100`)[0];

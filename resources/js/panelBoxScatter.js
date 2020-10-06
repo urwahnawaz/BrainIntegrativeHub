@@ -1,17 +1,18 @@
 class PanelBoxScatter {
-    constructor(element, data) {
+    constructor(plotElementId, controlsElementId, data, plotWidth) {
         var self = this;
-        this.elementId = element.id;
+        this.elementId = plotElementId;
         this.metaIndexObj = data;
-        element.innerHTML = this._generateHTML();
+
+        document.getElementById(controlsElementId).innerHTML = this._generateControlsHTML();
 
         // set the dimensions and margins of the graph
-        this.margin = { top: 10, right: 200, bottom: 100, left: 100 }
-        this.width = 800 - self.margin.left - self.margin.right,
+        this.margin = { top: 50, right: 100, bottom: 100, left: 50 }
+        this.width = plotWidth - self.margin.left - self.margin.right,
         this.height = 400 - self.margin.top - self.margin.bottom;
 
         // append the svg object to the body of the page
-        this.svg = d3.select("#myPlot" + this.elementId)
+        this.svg = d3.select("#" + this.elementId)
             .append("svg")
             .attr("width", self.width + self.margin.left + self.margin.right)
             .attr("height", self.height + self.margin.top + self.margin.bottom)
@@ -113,7 +114,9 @@ class PanelBoxScatter {
                         //Find entry in samples table
                         let ret = { Expression: circsamples[i] }
                         for (let j = 1; j < this.metadata[0].length; ++j) {
-                            ret[this.metadata[0][j]] = this.metadata[i][j]
+                            if(this.metadata[i]) {
+                                ret[this.metadata[0][j]] = this.metadata[i][j]
+                            }
                         }
                         this.plotData.push(ret);
                     }
@@ -133,7 +136,7 @@ class PanelBoxScatter {
     }
 
     clearGraph() {
-        d3.selectAll("#myPlot" + this.elementId + " > svg > g > *").remove();
+        d3.selectAll("#" + this.elementId + " > svg > g > *").remove();
     }
 
     createGraph() {
@@ -279,7 +282,7 @@ class PanelBoxScatter {
             // Show the X scale
             var x = d3.scaleLinear()
                 .range([0, self.width])
-                .domain(d3.extent(data, d => d[categoryName]))
+                .domain(data.length == 0 ? [d[categoryName][0]/2, d[categoryName][0]*2 + 0.01] : d3.extent(data, d => d[categoryName]))
             svg.append("g")
                 .attr("transform", "translate(0," + self.height + ")")
                 .call(d3.axisBottom(x))
@@ -328,40 +331,33 @@ class PanelBoxScatter {
         }
     }
 
-    _generateHTML() {
+    _generateControlsHTML() {
         return /*html*/`
-        <div class="row">
-            <div class="col-md-2">
-                <div>Select Dataset</div>
-                <select id="datasetSelect${this.elementId}" class="selectpicker">
-                </select>
-                <br><br>
-                <div>Select Measure</div>
-                <select id="measureSelect${this.elementId}" class="selectpicker">
-                </select>
-                <br><br>
-                <input type="checkbox" id="zscore${this.elementId}" name="zscore" value="zscore">
-                <label for="zscore${this.elementId}">ZScore Transformation</label>
-                <br><br>
-                <div>Select Metadata Variable</div>
-                <select id="metadataSelect${this.elementId}" class="selectpicker">
-                </select>
-                <br><br>
-                <div>Select Scale</div>
-                <select id="scaleSelect${this.elementId}" class="selectpicker">
-                    <option>Linear</option>
-                    <option>Log e</option>
-                    <option>Log 10</option>
-                </select>
-                <br><br>
-                <div>Select Second Metadata Variable</div>
-                <select id="metadataSelect2${this.elementId}" class="selectpicker">
-                </select>
-            </div>
-            <div class="col-md-6 col-md-offset-1">
-                <div class="chart-wrapper" id="myPlot${this.elementId}"></div>
-            </div>
-        </div>
+            <div>Select Dataset</div>
+            <select id="datasetSelect${this.elementId}" class="selectpicker">
+            </select>
+            <br><br>
+            <div>Select Measure</div>
+            <select id="measureSelect${this.elementId}" class="selectpicker">
+            </select>
+            <br><br>
+            <input type="checkbox" id="zscore${this.elementId}" name="zscore" value="zscore">
+            <label for="zscore${this.elementId}">ZScore Transformation</label>
+            <br><br>
+            <div>Select Metadata Variable</div>
+            <select id="metadataSelect${this.elementId}" class="selectpicker">
+            </select>
+            <br><br>
+            <div>Select Scale</div>
+            <select id="scaleSelect${this.elementId}" class="selectpicker">
+                <option>Linear</option>
+                <option>Log e</option>
+                <option>Log 10</option>
+            </select>
+            <br><br>
+            <div>Select Second Metadata Variable</div>
+            <select id="metadataSelect2${this.elementId}" class="selectpicker">
+            </select>
         `
     }
 }

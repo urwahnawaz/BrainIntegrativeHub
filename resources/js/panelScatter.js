@@ -1,15 +1,16 @@
 class PanelScatter {
-    constructor(element, data) {
+    constructor(plotElementId, controlsElementId, data, plotWidth, title="") {
         var self = this;
-        this.elementId = element.id;
+        this.elementId = plotElementId;
+        this.title = title;
         this.metaIndexObj = data;
-        element.innerHTML = this._generateHTML();
+        document.getElementById(controlsElementId).innerHTML = this._generateControlsHTML(controlsElementId);
 
-        this.margin = { top: 10, right: 30, bottom: 100, left: 100 }
-        this.width = 650 - self.margin.left - self.margin.right,
+        this.margin = { top: 50, right: 30, bottom: 100, left: 50 }
+        this.width = plotWidth - self.margin.left - self.margin.right,
         this.height = 400 - self.margin.top - self.margin.bottom;
 
-        this.svg = d3.select("#myPlot" + self.elementId)
+        this.svg = d3.select("#" + self.elementId)
             .append("svg")
             .attr("width", self.width + self.margin.left + self.margin.right)
             .attr("height", self.height + self.margin.top + self.margin.bottom)
@@ -84,7 +85,7 @@ class PanelScatter {
     }
 
     clearGraph() {
-        d3.selectAll("#myPlot" + this.elementId + " > svg > g > *").remove();
+        d3.selectAll("#" + this.elementId + " > svg > g > *").remove();
     }
 
     createGraph() {
@@ -96,6 +97,14 @@ class PanelScatter {
                 
         this.svg.append("g")
                 .call(d3.axisLeft(y))
+
+        // Show title
+        this.svg.append("text")             
+        .attr("transform",
+                "translate(" + (self.width/2) + " ," + 
+                            0 + ")")
+        .style("text-anchor", "middle")
+        .text(self.title);
 
         // Show the Y label
         this.svg.append("text")
@@ -134,27 +143,20 @@ class PanelScatter {
             .attr("stroke", "black");
     }
 
-    _generateHTML() {
+    _generateControlsHTML() {
         return /*html*/`
-        <div class="row">
-            <div class="col-md-2">
-                <div>Select Dataset</div>
-                <select id="datasetSelect${this.elementId}" class="selectpicker">
-                    <option>gokool</option>
-                </select>
-                <br><br>
-                <div>Select First Measure</div>
-                <select id="measureSelect1${this.elementId}" class="selectpicker">
-                </select>
-                <br><br>
-                <div>Select Second Measure</div>
-                <select id="measureSelect2${this.elementId}" class="selectpicker">
-                </select>
-            </div>
-            <div class="col-md-6 col-md-offset-1">
-                <div class="chart-wrapper" id="myPlot${this.elementId}"></div>
-            </div>
-        </div>
+        <div>Select Dataset</div>
+        <select id="datasetSelect${this.elementId}" class="selectpicker">
+            <option>gokool</option>
+        </select>
+        <br><br>
+        <div>Select First Measure</div>
+        <select id="measureSelect1${this.elementId}" class="selectpicker">
+        </select>
+        <br><br>
+        <div>Select Second Measure</div>
+        <select id="measureSelect2${this.elementId}" class="selectpicker">
+        </select>
         `
     }
 }
