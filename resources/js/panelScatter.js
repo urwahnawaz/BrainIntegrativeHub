@@ -102,7 +102,7 @@ class PanelScatter {
         this.svg.append("text")             
         .attr("transform",
                 "translate(" + (self.width/2) + " ," + 
-                            0 + ")")
+                           -self.margin.top/2 + ")")
         .style("text-anchor", "middle")
         .text(self.title);
 

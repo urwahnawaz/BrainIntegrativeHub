@@ -179,7 +179,7 @@ class PanelBoxScatter {
         }
 
         var y = d3.scaleLinear()
-                .domain(d3.extent(data, d => d.plotValue))
+                .domain(data.length == 1 ? [data[0].plotValue/2, data[0].plotValue*2 + 0.1] : d3.extent(data, d => d.plotValue))
                 .range([self.height, 0])
             svg.append("g")
                 .call(d3.axisLeft(y))
@@ -282,7 +282,7 @@ class PanelBoxScatter {
             // Show the X scale
             var x = d3.scaleLinear()
                 .range([0, self.width])
-                .domain(data.length == 0 ? [d[categoryName][0]/2, d[categoryName][0]*2 + 0.01] : d3.extent(data, d => d[categoryName]))
+                .domain(data.length == 1 ? [data[0][categoryName]/2, data[0][categoryName]*2 + 0.1] : d3.extent(data, d => d[categoryName]))
             svg.append("g")
                 .attr("transform", "translate(0," + self.height + ")")
                 .call(d3.axisBottom(x))
