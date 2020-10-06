@@ -79,14 +79,17 @@
                                         <div class="col-md-2">
                                             <div id="myControls1a"></div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6 col-md-offset-1">
                                             <div id="myPlot1a"></div>
                                         </div>
-                                        <div class="col-md-4">
-                                            <div id="myPlot1b"></div>
-                                        </div>
+                                    </div>
+                                    <hr class="mt-1 mb-1"/>
+                                    <div class="row">
                                         <div class="col-md-2">
                                             <div id="myControls1b"></div>
+                                        </div>
+                                        <div class="col-md-6 col-md-offset-1">
+                                            <div id="myPlot1b"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -190,8 +193,8 @@
 
             (async () => {
                 metadata = await loadMetadata(windowPath);
-                boxplot1 = new PanelBoxScatter("myPlot1a", "myControls1a", metadata.group1, 500);
-                scatterplot1 = new PanelScatter("myPlot1b", "myControls1b", metadata.group1, 500, "Circular vs. linear RNA expression");
+                boxplot1 = new PanelBoxScatter("myPlot1a", "myControls1a", metadata.group1, 800);
+                scatterplot1 = new PanelScatter("myPlot1b", "myControls1b", metadata.group1, 800, "Circular vs. linear RNA expression");
 
                 boxplot2 = new PanelBoxScatter("myPlot2", "myControls2", metadata.group2, 800);
                 boxplot3 = new PanelBoxScatter("myPlot3", "myControls3", metadata.group3, 800);

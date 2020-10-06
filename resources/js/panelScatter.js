@@ -6,7 +6,7 @@ class PanelScatter {
         this.metaIndexObj = data;
         document.getElementById(controlsElementId).innerHTML = this._generateControlsHTML(controlsElementId);
 
-        this.margin = { top: 50, right: 30, bottom: 100, left: 50 }
+        this.margin = { top: 50, right: 100, bottom: 100, left: 80 }
         this.width = plotWidth - self.margin.left - self.margin.right,
         this.height = 400 - self.margin.top - self.margin.bottom;
 
@@ -119,7 +119,7 @@ class PanelScatter {
         this.svg.append("text")             
         .attr("transform",
                 "translate(" + (self.width/2) + " ," + 
-                            (self.height + self.margin.top + self.margin.bottom/2) + ")")
+                            (self.height + self.margin.top) + ")")
         .style("text-anchor", "middle")
         .text(self.currMeasure2);
 

@@ -7,7 +7,7 @@ class PanelBoxScatter {
         document.getElementById(controlsElementId).innerHTML = this._generateControlsHTML();
 
         // set the dimensions and margins of the graph
-        this.margin = { top: 50, right: 100, bottom: 100, left: 50 }
+        this.margin = { top: 50, right: 100, bottom: 100, left: 80 }
         this.width = plotWidth - self.margin.left - self.margin.right,
         this.height = 400 - self.margin.top - self.margin.bottom;
 
@@ -197,7 +197,7 @@ class PanelBoxScatter {
         svg.append("text")             
         .attr("transform",
                 "translate(" + (self.width/2) + " ," + 
-                            (self.height + self.margin.top + self.margin.bottom/2) + ")")
+                            (self.height + self.margin.top) + ")")
         .style("text-anchor", "middle")
         .text(categoryName);
 
@@ -304,16 +304,16 @@ class PanelBoxScatter {
                     .data(categoryNames2)
                     .enter()
                     .append("g")
-                    .attr("transform", function(d, i) { return "translate(" + (self.width + 20) + "," + (self.margin.top + (28 * i)) + ")"; });
+                    .attr("transform", function(d, i) { return "translate(" + (self.width + 20) + "," + ((28 * i)) + ")"; });
 
                 legend.append("circle")
                     .style("fill", function (d, i){ return pointColorScale(d); })
                     .attr("stroke", "black")
-                    .attr("r", 6)
+                    .attr("r", 8)
 
                 legend.append("text")
                     .attr("text-anchor", "start")
-                    .attr("font-size", "8px")
+                    .attr("font-size", "10px")
                     .attr("x", 20)
                     .text(function(d){return d});  
             }
