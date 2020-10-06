@@ -64,7 +64,7 @@ html, body {margin:0;padding:0;height:100%}
     width: 35px;
   }
 
-  .table > thead > tr > th.bool {
+  .table > thead > tr > th > span.bool {
     writing-mode: vertical-rl;
     transform: scale(-1);
     vertical-align: top;

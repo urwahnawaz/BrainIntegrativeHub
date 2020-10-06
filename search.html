@@ -200,7 +200,7 @@
             tableContents += "<tr>";
             for (let h of headings) {
                 if(h.endsWith("_meta")) {
-                    tableContents += '<th class="bool">' + h.replace('_meta','') + "</th>";
+                    tableContents += '<th><span class="bool">' + h.replace('_meta','') + "</span></th>";
                 } else {
                     tableContents += "<th>" + h + "</th>";
                 }
