@@ -81,6 +81,11 @@ html, body {margin:0;padding:0;height:100%}
     background-color: whitesmoke ;
   }
 
-  table > tbody > tr > td.yes {
+
+  table > tbody > tr > td.yes.dataset {
     background-color: #69b3a2;
+  }
+
+  table > tbody > tr > td.yes.database {
+    background-color: #69b1b3;
   }

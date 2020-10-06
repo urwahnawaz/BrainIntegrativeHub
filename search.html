@@ -98,7 +98,7 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
-                                    <a data-toggle="collapse" href="#collapse5" style="color: inherit">Variant Expression Comparison</a>
+                                    <a data-toggle="collapse" href="#collapse5" style="color: inherit">Circular vs. linear RNA expression</a>
                                 </h4>
                             </div>
                             <div id="collapse5" class="panel-collapse collapse in">
@@ -213,9 +213,15 @@
             for (let v of values) {
                 tableContents += "<tr>";
                 let i=0;
+                let j=0;
                 for (let e of v) {
                     if(headings[i++].endsWith("_meta")) {
-                        tableContents += '<td class="' + (e > -1 ? 'bool yes' : 'bool no') + '"></td>';
+                        console.log(i);
+                        if(j++ <= 4) { //TODO super hacky, this info should be in db
+                            tableContents += '<td class="' + (e > -1 ? 'bool yes dataset' : 'bool no') + '"></td>';
+                        } else {
+                            tableContents += '<td class="' + (e > -1 ? 'bool yes database' : 'bool no') + '"></td>';
+                        }
                     } else {
                         tableContents += '<td>' + e + "</td>";
                     }
