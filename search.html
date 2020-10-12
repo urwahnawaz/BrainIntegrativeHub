@@ -171,7 +171,9 @@
     <script>
         var database, genomebrowser, boxplot, heatmap, metadata = undefined;
 
+        searchQueryValid = true;
         searchQuery = "";
+        searchQueryPrev = "";
         sortQuery = "";
         sortCurrHeading = "";
         sortCurrIndex = 0;
@@ -215,6 +217,7 @@
                 } else {
                     searchQuery = "";
                 }
+                searchQueryValid = true;
                 makeTable();
             }
         });
@@ -231,15 +234,16 @@
 
 
         function makeTable() {
-            let contents = database.exec("SELECT * FROM circrna " + searchQuery + " " + sortQuery + " LIMIT 50")[0];
+            let contents = database.exec("SELECT * FROM circrna " + (searchQueryValid ? searchQuery : searchQueryPrev) + " " + sortQuery + " LIMIT 50")[0];
 
             if(!contents) {
                 $("#myInput")[0].setCustomValidity("No results");
-                searchQuery = "";
+                searchQueryValid = false;
                 return;
             }
-
-            if($("#myInput").val() == "" || searchQuery) {
+            
+            if(searchQueryValid) {
+                searchQueryPrev = searchQuery;
                 $("#myInput")[0].setCustomValidity("");
             }
 
