@@ -74,7 +74,6 @@ class PanelHeatmap {
             .attr("width", x.bandwidth())
             .attr("height", y.bandwidth())
             .style("fill", function (d) { return d3.color(d.value == -1 ? "lightgrey" : (d.value == 0 ? "lightcoral" : "#69b3a2"))})
-        console.log("done")
     }
 
     _generateHTML() {

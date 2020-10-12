@@ -161,9 +161,6 @@ class PanelBoxScatter {
         let categoryName = $('#metadataSelect' + this.elementId).find(":selected").text();
         let categoryName2 = $('#metadataSelect2' + this.elementId).find(":selected").text();
 
-        console.log(data);
-        console.log(categoryName);
-
         $('#metadataSelect2' + this.elementId).prop('disabled', (typeof data[0][categoryName] === 'string' || data[0][categoryName] instanceof String));
 
         let categories = {}

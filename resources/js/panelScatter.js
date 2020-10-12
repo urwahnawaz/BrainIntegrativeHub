@@ -32,7 +32,7 @@ class PanelScatter {
             $('#measureSelect2' + self.elementId).append('<option value="' + k + '">' + k + '</option>');
         }
         $('#measureSelect1' + self.elementId).prop('selectedIndex', 0);
-        $('#measureSelect2' + self.elementId).prop('selectedIndex', 0);
+        $('#measureSelect2' + self.elementId).prop('selectedIndex', 1);
         this.updateMeasure();
     }
 
@@ -93,7 +93,7 @@ class PanelScatter {
 
         var y = d3.scaleLinear()
                 .range([self.height, 0])
-                .domain(d3.extent(self.plotData, d => d.Expression2))
+                .domain(d3.extent(self.plotData, d => d.Expression1))
                 
         this.svg.append("g")
                 .call(d3.axisLeft(y))
@@ -126,7 +126,7 @@ class PanelScatter {
         // Show the X scale
         var x = d3.scaleLinear()
             .range([0, self.width])
-            .domain(d3.extent(self.plotData, d => d.Expression1))
+            .domain(d3.extent(self.plotData, d => d.Expression2))
         this.svg.append("g")
             .attr("transform", "translate(0," + self.height + ")")
             .call(d3.axisBottom(x))
@@ -136,8 +136,8 @@ class PanelScatter {
             .data(self.plotData)
             .enter()
             .append("circle")
-            .attr("cx", function (d) { return (x(d.Expression1)) })
-            .attr("cy", function (d) { return (y(d.Expression2)) })
+            .attr("cx", function (d) { return (x(d.Expression2)) })
+            .attr("cy", function (d) { return (y(d.Expression1)) })
             .attr("r", 4)
             .style("fill", "white")
             .attr("stroke", "black");
@@ -150,11 +150,11 @@ class PanelScatter {
             <option>gokool</option>
         </select>
         <br><br>
-        <div>Select First Measure</div>
+        <div>Select Y Axis</div>
         <select id="measureSelect1${this.elementId}" class="selectpicker">
         </select>
         <br><br>
-        <div>Select Second Measure</div>
+        <div>Select X Axis</div>
         <select id="measureSelect2${this.elementId}" class="selectpicker">
         </select>
         `

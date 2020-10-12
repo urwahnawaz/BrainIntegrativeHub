@@ -171,6 +171,12 @@
     <script>
         var database, genomebrowser, boxplot, heatmap, metadata = undefined;
 
+        searchQuery = "";
+        sortQuery = "";
+        sortCurrHeading = "";
+        sortCurrIndex = 0;
+        sortClassOrder = ["both", "desc", "asc"];
+
         //TODO convert to promises. Very hacky 
         var awaitAll = 0;
         function incAwaitAll() {
@@ -184,8 +190,7 @@
         window.onload = function () {
             loadDB(windowPath, (db) => {
                 database = db
-                var contents = database.exec("SELECT * FROM circrna LIMIT 50")[0];
-                makeTable(contents, "my_table")
+                makeTable()
                 incAwaitAll();
             });
             genomebrowser = new GenomeBrowser("myGenomeBrowser");
@@ -205,8 +210,12 @@
 
         $("#myInput").keyup(function (event) {
             if (event.keyCode === 13) {
-                var contents = database.exec("SELECT * FROM circrna WHERE circ_id LIKE \'%" + $("#myInput").val() + "%\' OR gene_symbol LIKE \'%" + $("#myInput").val() + "%\' LIMIT 50")[0];
-                if(contents) makeTable(contents, "my_table");
+                if($("#myInput").val()) {
+                    searchQuery = "WHERE circ_id LIKE \'%" + $("#myInput").val() + "%\' OR gene_symbol LIKE \'%" + $("#myInput").val() + "%\'";
+                } else {
+                    searchQuery = "";
+                }
+                makeTable();
             }
         });
 
@@ -220,7 +229,20 @@
             document.getElementById("myDiv").style.display = "block";
         }
 
-        function makeTable(contents, tableId) {
+
+        function makeTable() {
+            let contents = database.exec("SELECT * FROM circrna " + searchQuery + " " + sortQuery + " LIMIT 50")[0];
+
+            if(!contents) {
+                $("#myInput")[0].setCustomValidity("No results");
+                searchQuery = "";
+                return;
+            }
+
+            if($("#myInput").val() == "" || searchQuery) {
+                $("#myInput")[0].setCustomValidity("");
+            }
+
             let headings = contents.columns;
             let values = contents.values;
 
@@ -228,10 +250,12 @@
             tableContents += '<thead>';
             tableContents += "<tr>";
             for (let h of headings) {
+                sortClass = ((h === sortCurrHeading) ? sortClassOrder[sortCurrIndex] : "both");
+
                 if(h.endsWith("_meta")) {
-                    tableContents += '<th><span class="bool">' + h.replace('_meta','') + "</span></th>";
+                    tableContents += '<th><span id="' + h + '"class="unselectable sortable ' + sortClass + ' bool">' + h.replace('_meta','') + "</span></th>";
                 } else {
-                    tableContents += "<th>" + h + "</th>";
+                    tableContents += '<th><span id="' + h + '"class="unselectable sortable ' + sortClass + '">' + h + "</th>";
                 }
             }
             tableContents += "</tr>";
@@ -245,7 +269,6 @@
                 let j=0;
                 for (let e of v) {
                     if(headings[i++].endsWith("_meta")) {
-                        console.log(i);
                         if(j++ <= 4) { //TODO super hacky, this info should be in db
                             tableContents += '<td class="' + (e > -1 ? 'bool yes dataset' : 'bool no') + '"></td>';
                         } else {
@@ -258,9 +281,31 @@
                 tableContents += "</tr>";
             }
             tableContents += '</tbody>';
-            document.getElementById(tableId).innerHTML = tableContents;
+            document.getElementById("my_table").innerHTML = tableContents;
+            
+            $("thead > tr > th > span").click(function (arg) {
+                
+                if(sortCurrHeading == arg.target.id) {
+                    sortCurrIndex = (sortCurrIndex + 1) % 3;
+                } else {
+                    sortCurrIndex = 1;
+                }
+
+                sortCurrHeading = arg.target.id;
+
+                if(sortCurrIndex > 0) {
+                    sortQuery = "ORDER BY " + sortCurrHeading + " " + sortClassOrder[sortCurrIndex];
+                } else {
+                    sortQuery = "";
+                }
+                makeTable();
+            });
 
             $("tbody > tr").click(function (arg) {
+                if(getSelection().toString()){
+                    return; //user selected text, not a click
+                }
+
                 let circ = arg.currentTarget.firstChild.textContent;
                 var details = database.exec(/*sql*/`SELECT * FROM circrna WHERE circ_id='${circ}' LIMIT 100`)[0];
 
@@ -272,7 +317,7 @@
 
                 $("#myModalTitle").text("CircRNA: " + detailObj.circ_id)
                 $("#myModal").modal('toggle')
-                genomebrowser.setPosition(detailObj.chr, parseInt(detailObj.start_hg19), parseInt(detailObj.end_hg19));
+                genomebrowser.setPosition(detailObj.chr, parseInt(detailObj.start_hg38), parseInt(detailObj.end_hg38));
 
                 boxplot1.setCircID(detailObj, () => $('#panel1').show(), () => $('#panel1').hide());
                 boxplot2.setCircID(detailObj, () => $('#panel2').show(), () => $('#panel2').hide());

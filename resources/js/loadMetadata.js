@@ -26,10 +26,8 @@ async function loadMetadata(windowPath) {
         let promises = [];
         for(let group of Object.keys(obj)) {
             for(let entry of Object.keys(obj[group])) {
-                console.log(entry);
                 promises.push(loadCSV(dir + obj[group][entry].metadata).then(o => obj[group][entry].metadataObj = o));
                 for(let matrix of Object.keys(obj[group][entry].matrices)) {
-                    console.log(matrix);
                     promises.push(loadCSV(dir + obj[group][entry].matrices[matrix]).then(o => obj[group][entry].matrices[(matrix + "Obj")] = o));
                 }
             }
