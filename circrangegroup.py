@@ -14,13 +14,13 @@ class CircRangeGroup:
         ret.extend(self.strand)
         return ret
 
-    def toId(self):
-        if self.versions[1]:
-            return "%s_%d_%d_%s" % (self.ch, self.versions[1].start, self.versions[1].end, self.strand)
+    def toId(self, version=1):
+        if self.versions[version]:
+            return "%s_%d_%d_%s" % (self.ch, self.versions[version].start, self.versions[version].end, self.strand)
         return None
 
-    def hasId(self):
-        return bool(self.versions[1])
+    def hasId(self, version=1):
+        return bool(self.versions[version])
     
     def __iter__(self):
         return self.versions.__iter__()
@@ -30,39 +30,41 @@ class CircRangeGroup:
 
     def __lt__(self, other):
         if not isinstance(other, CircRangeGroup):
-            return NotImplemented
-        for i in range(len(self.versions)):
+            raise NotImplemented
+        for i in range(len(self.versions)-1, -1, -1):
             if(self.versions[i] and other.versions[i]):
                 return (self.ch, self.versions[i]) < (other.ch, other.versions[i])
         return False
         
     def __gt__(self, other):
         if not isinstance(other, CircRangeGroup):
-            return NotImplemented
-        for i in range(len(self.versions)):
+            raise NotImplemented
+        for i in range(len(self.versions)-1, -1, -1):
             if(self.versions[i] and other.versions[i]):
                 return (self.ch, self.versions[i]) > (other.ch, other.versions[i])
         return False
 
     def __eq__(self, other):
         if not isinstance(other, CircRangeGroup):
-            return NotImplemented
-        for i in range(len(self.versions)):
+            raise NotImplemented
+        for i in range(len(self.versions)-1, -1, -1):
             if(self.versions[i] and other.versions[i]):
                 return (self.ch, self.versions[i], self.strand) == (other.ch, other.versions[i], other.strand)
         return False
     
     def nearEqual(self, other, dist):
         if not isinstance(other, CircRangeGroup):
-            return NotImplemented
-        for i in range(len(self.versions)):
+            raise NotImplemented
+        for i in range(len(self.versions)-1, -1, -1):
             if(self.versions[i] and other.versions[i]):
-                return self.ch == other.ch and (self.strand == other.strand or self.strand == '.' or other.strand == '.') and abs(self.versions[i].start - other.versions[i].start) <= dist and abs(self.versions[i].end - other.versions[i].end) <= dist
+                one = (self.ch == other.ch and (self.strand == other.strand or self.strand == '.' or other.strand == '.'))
+                two = (abs(self.versions[i].start - other.versions[i].start) <= dist)
+                three =  (abs(self.versions[i].end - other.versions[i].end) <= dist)
+                return (one and two and three)
         return False
 
     def __hash__(self):
-        ret =  hash(self.ch) ^ hash(self.strand)
-        for i in range(len(self.versions)):
+        for i in range(len(self.versions)-1, -1, -1):
             if(self.versions[i]):
-                return ret ^ hash(self.versions[i]) ^ hash(AbstractLiftoverIter.required[i])
-        return ret
+                return hash(self.ch) ^ hash(self.strand) ^ hash(self.versions[i]) ^ hash(AbstractLiftoverIter.required[i])
+        return -1

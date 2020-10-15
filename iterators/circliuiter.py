@@ -32,10 +32,15 @@ class CircLiuIter(AbstractLiftoverIter):
             self.meta_index += 1
 
             match = re.search(r'(chr[^:]+):(\d+)\|(\d+)', line[0+1])
+            gene = ""
+            for g in line[3+1].split(','):
+                if g != "n.a.":
+                    gene = g
+                    break
 
             ids = CircHSAGroup()
             group = CircRangeGroup(ch=match.group(1), strand=line[1+1], versions=super().__next__())
-            ret = CircRow(group=group, hsa=ids, gene="" if line[3+1] == "n.a." else line[3+1], db_id = self.id, meta_index=self.meta_index)
+            ret = CircRow(group=group, hsa=ids, gene=gene, db_id = self.id, meta_index=self.meta_index)
             ret.addExpression(Expression(self.matcher.getTissueFromSynonym("Brain").name, "Liu", int(line[4+1])))
             return ret
 

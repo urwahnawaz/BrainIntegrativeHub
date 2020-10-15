@@ -1,0 +1,26 @@
+15:19:19 Merging Liu
+(total circrnas: 10559, total merges: 0)
+15:19:20 Merging Gokool
+(total circrnas: 17401, total merges: 7350)
+15:19:21 Merging ESC_FBN
+(total circrnas: 25073, total merges: 13428)
+15:19:22 Merging Org
+(total circrnas: 28224, total merges: 15299)
+15:19:23 Merging SY5Y
+(total circrnas: 29407, total merges: 18380)
+15:19:23 Merging Circpedia2
+(total circrnas: 202593, total merges: 764134)
+15:20:33 Merging CircBase
+(total circrnas: 221530, total merges: 815248)
+15:20:40 Merging RNADb
+(total circrnas: 223681, total merges: 828358)
+15:20:42 Merging CircFunBase
+(total circrnas: 223681, total merges: 830604)
+15:20:42 Merging CircAtlas2
+(total circrnas: 778500, total merges: 856033)
+15:21:45 Writing outputs
+Skipped 642854 [not in brain]
+Further 111915 skipped [not in novel datasets]
+Further 1005 skipped [no ensembl]
+Further 6 skipped [no hg38]
+Total 22720

@@ -30,7 +30,7 @@ class Circpedia2Iter(AbstractLiftoverIter):
             match = re.search(r'(chr[^:]+):(\d+)-(\d+)', line[4]) #chr10:92909426-93014267
 
             ids = CircHSAGroup()
-            ids.addCircHSA(CircHSA("Circpedia2", line[0]))
+            #ids.addCircHSA(CircHSA("Circpedia2", line[0]))
             
             group = CircRangeGroup(ch=match.group(1), strand=line[5], versions=super().__next__())
             ret = CircRow(group=group, hsa=ids, gene=line[2], db_id = self.id, meta_index=self.meta_index)

@@ -17,19 +17,19 @@ class Expression:
 
     def __lt__(self, other):
         if not isinstance(other, Expression):
-            return NotImplemented
+            raise NotImplemented
         
         return (self.tissueId, self.studyId) < (other.tissueId, other.studyId)
 
     def __gt__(self, other):
         if not isinstance(other, Expression):
-            return NotImplemented
+            raise NotImplemented
         
         return (self.tissueId, self.studyId) > (other.tissueId, other.studyId)
 
     def __eq__(self, other):
         if not isinstance(other, Expression):
-            return NotImplemented
+            raise NotImplemented
 
         return self.tissueId == other.tissueId and self.studyId == other.studyId
 

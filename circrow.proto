@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+message CircRow {
+  string id = 1;
+  byte chr = 2;
+  int32 hg38_start = 3;
+  int32 hg38_end = 4;
+  int32 hg19_start = 5;
+  int32 hg19_end = 6;
+  bool is_forward_strand = 7;
+  string gene_symbol = 8;
+  int32 ensembl_id = 9;
+  bool is_in_gokool = 8;
+  bool is_in_liu = 9;
+  bool is_in_org = 10;
+  bool is_in_sy5y = 11;
+  bool is_in_esc_fbn = 12;
+}
+
+
+bson {
+    int count
+    (circrow stuff from above as arrays?)
+    int16 tissue1[26000]
+}
+
+bson {
+    int count
+    int32 age[49944]
+    bool sex[49944]
+}
+
+bson {
+    int count
+    string circ_id[34873] <- binary search, sorted NUMERICALLY for near matching
+    float32 sample1[34873]
+    float32 sample2[34873]
+}

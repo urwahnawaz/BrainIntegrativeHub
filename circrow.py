@@ -13,6 +13,8 @@ class CircRow:
         self._meta = [CircRow.META_INDEX_CIRC_NOT_IN_DB] * (AbstractDB.id_max + 1)
         self._meta[db_id] = meta_index
         self.geneId = ""
+        self.mergeCount = 0
+        self._error = ""
 
     def merge(self, other):
         #Add other tissues/studies, transfer reads to existing if undefined
@@ -25,6 +27,7 @@ class CircRow:
                 self.addExpression(val)
         for i in range(len(other._meta)): self._meta[i] = max(self._meta[i], other._meta[i])
         self.hsa.merge(other.hsa)
+        self.mergeCount += other.mergeCount + (0 if (self.group == other.group) else 1) #Only counting non exact merges
     
     def addExpression(self, value):
         self.expressions.add(value)
@@ -51,7 +54,7 @@ class CircRow:
         if not isinstance(other, CircRow):
             raise NotImplementedError
 
-        return self.group == other.group
+        return self.group.nearEqual(other.group, 10)
 
     def __hash__(self):
         return hash(self.group)
