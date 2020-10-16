@@ -76,7 +76,30 @@ def writeIntersectionPlot(inputIterators, iter):
     plot(df, facecolor="red", sort_by="cardinality", show_counts='%d')
     pyplot.savefig('out.png')
 
-def getHDF5Matrix(fileName, longestId):
+def writeHDF5Matrix(fileName, entryGroup, idGroup, datasetName, noneType="NA"):
+    heading = []
+    isHeading = True
+    lines = []
+    for line in csv.reader(open(fileName, 'r'), delimiter=','):
+        if isHeading:
+            heading = line[1:]
+            isHeading = False
+        else: 
+            lines.append(line)
+
+    mdata1 = []
+    mdata2 = []
+    for line in lines:
+        mdata1.append(line[0])
+        mdata2.append(tuple([(line[i] if line[i] != noneType else -1.0) for i in range(1, len(line))]))
+
+    entryGroup.create_dataset(datasetName, data=np.array(mdata2, dtype="f4"), compression="gzip", compression_opts=9)
+
+    if not "circ_id" in idGroup:
+        idGroup.create_dataset("sample_id", data=np.array([h.encode() for h in heading], dtype="S" + str(len(max(heading, key=len)))), compression="gzip", compression_opts=9)
+        idGroup.create_dataset("circ_id", data=np.array([m.encode() for m in mdata1], dtype="S" + str(len(max(mdata1, key=len)))), compression="gzip", compression_opts=9)
+
+def writeHDF5Columns(fileName, hdf5Group, noneType="NA"):
     heading = []
     isHeading = True
     lines = []
@@ -87,61 +110,78 @@ def getHDF5Matrix(fileName, longestId):
         else: 
             lines.append(line)
     heading[0] = "circ_id"
-
-    noneType = "NA"
+    
     allTypes = [int, float, str]
     allDefaults = [0, 0.0, ""]
     allTypesNp = ["i4", "f4", "S"]
     colTypes = []
     colTypesNp = []
-    for i in range(len(lines[0])):
+    for i in range(1, len(lines[0])):
         for k in range(len(allTypes)):
             try:
-                values = [allTypes[k](lines[j][i]) for j in range(len(lines)) if lines[j][i] != noneType]
-                colTypes.append(allTypes[k])
-                colTypesNp.append(allTypesNp[k] + (str(len(max(values, key=lambda x:len(x)))) if allTypes[k]==str else ""))
+                #Attempt to parse all as this type
+                colType = allTypes[k]
+                values = [colType(lines[j][i]) for j in range(len(lines)) if lines[j][i] != noneType]
+
+                #No exception so correct type, fix values for hdf5
+                colTypeNp = allTypesNp[k] + (str(len(max(values, key=len))) if allTypes[k]==str else "")
+                for m in range(len(values)):
+                    if m == noneType:
+                        values[m] = allDefaults[k]
+                    elif colType == str:
+                        values[m] = values[m].encode()
+                    
+                #Write dataset
+                hdf5Group.create_dataset(heading[i], data=np.array(values, dtype=colTypeNp), compression="gzip")
                 break
             except:
                 continue
         else:
             raise("ERROR no type resolved for " + heading[i])
 
-    mdata = []
-    for line in lines:
-        mdata.append(tuple([(allDefaults[allTypes.index(colTypes[i])] if line[i] == noneType else (line[i].encode() if colTypes[i]==str else line[i])) for i in range(len(line))]))
-
-    mdtype = [(heading[i], colTypesNp[i]) for i in range(len(heading))]
-    return np.array(mdata, dtype=mdtype)
-
+#View using https://ncnr.nist.gov/ncnrdata/view/nexus-hdf-viewer.html
 def writeHDF5(circIters, iter, outFile="out.hdf5"):
     root = h5py.File(outFile,'w')
 
     longestId = len(max(iter, key=lambda x:len(x.group.toId())).group.toId())
     longestGene = len(max(iter, key=lambda x:len(x.gene)).gene)
     longestEnsembl = len(max(iter, key=lambda x:len(x.geneId)).geneId)
-    arr = np.array(
-        [tuple([circ.group.toId().encode(), circ.group.ch.encode(), circ.group.versions[0].start, circ.group.versions[0].end, circ.group.versions[0].start, circ.group.versions[0].end, circ.group.strand.encode(), circ.gene.encode(), circ.geneId.encode()] + [(circ._meta[i] != -1) for i in range(len(circ._meta))]) for circ in iter],
-        dtype = ([('circ_id', 'S%d'%longestId), ('chr', 'S5'), ('start_hg19', 'i4'), ('end_hg19', 'i4'), ('start_hg38', 'i4'), ('end_hg38', 'i4'), ('strand', 'S1'), ('gene_symbol', 'S%d'%longestGene), ('ensembl_id', 'S%d'%longestEnsembl)] + [tuple(["is_in_%s," % (it.name.lower()), '?']) for it in circIters]))
-    data = root.create_dataset("data", data=arr, compression="gzip")
+
+    data = root.create_group("data")
+
+    data.create_dataset("circ_id", data=np.array([circ.group.toId().encode() for circ in iter], dtype='S%d'%longestId), compression="gzip")
+    data.create_dataset("chr", data=np.array([circ.group.ch.encode() for circ in iter], dtype='S5'), compression="gzip")
+    data.create_dataset("start_hg19", data=np.array([circ.group.versions[0].start for circ in iter], dtype='i4'), compression="gzip")
+    data.create_dataset("end_hg19", data=np.array([circ.group.versions[0].end for circ in iter], dtype='i4'), compression="gzip")
+    data.create_dataset("start_hg38", data=np.array([circ.group.versions[1].start for circ in iter], dtype='i4'), compression="gzip")
+    data.create_dataset("end_hg38", data=np.array([circ.group.versions[1].end for circ in iter], dtype='i4'), compression="gzip")
+    data.create_dataset("strand", data=np.array([circ.group.strand.encode() for circ in iter], dtype='S1'), compression="gzip")
+    data.create_dataset("gene_symbol", data=np.array([circ.gene.encode() for circ in iter], dtype='S%d'%longestGene), compression="gzip")
+    data.create_dataset("ensembl_id", data=np.array([circ.gene.encode() for circ in iter], dtype='S%d'%longestEnsembl), compression="gzip")
+    in_data_source = data.create_dataset("in_data_source", data=np.array([[int(circ._meta[i] != -1) for i in range(len(circ._meta))] for circ in iter], dtype="i1"), compression="gzip")
+    in_data_source.attrs.create("data_source", np.array([it.name.lower().encode() for it in circIters], dtype="S10"))
 
     gokool = root.create_group("charts/CircRNA_expression_in_human_brain_tissue/gokool")
-    gokool.create_dataset("ci", data=getHDF5Matrix("./../CircViewer/resources/data/gok_ci.csv", longestId), compression="gzip")
-    gokool.create_dataset("cpm", data=getHDF5Matrix("./../CircViewer/resources/data/gok_circ_cpm.csv", longestId), compression="gzip")
-    gokool.create_dataset("sj_cpm", data=getHDF5Matrix("./../CircViewer/resources/data/gok_sj_cpm.csv", longestId), compression="gzip")
-    gokool.create_dataset("meta", data=getHDF5Matrix("./../CircViewer/resources/data/gok_meta.csv", longestId), compression="gzip")
+    gokoolMatrices = gokool.create_group("matrices")
+    writeHDF5Matrix("./../CircViewer/resources/data/gok_ci.csv", gokoolMatrices, gokool, "ci")
+    writeHDF5Matrix("./../CircViewer/resources/data/gok_circ_cpm.csv", gokoolMatrices, gokool, "cpm")
+    writeHDF5Matrix("./../CircViewer/resources/data/gok_sj_cpm.csv", gokoolMatrices, gokool, "sj")
+    writeHDF5Columns("./../CircViewer/resources/data/gok_meta.csv", root.create_group("charts/CircRNA_expression_in_human_brain_tissue/gokool/samples"))
 
     org = root.create_group("charts/celullar_maturation/org")
-    org.create_dataset("cpm", data=getHDF5Matrix("./../CircViewer/resources/data/org_cpm.csv", longestId), compression="gzip")
-    org.create_dataset("meta", data=getHDF5Matrix("./../CircViewer/resources/data/org_meta.csv", longestId), compression="gzip")
-    
+    orgMatrices = org.create_group("matrices")
+    writeHDF5Matrix("./../CircViewer/resources/data/org_cpm.csv", orgMatrices, org, "cpm")
+    writeHDF5Columns("./../CircViewer/resources/data/org_meta.csv", root.create_group("charts/celullar_maturation/org/samples"))
+
     sy5y = root.create_group("charts/Neuronal_cell_differentiation/sy5y")
-    sy5y.create_dataset("cpm", data=getHDF5Matrix("./../CircViewer/resources/data/sy5y_cpm.csv", longestId), compression="gzip")
-    sy5y.create_dataset("meta", data=getHDF5Matrix("./../CircViewer/resources/data/sy5y_meta.csv", longestId), compression="gzip")
+    sy5yMatrices = sy5y.create_group("matrices")
+    writeHDF5Matrix("./../CircViewer/resources/data/sy5y_cpm.csv", sy5yMatrices, sy5y, "cpm")
+    writeHDF5Columns("./../CircViewer/resources/data/sy5y_meta.csv", root.create_group("charts/Neuronal_cell_differentiation/sy5y/samples"))
 
     esc_fbn = root.create_group("charts/Neuronal_cell_differentiation/esc_fbn")
-    esc_fbn.create_dataset("cpm", data=getHDF5Matrix("./../CircViewer/resources/data/esc_fbn_cpm.csv", longestId), compression="gzip")
-    esc_fbn.create_dataset("meta", data=getHDF5Matrix("./../CircViewer/resources/data/esc_fbn_meta.csv", longestId), compression="gzip")
-
+    esc_fbnMatrices = esc_fbn.create_group("matrices")
+    writeHDF5Matrix("./../CircViewer/resources/data/esc_fbn_cpm.csv", esc_fbnMatrices, esc_fbn, "cpm")
+    writeHDF5Columns("./../CircViewer/resources/data/esc_fbn_meta.csv", root.create_group("charts/Neuronal_cell_differentiation/esc_fbn/samples"))    
 
 def writeSqlite(circIters, iter, outFile="out.db"):
     if os.path.exists(outFile): os.remove(outFile)
