@@ -8,6 +8,9 @@ import csv, datetime, re, sqlite3, os
 from sortedcontainers import SortedSet
 from matplotlib import pyplot
 from upsetplot import from_contents, plot
+import numpy as np
+import h5py
+import sys
 
 from circrow import CircRow
 from circhsa import CircHSA
@@ -72,6 +75,73 @@ def writeIntersectionPlot(inputIterators, iter):
     df = from_contents(contents)
     plot(df, facecolor="red", sort_by="cardinality", show_counts='%d')
     pyplot.savefig('out.png')
+
+def getHDF5Matrix(fileName, longestId):
+    heading = []
+    isHeading = True
+    lines = []
+    for line in csv.reader(open(fileName, 'r'), delimiter=','):
+        if isHeading:
+            heading = line
+            isHeading = False
+        else: 
+            lines.append(line)
+    heading[0] = "circ_id"
+
+    noneType = "NA"
+    allTypes = [int, float, str]
+    allDefaults = [0, 0.0, ""]
+    allTypesNp = ["i4", "f4", "S"]
+    colTypes = []
+    colTypesNp = []
+    for i in range(len(lines[0])):
+        for k in range(len(allTypes)):
+            try:
+                values = [allTypes[k](lines[j][i]) for j in range(len(lines)) if lines[j][i] != noneType]
+                colTypes.append(allTypes[k])
+                colTypesNp.append(allTypesNp[k] + (str(len(max(values, key=lambda x:len(x)))) if allTypes[k]==str else ""))
+                break
+            except:
+                continue
+        else:
+            raise("ERROR no type resolved for " + heading[i])
+
+    mdata = []
+    for line in lines:
+        mdata.append(tuple([(allDefaults[allTypes.index(colTypes[i])] if line[i] == noneType else (line[i].encode() if colTypes[i]==str else line[i])) for i in range(len(line))]))
+
+    mdtype = [(heading[i], colTypesNp[i]) for i in range(len(heading))]
+    return np.array(mdata, dtype=mdtype)
+
+def writeHDF5(circIters, iter, outFile="out.hdf5"):
+    root = h5py.File(outFile,'w')
+
+    longestId = len(max(iter, key=lambda x:len(x.group.toId())).group.toId())
+    longestGene = len(max(iter, key=lambda x:len(x.gene)).gene)
+    longestEnsembl = len(max(iter, key=lambda x:len(x.geneId)).geneId)
+    arr = np.array(
+        [tuple([circ.group.toId().encode(), circ.group.ch.encode(), circ.group.versions[0].start, circ.group.versions[0].end, circ.group.versions[0].start, circ.group.versions[0].end, circ.group.strand.encode(), circ.gene.encode(), circ.geneId.encode()] + [(circ._meta[i] != -1) for i in range(len(circ._meta))]) for circ in iter],
+        dtype = ([('circ_id', 'S%d'%longestId), ('chr', 'S5'), ('start_hg19', 'i4'), ('end_hg19', 'i4'), ('start_hg38', 'i4'), ('end_hg38', 'i4'), ('strand', 'S1'), ('gene_symbol', 'S%d'%longestGene), ('ensembl_id', 'S%d'%longestEnsembl)] + [tuple(["is_in_%s," % (it.name.lower()), '?']) for it in circIters]))
+    data = root.create_dataset("data", data=arr, compression="gzip")
+
+    gokool = root.create_group("charts/CircRNA_expression_in_human_brain_tissue/gokool")
+    gokool.create_dataset("ci", data=getHDF5Matrix("./../CircViewer/resources/data/gok_ci.csv", longestId), compression="gzip")
+    gokool.create_dataset("cpm", data=getHDF5Matrix("./../CircViewer/resources/data/gok_circ_cpm.csv", longestId), compression="gzip")
+    gokool.create_dataset("sj_cpm", data=getHDF5Matrix("./../CircViewer/resources/data/gok_sj_cpm.csv", longestId), compression="gzip")
+    gokool.create_dataset("meta", data=getHDF5Matrix("./../CircViewer/resources/data/gok_meta.csv", longestId), compression="gzip")
+
+    org = root.create_group("charts/celullar_maturation/org")
+    org.create_dataset("cpm", data=getHDF5Matrix("./../CircViewer/resources/data/org_cpm.csv", longestId), compression="gzip")
+    org.create_dataset("meta", data=getHDF5Matrix("./../CircViewer/resources/data/org_meta.csv", longestId), compression="gzip")
+    
+    sy5y = root.create_group("charts/Neuronal_cell_differentiation/sy5y")
+    sy5y.create_dataset("cpm", data=getHDF5Matrix("./../CircViewer/resources/data/sy5y_cpm.csv", longestId), compression="gzip")
+    sy5y.create_dataset("meta", data=getHDF5Matrix("./../CircViewer/resources/data/sy5y_meta.csv", longestId), compression="gzip")
+
+    esc_fbn = root.create_group("charts/Neuronal_cell_differentiation/esc_fbn")
+    esc_fbn.create_dataset("cpm", data=getHDF5Matrix("./../CircViewer/resources/data/esc_fbn_cpm.csv", longestId), compression="gzip")
+    esc_fbn.create_dataset("meta", data=getHDF5Matrix("./../CircViewer/resources/data/esc_fbn_meta.csv", longestId), compression="gzip")
+
 
 def writeSqlite(circIters, iter, outFile="out.db"):
     if os.path.exists(outFile): os.remove(outFile)
@@ -245,11 +315,11 @@ if __name__ == '__main__':
         ESC_FBNIter("./data/ESC_FBN/Processed"),
         OrgIter("./data/ORG/Processed"),
         SY5YIter("./data/SY5Y/Processed"),
-        Circpedia2Iter("./data/CIRCpedia2"), 
-        CircBaseIter("./data/Circbase"), 
-        CircRNADbIter("./data/circRNADb"), 
-        CircFunBaseIter("./data/CircFunBase"),
-        CircAtlas2BrowserIter("./data/circAtlas2"), #No tissue info without individual php calls 
+        #Circpedia2Iter("./data/CIRCpedia2"), 
+        #CircBaseIter("./data/Circbase"), 
+        #CircRNADbIter("./data/circRNADb"), 
+        #CircFunBaseIter("./data/CircFunBase"),
+        #CircAtlas2BrowserIter("./data/circAtlas2"), #No tissue info without individual php calls 
         #CircRicIter("./data/CircRic"), #No strand info
         #MiOncoCirc2Iter("./data/MiOncoCirc2") #No strand or tissue info
     ]
@@ -261,6 +331,10 @@ if __name__ == '__main__':
     annotateEnsemblBiomart(ss)
 
     li, countExcludedDs, countExcludedEns, countExcluded38 = filterOutputToList(ss)
+
+    writeHDF5(circIters, li)
+
+    exit()
 
     print("> Filtered %d [not in novel datasets]" % (countExcludedDs))
     print("> Filtered %d [no hg38]" % (countExcluded38))
