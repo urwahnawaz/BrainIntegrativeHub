@@ -234,7 +234,7 @@ class PanelManager {
                             <div class="col-md-2">
                                 <div id="${this.elementId + "controls1"}"></div>
                             </div>
-                            <div class="col-md-6 col-md-offset-1">
+                            <div class="col-md-9 col-md-offset-1">
                                 <div id="${this.elementId + "plot1"}"></div>
                             </div>
                         </div>
@@ -259,7 +259,7 @@ class PanelManager {
                             <div class="col-md-2">
                                 <div id="${this.elementId + "controls1"}"></div>
                             </div>
-                            <div class="col-md-6 col-md-offset-1">
+                            <div class="col-md-9 col-md-offset-1">
                                 <div id="${this.elementId + "plot1"}"></div>
                             </div>
                         </div>
@@ -268,7 +268,7 @@ class PanelManager {
                             <div class="col-md-2">
                                 <div id="${this.elementId + "controls2"}"></div>
                             </div>
-                            <div class="col-md-6 col-md-offset-1">
+                            <div class="col-md-9 col-md-offset-1">
                                 <div id="${this.elementId + "plot2"}"></div>
                             </div>
                         </div>
