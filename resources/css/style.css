@@ -67,7 +67,7 @@ html, body {margin:0;padding:0;height:100%}
 
   .table > thead > tr > th.bool > span {
     writing-mode: vertical-lr;
-    transform: scale(-1) translate(25px, 0px);
+    transform: scale(-1);
     vertical-align: top;
     background-position-x: -5px;
     padding-left: 15px;
@@ -113,7 +113,6 @@ html, body {margin:0;padding:0;height:100%}
     cursor:pointer;
     background-position:right;
     background-repeat:no-repeat;
-    padding-right:30px
    }
    .table thead th .both {
     background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAQAAADYWf5HAAAAkElEQVQoz7X QMQ5AQBCF4dWQSJxC5wwax1Cq1e7BAdxD5SL+Tq/QCM1oNiJidwox0355mXnG/DrEtIQ6azioNZQxI0ykPhTQIwhCR+BmBYtlK7kLJYwWCcJA9M4qdrZrd8pPjZWPtOqdRQy320YSV17OatFC4euts6z39GYMKRPCTKY9UnPQ6P+GtMRfGtPnBCiqhAeJPmkqAAAAAElFTkSuQmCC');
