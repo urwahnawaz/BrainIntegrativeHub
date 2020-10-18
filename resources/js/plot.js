@@ -73,7 +73,7 @@ class Plot {
             .attr("cx", function (d) { return (self.x(d.x)) })
             .attr("cy", function (d) { return (self.y(d.y)) })
             .attr("r", 4)
-            .style("fill", function (d) { return data[0].z ? (pointColorScale(d.z)) : "white"})
+            .style("fill", function (d) { return data[0].z ? (pointColorScale(d.z)) : "#2b6da4"})
             .attr("stroke", "black")
     }
 
