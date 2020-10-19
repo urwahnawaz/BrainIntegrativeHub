@@ -93,6 +93,11 @@
 
             <!-- Main Table -->
             <table class="table table-hover" style="width:100%" id="my_table"></table>
+
+            <!-- Pagination -->
+            <div id="my_pagination_container" class="container unselectable">
+                <ul id="my_pagination" class="pagination"></ul>
+            </div>
         </div>
     </div>
 
@@ -112,6 +117,10 @@
         let sortCurrCol = -1;
         let sortCurrIndex = 0;
         let sortClassOrder = ["both", "desc", "asc"];
+
+        let pageSize = 50;
+        let pageCurr = 0;
+        let pageMax = 5;
 
         let searchTerm = "";
 
@@ -158,6 +167,7 @@
         $("#myInput").keyup(function (event) {
             if (event.keyCode === 13) {
                 searchTerm = $("#myInput").val().trim().toLowerCase();
+                pageCurr = 0;
                 makeTable();
             }
         });
@@ -201,14 +211,20 @@
                 }
             }
             
-            let limit=0;
-            for(let i=0; i<matrix[0].length && limit<50; ++i) {
+            let total=0;
+            console.log(`pageCurr: ${pageCurr}, pageSize: ${pageSize}`);
+            for(let i=0; i<matrix[0].length; ++i) {
                 let sortIndex = indices[i];
 
                 //Skip if doesn't match search
                 if(!(matrix[0][sortIndex].toLowerCase().includes(searchTerm) || matrix[7][sortIndex].toLowerCase().includes(searchTerm))) continue;
                 
-                ++limit;
+                ++total;
+
+                //Skip if not on page
+                if(total <= (pageCurr * pageSize) || total > ((pageCurr + 1) * pageSize)) continue;
+                //total < 50 || total > 100
+
                 tableContents += "<tr>";
                 for(let j=0; j<headings.length; ++j) {
                     let e = matrix[j][sortIndex];
@@ -225,7 +241,7 @@
             tableContents += '</tbody>';
             document.getElementById("my_table").innerHTML = tableContents;
 
-            $("#myInput")[0].setCustomValidity(limit ? "" : "No results");
+            $("#myInput")[0].setCustomValidity(total ? "" : "No results");
 
             $("thead > tr > th > span").click(function (arg) {
                 sortNewCol = headings.indexOf(arg.target.id);
@@ -252,6 +268,23 @@
 
                 $("#myModalTitle").text("CircRNA: " + circ)
                 $("#myModal").modal('toggle')
+            });
+
+            let paginateContents = "";
+            let pageCurrMax = Math.ceil(total / pageSize);
+            let pageStart = Math.max(0, Math.floor(pageCurr+1-pageMax/2));
+            let pageEnd = Math.min(pageCurrMax, pageStart + pageMax)
+            if(pageStart > 0) paginateContents += '<li class="page-item"><a class="page-link" value="0">1</a></li>' + '<li class="page-item disabled"><a class="page-link">...</a></li>'
+            for(let i=pageStart; i<pageEnd; ++i) paginateContents += '<li class="page-item ' + (i == pageCurr ? "page-current disabled" : "") + '"><a class="page-link" value="' + (i) +'">' + (i+1) + '</a></li>'
+            if(pageEnd < pageCurrMax) paginateContents += '<li class="page-item disabled"><a class="page-link">...</a></li>' + '<li class="page-item"><a class="page-link" value="' + (pageCurrMax-1) +'">' + (pageCurrMax) + '</a></li>'
+            paginateContents += '<li class="page-item ' + (pageCurr+1==pageCurrMax ? "disabled" : "")
+            document.getElementById("my_pagination").innerHTML = paginateContents;
+
+            $("#my_pagination > li").click(function (arg) {
+                if(!$(arg.currentTarget).hasClass('disabled')) {
+                    pageCurr = parseInt(arg.currentTarget.firstChild.getAttribute("value"));
+                    makeTable();
+                }
             });
         }
     </script>

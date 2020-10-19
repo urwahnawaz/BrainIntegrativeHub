@@ -77,10 +77,10 @@ html, body {margin:0;padding:0;height:100%}
 
   .table > thead > tr > th.bool {
     width: 50px;
+    text-overflow: clip;
   }
 
-  td, th
-  {
+  td, th {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -168,3 +168,7 @@ html, body {margin:0;padding:0;height:100%}
       border-radius: 0px; 
   }
 
+  #my_pagination_container {
+    display: flex;
+    justify-content: center
+  }
