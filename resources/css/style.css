@@ -72,6 +72,7 @@ html, body {margin:0;padding:0;height:100%}
     background-position-x: -5px;
     padding-left: 15px;
     padding-right: 0px;
+    background-position-y: initial;
   }
 
   .table > thead > tr > th.bool {
