@@ -39,30 +39,33 @@ class Plot {
             .attr("transform", "translate(0," + self.height + ")")
             .call(d3.axisBottom(self.x))
 
-        var pointColorScale;
+        var pointColorScale = undefined;
+        var categoriesZ = undefined;
         if (data[0].z) {
-            let categoriesZ = self._getCategories(data, d=>d.z)
+            categoriesZ = self._getCategories(data, d=>d.z)
+            let colors = colorbrewer["Paired"][Math.max(3, categoriesZ.length)];
+            if(colors) {
+                pointColorScale = d3.scaleOrdinal()
+                    .domain(data.map(d => d.z))
+                    .range(colors);
 
-            pointColorScale = d3.scaleOrdinal()
-                .domain(data.map(d => d.z))
-                .range(colorbrewer["Paired"][Math.max(3, categoriesZ.length)]);
+                var legend = self.svg.selectAll("legend")
+                    .data(categoriesZ)
+                    .enter()
+                    .append("g")
+                    .attr("transform", function (d, i) { return "translate(" + (self.width + 20) + "," + ((28 * i)) + ")"; });
 
-            var legend = self.svg.selectAll("legend")
-                .data(categoriesZ)
-                .enter()
-                .append("g")
-                .attr("transform", function (d, i) { return "translate(" + (self.width + 20) + "," + ((28 * i)) + ")"; });
+                legend.append("circle")
+                    .style("fill", function (d, i) { return pointColorScale(d); })
+                    .attr("stroke", "black")
+                    .attr("r", 8)
 
-            legend.append("circle")
-                .style("fill", function (d, i) { return pointColorScale(d); })
-                .attr("stroke", "black")
-                .attr("r", 8)
-
-            legend.append("text")
-                .attr("text-anchor", "start")
-                .attr("font-size", "10px")
-                .attr("x", 20)
-                .text(function (d) { return d });
+                legend.append("text")
+                    .attr("text-anchor", "start")
+                    .attr("font-size", "10px")
+                    .attr("x", 20)
+                    .text(function (d) { return d });
+            }
         }
 
         // Show scatter plot
@@ -73,8 +76,12 @@ class Plot {
             .attr("cx", function (d) { return (self.x(d.x)) })
             .attr("cy", function (d) { return (self.y(d.y)) })
             .attr("r", 4)
-            .style("fill", function (d) { return data[0].z ? (pointColorScale(d.z)) : "#2b6da4"})
+            .style("fill", function (d) { return pointColorScale ? (pointColorScale(d.z)) : "#2b6da4"})
             .attr("stroke", "black")
+
+        if(data[0].z && !pointColorScale) {
+            window.alert("Couldn't display " + categoriesZ.length + " categories");
+        }
     }
 
     //Expects [{x, y}...] where x is string and y is numeric
@@ -168,7 +175,6 @@ class Plot {
         d3.selectAll("#" + self.elementId + " > svg > g > *").remove();
 
         //Create y scale
-        console.log();
         self.y = d3.scaleLinear()
             .domain(data.length == 1 ? [0, 2*data[0].y] : d3.extent(data, d => d.y))
             .range([self.height-self.rangePad, self.rangePad])
