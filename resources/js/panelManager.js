@@ -44,37 +44,39 @@ class PanelManager {
         var self = this;
         let matrix = self.hdf5Group.get(datasetName + "/matrices/" + matrixName);
         let cache = self.rowCache[datasetName][matrixName];
-        let ret = undefined;
         if(cache.id == row) {
             console.log(`used cached row ${row}`);
-            ret = cache.data;
         } else {
             console.log("no cached row");
             let rowStart = row * matrix.shape[1];
-            ret = matrix.value.slice(rowStart, rowStart + matrix.shape[1])
-            cache.data = ret;
+            cache.data = matrix.value.slice(rowStart, rowStart + matrix.shape[1])
             cache.id = row;
         }
-        return ret;
+        return cache.data;
     }
 
-    //This works but there should be more hits
-    //Try increasing hdf5 chunk size and removing deleted circrnas from matrices
     _getMatrixRowChunkCached(datasetName, matrixName, row) {
+        //This works but there should be more hits
+        //Try increasing hdf5 chunk size and removing deleted circrnas from matrices
         var self = this;
         let matrix = self.hdf5Group.get(datasetName + "/matrices/" + matrixName);
         let chunks = matrix._dataobjects.chunks;
         let rowLength = matrix.shape[1];
-        let rowStart = row * rowLength;
         let chunkSize = chunks[0] * chunks[1];
+        if((chunkSize % rowLength) != 0) {
+            console.log(`cannot use chunk cache, rows span multiple chunks`);
+            return this._getMatrixRowCached(datasetName, matrixName, row);
+        }
+        let rowStart = row * rowLength;
+        let matrixSize =  matrix.shape[0] * matrix.shape[1];
         let chunkIndex = Math.floor(rowStart / chunkSize);
         let chunkStart = chunkIndex * chunkSize;
         let cache = self.rowCache[datasetName][matrixName];
-        if(cache.id == chunkStart && rowLength == chunks[1]) {
+        if(cache.id == chunkStart) {
             console.log(`used cached chunk ${chunkIndex}`);
         } else {
             console.log("no cached chunk");
-            cache.data = matrix.value.slice(chunkStart, chunkStart + chunkSize);
+            cache.data = matrix.value.slice(chunkStart, Math.min(chunkStart + chunkSize, matrixSize));
             cache.id = chunkStart;
         }
         return cache.data.slice(rowStart - chunkStart, rowStart + rowLength - chunkStart);
