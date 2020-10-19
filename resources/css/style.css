@@ -79,6 +79,13 @@ html, body {margin:0;padding:0;height:100%}
     width: 50px;
   }
 
+  td, th
+  {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  }
+
   table > tbody > tr > td.bool {
     border-color: white;
     border-width: 2px;
