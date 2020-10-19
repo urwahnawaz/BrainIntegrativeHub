@@ -34,7 +34,7 @@ class Plot {
         // Show the X scale
         self.x = d3.scaleLinear()
             .range([self.rangePad, self.width-self.rangePad])
-            .domain(data.length == 1 ? [0, 2*data[0].x] : d3.extent(data, d => d.y))
+            .domain(data.length == 1 ? [0, 2*data[0].x] : d3.extent(data, d => d.x))
         self.svg.append("g")
             .attr("transform", "translate(0," + self.height + ")")
             .call(d3.axisBottom(self.x))
