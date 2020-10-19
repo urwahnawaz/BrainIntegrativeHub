@@ -34,7 +34,7 @@ class Plot {
         // Show the X scale
         self.x = d3.scaleLinear()
             .range([self.rangePad, self.width-self.rangePad])
-            .domain(d3.extent(data, d => d.x))
+            .domain(data.length == 1 ? [0, 2*data[0].x] : d3.extent(data, d => d.y))
         self.svg.append("g")
             .attr("transform", "translate(0," + self.height + ")")
             .call(d3.axisBottom(self.x))
@@ -168,8 +168,9 @@ class Plot {
         d3.selectAll("#" + self.elementId + " > svg > g > *").remove();
 
         //Create y scale
+        console.log();
         self.y = d3.scaleLinear()
-            .domain(d3.extent(data, d => d.y))
+            .domain(data.length == 1 ? [0, 2*data[0].y] : d3.extent(data, d => d.y))
             .range([self.height-self.rangePad, self.rangePad])
 
         self.svg.append("g").call(d3.axisLeft(self.y))

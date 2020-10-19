@@ -157,7 +157,7 @@
 
         $("#myInput").keyup(function (event) {
             if (event.keyCode === 13) {
-                searchTerm = $("#myInput").val().toLowerCase();
+                searchTerm = $("#myInput").val().trim().toLowerCase();
                 makeTable();
             }
         });
