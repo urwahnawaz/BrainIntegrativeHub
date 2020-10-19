@@ -203,14 +203,13 @@
             
             let limit=0;
             for(let i=0; i<matrix[0].length && limit<50; ++i) {
-                tableContents += "<tr>";
                 let sortIndex = indices[i];
 
                 //Skip if doesn't match search
                 if(!(matrix[0][sortIndex].toLowerCase().includes(searchTerm) || matrix[7][sortIndex].toLowerCase().includes(searchTerm))) continue;
                 
                 ++limit;
-
+                tableContents += "<tr>";
                 for(let j=0; j<headings.length; ++j) {
                     let e = matrix[j][sortIndex];
                     if (datasets.includes(headings[j])) { //TODO super hacky, this info should be in db
