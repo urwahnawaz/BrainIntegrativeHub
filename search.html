@@ -106,13 +106,15 @@
         var panels = [];
         var hdf5Data = undefined;
 
+        //TODO: this is only non self-describing data 
         let datasets = ["Gokool", "Liu", "Org", "ESC_FBN", "SY5Y"];
         let databases = ["CircAtlas2", "CircBase", "CircFunBase", "Circpedia2", "RNADb"];
         let other = ["circ_id", "chr", "start_hg38", "end_hg38", "start_hg19", "end_hg19", "strand", "gene_symbol", "ensembl_id"]
         let headings = other.concat(datasets).concat(databases);
         let datasetsStart = other.length;
         let datasetsEnd = other.length + datasets.length;
-        let matrix = [];
+        let matrix = undefined;
+        let indices = undefined;
 
         let sortCurrCol = -1;
         let sortCurrIndex = 0;
@@ -156,6 +158,7 @@
                 hdf5Data = f.get("data");
                 matrix = [];
                 for(let h of headings) matrix.push([...hdf5Data.get(h).value]);
+                indices = new Array(matrix[0].length);
 
                 makeTable();
                 incAwaitAll();
@@ -201,7 +204,6 @@
             tableContents += "</thead>";
             tableContents += '<tbody>';
             
-            var indices = new Array(matrix[0].length);
             for (var i=0; i < matrix[0].length; ++i) indices[i] = i;
             if(sortCurrCol >= 0) {
                 if(sortClassOrder[sortCurrIndex] == "asc") {
