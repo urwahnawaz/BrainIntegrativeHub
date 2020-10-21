@@ -82,12 +82,12 @@ class PanelManager {
         return cache.data.slice(rowStart - chunkStart, rowStart + rowLength - chunkStart);
     }
 
-    _transformZScore(arr, datasetName, matrixName) {
+    _transformZScore(arr, datasetName, matrixName, which) {
         var self = this;
         let matrix = self.hdf5Group.get(datasetName + "/matrices/" + matrixName);
-        let mean = matrix.attrs["mean"];
-        let sd = matrix.attrs["sd"];
-        for(let i=0; i<arr.length; ++i) arr[i] = (arr[i] - mean) / sd;
+        let means = matrix.attrs["mean"];
+        let sds = matrix.attrs["sd"];
+        for(let i=0; i<arr.length; ++i) arr[i] = (arr[i] - means[which[i]]) / sds[which[i]];
     }
 
     //assigns all callbacks to general, plot agnostic helper functions
@@ -164,9 +164,9 @@ class PanelManager {
         let yAxisLabel = yAxis;
         let xAxisLabel = xAxis;
         if(useZScore) {
-            self._transformZScore(y, dataset, yAxis);
+            self._transformZScore(y, dataset, yAxis, which);
             if(useMatrices) {
-                self._transformZScore(x, dataset, xAxis);
+                self._transformZScore(x, dataset, xAxis, which);
                 xAxisLabel += " (Z-Score)";
             }
             yAxisLabel += " (Z-Score)";
