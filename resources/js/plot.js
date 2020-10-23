@@ -1,6 +1,6 @@
 //D3 plot drawing only
 class Plot {
-    constructor(elementId, jitterWidth=50) {
+    constructor(elementId, jitterWidth = 50) {
         var self = this;
 
         self.elementId = elementId;
@@ -33,8 +33,8 @@ class Plot {
 
         // Show the X scale
         self.x = d3.scaleLinear()
-            .range([self.rangePad, self.width-self.rangePad])
-            .domain(data.length == 1 ? [0, 2*data[0].x] : d3.extent(data, d => d.x))
+            .range([self.rangePad, self.width - self.rangePad])
+            .domain(data.length == 1 ? [0, 2 * data[0].x] : d3.extent(data, d => d.x))
         self.svg.append("g")
             .attr("transform", "translate(0," + self.height + ")")
             .call(d3.axisBottom(self.x))
@@ -42,9 +42,9 @@ class Plot {
         var pointColorScale = undefined;
         var categoriesZ = undefined;
         if (data[0].z) {
-            categoriesZ = self._getCategories(data, d=>d.z)
+            categoriesZ = self._getCategories(data, d => d.z)
             let colors = colorbrewer["Paired"][Math.max(3, categoriesZ.length)];
-            if(colors) {
+            if (colors) {
                 pointColorScale = d3.scaleOrdinal()
                     .domain(data.map(d => d.z))
                     .range(colors);
@@ -76,12 +76,16 @@ class Plot {
             .attr("cx", function (d) { return (self.x(d.x)) })
             .attr("cy", function (d) { return (self.y(d.y)) })
             .attr("r", 4)
-            .style("fill", function (d) { return pointColorScale ? (pointColorScale(d.z)) : "#2b6da4"})
+            .style("fill", function (d) { return pointColorScale ? (pointColorScale(d.z)) : "#2b6da4" })
             .attr("stroke", "black")
+            .on("mouseover", (d) => self._tooltipMouseOver(d))
+            .on("mouseleave", (d) => self._tooltipMouseLeave(d))
 
-        if(data[0].z && !pointColorScale) {
+        if (data[0].z && !pointColorScale) {
             window.alert("Couldn't display " + categoriesZ.length + " categories");
         }
+
+        self._addTooltip();
     }
 
     //Expects [{x, y}...] where x is string and y is numeric
@@ -89,7 +93,7 @@ class Plot {
         var self = this;
         self._update(data, xName, yName, title);
 
-        while(self.cachedJitter.length < data.length) self.cachedJitter.push(- self.jitterWidth / 2 + Math.random() * self.jitterWidth);
+        while (self.cachedJitter.length < data.length) self.cachedJitter.push(- self.jitterWidth / 2 + Math.random() * self.jitterWidth);
 
         // Compute quartiles, median, inter quantile range min and max --> these info are then used to draw the box.
         var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
@@ -105,11 +109,11 @@ class Plot {
             })
             .entries(data)
 
-        let categoriesX = self._getCategories(data, d=>d.x)
+        let categoriesX = self._getCategories(data, d => d.x)
 
         // Show the X scale
         self.x = d3.scaleBand()
-            .range([self.rangePad, self.width-self.rangePad])
+            .range([self.rangePad, self.width - self.rangePad])
             .domain(categoriesX)
             .paddingInner(1)
             .paddingOuter(.5)
@@ -131,7 +135,7 @@ class Plot {
             .style("width", 40)
 
         // rectangle for the main box
-        var boxWidth = (self.width - 2*self.rangePad) / categoriesX.length - self.boxPadding;
+        var boxWidth = (self.width - 2 * self.rangePad) / categoriesX.length - self.boxPadding;
         self.svg.selectAll("boxes")
             .data(sumstat)
             .enter()
@@ -160,11 +164,15 @@ class Plot {
             .data(data)
             .enter()
             .append("circle")
-            .attr("cx", function (d, i) { return self.x(d.x) + (data.length <=1 ? 0 : self.cachedJitter[i]) })
+            .attr("cx", function (d, i) { return self.x(d.x) + (data.length <= 1 ? 0 : self.cachedJitter[i]) })
             .attr("cy", function (d) { return self.y(d.y) })
             .attr("r", 4)
             .style("fill", "white")
             .attr("stroke", "black")
+            .on("mouseover", (d) => self._tooltipMouseOver(d))
+            .on("mouseleave", (d) => self._tooltipMouseLeave(d))
+
+        self._addTooltip();
     }
 
     //Internal function for shared axis creation
@@ -176,8 +184,8 @@ class Plot {
 
         //Create y scale
         self.y = d3.scaleLinear()
-            .domain(data.length == 1 ? [0, 2*data[0].y] : d3.extent(data, d => d.y))
-            .range([self.height-self.rangePad, self.rangePad])
+            .domain(data.length == 1 ? [0, 2 * data[0].y] : d3.extent(data, d => d.y))
+            .range([self.height - self.rangePad, self.rangePad])
 
         self.svg.append("g").call(d3.axisLeft(self.y))
 
@@ -197,17 +205,46 @@ class Plot {
             .text(xName);
 
         // Show title
-        self.svg.append("text")             
-        .attr("transform",
-                "translate(" + (self.width/2) + " ," + 
-                           -self.margin.top/2 + ")")
-        .style("text-anchor", "middle")
-        .text(title);
+        self.svg.append("text")
+            .attr("transform",
+                "translate(" + (self.width / 2) + " ," +
+                -self.margin.top / 2 + ")")
+            .style("text-anchor", "middle")
+            .text(title);
+    }
+
+    _addTooltip() {
+        //Create tooltip
+        var self = this;
+        self.tooltip = self.svg.append("text")
+            .attr("fill-opacity", 0)
+            .attr("font-size", "12px")
+            .style("text-anchor", "middle")
     }
 
     _getCategories(data, func) {
-        let ret = {}
-        for (let d of data) ret[func(d)] = true
-        return Object.keys(ret);
+        let dic = {}
+        for (let d of data) dic[func(d)] = true
+        let ret = Object.keys(dic);
+        ret.sort();
+        return ret;
+    }
+
+    _tooltipMouseOver(d) {
+        var self = this;
+        self.tooltip
+            .attr("fill-opacity", 1)
+            .text(d.name)
+            .attr("transform",
+                "translate(" + (self.x(d.x)) + " ," +
+                (self.y(d.y) - 20) + ")")
+    }
+
+    _tooltipMouseLeave(d) {
+        this.tooltip
+            .attr("fill-opacity", 0)
+            .attr("transform",
+                "translate(" + 0 + " ," +
+                0 + ")")
     }
 }

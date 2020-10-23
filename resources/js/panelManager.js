@@ -131,14 +131,11 @@ class PanelManager {
         let yMatrixRow = self._getMatrixRowChunkCached(dataset, yAxis, yRow);
         for(let i=0; i<yMatrixRow.length; ++i) {
             let val = yMatrixRow[i];
-            if(val > 0) {
+            //if(val > 0) { //TODO remove which since we are including ALL points
                 y.push(val)
                 which.push(i);
-            } 
+            //} 
         }
-
-        //z score for y:
-        // mean(cpm) and sd(cpm) for WHOLE circ matrix
 
         let xAxis = controls.getSelectedXAxis();
         let x = [];
@@ -190,6 +187,11 @@ class PanelManager {
             plotData = x.map((v, i) => {return {x: x[i], y: y[i], z: z[i]};});
         } else {
             plotData = x.map((v, i) => {return {x: x[i], y: y[i]};});
+        }
+
+        let sampleNames = self.hdf5Group.get(dataset).attrs["sample_id"];
+        for(let i=0; i<which.length; ++i) {
+            plotData[i].name = sampleNames[i];
         }
 
         if(xAxisIsString) {
