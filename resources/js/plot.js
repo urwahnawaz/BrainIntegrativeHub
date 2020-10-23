@@ -95,21 +95,8 @@ class Plot {
 
         while (self.cachedJitter.length < data.length) self.cachedJitter.push(- self.jitterWidth / 2 + Math.random() * self.jitterWidth);
 
-        // Compute quartiles, median, inter quantile range min and max --> these info are then used to draw the box.
-        var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
-            .key(function (d) { return d.x; })
-            .rollup(function (d) {
-                let q1 = d3.quantile(d.map(function (g) { return g.y; }).sort(d3.ascending), .25)
-                let median = d3.quantile(d.map(function (g) { return g.y; }).sort(d3.ascending), .5)
-                let q3 = d3.quantile(d.map(function (g) { return g.y; }).sort(d3.ascending), .75)
-                let interQuantileRange = q3 - q1
-                let min = q1 - 1.5 * interQuantileRange
-                let max = q3 + 1.5 * interQuantileRange
-                return ({ q1: q1, median: median, q3: q3, interQuantileRange: interQuantileRange, min: min, max: max })
-            })
-            .entries(data)
-
         let categoriesX = self._getCategories(data, d => d.x)
+        let multiplePerCategory = (data.length > categoriesX.length);
 
         // Show the X scale
         self.x = d3.scaleBand()
@@ -122,49 +109,65 @@ class Plot {
             .attr("transform", "translate(0," + self.height + ")")
             .call(d3.axisBottom(self.x))
 
-        // Show the main vertical line
-        self.svg.selectAll("vertLines")
-            .data(sumstat)
-            .enter()
-            .append("line")
-            .attr("x1", function (d) { return (self.x(d.key)) })
-            .attr("x2", function (d) { return (self.x(d.key)) })
-            .attr("y1", function (d) { return (Math.min(self.height, self.y(d.value.min))) })
-            .attr("y2", function (d) { return (self.y(d.value.max)) })
-            .attr("stroke", "black")
-            .style("width", 40)
+        if(multiplePerCategory) {
+            // Compute quartiles, median, inter quantile range min and max --> these info are then used to draw the box.
+            var sumstat = d3.nest() // nest function allows to group the calculation per level of a factor
+                .key(function (d) { return d.x; })
+                .rollup(function (d) {
+                    let q1 = d3.quantile(d.map(function (g) { return g.y; }).sort(d3.ascending), .25)
+                    let median = d3.quantile(d.map(function (g) { return g.y; }).sort(d3.ascending), .5)
+                    let q3 = d3.quantile(d.map(function (g) { return g.y; }).sort(d3.ascending), .75)
+                    let interQuantileRange = q3 - q1
+                    let min = q1 - 1.5 * interQuantileRange
+                    let max = q3 + 1.5 * interQuantileRange
+                    return ({ q1: q1, median: median, q3: q3, interQuantileRange: interQuantileRange, min: min, max: max })
+                })
+                .entries(data)
 
-        // rectangle for the main box
-        var boxWidth = (self.width - 2 * self.rangePad) / categoriesX.length - self.boxPadding;
-        self.svg.selectAll("boxes")
-            .data(sumstat)
-            .enter()
-            .append("rect")
-            .attr("x", function (d) { return (self.x(d.key) - boxWidth / 2) })
-            .attr("y", function (d) { return (self.y(d.value.q3)) })
-            .attr("height", function (d) { return (self.y(d.value.q1) - self.y(d.value.q3)) })
-            .attr("width", boxWidth)
-            .attr("stroke", "black")
-            .style("fill", "#2b6da4")//#69b3a2
+            // Show the main vertical line
+            self.svg.selectAll("vertLines")
+                .data(sumstat)
+                .enter()
+                .append("line")
+                .attr("x1", function (d) { return (self.x(d.key)) })
+                .attr("x2", function (d) { return (self.x(d.key)) })
+                .attr("y1", function (d) { return (Math.min(self.height, self.y(d.value.min))) })
+                .attr("y2", function (d) { return (self.y(d.value.max)) })
+                .attr("stroke", "black")
+                .style("width", 40)
 
-        // Show the median
-        self.svg.selectAll("medianLines")
-            .data(sumstat)
-            .enter()
-            .append("line")
-            .attr("x1", function (d) { return (self.x(d.key) - boxWidth / 2) })
-            .attr("x2", function (d) { return (self.x(d.key) + boxWidth / 2) })
-            .attr("y1", function (d) { return (self.y(d.value.median)) })
-            .attr("y2", function (d) { return (self.y(d.value.median)) })
-            .attr("stroke", "black")
-            .style("width", 80)
+            // rectangle for the main box
+            var boxWidth = (self.width - 2 * self.rangePad) / categoriesX.length - self.boxPadding;
+            self.svg.selectAll("boxes")
+                .data(sumstat)
+                .enter()
+                .append("rect")
+                .attr("x", function (d) { return (self.x(d.key) - boxWidth / 2) })
+                .attr("y", function (d) { return (self.y(d.value.q3)) })
+                .attr("height", function (d) { return (self.y(d.value.q1) - self.y(d.value.q3)) })
+                .attr("width", boxWidth)
+                .attr("stroke", "black")
+                .style("fill", "#2b6da4")//#69b3a2
+
+            // Show the median
+            self.svg.selectAll("medianLines")
+                .data(sumstat)
+                .enter()
+                .append("line")
+                .attr("x1", function (d) { return (self.x(d.key) - boxWidth / 2) })
+                .attr("x2", function (d) { return (self.x(d.key) + boxWidth / 2) })
+                .attr("y1", function (d) { return (self.y(d.value.median)) })
+                .attr("y2", function (d) { return (self.y(d.value.median)) })
+                .attr("stroke", "black")
+                .style("width", 80)
+        }
 
         // Add individual points
         self.svg.selectAll("indPoints")
             .data(data)
             .enter()
             .append("circle")
-            .attr("cx", function (d, i) { return self.x(d.x) + (data.length <= 1 ? 0 : self.cachedJitter[i]) })
+            .attr("cx", function (d, i) { return self.x(d.x) + (multiplePerCategory ? self.cachedJitter[i] : 0) }) //TODO per-category jitter/no jitter
             .attr("cy", function (d) { return self.y(d.y) })
             .attr("r", 4)
             .style("fill", "white")
