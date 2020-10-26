@@ -9,6 +9,7 @@ from circrangegroup import CircRangeGroup
 
 class CircAtlas2Iter(AbstractDB):
     name = "CircAtlas2DL"
+    url = "http://159.226.67.237:8080/new/index.php"
 
     def __init__(self, directory):
         super().__init__()

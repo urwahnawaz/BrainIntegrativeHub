@@ -5,7 +5,7 @@ from sortedcontainers import SortedSet
 class CircRow:
     META_INDEX_CIRC_NOT_IN_DB = -1
 
-    def __init__(self, group, hsa, gene, db_id, meta_index):
+    def __init__(self, group, hsa, gene, db_id, meta_index, url=""):
         self.group = group
         self.hsa = hsa
         self.gene = gene
@@ -15,6 +15,8 @@ class CircRow:
         self.geneId = ""
         self.mergeCount = 0
         self._error = ""
+        self._url = [""] * (AbstractDB.id_max + 1)
+        self._url[db_id] = url
 
     def merge(self, other):
         #Add other tissues/studies, transfer reads to existing if undefined
@@ -26,6 +28,8 @@ class CircRow:
             else:
                 self.addExpression(val)
         for i in range(len(other._meta)): self._meta[i] = max(self._meta[i], other._meta[i])
+        for i in range(len(other._meta)): 
+            if(not self._url[i]): self._url[i] = other._url[i]
         self.hsa.merge(other.hsa)
         self.mergeCount += other.mergeCount + (0 if (self.group == other.group) else 1) #Only counting non exact merges
     

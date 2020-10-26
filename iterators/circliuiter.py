@@ -10,6 +10,7 @@ from expression import Expression
 
 class CircLiuIter(AbstractLiftoverIter):
     name = "Liu"
+    isDataset = True
 
     def __init__(self, directory):
         super().__init__(directory)

@@ -12,6 +12,9 @@ from expression import Expression
 
 class CircFunBaseIter(AbstractLiftoverIter):
     name = "CircFunBase"
+    url = "http://bis.zju.edu.cn/CircFunBase"
+    urlPrefix = "http://bis.zju.edu.cn/CircFunBase/detail.php?name="
+    hasIndividualURLs = True
 
     def __init__(self, directory):
         super().__init__(directory)
@@ -42,7 +45,7 @@ class CircFunBaseIter(AbstractLiftoverIter):
             if not match: continue
 
             group = CircRangeGroup(ch=match.group(1), strand='.', versions=super().__next__())
-            ret = CircRow(group=group, hsa=ids, gene=line[3], db_id = self.id, meta_index = self.meta_index)
+            ret = CircRow(group=group, hsa=ids, gene=line[3], db_id = self.id, meta_index = self.meta_index, url=line[0])
 
             if "brain" in line[2]:
                 ret.addExpression(Expression(self.matcher.getTissueFromSynonym("Brain").name, line[5]))

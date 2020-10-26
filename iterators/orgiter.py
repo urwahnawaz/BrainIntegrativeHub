@@ -1,18 +1,23 @@
 import csv, re, os
-import pandas as pd
 
-from abstractliftoveriter import AbstractLiftoverIter
+from abstractmetaiter import AbstractMetaIter
 from circrow import CircRow
 from circhsa import CircHSA
 from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 from expression import Expression
 
-class OrgIter(AbstractLiftoverIter):
+class OrgIter(AbstractMetaIter):
     name = "Org"
+    isDataset = True
 
     def __init__(self, directory):
-        super().__init__(directory)
+        super().__init__(
+            directory, 
+            [directory + "/Reduced/org_cpm.csv"],
+            ["CPM"],
+            directory + "/Reduced/org_meta.csv",
+            "Celullar maturation")
 
         self.fileName = os.path.join(directory, "org_cpm.csv")
         self.read_file = open(self.fileName, 'r')

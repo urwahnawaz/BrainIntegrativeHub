@@ -32,12 +32,11 @@ from iterators.sy5yiter import SY5YIter
 
 nmDist = 10 #Maximum difference in coordinates to be considered a near match
 
-def isInNovelDataset(circ):
-    return ((circ._meta[0] != CircRow.META_INDEX_CIRC_NOT_IN_DB) or
-        (circ._meta[1] != CircRow.META_INDEX_CIRC_NOT_IN_DB) or
-        (circ._meta[2] != CircRow.META_INDEX_CIRC_NOT_IN_DB) or
-        (circ._meta[3] != CircRow.META_INDEX_CIRC_NOT_IN_DB) or
-        (circ._meta[4] != CircRow.META_INDEX_CIRC_NOT_IN_DB))
+def isInDataset(circ, iters):
+    for i in range(len(iters)):
+        if iters[i].isDataset and circ._meta[i] != CircRow.META_INDEX_CIRC_NOT_IN_DB:
+            return True
+    return False
 
 def shouldMerge(circ1, circ2):
     cmp = circ1.hsa.cmp(circ2.hsa)
@@ -74,78 +73,8 @@ def writeIntersectionPlot(inputIterators, iter):
     plot(df, facecolor="red", sort_by="cardinality", show_counts='%d')
     pyplot.savefig('out.png')
 
-def writeHDF5Matrix(fileName, entryGroup, idGroup, datasetName, noneType="NA"):
-    heading = []
-    isHeading = True
-    lines = []
-    for line in csv.reader(open(fileName, 'r'), delimiter=','):
-        if isHeading:
-            heading = line[1:]
-            isHeading = False
-        else: 
-            lines.append(line)
-
-    mdata1 = []
-    mdata2 = []
-    for line in lines:
-        mdata1.append(line[0])
-        mdata2.append(tuple([(line[i] if line[i] != noneType else -1.0) for i in range(1, len(line))]))
-
-    #for j in range(1, len(lines[0])): #This is transpose, but not needed!
-        #mdata2.append(tuple([(lines[i][j] if lines[i][j] != noneType else -1.0) for i in range(0, len(lines))]))
-
-    arr = np.array(mdata2, dtype="f4") #Note chunks are 100kb, and include whole rows
-    ds = entryGroup.create_dataset(datasetName, data=arr, chunks=(min(arr.shape[0], math.floor(10000/len(heading))), arr.shape[1]), compression="gzip", compression_opts=9)
-    ds.attrs.create("sd", np.std(arr))
-    ds.attrs.create("mean", np.mean(arr))
-
-    #if not "circ_id" in idGroup:
-        #idGroup.create_dataset("sample_id", data=np.array([h.encode() for h in heading], dtype="S" + str(len(max(heading, key=len)))), compression="gzip", compression_opts=9)
-        #idGroup.create_dataset("circ_id", data=np.array([m.encode() for m in mdata1], dtype="S" + str(len(max(mdata1, key=len)))), compression="gzip", compression_opts=9)
-
-def writeHDF5Columns(fileName, hdf5Group, noneType="NA"):
-    heading = []
-    isHeading = True
-    lines = []
-    for line in csv.reader(open(fileName, 'r'), delimiter=','):
-        if isHeading:
-            heading = line
-            isHeading = False
-        else: 
-            lines.append(line)
-    heading[0] = "circ_id"
-    
-    allTypes = [int, float, str]
-    allDefaults = [0, 0.0, ""]
-    allTypesNp = ["i4", "f4", "S"]
-    colTypes = []
-    colTypesNp = []
-    for i in range(1, len(lines[0])):
-        for k in range(len(allTypes)):
-            try:
-                #Attempt to parse all as this type
-                colType = allTypes[k]
-                values = [colType(lines[j][i]) for j in range(len(lines)) if lines[j][i] != noneType]
-
-                #No exception so correct type, fix values for hdf5
-                colTypeNp = allTypesNp[k] + (str(len(max(values, key=len))) if allTypes[k]==str else "")
-                for m in range(len(values)):
-                    if m == noneType:
-                        values[m] = allDefaults[k]
-                    elif colType == str:
-                        values[m] = values[m].encode()
-                    
-                #Write dataset
-                arr = np.array(values, dtype=colTypeNp)
-                hdf5Group.create_dataset(heading[i], data=arr, chunks=arr.shape, compression="gzip", compression_opts=9)
-                break
-            except:
-                continue
-        else:
-            raise("ERROR no type resolved for " + heading[i])
-    hdf5Group.attrs.create("default", heading[1])
-
 #View using https://ncnr.nist.gov/ncnrdata/view/nexus-hdf-viewer.html
+#Note JS reader DOES NOT support track_order
 def writeHDF5(circIters, iter, outFile="out.hdf5"):
     root = h5py.File(outFile,'w')
 
@@ -154,7 +83,6 @@ def writeHDF5(circIters, iter, outFile="out.hdf5"):
     longestEnsembl = len(max(iter, key=lambda x:len(x.geneId)).geneId)
 
     data = root.create_group("data")
-
     data.create_dataset("circ_id", data=np.array([circ.group.toId().encode() for circ in iter], dtype='S%d'%longestId), compression="gzip", compression_opts=9)
     data.create_dataset("chr", data=np.array([circ.group.ch.encode() for circ in iter], dtype='S5'), compression="gzip", compression_opts=9)
     data.create_dataset("start_hg19", data=np.array([circ.group.versions[0].start for circ in iter], dtype='i4'), compression="gzip", compression_opts=9)
@@ -164,41 +92,15 @@ def writeHDF5(circIters, iter, outFile="out.hdf5"):
     data.create_dataset("strand", data=np.array([circ.group.strand.encode() for circ in iter], dtype='S1'), compression="gzip", compression_opts=9)
     data.create_dataset("gene_symbol", data=np.array([circ.gene.encode() for circ in iter], dtype='S%d'%longestGene), compression="gzip", compression_opts=9)
     data.create_dataset("ensembl_id", data=np.array([circ.geneId.encode() for circ in iter], dtype='S%d'%longestEnsembl), compression="gzip", compression_opts=9)
+    
+    urls = root.create_group("urls")
+    charts = root.create_group("charts")
     for i in range(len(circIters)):
         data.create_dataset(circIters[i].name, data=np.array([int(circ._meta[i]) for circ in iter], dtype="i4"), compression="gzip", compression_opts=9)
+        if(circIters[i].hasMetadata): circIters[i].writeHDF5Metadata(charts, iter)
+        circIters[i].writeHDF5URLs(urls, iter)
 
-    gokool = root.create_group("charts/CircRNA expression in human brain tissue/gokool")
-    gokoolMatrices = gokool.create_group("matrices")
-    gokoolMeta = gokool.create_group("samples")
-    gokoolMatrices.attrs.create("default", "CPM")
-    writeHDF5Matrix("./data/Gokool/gok_ci.csv", gokoolMatrices, gokool, "CI")
-    writeHDF5Matrix("./data/Gokool/Reduced/gok_circ_cpm.csv", gokoolMatrices, gokool, "CPM")
-    writeHDF5Matrix("./data/Gokool/Reduced/gok_sj_cpm.csv", gokoolMatrices, gokool, "SJ")
-    writeHDF5Columns("./data/Gokool/Reduced/gok_meta.csv", gokoolMeta)
-
-    org = root.create_group("charts/Celullar maturation/org")
-    orgMatrices = org.create_group("matrices")
-    orgMeta = org.create_group("samples")
-    org.attrs.create("default", "")
-    orgMatrices.attrs.create("default", "CPM")
-    writeHDF5Matrix("./data/ORG/Reduced/org_cpm.csv", orgMatrices, org, "CPM")
-    writeHDF5Columns("./data/ORG/Reduced/org_meta.csv", orgMeta)
-
-    sy5y = root.create_group("charts/Neuronal cell differentiation/sy5y")
-    sy5yMatrices = sy5y.create_group("matrices")
-    sy5yMeta = sy5y.create_group("samples")
-    sy5yMatrices.attrs.create("default", "CPM")
-    writeHDF5Matrix("./data/SY5Y/Reduced/sy5y_cpm.csv", sy5yMatrices, sy5y, "CPM")
-    writeHDF5Columns("./data/SY5Y/Reduced/sy5y_meta.csv", sy5yMeta)
-
-    esc_fbn = root.create_group("charts/Neuronal cell differentiation/esc_fbn")
-    esc_fbnMatrices = esc_fbn.create_group("matrices")
-    esc_fbnMeta = esc_fbn.create_group("samples")
-    esc_fbnMatrices.attrs.create("default", "CPM")
-    writeHDF5Matrix("./data/ESC_FBN/Reduced/esc_fbn_cpm.csv", esc_fbnMatrices, esc_fbn, "CPM")
-    writeHDF5Columns("./data/ESC_FBN/Reduced/esc_fbn_meta.csv", esc_fbnMeta)    
-
-def writeCSV(fileName, iter, writeError=False):
+def writeCSV(fileName, iter, datasetsMap, databasesMap, writeError=False):
     #"","chr","hg38.start","hg38.end","hg19.coord","score","strand","hg38.coord","hg38.id","DS.gok","DS.liu","DS.sy5y","DS.esc","DS.org","nDS","DB.atlas","DB.pedia","DB.base","DB.fun","nDB"
     #"1","chr1",9972018,9981170,"chr1_10032076_10041228_+",0,"+","chr1_9972018_9981170_+","chr1_9972018_9981170",TRUE,TRUE,FALSE,FALSE,FALSE,2,TRUE,TRUE,TRUE,FALSE,3
     with open(fileName, 'w', newline='') as csvfile:
@@ -207,19 +109,16 @@ def writeCSV(fileName, iter, writeError=False):
         for circ in iter:
             id19 = circ.group.toId(0)
             id38 = circ.group.toId(1)
-            notIn = CircRow.META_INDEX_CIRC_NOT_IN_DB
-            dsBools = [circ._meta[1] != notIn, circ._meta[0] != notIn, circ._meta[4] != notIn, circ._meta[2] != notIn, circ._meta[3] != notIn] #"DS.gok","DS.liu","DS.sy5y","DS.esc","DS.org" 
-            dbBools = [circ._meta[9] != notIn, circ._meta[5] != notIn, circ._meta[6] != notIn, circ._meta[8] != notIn] #"DB.atlas","DB.pedia","DB.base","DB.fun"
-            
+            dsBools = [(circ._meta[datasetsMap[i]] != CircRow.META_INDEX_CIRC_NOT_IN_DB) for i in range(len(datasetsMap))]
+            dbBools = [(circ._meta[databasesMap[i]] != CircRow.META_INDEX_CIRC_NOT_IN_DB) for i in range(len(databasesMap))]
             dsStrings = [("TRUE" if x else "FALSE") for x in dsBools]
             dbStrings = [("TRUE" if x else "FALSE") for x in dbBools]
-            
             dsCount = sum(x == True for x in dsBools)
             dbCount = sum(x == True for x in dbBools)
             writer.writerow([str(i), circ.group.ch, circ.group.versions[1].start, circ.group.versions[1].end, id19, 0, circ.group.strand, id38, id38[:-1]] + dsStrings + [dsCount] + dbStrings + [dbCount] + ([circ._error] if writeError else []))
             i += 1
 
-def readCSV(fileName):
+def readCSV(fileName, datasetsMap, databasesMap):
     #"","chr","hg38.start","hg38.end","hg19.coord","score","strand","hg38.coord","hg38.id","DS.gok","DS.liu","DS.sy5y","DS.esc","DS.org","nDS","DB.atlas","DB.pedia","DB.base","DB.fun","nDB"
     #"1","chr1",9972018,9981170,"chr1_10032076_10041228_+",0,"+","chr1_9972018_9981170_+","chr1_9972018_9981170_",True,True,False,False,False,2,True,True,True,False,3
     output = SortedSet()
@@ -229,18 +128,8 @@ def readCSV(fileName):
         if (not hg19) or (strand == "."): continue
         group = CircRangeGroup(line[1], strand, [CircRange(int(hg19.group(1)), int(hg19.group(2))), CircRange(int(line[2]), int(line[3]))])
         circ = CircRow(group, CircHSAGroup(), "", 0, -1)
-
-        circ._meta[1] = (1 if line[9] == "TRUE" else -1)
-        circ._meta[0] = (1 if line[10] == "TRUE" else -1)
-        circ._meta[4] = (1 if line[11] == "TRUE" else -1)
-        circ._meta[2] = (1 if line[12] == "TRUE" else -1)
-        circ._meta[3] = (1 if line[13] == "TRUE" else -1)
-        
-        circ._meta[9] = (1 if line[15] == "TRUE" else -1)
-        circ._meta[5] = (1 if line[16] == "TRUE" else -1)
-        circ._meta[6] = (1 if line[17] == "TRUE" else -1)
-        circ._meta[8] = (1 if line[18] == "TRUE" else -1)
-        
+        for i in range(len(datasetsMap)): circ._meta[datasetsMap[i + 9]] = (1 if line[i + 9] == "TRUE" else -1)
+        for i in range(len(databasesMap)): circ._meta[databasesMap[i + 15]] = (1 if line[i + 15] == "TRUE" else -1)
         output.add(circ)
     return output
 
@@ -284,14 +173,13 @@ def annotateEnsemblBiomart(iter):
     for circ in iter:
         if not circ.geneId: circ.geneId = dic.get(circ.gene, None)
 
-def filterOutputToList(iter, debugStep=-1):
+def filterOutputToList(iter, circIters):
     ret = []
-    debug = []
     countExcludedDs = 0
     countExcludedEns = 0
     countExcluded38 = 0
     for circ in iter:
-        if not isInNovelDataset(circ): 
+        if not isInDataset(circ, circIters): 
             countExcludedDs += 1
             circ._error = "ERROR: not in novel datasets"
         elif not circ.group.hasId(): 
@@ -302,6 +190,21 @@ def filterOutputToList(iter, debugStep=-1):
             circ._error = "ERROR: no Ensembl ID found for gene symbol/alias: " + str(circ.gene)
         else: ret.append(circ)
     return ret, countExcludedDs, countExcludedEns, countExcluded38
+
+def outputComparisonCSVs(ss, li, circIters):
+    names = [v.name for v in circIters]
+    datasets = ["Gokool", "Liu", "SY5Y", "ESC_FBN", "Org"]
+    databases = ["CircAtlas2", "Circpedia2", "CircBase", "CircFunBase"]
+    datasetsMap = [names.index[v] for v in datasets]
+    databasesMap = [names.index[v] for v in databases]
+    if -1 not in datasetsMap and -1 not in databasesMap: 
+        writeCSV("outPy.csv", li, datasetsMap, databasesMap)
+        ss2 = readCSV("./data/neuroCirc.csv", datasetsMap, databasesMap)
+        writeCSV("outR.csv", ss2, datasetsMap, databasesMap)
+        missing = ss2.difference(ss)
+        writeCSV("outMissing.csv", missing, datasetsMap, databasesMap)
+        error = [x for x in ss2.intersection(ss) if x._error]
+        writeCSV("outError.csv", error, datasetsMap, databasesMap, True)
 
 if __name__ == '__main__':
     circIters = [
@@ -326,11 +229,9 @@ if __name__ == '__main__':
     annotateEnsemblNCBI(ss)
     annotateEnsemblBiomart(ss)
 
-    li, countExcludedDs, countExcludedEns, countExcluded38 = filterOutputToList(ss)
+    li, countExcludedDs, countExcludedEns, countExcluded38 = filterOutputToList(ss, circIters)
 
     writeHDF5(circIters, li)
-
-    exit()
 
     print("> Filtered %d [not in novel datasets]" % (countExcludedDs))
     print("> Filtered %d [no hg38]" % (countExcluded38))
@@ -342,12 +243,3 @@ if __name__ == '__main__':
         writeIntersectionPlot(circIters, li)
 
     print("%d circrnas written" % (len(li)))
-    exit()
-
-    writeCSV("outPy.csv", li)
-    ss2 = readCSV("./data/neuroCirc.csv")
-    writeCSV("outR.csv", ss2) 
-    missing = ss2.difference(ss)
-    writeCSV("outMissing.csv", missing)
-    error = [x for x in ss2.intersection(ss) if x._error]
-    writeCSV("outError.csv", error, True)

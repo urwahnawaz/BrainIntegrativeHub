@@ -1,18 +1,23 @@
 import csv, re, os
-import pandas as pd
 
-from abstractliftoveriter import AbstractLiftoverIter
+from abstractmetaiter import AbstractMetaIter
 from circrow import CircRow
 from circhsa import CircHSA
 from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 from expression import Expression
 
-class SY5YIter(AbstractLiftoverIter):
+class SY5YIter(AbstractMetaIter):
     name = "SY5Y"
+    isDataset = True
 
     def __init__(self, directory):
-        super().__init__(directory)
+        super().__init__(
+            directory, 
+            [directory + "/Reduced/sy5y_cpm.csv"],
+            ["CPM"],
+            directory + "/Reduced/sy5y_meta.csv",
+            "Neuronal cell differentiation")
 
         self.fileName = os.path.join(directory, "sy5y_cpm.csv")
         self.read_file = open(self.fileName, 'r')

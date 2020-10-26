@@ -7,11 +7,14 @@ from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 from expression import Expression
 
-#TODO: can generate link using id e.g. http://www.circbase.org/cgi-bin/singlerecord.cgi?id=hsa_circ_0114324
+#can generate link using id e.g. http://www.circbase.org/cgi-bin/singlerecord.cgi?id=hsa_circ_0114324
 #Can also generate link using position
 
 class CircBaseIter(AbstractLiftoverIter):
     name = "CircBase"
+    url = "http://www.circbase.org/"
+    urlPrefix = "http://www.circbase.org/cgi-bin/singlerecord.cgi?id="
+    hasIndividualURLs = True
     files = ["Rybak2015.txt", "Maass2017.txt"]
     studies = ["Rybak2015", "Maass2017"]
 
@@ -47,7 +50,7 @@ class CircBaseIter(AbstractLiftoverIter):
             ids.addCircHSA(CircHSA("circBase", line[2]))
 
             group = CircRangeGroup(ch=match.group(1), strand=line[1], versions=super().__next__())
-            ret = CircRow(group=group, hsa=ids, gene=line[10], db_id = self.id, meta_index=self.meta_index)
+            ret = CircRow(group=group, hsa=ids, gene=line[10], db_id = self.id, meta_index=self.meta_index, url=line[0])
 
             tissues = line[5].replace(" ", "").split(',')
             expressions = line[6].replace(" ", "").split(',')

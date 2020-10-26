@@ -1,17 +1,25 @@
-import csv, re, circrow, os
+import csv, re, os
 import pandas as pd
 
-from abstractliftoveriter import AbstractLiftoverIter
+from abstractmetaiter import AbstractMetaIter
 from circhsa import CircHSA
 from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 from expression import Expression
+from circrow import CircRow
 
-class CircGokoolIter(AbstractLiftoverIter):
+class CircGokoolIter(AbstractMetaIter):
     name = "Gokool"
+    isDataset = True
+    url = "https://doi.org/10.1016/j.biopsych.2019.07.029"
 
     def __init__(self, directory):
-        super().__init__(directory)
+        super().__init__(
+            directory, 
+            [directory + "/Reduced/gok_ci.csv", directory + "/Reduced/gok_circ_cpm.csv", directory + "/Reduced/gok_sj_cpm.csv"],
+            ["CI", "CPM", "SJ"],
+            directory + "/Reduced/gok_meta.csv",
+            "CircRNA expression in human brain tissue")
 
         self.currSheet = 0
         self.fileName = os.path.join(directory, "SupplementalTables/SupplementalTable_S3.xlsx")
@@ -38,7 +46,7 @@ class CircGokoolIter(AbstractLiftoverIter):
                 ids.addCircHSA(CircHSA("circBase", line[26+1]))
 
             group = CircRangeGroup(ch=line[2+1], strand=line[8+1], versions=super().__next__())
-            ret = circrow.CircRow(group=group, hsa=ids, gene="" if  pd.isna(line[6+1]) else line[6+1], db_id=self.id, meta_index=self.meta_index)
+            ret = CircRow(group=group, hsa=ids, gene="" if  pd.isna(line[6+1]) else line[6+1], db_id=self.id, meta_index=self.meta_index)
 
             
             ret.addExpression(Expression(self.matcher.getTissueFromSynonym("CTX").name, "Gokool", int(line[20+1])))

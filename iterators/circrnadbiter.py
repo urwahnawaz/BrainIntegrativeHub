@@ -9,6 +9,9 @@ from expression import Expression
 
 class CircRNADbIter(AbstractLiftoverIter):
     name = "RNADb"
+    url = "http://reprod.njmu.edu.cn/cgi-bin/circrnadb/circRNADb.php"
+    urlPrefix = "http://reprod.njmu.edu.cn/cgi-bin/circrnadb/detail_info.php?circ_id="
+    hasIndividualURLs = True
 
     def __init__(self, directory):
         super().__init__(directory)
@@ -33,7 +36,7 @@ class CircRNADbIter(AbstractLiftoverIter):
             ids.addCircHSA(CircHSA("circRNADb", line[0]))
 
             group = CircRangeGroup(ch=line[1], strand=line[4], versions=super().__next__())
-            ret = CircRow(group=group, hsa=ids, gene=line[5], db_id = self.id, meta_index=self.meta_index)
+            ret = CircRow(group=group, hsa=ids, gene=line[5], db_id = self.id, meta_index=self.meta_index, url=line[0])
             ret.addExpression(Expression(self.matcher.getTissueFromSynonym("Brain").name, "CircRNADb"))
             return ret
 

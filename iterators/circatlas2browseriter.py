@@ -9,6 +9,9 @@ from expression import Expression
 
 class CircAtlas2BrowserIter(AbstractLiftoverIter):
     name = "CircAtlas2"
+    url = "http://159.226.67.237:8080/new/index.php"
+    urlPrefix = "http://159.226.67.237:8080/new/circ_detail.php?ID="
+    hasIndividualURLs = True
     #tissues = ['Bone Marrow','Brain','Colon','Heart','Kidney','Liver','Lung','Placental','Prostate','Skeletal Muscle','Small Intestine','Spleen','Spinal Cord','Stomach','Testis','Thymus','Uterus','Pancreas','Retina']
 
     def __init__(self, directory):
@@ -39,7 +42,7 @@ class CircAtlas2BrowserIter(AbstractLiftoverIter):
             ids.addCircHSA(CircHSA("circAltas", line["name"]))
 
             group = CircRangeGroup(ch=match.group(1), strand=line["strand"], versions=super().__next__())
-            ret = CircRow(group=group, hsa=ids, gene=gene, db_id = self.id, meta_index=self.meta_index)
+            ret = CircRow(group=group, hsa=ids, gene=gene, db_id = self.id, meta_index=self.meta_index, url=line["name"])
 
             #Ntis isn't actually a tissue ID, need to make individual calls to get this info
             #tissue = CircAtlas2BrowserIter.tissues[int(line["ntis"]) - 1]

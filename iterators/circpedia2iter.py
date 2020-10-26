@@ -9,6 +9,7 @@ from expression import Expression
 
 class Circpedia2Iter(AbstractLiftoverIter):
     name = "Circpedia2"
+    url = "https://www.picb.ac.cn/rnomics/circpedia"
 
     def __init__(self, directory):
         super().__init__(directory)
