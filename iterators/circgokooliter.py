@@ -11,13 +11,13 @@ from circrow import CircRow
 class CircGokoolIter(AbstractMetaIter):
     name = "Gokool"
     isDataset = True
-    url = "https://doi.org/10.1016/j.biopsych.2019.07.029"
+    url = "https://www.biologicalpsychiatryjournal.com/article/S0006-3223(19)31581-1/"
 
     def __init__(self, directory):
         super().__init__(
             directory, 
-            [directory + "/Reduced/gok_ci.csv", directory + "/Reduced/gok_circ_cpm.csv", directory + "/Reduced/gok_sj_cpm.csv"],
-            ["CI", "CPM", "SJ"],
+            [directory + "/Reduced/gok_circ_cpm.csv", directory + "/Reduced/gok_ci.csv", directory + "/Reduced/gok_sj_cpm.csv"],
+            ["CPM", "CI", "SJ"],
             directory + "/Reduced/gok_meta.csv",
             "CircRNA expression in human brain tissue")
 

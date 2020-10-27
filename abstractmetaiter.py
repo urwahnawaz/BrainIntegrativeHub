@@ -13,7 +13,6 @@ class AbstractMetaIter(AbstractLiftoverIter):
 
     def writeHDF5Metadata(self, root, rows):
         which = [row._meta[self.id] for row in rows if row._meta[self.id] > -1]
-        which.sort()
         experiment = root.create_group(self.groupName + "/" + self.name)
         matrices = experiment.create_group("matrices")
         matrices.attrs.create("default", self.measureNames[0])
@@ -23,8 +22,12 @@ class AbstractMetaIter(AbstractLiftoverIter):
         self._writeHDF5Columns(self.metadata, samples)
 
     def _writeHDF5Matrix(self, fileName, entryGroup, idGroup, datasetName, which, noneType="NA"):
+        #Writes matrix in overall row order
         heading = []
-        lines = []
+        lines = [None] * len(which)
+        sortedWhich = sorted(which)
+        indexOfWhich = [None] * (max(which) + 1)
+        for i in range(len(which)): indexOfWhich[which[i]] = i
         m = -1
         n = 0
         for line in csv.reader(open(fileName, 'r'), delimiter=','):
@@ -32,8 +35,8 @@ class AbstractMetaIter(AbstractLiftoverIter):
                 heading = line[1:]
             elif n >= len(which):
                 break
-            elif which[n] == m:
-                lines.append(line)
+            elif sortedWhich[n] == m:
+                lines[indexOfWhich[sortedWhich[n]]] = line
                 n += 1
             m += 1
 

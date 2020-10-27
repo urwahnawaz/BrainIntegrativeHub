@@ -11,6 +11,7 @@ from expression import Expression
 class CircLiuIter(AbstractLiftoverIter):
     name = "Liu"
     isDataset = True
+    url = "https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1701-8"
 
     def __init__(self, directory):
         super().__init__(directory)
