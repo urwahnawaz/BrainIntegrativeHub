@@ -16,6 +16,7 @@
 
     <script src="resources/js/circviewer.js"></script>
     <script src="resources/js/genomebrowser.js"></script>
+    <script src="resources/js/heatmap.js"></script>
 
     <script src="resources/js/plot.js"></script>
     <script src="resources/js/panelManager.js"></script>
@@ -47,14 +48,26 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
-                                        <a data-toggle="collapse" href="#collapse1">Genome
-                                            browser
-                                            view</a>
+                                        <a data-toggle="collapse" href="#collapse1">Genome browser view</a>
                                     </h4>
                                 </div>
                                 <div id="collapse1" class="panel-collapse collapse in">
                                     <div class="panel-body">
                                         <div id="myGenomeBrowser"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-group">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a data-toggle="collapse" href="#collapse2">Found in datasets</a>
+                                    </h4>
+                                </div>
+                                <div id="collapse2" class="panel-collapse collapse in">
+                                    <div class="panel-body">
+                                        <div id="myHeatmap" align="center"></div>
                                     </div>
                                 </div>
                             </div>
@@ -105,6 +118,8 @@
         var genomebrowser = undefined;
         var panels = [];
         var hdf5Data = undefined;
+        var urls = {};
+        var heatmap = undefined;
 
         //TODO: this is only non self-describing data 
         let datasets = ["Gokool", "Liu", "Org", "ESC_FBN", "SY5Y"];
@@ -160,12 +175,20 @@
                 for(let h of headings) matrix.push([...hdf5Data.get(h).value]);
                 indices = new Array(matrix[0].length);
 
+                let urlsGroup = f.get("urls");
+                for(let k of urlsGroup.keys) {
+                    let dataset = urlsGroup.get(k);
+                    urls[k] = {urls: dataset.value, home: dataset.attrs.home, prefix: dataset.attrs.prefix}
+                }
+
+                console.log(urls);
+
                 makeTable();
                 incAwaitAll();
             });
 
         genomebrowser = new GenomeBrowser("myGenomeBrowser");
-       
+        heatmap = new Heatmap("myHeatmap");
 
         $("#myInput").keyup(function (event) {
             if (event.keyCode === 13) {
@@ -190,8 +213,7 @@
                 let dtypeRes = hdf5Data.get(h).dtype.match(/([A-Z])([0-9]+)/i);
                 let dtypeStyle = "";
                 if(dtypeRes && dtypeRes[1].toLowerCase() == "s") {
-                    dtypeStyle = ' style="width:' + (0.75 * Math.max(h.length+5, parseInt(dtypeRes[2])) * 14) + 'px;" ';
-                    
+                    dtypeStyle = ' style="width:' + (0.725 * Math.max(h.length+5, parseInt(dtypeRes[2])) * 14) + 'px;" ';
                 }
 
                 if (datasets.includes(h) || databases.includes(h)) {
@@ -263,11 +285,29 @@
                 let circ = arg.currentTarget.children[0].textContent;
 
                 genomebrowser.setPosition(arg.currentTarget.children[1].textContent, parseInt(arg.currentTarget.children[2].textContent), parseInt(arg.currentTarget.children[3].textContent));
+                
+                let metaIndex = new Array(headings.length);
 
-                obj = {};
-                for(let i=datasetsStart; i<datasetsEnd; ++i) obj[headings[i].toLowerCase()] = arg.currentTarget.children[i].textContent;
-                for (let p of panels) p.setCircId(circ, obj);
+                //Change heatmap
+                heatmapObj = []
+                for(let i=other.length; i<headings.length; ++i) {
+                    metaIndex[i] = parseInt(arg.currentTarget.children[i].textContent);
+                    present = (metaIndex[i] >= 0);
+                    let url = "";
+                    if(present) {
+                        let urlObj = urls[headings[i]];
+                        if(urlObj) url = urlObj.prefix ? (urlObj.prefix + urlObj.urls[metaIndex[i]]) : urlObj.home;
+                    }
+                    heatmapObj.push({name: headings[i], url: url, present: present, isDataset: (i < datasetsEnd)});
+                }
+                heatmap.update(heatmapObj);
 
+                //Change metadata panels
+                metadataObj = {};
+                for(let i=datasetsStart; i<datasetsEnd; ++i) metadataObj[headings[i]] = metaIndex[i];
+                for (let p of panels) p.setCircId(circ, metadataObj);
+
+                //Show modal
                 $("#myModalTitle").text("CircRNA: " + circ)
                 $("#myModal").modal('toggle')
             });
