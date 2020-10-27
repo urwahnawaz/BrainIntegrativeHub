@@ -50,7 +50,7 @@ class CircBaseIter(AbstractLiftoverIter):
             ids.addCircHSA(CircHSA("circBase", line[2]))
 
             group = CircRangeGroup(ch=match.group(1), strand=line[1], versions=super().__next__())
-            ret = CircRow(group=group, hsa=ids, gene=line[10], db_id = self.id, meta_index=self.meta_index, url=line[0])
+            ret = CircRow(group=group, hsa=ids, gene=line[10], db_id = self.id, meta_index=self.meta_index, url=line[2])
 
             tissues = line[5].replace(" ", "").split(',')
             expressions = line[6].replace(" ", "").split(',')

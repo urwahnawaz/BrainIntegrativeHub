@@ -96,9 +96,10 @@ def writeHDF5(circIters, iter, outFile="out.hdf5"):
     urls = root.create_group("urls")
     charts = root.create_group("charts")
     for i in range(len(circIters)):
-        data.create_dataset(circIters[i].name, data=np.array([int(circ._meta[i]) for circ in iter], dtype="i4"), compression="gzip", compression_opts=9)
         if(circIters[i].hasMetadata): circIters[i].writeHDF5Metadata(charts, iter)
+        circIters[i].reduceIndices(iter)
         circIters[i].writeHDF5URLs(urls, iter)
+        data.create_dataset(circIters[i].name, data=np.array([int(circ._meta[i]) for circ in iter], dtype="i4"), compression="gzip", compression_opts=9)
 
 def writeCSV(fileName, iter, datasetsMap, databasesMap, writeError=False):
     #"","chr","hg38.start","hg38.end","hg19.coord","score","strand","hg38.coord","hg38.id","DS.gok","DS.liu","DS.sy5y","DS.esc","DS.org","nDS","DB.atlas","DB.pedia","DB.base","DB.fun","nDB"

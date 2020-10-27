@@ -22,14 +22,6 @@ class AbstractMetaIter(AbstractLiftoverIter):
             self._writeHDF5Matrix(self.measures[i], matrices, experiment, self.measureNames[i], which)
         self._writeHDF5Columns(self.metadata, samples)
 
-        #Fix _meta indices
-        temp = sorted(rows, key=lambda x:x._meta[self.id])
-        fixed = 0
-        for i in range(len(temp)):
-            if temp[i]._meta[self.id] != -1:
-                temp[i]._meta[self.id] = fixed
-                fixed += 1
-
     def _writeHDF5Matrix(self, fileName, entryGroup, idGroup, datasetName, which, noneType="NA"):
         heading = []
         lines = []
