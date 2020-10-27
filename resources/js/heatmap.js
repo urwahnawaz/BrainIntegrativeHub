@@ -6,7 +6,7 @@ class Heatmap {
         self.elementId = elementId;
         
         // set the dimensions and margins of the heatmap
-        self.margin = { top: 10, right: 0, bottom: 100, left: 0 }
+        self.margin = { top: 50, right: 0, bottom: 10, left: 0 }
         self.width = 1000 - self.margin.left - self.margin.right,
         self.height = 250 - self.margin.top - self.margin.bottom;
     
@@ -35,12 +35,19 @@ class Heatmap {
         //Read the data
         let numBoxes = data.length;
         let boxWidth = self.width / numBoxes;
-        let boxes = self.svg.selectAll("boxes")
+        let boxes = self.svg.selectAll("g")
             .data(data)
             .enter()
-            .append("rect")
-            .attr("x", function (d, i) { return boxWidth * (i)})
-            .attr("y", self.height / 2)
+            .append('g')
+            .attr("transform", (d, i) => `translate(${boxWidth * (i)},${self.height / 2})`);
+
+        boxes.append("text")
+            .attr("fill", "black")
+            .attr("transform", `translate(${boxWidth/2},-10)rotate(-90)`)
+            .text(d => d.name);
+            
+
+        boxes.append("rect")
             .attr("width", boxWidth-4)
             .attr("height", boxWidth-4)
             .style("fill", function (d) { return d3.color(!d.present ? "whitesmoke" : (d.isDataset ? "#ff9433" : "#2b6da4"))})
@@ -52,7 +59,7 @@ class Heatmap {
                 }
 
                 let selected = this;
-                boxes
+                boxes.selectAll("rect")
                 .interrupt()
                 .transition()
                 .filter(function() {return this != selected;})
@@ -73,7 +80,7 @@ class Heatmap {
                 d3.select(this)
                 .style("cursor", "default")
 
-                boxes
+                boxes.selectAll("rect")
                 .interrupt()
                 .transition()
                 .filter(function() {return this != selected;})
