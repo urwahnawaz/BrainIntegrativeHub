@@ -7,7 +7,7 @@ class Heatmap {
         
         // set the dimensions and margins of the heatmap
         self.margin = { top: 50, right: 0, bottom: 10, left: 0 }
-        self.width = 1000 - self.margin.left - self.margin.right,
+        self.width = 800 - self.margin.left - self.margin.right,
         self.height = 250 - self.margin.top - self.margin.bottom;
     
         // append the svg object to the body of the page
