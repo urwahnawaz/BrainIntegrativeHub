@@ -21,7 +21,6 @@ class AbstractDB:
 
     def reduceIndices(self, rows):
         #Fix _meta indices, must do after filtering metadata
-        #temp = sorted(rows, key=lambda x:x._meta[self.id])
         fixed = 0
         for i in range(len(rows)):
             if rows[i]._meta[self.id] >= 0:

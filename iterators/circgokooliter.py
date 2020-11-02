@@ -18,6 +18,8 @@ class CircGokoolIter(AbstractMetaIter):
             directory, 
             [directory + "/Reduced/gok_circ_cpm.csv", directory + "/Reduced/gok_ci.csv", directory + "/Reduced/gok_sj_cpm.csv"],
             ["CPM", "CI", "SJ"],
+            "",
+            "",
             directory + "/Reduced/gok_meta.csv",
             "CircRNA expression in human brain tissue")
 

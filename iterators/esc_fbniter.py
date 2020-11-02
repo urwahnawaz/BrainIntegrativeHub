@@ -16,6 +16,8 @@ class ESC_FBNIter(AbstractMetaIter):
             directory, 
             [directory + "/Reduced/esc_fbn_cpm.csv"],
             ["CPM"],
+            "",
+            "",
             directory + "/Reduced/esc_fbn_meta.csv",
             "Neuronal cell differentiation")
 

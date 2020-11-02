@@ -16,6 +16,8 @@ class SY5YIter(AbstractMetaIter):
             directory, 
             [directory + "/Reduced/sy5y_cpm.csv"],
             ["CPM"],
+            "",
+            "",
             directory + "/Reduced/sy5y_meta.csv",
             "Neuronal cell differentiation")
 

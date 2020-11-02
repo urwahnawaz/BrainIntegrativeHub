@@ -16,6 +16,8 @@ class OrgIter(AbstractMetaIter):
             directory, 
             [directory + "/Reduced/org_cpm.csv"],
             ["CPM"],
+            "",
+            "",
             directory + "/Reduced/org_meta.csv",
             "Celullar maturation")
 

@@ -1,20 +1,27 @@
 import csv, re, os
 import pandas as pd
 
-from abstractliftoveriter import AbstractLiftoverIter
+from abstractmetaiter import AbstractMetaIter
 from circrow import CircRow
 from circhsa import CircHSA
 from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 from expression import Expression
 
-class CircLiuIter(AbstractLiftoverIter):
+class CircLiuIter(AbstractMetaIter):
     name = "Liu"
     isDataset = True
     url = "https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1701-8"
 
     def __init__(self, directory):
-        super().__init__(directory)
+        super().__init__(
+            directory, 
+            [],
+            [],
+            directory + "/Reduced/liu_qtl.csv",
+            directory + "/Processed/liu_exp.csv",
+            "",
+            "QTL Analysis Brain")
 
         self.fileName = os.path.join(directory, "Liu et al. 2020 - 13059_2019_1701_MOESM3_ESM.xlsx")
         self.read_file = pd.read_excel(self.fileName, sheet_name="Table S2")
