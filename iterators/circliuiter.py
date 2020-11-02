@@ -18,7 +18,7 @@ class CircLiuIter(AbstractMetaIter):
             directory, 
             [],
             [],
-            directory + "/Reduced/liu_qtl.csv",
+            directory + "/Reduced/liu_qtl2.csv",
             directory + "/Processed/liu_exp.csv",
             "",
             "QTL Analysis Brain")

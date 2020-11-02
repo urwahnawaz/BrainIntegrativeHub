@@ -133,7 +133,7 @@ class AbstractMetaIter(AbstractLiftoverIter):
         for line in open(fileName, 'r').readlines():
             keyFiltered = line.split(',', 1)[0]
             if m == -1:
-                heading = line[1:]
+                heading = line.rstrip("\n")
             else:
                 if keyCurr != keyFiltered:
                     try:
@@ -144,9 +144,9 @@ class AbstractMetaIter(AbstractLiftoverIter):
                     n += 1
 
                 if not lines[indexOfWhich[sortedWhich[n]]]:
-                    lines[indexOfWhich[sortedWhich[n]]] = [line.split(',',1)[1].rstrip("\n")]
+                    lines[indexOfWhich[sortedWhich[n]]] = [line.rstrip("\n")]
                 else:
-                    lines[indexOfWhich[sortedWhich[n]]].append(line.split(',',1)[1].rstrip("\n"))
+                    lines[indexOfWhich[sortedWhich[n]]].append(line.rstrip("\n"))
             m += 1
         #Data is now in order of ss with None if no qtl
         #-2 means its here but not relevant for indexing
@@ -168,4 +168,5 @@ class AbstractMetaIter(AbstractLiftoverIter):
                     mdata.append(subline)
         
         arr = np.array(mdata, dtype="S" + str(len(max(mdata, key=len))))
-        hdf5Group.create_dataset("QTL", data=arr, compression="gzip", compression_opts=9)
+        ds = hdf5Group.create_dataset("QTL", data=arr, compression="gzip", compression_opts=9)
+        ds.attrs.create("heading", heading)
