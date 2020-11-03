@@ -351,12 +351,21 @@
 
                 //Change QTL table
                 let qtl = undefined;
+
+                let temp = [];
+                for(let i=0; i<matrix[10].length; ++i) {
+                    if(matrix[10][i] >= 0 && qtlIndices[matrix[10][i]] >= 0) {
+                        temp.push(qtlIndices[matrix[10][i]]);
+                        if(temp.length > 10) break;
+                    }
+                }
                 
                 if(matrix[10][circindex] >= 0) {
                     let qtlCalcIndex = qtlIndices[matrix[10][circindex]]
+                    
                     if(qtlCalcIndex >= 0) {
                         let end = -1;
-                        for(let i = qtlCalcIndex + 1; i < qtlIndices.length; ++i) {
+                        for(let i = matrix[10][circindex] + 1; i < qtlIndices.length; ++i) {
                             if(qtlIndices[i] >= 0) {
                                 end = qtlIndices[i];
                                 break;
@@ -365,7 +374,6 @@
                         qtl = hdf5QTL.value.slice(qtlCalcIndex, (end == -1 ? hdf5QTL.shape[0] : end));
                         for(let i=0; i<qtl.length; ++i) qtl[i] = qtl[i].split(",");
                     }
-                    
                 }
 
                 qtlTable.setData(qtl);
