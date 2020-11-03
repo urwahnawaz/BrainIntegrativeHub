@@ -8,20 +8,24 @@ class LMSPanel {
         document.getElementById(self.parentId).children[childIndex].insertAdjacentHTML("afterEnd", self._generateHTML());
         self.metas = metas;
         self.data = {}
-        for(let panel of hdf5Group.keys) {
-            let panelGroup = hdf5Group.get(panel);
-            for(let experiment of panelGroup.keys) {
-                let experimentGroup = panelGroup.get(experiment)
-                let scaled = experimentGroup.get("scaled");
-                self.data[experiment] = [...scaled.value];
+        for(let type of ["charts", "tables"]) {
+            let typeGroup = hdf5Group.get(type);
+            for(let panel of typeGroup.keys) {
+                let panelGroup = typeGroup.get(panel);
+                for(let experiment of panelGroup.keys) {
+                    let experimentGroup = panelGroup.get(experiment)
+                    let scaled = experimentGroup.get("scaled");
+                    self.data[experiment] = [...scaled.value];
+                }
             }
         }
+        
 
         self.plot = new Plot("lmsplot");
 
         let names = Object.keys(self.data);
-        self._setOptions("lmsselect1", names);
-        self._setOptions("lmsselect2", names)
+        self._setOptions("lmsselect1", names, "Gokool");
+        self._setOptions("lmsselect2", names, "Liu")
         $('#lmsselect1').on('change', () => self.update());
         $('#lmsselect2').on('change', () => self.update());
 
@@ -89,10 +93,10 @@ class LMSPanel {
                     <div id="${this.elementId + "collapse"}" class="panel-collapse collapse in">
                         <div class="panel-body">
                             <div class="col-md-2">
-                                <div>Select X Axis</div>
-                                <select class="selectpicker" id="lmsselect1"></select><br><br>
                                 <div>Select Y Axis</div>
                                 <select class="selectpicker" id="lmsselect2"></select><br><br>
+                                <div>Select X Axis</div>
+                                <select class="selectpicker" id="lmsselect1"></select><br><br>
                             </div>
                             <div class="col-md-9 col-md-offset-1">
                                 <div id="lmsplot"></div>

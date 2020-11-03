@@ -107,7 +107,7 @@ class PanelManager {
 
         let matrices = self.hdf5Group.get(dataset + "/matrices");
         let samples = self.hdf5Group.get(dataset + "/samples");
-        if(useMatrices) controls.setXAxis(matrices.keys, matrices.attrs["default"]);
+        if(useMatrices) controls.setXAxis(matrices.keys);
         else controls.setXAxis(samples.keys, samples.attrs["default"]);
         controls.setYAxis(matrices.keys, matrices.attrs["default"]);
         controls.setColorings(samples.keys.filter(k=>$.type(samples.get(k).value[0]) === "string"), "None");

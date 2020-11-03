@@ -40,7 +40,7 @@ class GenomeBrowser {
                 stylesheet_uri: '//www.biodalliance.org/stylesheets/bb-repeats2.xml'
             }],
         });
-        this.browser.addInitListener(() => $(".powered-by").first().remove());
+        //this.browser.addInitListener(() => $(".powered-by").first().remove());
     }
 
     setPosition(chr, start, end) {

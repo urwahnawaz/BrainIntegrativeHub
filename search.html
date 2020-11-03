@@ -124,6 +124,7 @@
         var heatmap = undefined;
         var hdf5QTL = undefined;
         var qtlTable = undefined;
+        var qtlIndices = undefined;
 
         //TODO: this is only non self-describing data 
         let datasets = ["Gokool", "Liu", "Org", "ESC_FBN", "SY5Y"];
@@ -184,13 +185,21 @@
                     let dataset = urlsGroup.get(k);
                     urls[k] = {urls: dataset.value, home: dataset.attrs.home, prefix: dataset.attrs.prefix}
                 }
-
+                qtlIndices = [...f.get("tables/QTL Analysis Brain/Liu/indices").value];
                 hdf5QTL = f.get("tables/QTL Analysis Brain/Liu/QTL");
                 qtlTable = new QTLPanel("allpanels", 2, "QTL Analysis Brain", hdf5QTL.attrs.heading.split(","));
+                
 
                 lmsMeta = {};
                 for(let i=other.length; i<other.length + datasets.length; ++i) lmsMeta[headings[i]] = matrix[i];
-                lmsPanel = new LMSPanel("allpanels", 1, "Dataset comparison (log mean scale)", f.get("charts"), lmsMeta);
+                lmsPanel = new LMSPanel("allpanels", 1, "Dataset comparison (log mean scale)", f, lmsMeta);
+
+                i = 0;
+                for(let x of document.getElementsByClassName("panel-body")) {
+                    if(i++ > 1) {
+                        x.insertAdjacentHTML("afterbegin", '<div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin fermentum sem a nibh tempor, non rutrum ipsum molestie. Suspendisse sagittis hendrerit aliquam. In posuere nisl sit amet ultrices pretium. Sed vel turpis faucibus, congue nibh in, varius ligula. Donec ac enim et tortor finibus mollis et eget mi. Cras eu orci sit amet augue rutrum consequat. Maecenas lorem ante, aliquam a cursus sit amet, facilisis eget magna. </div><br><br>')
+                    }
+                }
 
                 makeTable();
                 incAwaitAll();
@@ -326,16 +335,21 @@
 
                 //Change QTL table
                 let qtl = undefined;
+                
                 if(matrix[10][circindex] >= 0) {
-                    let end = -1;
-                    for(let i = circindex + 1; i < matrix[10].length; ++i) {
-                        if(matrix[10][i] >= 0) {
-                            end = matrix[10][i];
-                            break;
+                    let qtlCalcIndex = qtlIndices[matrix[10][circindex]]
+                    if(qtlCalcIndex >= 0) {
+                        let end = -1;
+                        for(let i = qtlCalcIndex + 1; i < qtlIndices.length; ++i) {
+                            if(qtlIndices[i] >= 0) {
+                                end = qtlIndices[i];
+                                break;
+                            }
                         }
+                        qtl = hdf5QTL.value.slice(qtlCalcIndex, (end == -1 ? hdf5QTL.shape[0] : end));
+                        for(let i=0; i<qtl.length; ++i) qtl[i] = qtl[i].split(",");
                     }
-                    qtl = hdf5QTL.value.slice(matrix[10][circindex], (end == -1 ? hdf5QTL.shape[0] : end));
-                    for(let i=0; i<qtl.length; ++i) qtl[i] = qtl[i].split(",");
+                    
                 }
                 qtlTable.setData(qtl);
 
