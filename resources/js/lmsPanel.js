@@ -34,7 +34,6 @@ class LMSPanel {
 
     setCircIndex(circIndex) {
         var self = this;
-        console.log("hi")
         self.plot.removeScatterHighlight();
         self.circIndex = circIndex;
         let curr1 = $("#lmsselect1").find(":selected").text();

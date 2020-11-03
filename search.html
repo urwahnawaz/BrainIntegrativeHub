@@ -335,8 +335,6 @@
                         if(urlObj) {
                             if(urlObj.prefix) {
                                 url = urlObj.prefix + urlObj.urls[metaIndex[i]];
-                                console.log(metaIndex[i]);
-                                console.log(urlObj.urls)
                             } else {
                                 url = urlObj.home;
                             }
@@ -369,12 +367,9 @@
                     }
                     
                 }
+                
                 qtlTable.setData(qtl);
-
                 lmsPanel.setCircIndex(circindex);
-
-                //console.log(hdf5QTL.value.slice(0, 110));
-
                 //Show modal
                 $("#myModalTitle").text("CircRNA: " + matrix[0][circindex])
                 $("#myModal").modal('toggle')
