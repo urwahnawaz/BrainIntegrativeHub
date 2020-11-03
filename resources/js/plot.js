@@ -170,7 +170,7 @@ class Plot {
             .attr("cx", function (d, i) { return self.x(d.x) + (multiplePerCategory ? self.cachedJitter[i] : 0) }) //TODO per-category jitter/no jitter
             .attr("cy", function (d) { return self.y(d.y) })
             .attr("r", 4)
-            .style("fill", "white")
+            .style("fill", multiplePerCategory ? "white" : "#2b6da4")
             .attr("stroke", "black")
             .on("mouseover", (d) => self._tooltipMouseOver(d))
             .on("mouseleave", (d) => self._tooltipMouseLeave(d))
