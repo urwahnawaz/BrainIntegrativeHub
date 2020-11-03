@@ -191,3 +191,9 @@ html, body {margin:0;padding:0;height:100%}
     display:block;
     width:100%;
   } 
+
+  .progress {
+    border-radius: 0px;
+    position: relative; 
+    top: 50px; 
+  }

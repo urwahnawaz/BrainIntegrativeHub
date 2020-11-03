@@ -31,8 +31,11 @@
 <body>
     <!-- Loading Animation -->
     <div id="my_loading" class="d-flex flex-row justify-content-center align-items-center" style="height: 100%">
-        <div class="loader">
+        <!--<div class="loader">
             <span class="sr-only">Loading...</span>
+        </div> -->
+        <div class="progress">
+            <div id="my_progress" class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
     </div>
 
@@ -155,55 +158,69 @@
         }
 
         let windowPath = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
-
-        fetch(windowPath + "/resources/data/out.hdf5")
-            .then(function (response) {
-                return response.arrayBuffer()
-            })
-            .then(function (buffer) {
-                var f = new hdf5.File(buffer, "");
-                var panelContainer = document.getElementById("allpanels");;
-                var charts = f.get('charts');
-                
-                let parentId = "allpanels";
-                let panelNames = ["CircRNA expression in human brain tissue","Neuronal cell differentiation", "Celullar maturation"];
-
-                let i = 0;
-                for(let group of panelNames) {
-                    let groupObj = charts.get(group);
-                    panels.push(new PanelManager(parentId, parentId + i, groupObj, group));
-                    ++i;
+        myProgress = document.getElementById("my_progress");
+        (async function downloadFile() {
+            const response = await fetch(windowPath + "/resources/data/out.hdf5");
+            const length = response.headers.get('Content-Length');
+            const buffer = new Uint8Array(length);
+            let at = 0;
+            const reader = response.body.getReader();
+            for (;;) {
+                const {done, value} = await reader.read();
+                if (done) {
+                    break;
                 }
+                buffer.set(value, at);
+                at += value.length;
+                let pcg = Math.floor(100 * (at / length));
+                myProgress.setAttribute('aria-valuenow',pcg);
+                myProgress.setAttribute('style','width:'+Number(pcg)+'%');
+            }
+            
+            //Now we have data in buffer
+            var f = new hdf5.File(buffer.buffer, "");
+            var panelContainer = document.getElementById("allpanels");;
+            var charts = f.get('charts');
+            
+            let parentId = "allpanels";
+            let panelNames = ["CircRNA expression in human brain tissue","Neuronal cell differentiation", "Celullar maturation"];
 
-                hdf5Data = f.get("data");
-                matrix = [];
-                for(let h of headings) matrix.push([...hdf5Data.get(h).value]);
-                indices = new Array(matrix[0].length);
+            let i = 0;
+            for(let group of panelNames) {
+                let groupObj = charts.get(group);
+                panels.push(new PanelManager(parentId, parentId + i, groupObj, group));
+                ++i;
+            }
 
-                let urlsGroup = f.get("urls");
-                for(let k of urlsGroup.keys) {
-                    let dataset = urlsGroup.get(k);
-                    urls[k] = {urls: dataset.value, home: dataset.attrs.home, prefix: dataset.attrs.prefix}
+            hdf5Data = f.get("data");
+            matrix = [];
+            for(let h of headings) matrix.push([...hdf5Data.get(h).value]);
+            indices = new Array(matrix[0].length);
+
+            let urlsGroup = f.get("urls");
+            for(let k of urlsGroup.keys) {
+                let dataset = urlsGroup.get(k);
+                urls[k] = {urls: dataset.value, home: dataset.attrs.home, prefix: dataset.attrs.prefix}
+            }
+            qtlIndices = [...f.get("tables/QTL Analysis Brain/Liu/indices").value];
+            hdf5QTL = f.get("tables/QTL Analysis Brain/Liu/QTL");
+            qtlTable = new QTLPanel("allpanels", 2, "QTL Analysis Brain", hdf5QTL.attrs.heading.split(","));
+            
+
+            lmsMeta = {};
+            for(let i=other.length; i<other.length + datasets.length; ++i) lmsMeta[headings[i]] = matrix[i];
+            lmsPanel = new LMSPanel("allpanels", 1, "Dataset comparison (log mean scale)", f, lmsMeta);
+
+            i = 0;
+            for(let x of document.getElementsByClassName("panel-body")) {
+                if(i++ > 1) {
+                    x.insertAdjacentHTML("afterbegin", '<div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin fermentum sem a nibh tempor, non rutrum ipsum molestie. Suspendisse sagittis hendrerit aliquam. In posuere nisl sit amet ultrices pretium. Sed vel turpis faucibus, congue nibh in, varius ligula. Donec ac enim et tortor finibus mollis et eget mi. Cras eu orci sit amet augue rutrum consequat. Maecenas lorem ante, aliquam a cursus sit amet, facilisis eget magna. </div><br><br>')
                 }
-                qtlIndices = [...f.get("tables/QTL Analysis Brain/Liu/indices").value];
-                hdf5QTL = f.get("tables/QTL Analysis Brain/Liu/QTL");
-                qtlTable = new QTLPanel("allpanels", 2, "QTL Analysis Brain", hdf5QTL.attrs.heading.split(","));
-                
+            }
 
-                lmsMeta = {};
-                for(let i=other.length; i<other.length + datasets.length; ++i) lmsMeta[headings[i]] = matrix[i];
-                lmsPanel = new LMSPanel("allpanels", 1, "Dataset comparison (log mean scale)", f, lmsMeta);
-
-                i = 0;
-                for(let x of document.getElementsByClassName("panel-body")) {
-                    if(i++ > 1) {
-                        x.insertAdjacentHTML("afterbegin", '<div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin fermentum sem a nibh tempor, non rutrum ipsum molestie. Suspendisse sagittis hendrerit aliquam. In posuere nisl sit amet ultrices pretium. Sed vel turpis faucibus, congue nibh in, varius ligula. Donec ac enim et tortor finibus mollis et eget mi. Cras eu orci sit amet augue rutrum consequat. Maecenas lorem ante, aliquam a cursus sit amet, facilisis eget magna. </div><br><br>')
-                    }
-                }
-
-                makeTable();
-                incAwaitAll();
-            });
+            makeTable();
+            incAwaitAll();
+        })();
 
         genomebrowser = new GenomeBrowser("myGenomeBrowser");
         heatmap = new Heatmap("myHeatmap");
