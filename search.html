@@ -17,6 +17,7 @@
     <script src="resources/js/circviewer.js"></script>
     <script src="resources/js/genomebrowser.js"></script>
     <script src="resources/js/heatmap.js"></script>
+    <script src="resources/js/qtl.js"></script>
 
     <script src="resources/js/plot.js"></script>
     <script src="resources/js/panelManager.js"></script>
@@ -120,6 +121,8 @@
         var hdf5Data = undefined;
         var urls = {};
         var heatmap = undefined;
+        var hdf5QTL = undefined;
+        var qtlTable = undefined;
 
         //TODO: this is only non self-describing data 
         let datasets = ["Gokool", "Liu", "Org", "ESC_FBN", "SY5Y"];
@@ -181,7 +184,8 @@
                     urls[k] = {urls: dataset.value, home: dataset.attrs.home, prefix: dataset.attrs.prefix}
                 }
 
-                console.log(urls);
+                hdf5QTL = f.get("tables/QTL Analysis Brain/Liu/QTL");
+                qtlTable = new QTL("allpanels", 2, "QTL Analysis Brain", hdf5QTL.attrs.heading.split(","));
 
                 makeTable();
                 incAwaitAll();
@@ -249,13 +253,13 @@
                 if(total <= (pageCurr * pageSize) || total > ((pageCurr + 1) * pageSize)) continue;
                 //total < 50 || total > 100
 
-                tableContents += "<tr>";
+                tableContents += `<tr data-index="${sortIndex}">`;
                 for(let j=0; j<headings.length; ++j) {
                     let e = matrix[j][sortIndex];
                     if (datasets.includes(headings[j])) { //TODO super hacky, this info should be in db
-                        tableContents += '<td class="' + (e >= 0 ? 'bool yes dataset' : 'bool no') + '">' + e + '</td>';
+                        tableContents += `<td class="${(e != -1 ? 'bool yes dataset' : 'bool no')}" data-metaindex="${e}"></td>`;
                     } else if (databases.includes(headings[j])) {
-                        tableContents += '<td class="' + (e >= 0 ? 'bool yes database' : 'bool no') + '">' + e + '</td>';
+                        tableContents += `<td class="${(e != -1 ? 'bool yes database' : 'bool no')}" data-metaindex="${e}"></td>`;
                     } else {
                         tableContents += '<td>' + e + "</td>";
                     }
@@ -282,17 +286,17 @@
                 if (getSelection().toString()) {
                     return; //user selected text, not a click
                 }
-                let circ = arg.currentTarget.children[0].textContent;
+                let circindex = arg.currentTarget.getAttribute("data-index");
 
-                genomebrowser.setPosition(arg.currentTarget.children[1].textContent, parseInt(arg.currentTarget.children[2].textContent), parseInt(arg.currentTarget.children[3].textContent));
+                genomebrowser.setPosition(matrix[1][circindex], matrix[2][circindex], matrix[3][circindex]);
                 
                 let metaIndex = new Array(headings.length);
 
                 //Change heatmap
                 heatmapObj = []
                 for(let i=other.length; i<headings.length; ++i) {
-                    metaIndex[i] = parseInt(arg.currentTarget.children[i].textContent);
-                    present = (metaIndex[i] >= 0);
+                    metaIndex[i] = parseInt(arg.currentTarget.children[i].getAttribute("data-metaindex"));
+                    present = (metaIndex[i] != -1);
                     let url = "";
                     if(present) {
                         let urlObj = urls[headings[i]];
@@ -305,10 +309,27 @@
                 //Change metadata panels
                 metadataObj = {};
                 for(let i=datasetsStart; i<datasetsEnd; ++i) metadataObj[headings[i]] = metaIndex[i];
-                for (let p of panels) p.setCircId(circ, metadataObj);
+                for (let p of panels) p.setCircId(matrix[0][circindex], metadataObj);
+
+                //Change QTL table
+                let qtl = undefined;
+                if(matrix[10][circindex] >= 0) {
+                    let end = -1;
+                    for(let i = circindex + 1; i < matrix[10].length; ++i) {
+                        if(matrix[10][i] >= 0) {
+                            end = matrix[10][i];
+                            break;
+                        }
+                    }
+                    qtl = hdf5QTL.value.slice(matrix[10][circindex], (end == -1 ? hdf5QTL.shape[0] : end));
+                    for(let i=0; i<qtl.length; ++i) qtl[i] = qtl[i].split(",");
+                }
+                qtlTable.setData(qtl);
+
+                //console.log(hdf5QTL.value.slice(0, 110));
 
                 //Show modal
-                $("#myModalTitle").text("CircRNA: " + circ)
+                $("#myModalTitle").text("CircRNA: " + matrix[0][circindex])
                 $("#myModal").modal('toggle')
             });
 
