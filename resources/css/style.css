@@ -197,4 +197,5 @@ html, body {margin:0;padding:0;height:100%}
     position: relative; 
     top: 50px; 
     transition:none;
+    height: 5px;
   }
