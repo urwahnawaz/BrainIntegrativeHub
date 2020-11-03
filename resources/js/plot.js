@@ -26,6 +26,27 @@ class Plot {
                 "translate(" + self.margin.left + "," + self.margin.top + ")");
     }
 
+    removeScatterHighlight() {
+        var self = this;
+        if(self.highlight) {
+            self.highlight.remove();
+            self.highlight = undefined;
+        }
+    }
+
+    addScatterHighlight(point) {
+        var self = this;
+        self.highlight = self.svg.selectAll("highlight")
+            .data([point])
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) { return (self.x(d.x)) })
+            .attr("cy", function (d) { return (self.y(d.y)) })
+            .attr("r", 8)
+            .style("fill", "#ff9433" )
+            .attr("stroke", "white")
+    }
+
     //Expects [{x, y, z=undefined}...] where x and y are numeric, z is optional string for coloring
     updateScatter(data, xName, yName, title = "") {
         var self = this;
@@ -77,7 +98,6 @@ class Plot {
             .attr("cy", function (d) { return (self.y(d.y)) })
             .attr("r", 4)
             .style("fill", function (d) { return pointColorScale ? (pointColorScale(d.z)) : "#2b6da4" })
-            .attr("stroke", "black")
             .on("mouseover", (d) => self._tooltipMouseOver(d))
             .on("mouseleave", (d) => self._tooltipMouseLeave(d))
 

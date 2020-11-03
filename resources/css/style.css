@@ -178,10 +178,8 @@ html, body {margin:0;padding:0;height:100%}
   }
 
   .qtltable {
-    
     overflow:auto;
-    height:200px;
-    max-height:200px;
+    max-height:400px;
     display:block;
     width:100%;
-    } 
+  } 

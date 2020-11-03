@@ -1,12 +1,10 @@
-class QTL {
+class QTLPanel {
     constructor(parentId, childIndex, name, heading) {
         var self = this;
         self.heading = heading;
         self.parentId = parentId;
         self.elementId = self.parentId + "qtl";
         self.name = name;
-        console.log(document.getElementById(self.parentId).children[0])
-        console.log(self._generateHTML());
         document.getElementById(self.parentId).children[childIndex].insertAdjacentHTML("afterEnd", self._generateHTML());
     }
 

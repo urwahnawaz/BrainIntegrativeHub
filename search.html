@@ -17,7 +17,8 @@
     <script src="resources/js/circviewer.js"></script>
     <script src="resources/js/genomebrowser.js"></script>
     <script src="resources/js/heatmap.js"></script>
-    <script src="resources/js/qtl.js"></script>
+    <script src="resources/js/qtlPanel.js"></script>
+    <script src="resources/js/lmsPanel.js"></script>
 
     <script src="resources/js/plot.js"></script>
     <script src="resources/js/panelManager.js"></script>
@@ -185,7 +186,11 @@
                 }
 
                 hdf5QTL = f.get("tables/QTL Analysis Brain/Liu/QTL");
-                qtlTable = new QTL("allpanels", 2, "QTL Analysis Brain", hdf5QTL.attrs.heading.split(","));
+                qtlTable = new QTLPanel("allpanels", 2, "QTL Analysis Brain", hdf5QTL.attrs.heading.split(","));
+
+                lmsMeta = {};
+                for(let i=other.length; i<other.length + datasets.length; ++i) lmsMeta[headings[i]] = matrix[i];
+                lmsPanel = new LMSPanel("allpanels", 1, "Dataset comparison (log mean scale)", f.get("charts"), lmsMeta);
 
                 makeTable();
                 incAwaitAll();
@@ -286,7 +291,7 @@
                 if (getSelection().toString()) {
                     return; //user selected text, not a click
                 }
-                let circindex = arg.currentTarget.getAttribute("data-index");
+                let circindex = parseInt(arg.currentTarget.getAttribute("data-index"));
 
                 genomebrowser.setPosition(matrix[1][circindex], matrix[2][circindex], matrix[3][circindex]);
                 
@@ -300,7 +305,15 @@
                     let url = "";
                     if(present) {
                         let urlObj = urls[headings[i]];
-                        if(urlObj) url = urlObj.prefix ? (urlObj.prefix + urlObj.urls[metaIndex[i]]) : urlObj.home;
+                        if(urlObj) {
+                            if(urlObj.prefix) {
+                                url = urlObj.prefix + urlObj.urls[metaIndex[i]];
+                                console.log(metaIndex[i]);
+                                console.log(urlObj.urls)
+                            } else {
+                                url = urlObj.home;
+                            }
+                        }
                     }
                     heatmapObj.push({name: headings[i], url: url, present: present, isDataset: (i < datasetsEnd)});
                 }
@@ -325,6 +338,8 @@
                     for(let i=0; i<qtl.length; ++i) qtl[i] = qtl[i].split(",");
                 }
                 qtlTable.setData(qtl);
+
+                lmsPanel.setCircIndex(circindex);
 
                 //console.log(hdf5QTL.value.slice(0, 110));
 
