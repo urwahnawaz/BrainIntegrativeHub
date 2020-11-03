@@ -164,7 +164,7 @@ html, body {margin:0;padding:0;height:100%}
 
     .panel-title>.small, .panel-title>.small>a, .panel-title>a, .panel-title>small, .panel-title>small>a {
       color: #2b6da4;
-      font-size: 25px;
+      font-size: 22px;
     }
 
     .modal-content  {
@@ -175,7 +175,7 @@ html, body {margin:0;padding:0;height:100%}
 
   .modal-title {
     color: #000000;
-    font-size: 28px;
+    font-size: 24px;
     text-align: left;
     text-indent: 8px;
   }
