@@ -27,10 +27,12 @@ class PlotControls {
 
     setScaleDisabled(value) {
         $('#scaleselect' + this.elementId).attr('disabled', value);
+        $('#scaleselect' + this.elementId).selectpicker('refresh');
     }
 
     setColoringDisabled(value) {
         $('#coloringselect' + this.elementId).attr('disabled', value);
+        $('#coloringselect' + this.elementId).selectpicker('refresh');
     }
 
     setDatasets(obj) {
@@ -55,23 +57,23 @@ class PlotControls {
     }
 
     getSelectedDataset() {
-        return $('#datasetselect' + this.elementId).find(":selected").text();
+        return $('#datasetselect' + this.elementId).val();
     }
 
     getSelectedYAxis() {
-        return $('#yaxisselect' + this.elementId).find(":selected").text();
+        return $('#yaxisselect' + this.elementId).val();
     }
 
     getSelectedXAxis() {
-        return $('#xaxisselect' + this.elementId).find(":selected").text();
+        return $('#xaxisselect' + this.elementId).val();
     }
 
     getSelectedScale() {
-        return $('#scaleselect' + this.elementId).find(":selected").text();
+        return $('#scaleselect' + this.elementId).val();
     }
 
     getSelectedColoring() {
-        return $('#coloringselect' + this.elementId).find(":selected").text();
+        return $('#coloringselect' + this.elementId).val();
     }
 
     getSelectedZScore() {
@@ -80,20 +82,22 @@ class PlotControls {
 
     _setOptions(id, names, defaultName=undefined) {
         $("#" + id).empty();
-        let index = 0;
-        if(defaultName) {
-            let found = names.indexOf(defaultName);
-            if(found == -1) names.unshift(defaultName);
-            else index = found;
-        }
+        if(!defaultName && names.length > 0) defaultName = names[0];
         for (let n of names) $('#' + id).append('<option value="' + n + '">' + n + '</option>');
-        $("#" + id).prop('selectedIndex', index);
+        
+        $("#" + id).selectpicker("refresh");
+        if(defaultName) $("#" + id).val(defaultName);
+        $("#" + id).selectpicker("refresh");
+        
     }
 
     _setOptionsToggle(id, obj) {
         $("#" + id).empty();
         for (let o of obj) $('#' + id).append('<option value="' + o.name + '"' + (o.disabled ? 'disabled' : '') + '>' + o.name + '</option>');
-        $("#" + id + ' option:not([disabled]):first').addClass('highlight');
+        let defaultName = $("#" + id + ' option:not([disabled]):first').val();
+        $("#" + id).selectpicker("refresh");
+        if(defaultName) $("#" + id).val(defaultName);
+        $("#" + id).selectpicker("refresh");
     }
 
     _generateHTML() {

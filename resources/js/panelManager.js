@@ -177,7 +177,8 @@ class PanelManager {
         let z = undefined;
         let plotData = undefined;
         let coloring = controls.getSelectedColoring();
-        if(!xAxisIsString && coloring != "None") {
+        console.log(coloring);
+        if(!xAxisIsString && coloring) {
             if(xAxis == coloring) {
                 z = x;
             } else {

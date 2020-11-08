@@ -36,8 +36,8 @@ class LMSPanel {
         var self = this;
         self.plot.removeScatterHighlight();
         self.circIndex = circIndex;
-        let curr1 = $("#lmsselect1").find(":selected").text();
-        let curr2 = $("#lmsselect2").find(":selected").text();
+        let curr1 = $("#lmsselect1").val();
+        let curr2 = $("#lmsselect2").val();
         let data1 = self.data[curr1];
         let data2 = self.data[curr2];
         let meta1 = self.metas[curr1][circIndex];
@@ -50,8 +50,8 @@ class LMSPanel {
 
     update() {
         var self = this;
-        let curr1 = $("#lmsselect1").find(":selected").text();
-        let curr2 = $("#lmsselect2").find(":selected").text();
+        let curr1 = $("#lmsselect1").val();
+        let curr2 = $("#lmsselect2").val();
         let data1 = self.data[curr1];
         let data2 = self.data[curr2];
         let plotData = [];
@@ -78,6 +78,7 @@ class LMSPanel {
         }
         for (let n of names) $('#' + id).append('<option value="' + n + '">' + n + '</option>');
         $("#" + id).prop('selectedIndex', index);
+        $("#" + id).selectpicker("refresh");
     }
 
     _generateHTML() {

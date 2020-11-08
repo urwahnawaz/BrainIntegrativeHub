@@ -122,7 +122,7 @@
                         </label>
                     </div>
                     <div class="col-md-2">
-                        <span id="my_search_select_group"><select data-header="Select searchable parameters" id="my_search_select" multiple></select></span>
+                        <span id="my_search_select_group"><select class="selectpicker" data-header="Select searchable parameters" id="my_search_select" multiple></select></span>
                     </div>
                     <div class="col-md-1">
                         <button id="my_search_button" type="submit"><i class="fa fa-search"></i></button>
@@ -131,7 +131,7 @@
             </div>
 
             <!-- Main Table -->
-            <span id="my_table_select_group"><select data-header="Select visible columns" id="my_table_select" multiple></select>&nbsp;&nbsp;<i class="fas fa-eye" style="opacity:25%;"></i></span>
+            <span id="my_table_select_group"><select class="selectpicker" data-header="Select visible columns" id="my_table_select" multiple></select>&nbsp;&nbsp;<i class="fas fa-eye" style="opacity:25%;"></i></span>
             <table class="table table-hover" style="width:100%" id="my_table"></table>
 
             <!-- Pagination -->
@@ -267,7 +267,6 @@
             optAll += '</optgroup>'
 
             $("#my_search_select").append(optSearch);
-            $('#my_search_select').selectpicker();
             $('#my_search_select').val(searchCols);
             $('#my_search_select').selectpicker('refresh');
             $('#my_search_select').on('change', function(){
@@ -279,13 +278,16 @@
             $("#my_table_select").append(optAll);
             $('#my_table_select').children().first().children().first().attr("disabled","disabled");
             $('#my_table_select').children().first().children().first().hide();
-            $('#my_table_select').selectpicker();
             $('#my_table_select').val(showCols);
             $('#my_table_select').selectpicker('refresh');
             $('#my_table_select').on('change', function(){
                 showCols = $(this).val();
                 showCols.unshift(0);
                 makeTable();
+            });
+
+            $(document).ready(function() {
+                $(".selectpicker").selectpicker("refresh");
             });
 
             
@@ -484,7 +486,6 @@
                 //Change metadata panels
                 metadataObj = {};
                 for(let i=datasetsStart; i<datasetsEnd; ++i) metadataObj[headings[i]] = metaIndex[i];
-                console.log(metaIndex);
                 for (let p of panels) p.setCircId(matrix[0][circindex], metadataObj);
 
                 //Change QTL table
