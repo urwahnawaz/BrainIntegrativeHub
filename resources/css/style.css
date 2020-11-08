@@ -96,6 +96,10 @@ html, body {margin:0;padding:0;height:100%}
     left: 15px;
   }
 
+  #my_table_select_group>.bootstrap-select {
+    width: 120px;
+  }
+
   .bootstrap-select>.dropdown-toggle {
     border-radius: 0;
     height: 40px;
