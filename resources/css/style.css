@@ -6,6 +6,7 @@ html, body {margin:0;padding:0;height:100%}
 
 .selectpicker {
     width: 100%;
+    display: none;
 }
 
 .navbar-inverse {
@@ -17,11 +18,45 @@ html, body {margin:0;padding:0;height:100%}
     background-image: url('/css/searchicon.png');
     background-position: 10px 10px;
     background-repeat: no-repeat;
-    width: 100%;
     font-size: 16px;
-    padding: 12px 20px 12px 40px;
+    padding: 12px 20px 12px 20px;
     border: 1px solid #ddd;
     margin-bottom: 12px;
+    width: 100%;
+    height: 40px;
+}
+
+#myDisplay, #myInput {
+  position: relative;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-weight: normal
+}
+
+#myDisplay::after {
+  content: attr(data-domain);
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-family: arial, helvetica, sans-serif;
+  font-size: 12px;
+  display: block;
+  color: lightgrey;
+}
+
+#my_search_select_group {
+  vertical-align: top;
+  width: 100%;
+  height: 40px;
+  border-radius: 0;
+}
+
+#my_search_button {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #ddd;
+  border-radius: 0;
 }
 
 .loader {
@@ -60,9 +95,41 @@ html, body {margin:0;padding:0;height:100%}
     to{ bottom:0; opacity:1 }
   }
 
+  #my_table_select_group {
+    position: absolute;
+    top: 175px;
+    left: 15px;
+  }
+
+  .bootstrap-select>.dropdown-toggle {
+    border-radius: 0;
+    height: 40px;
+  }
+
+  .filter-option-inner-inner {
+    text-overflow: ellipsis;
+  }
+
+  #my_search_select_group > .bootstrap-select {
+    width: 100%;
+  }
 
   .table {
     table-layout: fixed;
+  }
+  
+  .table > thead > tr > th {
+    border-top: none;
+  }
+
+  .table > thead > tr > th.legend {
+    border-bottom: 1px solid #ddd;
+    color: gray;
+    text-align: center;
+  }
+
+  .table > thead > tr > th.nolegend {
+    border-bottom: none;
   }
 
   .table > thead > tr > th.bool > span {
@@ -76,8 +143,8 @@ html, body {margin:0;padding:0;height:100%}
   }
 
   .table > thead > tr > th.bool {
-    width: 50px;
     text-overflow: clip;
+    height: 110px;
   }
 
   td, th {
@@ -102,11 +169,11 @@ html, body {margin:0;padding:0;height:100%}
   }
 
   table > tbody > tr > td.yes.dataset {
-    background-color: #ff9433 /*#9f9f9f*//*#69b3a2*/;
+    background-color: #ff9433;
   }
 
   table > tbody > tr > td.yes.database {
-    background-color: #2b6da4/*#736ea8*/;
+    background-color: #2b6da4;
   }
 
   .unselectable {

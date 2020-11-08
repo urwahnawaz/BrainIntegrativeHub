@@ -6,7 +6,15 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+
     <script language="javascript" src="https://www.biodalliance.org/release-0.13/dalliance-compiled.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/solid.min.css"/>
+
+
+
 
     <script src="https://d3js.org/colorbrewer.v1.min.js"></script>
     <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
@@ -106,10 +114,24 @@
             <br>
             <br>
             <br>
-            <input type="search" autocomplete="off" id="myInput" placeholder="Search for circ_id or gene_symbol.."
-                title="Type in an ID">
+            <div>
+                <div class="row">
+                    <div class="col-md-9">
+                        <label id="myDisplay" data-domain="">
+                            <input type="search" autocomplete="off" class="mySearch" id="myInput" placeholder='e.g. "sdf4", "chr1:1600000-1800000"...'>
+                        </label>
+                    </div>
+                    <div class="col-md-2">
+                        <span id="my_search_select_group"><select data-header="Select searchable parameters" id="my_search_select" multiple></select></span>
+                    </div>
+                    <div class="col-md-1">
+                        <button id="my_search_button" type="submit"><i class="fa fa-search"></i></button>
+                    </div>
+                  </div>
+            </div>
 
             <!-- Main Table -->
+            <span id="my_table_select_group"><select data-header="Select visible columns" id="my_table_select" multiple></select>&nbsp;&nbsp;<i class="fas fa-eye" style="opacity:25%;"></i></span>
             <table class="table table-hover" style="width:100%" id="my_table"></table>
 
             <!-- Pagination -->
@@ -138,6 +160,9 @@
         let datasetsEnd = other.length + datasets.length;
         let matrix = undefined;
         let indices = undefined;
+        
+        let showCols = [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+        let searchCols = [0, 7, 8, -2];
 
         let sortCurrCol = -1;
         let sortCurrIndex = 0;
@@ -148,6 +173,7 @@
         let pageMax = 5;
 
         let searchTerm = "";
+        let searchPos = undefined;
 
         //TODO convert to promises. Very hacky 
         var awaitAll = 0;
@@ -219,6 +245,50 @@
                 }
             }
 
+            i = 0
+            let optOther = "";
+            optOther += '<optgroup label="Column contents">';
+            for(let h of other) optOther += '<option value="' + (i++) + '">' + h + '</option>';
+            optOther += '</optgroup>';
+
+            let optSearch = optOther;
+            optSearch += '<optgroup label="Genomic range" data-max-options="1">';
+            optSearch += '<option value="-1">hg19</option>';
+            optSearch += '<option value="-2">hg38</option>';
+            optSearch += '</optgroup>';
+            
+
+            let optAll = optOther;
+            optAll += '<optgroup label="Datasets">';
+            for(let h of datasets) optAll += '<option value="' + (i++) + '">' + h + '</option>';
+            optAll += '</optgroup>'
+            optAll += '<optgroup label="Databases">';
+            for(let h of databases) optAll += '<option value="' + (i++) + '">' + h + '</option>';
+            optAll += '</optgroup>'
+
+            $("#my_search_select").append(optSearch);
+            $('#my_search_select').selectpicker();
+            $('#my_search_select').val(searchCols);
+            $('#my_search_select').selectpicker('refresh');
+            $('#my_search_select').on('change', function(){
+                searchCols = $(this).val();
+                updateSearchPos();
+                makeTable();
+            });
+
+            $("#my_table_select").append(optAll);
+            $('#my_table_select').children().first().children().first().attr("disabled","disabled");
+            $('#my_table_select').children().first().children().first().hide();
+            $('#my_table_select').selectpicker();
+            $('#my_table_select').val(showCols);
+            $('#my_table_select').selectpicker('refresh');
+            $('#my_table_select').on('change', function(){
+                showCols = $(this).val();
+                showCols.unshift(0);
+                makeTable();
+            });
+
+            
             makeTable();
             incAwaitAll();
         })();
@@ -226,12 +296,28 @@
         genomebrowser = new GenomeBrowser("myGenomeBrowser");
         heatmap = new Heatmap("myHeatmap");
 
+        function updateSearchPos() {
+            if(searchCols.length > 0 && searchCols[searchCols.length-1] < 0) {
+                searchPos = searchTerm.match(/(chr[^:]+):([0-9]+)-([0-9]+)/i);
+            } else {
+                searchPos = undefined;
+            }
+        }
+
         $("#myInput").keyup(function (event) {
             if (event.keyCode === 13) {
                 searchTerm = $("#myInput").val().trim().toLowerCase();
                 pageCurr = 0;
+                updateSearchPos();
                 makeTable();
             }
+        });
+
+        $("#my_search_button").click(function () {
+            searchTerm = $("#myInput").val().trim().toLowerCase();
+            pageCurr = 0;
+            updateSearchPos();
+            makeTable();
         });
 
         function hideLoading() {
@@ -240,22 +326,47 @@
         }
 
         function makeTable() {
+            let otherCount = 0;
+            let datasetCount = 0;
+            let databaseCount = 0;
+            for(let j of showCols) {
+                if(j >= other.length) {
+                    if(j >= (other.length + datasets.length)) {
+                        ++databaseCount;
+                    } else {
+                        ++datasetCount;
+                    }
+                } else {
+                    ++otherCount;
+                }
+            }
+
             let tableContents = "";
             tableContents += '<thead>';
             tableContents += "<tr>";
-            for (let i=0; i<headings.length; ++i) {
+            for(let i of showCols) {
+                if(i >= other.length) break;
+                let o = other[i];
+                let dtypeRes = hdf5Data.get(o).dtype.match(/([A-Z])([0-9]+)/i);
+                let dtypeStyle = "";
+                if(otherCount > 2 && dtypeRes && dtypeRes[1].toLowerCase() == "s") {
+                    dtypeStyle = ' style="width:' + (0.725 * Math.max(o.length+5, parseInt(dtypeRes[2])) * 14) + 'px;" ';
+                }
+                tableContents += `<th ${dtypeStyle} class="nolegend" scope="colgroup" colspan="1"></th>`
+            }
+
+            if(datasetCount) tableContents += `<th class="legend" scope="colgroup" colspan="${datasetCount}" style="width:${(50 * datasetCount) + "px"}">Datasets</th>`
+            if(databaseCount) tableContents += `<th class="legend" scope="colgroup" colspan="${databaseCount}" style="width:${(50 * databaseCount) + "px"}">Databases</th>`
+            tableContents += "</tr>";
+
+            tableContents += "<tr>";
+            for (let i of showCols) {
                 let h = headings[i];
                 sortClass = ((i == sortCurrCol) ? sortClassOrder[sortCurrIndex] : "both");
-                let dtypeRes = hdf5Data.get(h).dtype.match(/([A-Z])([0-9]+)/i);
-                let dtypeStyle = "";
-                if(dtypeRes && dtypeRes[1].toLowerCase() == "s") {
-                    dtypeStyle = ' style="width:' + (0.725 * Math.max(h.length+5, parseInt(dtypeRes[2])) * 14) + 'px;" ';
-                }
-
                 if (datasets.includes(h) || databases.includes(h)) {
-                    tableContents += '<th ' + dtypeStyle + 'class="bool"><span id="' + h + '"class="unselectable sortable ' + sortClass + '">' + h + "</span></th>";
+                    tableContents += '<th class="bool"><span id="' + h + '"class="unselectable sortable ' + sortClass + '">' + h + "</span></th>";
                 } else {
-                    tableContents += '<th' + dtypeStyle + '><span id="' + h + '"class="unselectable sortable ' + sortClass + '">' + h + "</th>";
+                    tableContents += '<th><span id="' + h + '"class="unselectable sortable ' + sortClass + '">' + h + "</th>";
                 }
             }
             tableContents += "</tr>";
@@ -272,12 +383,36 @@
             }
             
             let total=0;
-            console.log(`pageCurr: ${pageCurr}, pageSize: ${pageSize}`);
+            let genomicSearchSystem = searchCols[searchCols.length-1];
             for(let i=0; i<matrix[0].length; ++i) {
                 let sortIndex = indices[i];
 
-                //Skip if doesn't match search
-                if(!(matrix[0][sortIndex].toLowerCase().includes(searchTerm) || matrix[7][sortIndex].toLowerCase().includes(searchTerm))) continue;
+                let shouldInclude = true;
+                if(searchPos) {
+                    shouldInclude = false;
+                    //Skip if not in interval
+                    if(matrix[1][sortIndex] == searchPos[1]) {
+                        if(genomicSearchSystem == -1) { //hg19
+                            if(matrix[4][sortIndex] >= searchPos[2] && matrix[5][sortIndex] <= searchPos[3]) shouldInclude = true;
+                        } else { //hg38
+                            if(matrix[2][sortIndex] >= searchPos[2] && matrix[3][sortIndex] <= searchPos[3]) shouldInclude = true;
+                        } 
+                    }
+                } else if(searchTerm) {
+                    //Skip if doesn't match search
+                    shouldInclude = false;
+                    for(let j of searchCols) {
+                        if(j < 0) continue;
+                        let searchable = matrix[j][sortIndex];
+                        if((typeof searchable === "string" && searchable.trim().toLocaleLowerCase().includes(searchTerm)) || (searchable == searchTerm)) {
+                            shouldInclude = true;
+                            break;
+                        }
+                    }
+                }
+       
+                
+                if(!shouldInclude) continue;
                 
                 ++total;
 
@@ -286,12 +421,12 @@
                 //total < 50 || total > 100
 
                 tableContents += `<tr data-index="${sortIndex}">`;
-                for(let j=0; j<headings.length; ++j) {
+                for(let j of showCols) {
                     let e = matrix[j][sortIndex];
                     if (datasets.includes(headings[j])) { //TODO super hacky, this info should be in db
-                        tableContents += `<td class="${(e != -1 ? 'bool yes dataset' : 'bool no')}" data-metaindex="${e}"></td>`;
+                        tableContents += `<td class="${(e != -1 ? 'bool yes dataset' : 'bool no')}"></td>`;
                     } else if (databases.includes(headings[j])) {
-                        tableContents += `<td class="${(e != -1 ? 'bool yes database' : 'bool no')}" data-metaindex="${e}"></td>`;
+                        tableContents += `<td class="${(e != -1 ? 'bool yes database' : 'bool no')}"></td>`;
                     } else {
                         tableContents += '<td>' + e + "</td>";
                     }
@@ -302,6 +437,8 @@
             document.getElementById("my_table").innerHTML = tableContents;
 
             $("#myInput")[0].setCustomValidity(total ? "" : "No results");
+
+            $("#myDisplay")[0].setAttribute('data-domain', total + " result" + (total != 1 ? "s" : ""));
 
             $("thead > tr > th > span").click(function (arg) {
                 sortNewCol = headings.indexOf(arg.target.id);
@@ -327,7 +464,7 @@
                 //Change heatmap
                 heatmapObj = []
                 for(let i=other.length; i<headings.length; ++i) {
-                    metaIndex[i] = parseInt(arg.currentTarget.children[i].getAttribute("data-metaindex"));
+                    metaIndex[i] = matrix[i][circindex];
                     present = (metaIndex[i] != -1);
                     let url = "";
                     if(present) {
@@ -347,6 +484,7 @@
                 //Change metadata panels
                 metadataObj = {};
                 for(let i=datasetsStart; i<datasetsEnd; ++i) metadataObj[headings[i]] = metaIndex[i];
+                console.log(metaIndex);
                 for (let p of panels) p.setCircId(matrix[0][circindex], metadataObj);
 
                 //Change QTL table
