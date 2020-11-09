@@ -102,6 +102,12 @@ html, body {margin:0;padding:0;height:100%}
 
   .bootstrap-select>.dropdown-toggle {
     border-radius: 0;
+  }
+
+  #my_table_select_group>.bootstrap-select>.dropdown-toggle {
+    height: 40px;
+  }
+  #my_search_select_group>.bootstrap-select>.dropdown-toggle {
     height: 40px;
   }
 
