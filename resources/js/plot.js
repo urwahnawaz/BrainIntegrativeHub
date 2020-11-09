@@ -329,7 +329,7 @@ class Plot {
         var downloadLink = document.createElement("a");
         console.log(downloadLink);
         downloadLink.href = linkSource;
-        downloadLink.download = "Chart";
+        downloadLink.download = "chart.svg";
         downloadLink.click();
         //downloadLink.remove();
     }
