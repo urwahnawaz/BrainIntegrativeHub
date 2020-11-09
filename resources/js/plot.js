@@ -16,6 +16,8 @@ class Plot {
         self.width = 800 - self.margin.left - self.margin.right
         self.height = 400 - self.margin.top - self.margin.bottom
 
+        self.zeroCountNum = 0
+
         // append the svg object to the body of the page
         self.svg = d3.select("#" + self.elementId)
             .append("svg")
@@ -94,6 +96,7 @@ class Plot {
             .data(data)
             .enter()
             .append("circle")
+            .style("cursor", "pointer")
             .attr("cx", function (d) { return (self.x(d.x)) })
             .attr("cy", function (d) { return (self.y(d.y)) })
             .attr("r", 4)
@@ -105,7 +108,10 @@ class Plot {
             window.alert("Couldn't display " + categoriesZ.length + " categories");
         }
 
+        for(let d of data) if(d.x == 0 && d.y == 0) ++self.zeroCountNum;
+
         self._addTooltip();
+        self._addZeroCount();
     }
 
     //Expects [{x, y}...] where x is string and y is numeric
@@ -187,6 +193,7 @@ class Plot {
             .data(data)
             .enter()
             .append("circle")
+            .style("cursor", "pointer")
             .attr("cx", function (d, i) { return self.x(d.x) + (multiplePerCategory ? self.cachedJitter[i] : 0) }) //TODO per-category jitter/no jitter
             .attr("cy", function (d) { return self.y(d.y) })
             .attr("r", 4)
@@ -234,6 +241,8 @@ class Plot {
                 -self.margin.top / 2 + ")")
             .style("text-anchor", "middle")
             .text(title);
+
+        self._addDownloadButton();
     }
 
     _addTooltip() {
@@ -261,13 +270,68 @@ class Plot {
             .attr("transform",
                 "translate(" + (self.x(d.x)) + " ," +
                 (self.y(d.y) - 20) + ")")
+        if(d.x == 0 && d.y == 0) self._zeroCountMouseOver();
     }
 
     _tooltipMouseLeave(d) {
-        this.tooltip
+        var self = this;
+        self.tooltip
             .attr("fill-opacity", 0)
             .attr("transform",
                 "translate(" + 0 + " ," +
                 0 + ")")
+        if(d.x == 0 && d.y == 0) self._zeroCountMouseLeave();
+    }
+
+    _zeroCountMouseOver() {
+        var self = this;
+        if(self.zeroCountNum <= 1) return;
+        self.zeroCountText
+            .attr("fill-opacity", 1)
+            .text("(" + self.zeroCountNum + " null points)")
+    }
+
+    _zeroCountMouseLeave() {
+        this.zeroCountText.attr("fill-opacity", 0)
+    }
+
+    _addZeroCount() {
+        var self = this;
+        self.zeroCountText = self.svg.append("text")
+            .attr("font-size", "12px")
+            .style("text-anchor", "middle")
+            .attr("fill-opacity", 0)
+            .attr("text-anchor", "start")
+            .attr("transform",
+                "translate(" + (-self.margin.left/2) + " ," +
+                (self.height + self.margin.bottom/2) + ")")
+    }
+
+    _addDownloadButton() {
+        var self = this;
+        self.downloadButton = self.svg.append('text')
+            .attr('font-family', 'FontAwesome')
+            .attr('font-size', "20px")
+            .text(function(d) { return '\uf019' })
+            .style("cursor", "pointer")
+            .attr("transform",
+                "translate(" + (self.width) + " ," +
+                (self.height + self.margin.bottom/2) + ")")
+            .on("click", () => console.log(self._toImg()))
+            
+    }
+
+    _toImg() {
+        var self = this;
+        self.downloadButton.remove() //Remove since we don't want this in image
+        var xml = new XMLSerializer().serializeToString(this.svg.node().parentNode);
+        self._addDownloadButton(); //Readd
+        var linkSource = 'data:image/svg+xml;base64,' + btoa(xml);
+        var downloadLink = document.createElement("a");
+        console.log(downloadLink);
+        downloadLink.href = linkSource;
+        downloadLink.download = "Chart";
+        downloadLink.click();
+        //downloadLink.remove();
     }
 }
