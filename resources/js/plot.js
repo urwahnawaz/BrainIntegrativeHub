@@ -299,7 +299,6 @@ class Plot {
         var self = this;
         self.zeroCountText = self.svg.append("text")
             .attr("font-size", "12px")
-            .style("text-anchor", "middle")
             .attr("fill-opacity", 0)
             .attr("text-anchor", "start")
             .attr("transform",
