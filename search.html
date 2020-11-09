@@ -239,7 +239,7 @@
 
             lmsMeta = {};
             for(let i=other.length; i<other.length + datasets.length; ++i) lmsMeta[headings[i]] = matrix[i];
-            lmsPanel = new LMSPanel("allpanels", 1, "Dataset comparison (log mean scale)", f, lmsMeta);
+            lmsPanel = new LMSPanel("allpanels", 1, "Dataset comparison (z-score)", f, lmsMeta);
 
             i = 0;
             for(let x of document.getElementsByClassName("panel-body")) {
