@@ -29,27 +29,57 @@ class LMSPanel {
         $('#lmsselect1').on('change', () => self.update());
         $('#lmsselect2').on('change', () => self.update());
 
+        self.preventUpdates = false;
         self.update();
     }
 
     setCircIndex(circIndex) {
         var self = this;
         self.plot.removeScatterHighlight();
+        self.preventUpdates = true;
         self.circIndex = circIndex;
-        let curr1 = $("#lmsselect1").val();
-        let curr2 = $("#lmsselect2").val();
-        let data1 = self.data[curr1];
-        let data2 = self.data[curr2];
-        let meta1 = self.metas[curr1][circIndex];
-        let meta2 = self.metas[curr2][circIndex];
+        let names = Object.keys(self.data);
+        let setChart = false;
+        for(let i=0; i<names.length; ++i) {
+            let curr1 = names[i];
+            console.log(curr1);
+            let meta1 = self.metas[curr1][circIndex];
+            $('#lmsselect1').children().eq(i).attr("hidden",meta1 == -1);
+            $('#lmsselect2').children().eq(i).attr("hidden",meta1 == -1);
+
+            for(let j=i+1; !setChart && j<names.length; ++j) {
+                let curr2 = names[j];
+                let meta2 = self.metas[curr2][circIndex];
+
+                if(meta1 != -1 && meta2 != -1) {
+                    $("#lmsselect2").val(curr1);
+                    $("#lmsselect1").val(curr2);
+                    setChart = true;
+                    break;
+                }
+            }
+        }
+        if(!setChart) self.circIndex = undefined;
+
         
-        if(meta1 != -1 && meta2 != -1) {
-            self.plot.addScatterHighlight({x: data1[meta1], y: data2[meta2]})
+        self.preventUpdates = false;
+        
+        if(setChart) {
+            self.update();
+            $('#' + self.elementId + "panel").show()
+            $('#lmsselect1').selectpicker('refresh');
+            $('#lmsselect2').selectpicker('refresh');
+        } else {
+            $('#' + self.elementId + "panel").hide()
         }
     }
 
     update() {
         var self = this;
+
+        if(self.preventUpdates) return;
+        if(!self.circIndex) return;
+
         let curr1 = $("#lmsselect1").val();
         let curr2 = $("#lmsselect2").val();
         let data1 = self.data[curr1];
@@ -63,9 +93,7 @@ class LMSPanel {
             }
         }
         self.plot.updateScatter(plotData, curr1, curr2);
-        if(self.circIndex) {
-            self.setCircIndex(self.circIndex);
-        }
+        self.plot.addScatterHighlight({x: data1[self.metas[curr1][self.circIndex]], y: data2[self.metas[curr2][self.circIndex]]})
     }
 
     _setOptions(id, names, defaultName=undefined) {
@@ -79,8 +107,11 @@ class LMSPanel {
         for (let n of names) $('#' + id).append('<option value="' + n + '">' + n + '</option>');
         $("#" + id).prop('selectedIndex', index);
         $("#" + id).selectpicker("refresh");
+
+        
     }
 
+    
     _generateHTML() {
         return /*html*/`
             <div id="${this.elementId + "panel"}" class="panel-group">
