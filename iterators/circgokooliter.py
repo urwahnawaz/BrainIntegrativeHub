@@ -48,9 +48,9 @@ class CircGokoolIter(AbstractMetaIter):
                 ids.addCircHSA(CircHSA("circBase", line[26+1]))
 
             group = CircRangeGroup(ch=line[2+1], strand=line[8+1], versions=super().__next__())
-            ret = CircRow(group=group, hsa=ids, gene="" if  pd.isna(line[6+1]) else line[6+1], db_id=self.id, meta_index=self.meta_index)
+            ret = CircRow(group=group, hsa=ids, gene="", db_id=self.id, meta_index=self.meta_index)
+            ret.geneId = line[5+1]
 
-            
             ret.addExpression(Expression(self.matcher.getTissueFromSynonym("CTX").name, "Gokool", int(line[20+1])))
             ret.addExpression(Expression(self.matcher.getTissueFromSynonym("CB").name, "Gokool", int(line[21+1])))
 

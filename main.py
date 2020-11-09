@@ -95,8 +95,10 @@ def writeHDF5(circIters, iter, outFile="out.hdf5"):
     
     urls = root.create_group("urls")
     charts = root.create_group("charts")
+    tables = root.create_group("tables")
     for i in range(len(circIters)):
-        if(circIters[i].hasMetadata): circIters[i].writeHDF5Metadata(charts, iter)
+        if(circIters[i].hasMetadata): circIters[i].writeHDF5Metadata(charts, tables, iter)
+        circIters[i].reduceIndices(iter)
         circIters[i].writeHDF5URLs(urls, iter)
         data.create_dataset(circIters[i].name, data=np.array([int(circ._meta[i]) for circ in iter], dtype="i4"), compression="gzip", compression_opts=9)
 
@@ -128,8 +130,8 @@ def readCSV(fileName, datasetsMap, databasesMap):
         if (not hg19) or (strand == "."): continue
         group = CircRangeGroup(line[1], strand, [CircRange(int(hg19.group(1)), int(hg19.group(2))), CircRange(int(line[2]), int(line[3]))])
         circ = CircRow(group, CircHSAGroup(), "", 0, -1)
-        for i in range(len(datasetsMap)): circ._meta[datasetsMap[i + 9]] = (1 if line[i + 9] == "TRUE" else -1)
-        for i in range(len(databasesMap)): circ._meta[databasesMap[i + 15]] = (1 if line[i + 15] == "TRUE" else -1)
+        for i in range(len(datasetsMap)): circ._meta[datasetsMap[i]] = (1 if line[i + 9] == "TRUE" else -1)
+        for i in range(len(databasesMap)): circ._meta[databasesMap[i]] = (1 if line[i + 15] == "TRUE" else -1)
         output.add(circ)
     return output
 
@@ -138,17 +140,26 @@ def annotateEnsemblNCBI(iter):
     #9606	1	A1BG	-	A1B|ABG|GAB|HYST2477	MIM:138670|HGNC:HGNC:5|Ensembl:ENSG00000121410	19	19q13.43	alpha-1-B glycoprotein	protein-coding	A1BG	alpha-1-B glycoprotein	O	alpha-1B-glycoprotein|HEL-S-163pA|epididymis secretory sperm binding protein Li 163pA	20200818	-
     synonyms = {}
     ids = {}
+    genes = {}
     for line in csv.reader(open("./data/Homo_sapiens.gene_info", 'r'), delimiter='\t'):
         gene = line[2]
         id = re.search(r'Ensembl:([A-Z0-9]+)', line[5])
         if not id: continue
         ids[gene] = id.group(1)
+        genes[id.group(1)] = gene
         for synonym in line[4].split('|'): synonyms[synonym] = gene
 
     for circ in iter:
-        newer = synonyms.get(circ.gene, None)
+        newer = None
+        if circ.gene:
+            newer = synonyms.get(circ.gene, None)
+        if not newer and circ.geneId:
+            newer = genes.get(circ.geneId, None)
+
         if newer: circ.gene = newer
-        if not circ.geneId: circ.geneId = ids.get(circ.gene, None)
+        if not circ.geneId and circ.gene: 
+            circ.geneId = ids.get(circ.gene, None)
+
 
 def annotateEnsembl(iter):
     #1	havana	gene	11869	14409	.	+	.	gene_id "ENSG00000223972"; gene_version "5"; gene_name "DDX11L1"; gene_source "havana"; gene_biotype "transcribed_unprocessed_pseudogene";
@@ -156,10 +167,6 @@ def annotateEnsembl(iter):
     for line in csv.reader(open("./data/Homo_sapiens.GRCh38.101.gtf", 'r'), delimiter='\t'):
         if len(line) < 9: continue
         match = re.search(r'gene_id \"([^\"]+)\".*gene_name \"([^\"]+)\";', line[8])
-
-        if not match:
-            print(line[8])
-
         dic[match.group(2)] = match.group(1)
 
     for circ in iter:
@@ -167,11 +174,14 @@ def annotateEnsembl(iter):
 
 def annotateEnsemblBiomart(iter):
     dic = {}
+    rev = {}
     for line in csv.reader(open("./data/mart_export.txt", 'r'), delimiter='\t'):
         dic[line[4]] = line[0]
+        rev[line[0]] = line[4]
 
     for circ in iter:
-        if not circ.geneId: circ.geneId = dic.get(circ.gene, None)
+        if not circ.geneId and circ.gene: circ.geneId = dic.get(circ.gene, None)
+        if not circ.gene and circ.geneId: circ.gene = rev.get(circ.geneId, "")
 
 def filterOutputToList(iter, circIters):
     ret = []
@@ -195,8 +205,8 @@ def outputComparisonCSVs(ss, li, circIters):
     names = [v.name for v in circIters]
     datasets = ["Gokool", "Liu", "SY5Y", "ESC_FBN", "Org"]
     databases = ["CircAtlas2", "Circpedia2", "CircBase", "CircFunBase"]
-    datasetsMap = [names.index[v] for v in datasets]
-    databasesMap = [names.index[v] for v in databases]
+    datasetsMap = [names.index(v) for v in datasets]
+    databasesMap = [names.index(v) for v in databases]
     if -1 not in datasetsMap and -1 not in databasesMap: 
         writeCSV("outPy.csv", li, datasetsMap, databasesMap)
         ss2 = readCSV("./data/neuroCirc.csv", datasetsMap, databasesMap)
@@ -243,3 +253,5 @@ if __name__ == '__main__':
         writeIntersectionPlot(circIters, li)
 
     print("%d circrnas written" % (len(li)))
+
+    outputComparisonCSVs(ss, li, circIters)

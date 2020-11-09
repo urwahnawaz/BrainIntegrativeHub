@@ -10,6 +10,8 @@ from expression import Expression
 class Circpedia2Iter(AbstractLiftoverIter):
     name = "Circpedia2"
     url = "https://www.picb.ac.cn/rnomics/circpedia"
+    urlPrefix = "https://www.picb.ac.cn/rnomics/circpedia/browser/%3Fdata%3Dhuman_hg38%26tracks%3DDNA%252CknownGene%252CHeLa_S3_poly(A)-_circ%252CHeLa_S3_poly(A)-%26highlight%3D%26loc%3D"
+    hasIndividualURLs = True
 
     def __init__(self, directory):
         super().__init__(directory)
@@ -32,9 +34,12 @@ class Circpedia2Iter(AbstractLiftoverIter):
 
             ids = CircHSAGroup()
             #ids.addCircHSA(CircHSA("Circpedia2", line[0]))
-            
             group = CircRangeGroup(ch=match.group(1), strand=line[5], versions=super().__next__())
-            ret = CircRow(group=group, hsa=ids, gene=line[2], db_id = self.id, meta_index=self.meta_index)
+            formattedURL = ""
+            
+            if(group.versions[1]):
+                formattedURL = group.ch + "%25" + str(group.versions[1].start) + ".." + str(group.versions[1].end) #chr9%253A135882815..135883078
+            ret = CircRow(group=group, hsa=ids, gene=line[2], db_id = self.id, meta_index=self.meta_index, url=formattedURL)
             tissue = self.matcher.getTissueFromSynonym(line[9].lower())
 
             if tissue:
