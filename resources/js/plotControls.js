@@ -83,8 +83,9 @@ class PlotControls {
     _setOptions(id, names, defaultName=undefined) {
         $("#" + id).empty();
         if(!defaultName && names.length > 0) defaultName = names[0];
+        if(defaultName && !names.includes(defaultName)) names.unshift(defaultName);
         for (let n of names) $('#' + id).append('<option value="' + n + '">' + n + '</option>');
-        
+
         $("#" + id).selectpicker("refresh");
         if(defaultName) $("#" + id).val(defaultName);
         $("#" + id).selectpicker("refresh");
