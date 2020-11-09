@@ -50,7 +50,7 @@ class Heatmap {
         boxes.append("rect")
             .attr("width", boxWidth-4)
             .attr("height", boxWidth-4)
-            .style("fill", function (d) { return d3.color(!d.present ? "whitesmoke" : (d.isDataset ? "#ff9433" : "#2b6da4"))})
+            .style("fill", function (d) { return d3.color(!d.present ? "whitesmoke" : (d.datasetType == 1 ? "#ffbe33" : (d.datasetType == 2 ? "#ff9433" : "#2b6da4")))})
             .on("mouseover", function(d,i) {
                 if(!d.url) {
                     d3.select(this)

@@ -173,9 +173,14 @@ html, body {margin:0;padding:0;height:100%}
     background-color: whitesmoke ;
   }
 
-  table > tbody > tr > td.yes.dataset {
+  table > tbody > tr > td.yes.dataset1 {
+    background-color: #ffbe33;
+  }
+
+  table > tbody > tr > td.yes.dataset2 {
     background-color: #ff9433;
   }
+
 
   table > tbody > tr > td.yes.database {
     background-color: #2b6da4;

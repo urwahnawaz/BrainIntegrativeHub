@@ -153,11 +153,14 @@
 
         //TODO: this is only non self-describing data 
         let datasets = ["Gokool", "Liu", "Org", "ESC_FBN", "SY5Y"];
+        let datasets1 = ["Gokool", "Liu"];
+        let datasets2 = ["Org", "ESC_FBN", "SY5Y"]
         let databases = ["CircAtlas2", "CircBase", "CircFunBase", "Circpedia2", "RNADb"];
         let other = ["circ_id", "chr", "start_hg38", "end_hg38", "start_hg19", "end_hg19", "strand", "gene_symbol", "ensembl_id"]
         let headings = other.concat(datasets).concat(databases);
         let datasetsStart = other.length;
         let datasetsEnd = other.length + datasets.length;
+        let datasets1End = other.length + datasets1.length;
         let matrix = undefined;
         let indices = undefined;
         
@@ -425,8 +428,10 @@
                 tableContents += `<tr data-index="${sortIndex}">`;
                 for(let j of showCols) {
                     let e = matrix[j][sortIndex];
-                    if (datasets.includes(headings[j])) { //TODO super hacky, this info should be in db
-                        tableContents += `<td class="${(e != -1 ? 'bool yes dataset' : 'bool no')}"></td>`;
+                    if (datasets1.includes(headings[j])) { //TODO super hacky, this info should be in db
+                        tableContents += `<td class="${(e != -1 ? 'bool yes dataset1' : 'bool no')}"></td>`;
+                    } else if (datasets2.includes(headings[j])) { //TODO super hacky, this info should be in db
+                        tableContents += `<td class="${(e != -1 ? 'bool yes dataset2' : 'bool no')}"></td>`;
                     } else if (databases.includes(headings[j])) {
                         tableContents += `<td class="${(e != -1 ? 'bool yes database' : 'bool no')}"></td>`;
                     } else {
@@ -479,7 +484,7 @@
                             }
                         }
                     }
-                    heatmapObj.push({name: headings[i], url: url, present: present, isDataset: (i < datasetsEnd)});
+                    heatmapObj.push({name: headings[i], url: url, present: present, datasetType: ((i < datasetsEnd) ? (i < datasets1End ? 1 : 2) : 0)});
                 }
                 heatmap.update(heatmapObj);
 
