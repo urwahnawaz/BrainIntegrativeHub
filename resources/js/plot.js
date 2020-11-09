@@ -66,7 +66,7 @@ class Plot {
         var categoriesZ = undefined;
         if (data[0].z) {
             categoriesZ = self._getCategories(data, d => d.z)
-            let colors = colorbrewer["Paired"][Math.max(3, categoriesZ.length)];
+            let colors = categoriesZ.length < 3 ? ["#1f78b4", "#b2df8a"] : colorbrewer["Paired"][Math.max(3, categoriesZ.length)];
             if (colors) {
                 pointColorScale = d3.scaleOrdinal()
                     .domain(data.map(d => d.z))
