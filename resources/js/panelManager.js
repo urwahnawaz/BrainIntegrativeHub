@@ -82,14 +82,6 @@ class PanelManager {
         return cache.data.slice(rowStart - chunkStart, rowStart + rowLength - chunkStart);
     }
 
-    _transformZScore(arr, datasetName, matrixName, which) {
-        var self = this;
-        let matrix = self.hdf5Group.get(datasetName + "/matrices/" + matrixName);
-        let means = matrix.attrs["mean"];
-        let sds = matrix.attrs["sd"];
-        for(let i=0; i<arr.length; ++i) arr[i] = (arr[i] - means[which[i]]) / sds[which[i]];
-    }
-
     //assigns all callbacks to general, plot agnostic helper functions
     _attachEvents(controls, plot, useMatrices) {
         var self = this;
@@ -154,20 +146,10 @@ class PanelManager {
         let xAxisIsString = $.type(x[0]) === "string";
         controls.setColoringDisabled(xAxisIsString);
 
-        let useZScore = controls.getSelectedZScore();
         let scale = controls.getSelectedScale();
-        controls.setScaleDisabled(useZScore);
-
         let yAxisLabel = yAxis;
         let xAxisLabel = xAxis;
-        if(useZScore) {
-            self._transformZScore(y, dataset, yAxis, which);
-            if(useMatrices) {
-                self._transformZScore(x, dataset, xAxis, which);
-                xAxisLabel += " (Z-Score)";
-            }
-            yAxisLabel += " (Z-Score)";
-        } else if(scale != "Linear") {
+        if(scale != "Linear") {
             let func = (scale == "Log e" ? Math.log : Math.log10);
             for(let i=0; i<y.length; ++i) y[i] = func(0.1 + y[i]);
             if(useMatrices) for(let i=0; i<x.length; ++i) x[i] = func(0.1 + x[i]);

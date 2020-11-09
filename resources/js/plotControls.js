@@ -18,7 +18,6 @@ class PlotControls {
         $('#yaxisselect' + self.elementId).on('change', () => self.onChange());
         $('#scaleselect' + self.elementId).on('change', () => self.onChange());
         $('#coloringselect' + self.elementId).on('change', () => self.onChange());
-        $('#zscore' + self.elementId).on('change', () => self.onChange());
 
         self.onDatasetChange = ()=>{throw "not implimented";};
         self.onChange = ()=>{throw "not implimented";};
@@ -76,10 +75,6 @@ class PlotControls {
         return $('#coloringselect' + this.elementId).val();
     }
 
-    getSelectedZScore() {
-        return $('#zscore' + this.elementId).prop('checked');
-    }
-
     _setOptions(id, names, defaultName=undefined) {
         $("#" + id).empty();
         if(!defaultName && names.length > 0) defaultName = names[0];
@@ -110,9 +105,6 @@ class PlotControls {
             <div>Select ${this.yAxisAlias}</div>
             <select id="yaxisselect${this.elementId}" class="selectpicker">
             </select>
-            <br><br>
-            <input type="checkbox" id="zscore${this.elementId}" name="zscore" value="zscore">
-            <label for="zscore${this.elementId}">ZScore Transformation</label>
             <br><br>
             <div>Select ${this.xAxisAlias}</div>
             <select id="xaxisselect${this.elementId}" class="selectpicker">
