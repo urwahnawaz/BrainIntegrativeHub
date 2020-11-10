@@ -13,8 +13,8 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/solid.min.css"/>
 
-
-
+    <script src="https://cdn.jsdelivr.net/npm/web-streams-polyfill@2.0.2/dist/ponyfill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/streamsaver@2.0.3/StreamSaver.min.js"></script>
 
     <script src="https://d3js.org/colorbrewer.v1.min.js"></script>
     <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
@@ -131,7 +131,12 @@
             </div>
 
             <!-- Main Table -->
-            <span id="my_table_select_group"><select class="selectpicker" data-header="Select visible columns" id="my_table_select" multiple></select>&nbsp;&nbsp;<i class="fas fa-eye" style="opacity:25%;"></i></span>
+            <span id="my_table_select_group">
+                <button id="my_download_button" type="submit" style="width: 40px; height: 40px; margin-right:15px; vertical-align: top;"><i class="fa fa-download"></i></button>
+                <select class="selectpicker" data-header="Select visible columns" id="my_table_select" multiple></select>&nbsp;&nbsp;
+                <i class="fas fa-eye" style="opacity:25%;"></i>
+                
+            </span>
             <table class="table table-hover" style="width:100%" id="my_table"></table>
 
             <!-- Pagination -->
@@ -415,7 +420,6 @@
                         }
                     }
                 }
-       
                 
                 if(!shouldInclude) continue;
                 
@@ -544,5 +548,43 @@
                 }
             });
         }
+
+        const streamSaver = window.streamSaver
+        $("#my_download_button").click(function () {
+            const fileStream = streamSaver.createWriteStream('neurocirc.csv');
+            const writer = fileStream.getWriter();
+            const encoder = new TextEncoder();
+            
+
+            //CSV header
+            let row = new Array(showCols.length);
+            for(let j=0; j<showCols.length; ++j) {
+                row[j] = headings[showCols[j]];
+            }
+            writer.write(encoder.encode(row.join(',') + "\n"));
+
+            // CSV body
+            for(let i = 0; i<matrix[0].length; ++i) {
+                shouldInclude = false;
+                for(let j of searchCols) {
+                    if(j < 0) continue;
+                    let searchable = matrix[j][i];
+                    if((typeof searchable === "string" && searchable.trim().toLocaleLowerCase().includes(searchTerm)) || (searchable == searchTerm)) {
+                        shouldInclude = true;
+                        break;
+                    }
+                }
+                if(shouldInclude) {
+                    for(let j = 0; j<showCols.length; ++j) {
+                        row[j] = matrix[showCols[j]][i]; 
+                        if(showCols[j] >= datasetsStart) {
+                            row[j] = (row[j] != -1);
+                        }
+                    }
+                    writer.write(encoder.encode(row.join(',') + "\n"));
+                }
+            }
+            writer.close();
+        });
     </script>
 </body>
