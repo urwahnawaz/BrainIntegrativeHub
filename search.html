@@ -565,10 +565,11 @@
 
             // CSV body
             for(let i = 0; i<matrix[0].length; ++i) {
+                let sortIndex = indices[i];
                 shouldInclude = false;
                 for(let j of searchCols) {
                     if(j < 0) continue;
-                    let searchable = matrix[j][i];
+                    let searchable = matrix[j][sortIndex];
                     if((typeof searchable === "string" && searchable.trim().toLocaleLowerCase().includes(searchTerm)) || (searchable == searchTerm)) {
                         shouldInclude = true;
                         break;
@@ -576,7 +577,7 @@
                 }
                 if(shouldInclude) {
                     for(let j = 0; j<showCols.length; ++j) {
-                        row[j] = matrix[showCols[j]][i]; 
+                        row[j] = matrix[showCols[j]][sortIndex]; 
                         if(showCols[j] >= datasetsStart) {
                             row[j] = (row[j] != -1);
                         }
