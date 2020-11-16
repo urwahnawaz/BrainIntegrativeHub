@@ -34,14 +34,9 @@ class GenomeBrowser {
                 collapseSuperGroups: true,
                 trixURI: '//www.biodalliance.org/datasets/GRCh38/gencode.v21.annotation.ix'
             },{
-                name: 'Circs',
+                name: 'NeuroCirc',
                 desc: 'Circular RNAs listed in NeuroCirc', 
                 bwgURI : './resources/data/out.bb',
-            },{
-                name: 'Repeats',
-                desc: 'Repeat annotation from UCSC', 
-                bwgURI: '//www.biodalliance.org/datasets/GRCh38/repeats.bb',
-                stylesheet_uri: '//www.biodalliance.org/stylesheets/bb-repeats2.xml'
             }],
         });
         //this.browser.addInitListener(() => $(".powered-by").first().remove());

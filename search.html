@@ -28,6 +28,7 @@
     <script src="resources/js/heatmap.js"></script>
     <script src="resources/js/qtlPanel.js"></script>
     <script src="resources/js/lmsPanel.js"></script>
+    <script src="resources/js/customPanel.js"></script>
 
     <script src="resources/js/plot.js"></script>
     <script src="resources/js/panelManager.js"></script>
@@ -97,25 +98,31 @@
 
     <!-- upload Modal -->
     <div class="modal fade" id="myUploadModal" role="dialog">
-        <div class="modal-dialog" style="width: 70%">
+        <div class="modal-dialog" style="width: 40%">
             <div class="modal-content rounded-0" style="padding: 10px">
                 <div class="modal-header">
-                    <h4 id="myUploadModalTitle" class="modal-title">Custom Dataset</h4>
+                    <h4 id="myUploadModalTitle" class="modal-title">Add Dataset</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div id="myUploadModalBody" class="modal-body">
-                    Adds additional columns visible only to you locally, NOT shared with external server.<br>
-                    If you want others to benefit from this dataset, contact Voineagu Lab.<br><br>
-                    <form id="my_upload_form">
-                        Dataset Name<br>
-                        <input type="text" name="name" autocomplete="off" placeholder="New dataset"><br><br>
-                        Select CPM Matrix 
-                        <input type="file" name="cpm" accept=".csv" required><br>
-                        Select Metadata (optional)
-                        <input type="file" name="meta" accept=".csv"><br>
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                            Adds local columns and charts, no data is shared with NeuroCirc.<br><br>
+                            Contact our lab for additions to the core database.<br><br>
+                            <form id="my_upload_form">
+                                Dataset Name<br>
+                                <input type="text" name="name" autocomplete="off" placeholder="New dataset"><br><br>
+                                Select CPM Matrix 
+                                <input type="file" class="form-control-file" name="cpm" accept=".csv" required><br>
+                                Select Metadata (optional)
+                                <input type="file" class="form-control-file" name="meta" accept=".csv"><br>
 
-                        <input type="submit">
-                    </form>
+                                <input type="submit" class="btn btn-default" value="Add">
+                            </form>
+                        </div>
+                    </div>
+                    <br>
+                    <br>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     </div>
@@ -322,10 +329,11 @@
             hdf5QTL = f.get("tables/QTL Analysis Brain/Liu/QTL");
             qtlTable = new QTLPanel("allpanels", 2, "QTL analysis brain", hdf5QTL.attrs.heading.split(","));
             
-
             lmsMeta = {};
             for(let i=datasetsStart; i<databasesStart; ++i) lmsMeta[headings[i]] = matrix[i];
             lmsPanel = new LMSPanel("allpanels", 1, "Dataset comparison (z-score)", f, lmsMeta);
+
+            customPanel = new CustomPanel("allpanels", "Custom Datasets");
 
             i = 0;
             for(let x of document.getElementsByClassName("panel-body")) {
@@ -552,6 +560,7 @@
                 metadataObj = {};
                 for(let i=datasetsStart; i<databasesStart; ++i) metadataObj[headings[i]] = metaIndex[i];
                 for (let p of panels) p.setCircId(matrix[0][circindex], metadataObj);
+                customPanel.setCircId(matrix[0][circindex], metadataObj);
 
                 //Change QTL table
                 let qtl = undefined;
@@ -717,6 +726,31 @@
                             complete: function(results2) {
                                 let metaData = results2.data;
 
+                                let sampleNamesData = csvData[0];
+                                sampleNamesData.shift();
+
+                                //Swap the rows to match
+                                let metaMatched = new Array(sampleNamesData.length);
+                                for(let i=0; i<metaMatched.length; ++i) {
+                                    let metaFound = sampleNamesData.indexOf(metaData[i+1][0]);
+                                    if(metaFound != -1) metaMatched[metaFound] = metaData[i+1].slice(1);
+                                }
+
+                                let metaObj = {};
+                                for(let j=0; j<metaMatched[0].length; ++j) {
+                                    let metaRow = new Array(metaMatched.length);
+                                    for(let i=0; i<metaMatched.length; ++i) {
+                                        metaRow[i] = metaMatched[i][j];
+                                    }
+                                    metaObj[metaData[0][j+1]] = metaRow;
+                                }
+
+                                //Cut off unmatched
+                                for(let i=0; i<matchedData.length; ++i) {
+                                    matchedData[i] = matchedData[i].slice(0, sampleNamesData.length);
+                                }
+
+                                customPanel.addCustomDataset(name, matchedData, metaObj);
                                 complete();
                             }
                         });

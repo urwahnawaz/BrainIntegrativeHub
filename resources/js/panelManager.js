@@ -142,7 +142,7 @@ class PanelManager {
             }
         } else {
             let samples = self.hdf5Group.get(dataset + "/samples/" + controls.getSelectedXAxis()).value;
-            x = which.map(i => samples[i]);
+            x = which.map(i => samples[i]); //TODO: we assume the orders match here, in some datasets they currently don't
         }
 
         let xAxisIsString = $.type(x[0]) === "string";

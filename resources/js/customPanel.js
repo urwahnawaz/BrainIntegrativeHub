@@ -19,7 +19,9 @@ class CustomPanel {
     }
 
     addCustomDataset(name, dataMatrix, metadataMatrix) {
+        let self = this;
         self.datasets[name] = {data: dataMatrix, meta: metadataMatrix};
+        console.log(self.datasets);
     }
 
     //assigns all callbacks to general, plot agnostic helper functions
@@ -58,7 +60,7 @@ class CustomPanel {
         let yRow = self.currIndex[dataset];
         let y = [];
         let which = [];
-        let yMatrixRow = self._getMatrixRowChunkCached(dataset, yAxis, yRow);
+        let yMatrixRow = self.datasets[dataset].data[yRow];//self._getMatrixRowChunkCached(dataset, yAxis, yRow);
         for(let i=0; i<yMatrixRow.length; ++i) {
             let val = yMatrixRow[i];
             y.push(val)
@@ -68,7 +70,7 @@ class CustomPanel {
         let xAxis = controls.getSelectedXAxis();
         let x = [];
 
-        let samples = self.hdf5Group.get(dataset + "/samples/" + controls.getSelectedXAxis()).value;
+        let samples = self.datasets[dataset].meta[controls.getSelectedXAxis()];//self.hdf5Group.get(dataset + "/samples/" + controls.getSelectedXAxis()).value;
         x = which.map(i => samples[i]);
 
         let xAxisIsString = $.type(x[0]) === "string";
@@ -90,17 +92,12 @@ class CustomPanel {
             if(xAxis == coloring) {
                 z = x;
             } else {
-                let samples = self.hdf5Group.get(dataset + "/samples/" + coloring).value;
+                let samples = self.datasets[dataset].meta[coloring];//self.hdf5Group.get(dataset + "/samples/" + coloring).value;
                 z = which.map(i => samples[i]);
             }
             plotData = x.map((v, i) => {return {x: x[i], y: y[i], z: z[i]};});
         } else {
             plotData = x.map((v, i) => {return {x: x[i], y: y[i]};});
-        }
-
-        let sampleNames = self.hdf5Group.get(dataset).attrs["sample_id"];
-        for(let i=0; i<which.length; ++i) {
-            plotData[i].name = sampleNames[i];
         }
 
         if(xAxisIsString) {
@@ -115,7 +112,7 @@ class CustomPanel {
         self.supressChanges = true;
         let found = false;
         self.currCircId = circId;
-        for(let d of self.datasets) {
+        for(let d of Object.keys(self.datasets)) {
             self.currIndex[d] = obj[d];
             found |= (self.currIndex[d] >= 0);
         }
