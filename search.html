@@ -108,14 +108,12 @@
                     If you want others to benefit from this dataset, contact Voineagu Lab.<br><br>
                     <form id="my_upload_form">
                         Dataset Name<br>
-                        <input type="text" name="name" placeholder="New dataset"><br><br>
+                        <input type="text" name="name" autocomplete="off" placeholder="New dataset"><br><br>
                         Select CPM Matrix 
                         <input type="file" name="cpm" accept=".csv" required><br>
-                        Select Metadata 
+                        Select Metadata (optional)
                         <input type="file" name="meta" accept=".csv"><br>
 
-                        CPM Threshold<br>
-                        <input type="number" id="quantity" name="threshold" min="0" max="1.0" step="0.05" value="0.05" required><br><br>
                         <input type="submit">
                     </form>
                     <div class="modal-footer">
@@ -421,7 +419,7 @@
             tableContents += '<tbody>';
             
             for (var i=0; i < matrix[0].length; ++i) indices[i] = i;
-            if(sortCurrCol != -3 && sortClassOrder[sortCurrIndex] == "asc" || sortClassOrder[sortCurrIndex] == "desc") {
+            if(sortCurrCol != -3 && (sortClassOrder[sortCurrIndex] == "asc" || sortClassOrder[sortCurrIndex] == "desc")) {
                 let f = (sortClassOrder[sortCurrIndex] == "asc" ? ((a, b) => (a > b ? 1 : (b > a ? -1 : 0))) : ((a, b) => (a > b ? -1 : (b > a ? 1 : 0))));
                 let g = (a, start, end) => { //would be better to have isDataset[x] rather than checking range?
                     let sum = 0; 
@@ -609,11 +607,11 @@
             $("#Datasets").removeClass("asc");
             $("#Datasets").removeClass("desc");
             $("#Datasets").removeClass("both");
-            $("#Datasets").addClass(((headings.length == sortCurrCol) ? sortClassOrder[sortCurrIndex] : "both"));
+            $("#Datasets").addClass(((-1 == sortCurrCol) ? sortClassOrder[sortCurrIndex] : "both"));
             $("#Databases").removeClass("asc");
             $("#Databases").removeClass("desc");
             $("#Databases").removeClass("both");
-            $("#Databases").addClass(((headings.length+1 == sortCurrCol) ? sortClassOrder[sortCurrIndex] : "both"));
+            $("#Databases").addClass(((-2 == sortCurrCol) ? sortClassOrder[sortCurrIndex] : "both"));
         }
 
         $("#my_upload_button").click(function() {
