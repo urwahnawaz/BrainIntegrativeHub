@@ -199,14 +199,15 @@
         let datasetsStart = other.length;
         let datasets2Start = other.length + datasets1.length;
         let databasesStart = other.length + datasets.length;
+        let datasetsCustomStart = databasesStart;
+        let datasetsCustomNum = 0;
         let matrix = undefined;
         let indices = undefined;
-        let customDatasets = [];
         
         let showCols = [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
         let searchCols = [0, 7, 8, -2];
 
-        let sortCurrCol = -1;
+        let sortCurrCol = -3;
         let sortCurrIndex = 0;
         let sortClassOrder = ["both", "desc", "asc"];
 
@@ -223,6 +224,54 @@
             if (++awaitAll == 1) {
                 hideLoading();
             }
+        }
+
+        function resetDropdowns() {
+            let optOther = "";
+            optOther += '<optgroup label="Column contents">';
+            for(let i=0; i<datasetsStart; ++i) optOther += '<option value="' + (i) + '">' + headings[i] + '</option>';
+            optOther += '</optgroup>';
+
+            let optSearch = optOther;
+            optSearch += '<optgroup label="Genomic range" data-max-options="1">';
+            optSearch += '<option value="-1">hg19</option>';
+            optSearch += '<option value="-2">hg38</option>';
+            optSearch += '</optgroup>';
+            
+
+            let optAll = optOther;
+            optAll += '<optgroup label="Datasets">';
+            for(let i=datasetsStart; i<databasesStart; ++i) optAll += '<option value="' + (i) + '">' + headings[i] + '</option>';
+            optAll += '</optgroup>'
+            optAll += '<optgroup label="Databases">';
+            for(let i=databasesStart; i<headings.length; ++i) optAll += '<option value="' + (i) + '">' + headings[i] + '</option>';
+            optAll += '</optgroup>'
+
+            $("#my_search_select").empty();
+            $("#my_search_select").append(optSearch);
+            $('#my_search_select').val(searchCols);
+            $('#my_search_select').selectpicker('refresh');
+            $('#my_search_select').on('change', function(){
+                searchCols = $(this).val();
+                updateSearchPos();
+                makeTable();
+            });
+
+            $("#my_table_select").empty();
+            $("#my_table_select").append(optAll);
+            $('#my_table_select').children().first().children().first().attr("disabled","disabled");
+            $('#my_table_select').children().first().children().first().hide();
+            $('#my_table_select').val(showCols);
+            $('#my_table_select').selectpicker('refresh');
+            $('#my_table_select').on('change', function(){
+                showCols = $(this).val();
+                showCols.unshift(0);
+                makeTable();
+            });
+
+            $(document).ready(function() {
+                $(".selectpicker").selectpicker("refresh");
+            });
         }
 
         let windowPath = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
@@ -277,7 +326,7 @@
             
 
             lmsMeta = {};
-            for(let i=other.length; i<other.length + datasets.length; ++i) lmsMeta[headings[i]] = matrix[i];
+            for(let i=datasetsStart; i<databasesStart; ++i) lmsMeta[headings[i]] = matrix[i];
             lmsPanel = new LMSPanel("allpanels", 1, "Dataset comparison (z-score)", f, lmsMeta);
 
             i = 0;
@@ -286,53 +335,7 @@
                     x.insertAdjacentHTML("afterbegin", '<div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin fermentum sem a nibh tempor, non rutrum ipsum molestie. Suspendisse sagittis hendrerit aliquam. In posuere nisl sit amet ultrices pretium. Sed vel turpis faucibus, congue nibh in, varius ligula. Donec ac enim et tortor finibus mollis et eget mi. Cras eu orci sit amet augue rutrum consequat. Maecenas lorem ante, aliquam a cursus sit amet, facilisis eget magna. </div><br><br>')
                 }
             }
-
-            i = 0
-            let optOther = "";
-            optOther += '<optgroup label="Column contents">';
-            for(let h of other) optOther += '<option value="' + (i++) + '">' + h + '</option>';
-            optOther += '</optgroup>';
-
-            let optSearch = optOther;
-            optSearch += '<optgroup label="Genomic range" data-max-options="1">';
-            optSearch += '<option value="-1">hg19</option>';
-            optSearch += '<option value="-2">hg38</option>';
-            optSearch += '</optgroup>';
-            
-
-            let optAll = optOther;
-            optAll += '<optgroup label="Datasets">';
-            for(let h of datasets) optAll += '<option value="' + (i++) + '">' + h + '</option>';
-            optAll += '</optgroup>'
-            optAll += '<optgroup label="Databases">';
-            for(let h of databases) optAll += '<option value="' + (i++) + '">' + h + '</option>';
-            optAll += '</optgroup>'
-
-            $("#my_search_select").append(optSearch);
-            $('#my_search_select').val(searchCols);
-            $('#my_search_select').selectpicker('refresh');
-            $('#my_search_select').on('change', function(){
-                searchCols = $(this).val();
-                updateSearchPos();
-                makeTable();
-            });
-
-            $("#my_table_select").append(optAll);
-            $('#my_table_select').children().first().children().first().attr("disabled","disabled");
-            $('#my_table_select').children().first().children().first().hide();
-            $('#my_table_select').val(showCols);
-            $('#my_table_select').selectpicker('refresh');
-            $('#my_table_select').on('change', function(){
-                showCols = $(this).val();
-                showCols.unshift(0);
-                makeTable();
-            });
-
-            $(document).ready(function() {
-                $(".selectpicker").selectpicker("refresh");
-            });
-
-            
+            resetDropdowns();
             makeTable();
             incAwaitAll();
         })();
@@ -374,8 +377,8 @@
             let datasetCount = 0;
             let databaseCount = 0;
             for(let j of showCols) {
-                if(j >= other.length) {
-                    if(j >= (other.length + datasets.length)) {
+                if(j >= datasetsStart) {
+                    if(j >= databasesStart) {
                         ++databaseCount;
                     } else {
                         ++datasetCount;
@@ -389,7 +392,7 @@
             tableContents += '<thead>';
             tableContents += "<tr>";
             for(let i of showCols) {
-                if(i >= other.length) break;
+                if(i >= datasetsStart) break;
                 let o = other[i];
                 let dtypeRes = hdf5Data.get(o).dtype.match(/([A-Z])([0-9]+)/i);
                 let dtypeStyle = "";
@@ -407,7 +410,7 @@
             for (let i of showCols) {
                 let h = headings[i];
                 sortClass = ((i == sortCurrCol) ? sortClassOrder[sortCurrIndex] : "both");
-                if (datasets.includes(h) || databases.includes(h)) {
+                if (i >= datasetsStart) {
                     tableContents += '<th class="bool"><span id="' + h + '"class="unselectable sortable ' + sortClass + '">' + h + "</span></th>";
                 } else {
                     tableContents += '<th><span id="' + h + '"class="unselectable sortable ' + sortClass + '">' + h + "</th>";
@@ -418,7 +421,7 @@
             tableContents += '<tbody>';
             
             for (var i=0; i < matrix[0].length; ++i) indices[i] = i;
-            if(sortCurrCol >= 0 && sortClassOrder[sortCurrIndex] == "asc" || sortClassOrder[sortCurrIndex] == "desc") {
+            if(sortCurrCol != -3 && sortClassOrder[sortCurrIndex] == "asc" || sortClassOrder[sortCurrIndex] == "desc") {
                 let f = (sortClassOrder[sortCurrIndex] == "asc" ? ((a, b) => (a > b ? 1 : (b > a ? -1 : 0))) : ((a, b) => (a > b ? -1 : (b > a ? 1 : 0))));
                 let g = (a, start, end) => { //would be better to have isDataset[x] rather than checking range?
                     let sum = 0; 
@@ -426,9 +429,9 @@
                     return sum;
                 }
 
-                if(sortCurrCol == headings.length) {
+                if(sortCurrCol == -1) {
                     indices.sort((a, b) => f(g(a, datasetsStart, databasesStart), g(b, datasetsStart, databasesStart)));
-                } else if(sortCurrCol == headings.length+1) {
+                } else if(sortCurrCol == -2) {
                     indices.sort((a, b) => f(g(a, databasesStart, headings.length), g(b, databasesStart, headings.length)));
                 } else {
                     indices.sort((a, b) => f(matrix[sortCurrCol][a], matrix[sortCurrCol][b]));
@@ -476,11 +479,11 @@
                 tableContents += `<tr data-index="${sortIndex}">`;
                 for(let j of showCols) {
                     let e = matrix[j][sortIndex];
-                    if (datasets1.includes(headings[j])) { //TODO super hacky, this info should be in db
+                    if (j >= datasetsStart && j < datasets2Start) { //TODO super hacky, this info should be in db
                         tableContents += `<td class="${(e != -1 ? 'bool yes dataset1' : 'bool no')}"></td>`;
-                    } else if (datasets2.includes(headings[j])) { //TODO super hacky, this info should be in db
+                    } else if (j >= datasets2Start && j < databasesStart) { //TODO super hacky, this info should be in db
                         tableContents += `<td class="${(e != -1 ? 'bool yes dataset2' : 'bool no')}"></td>`;
-                    } else if (databases.includes(headings[j])) {
+                    } else if (j >= databasesStart) {
                         tableContents += `<td class="${(e != -1 ? 'bool yes database' : 'bool no')}"></td>`;
                     } else {
                         tableContents += '<td>' + e + "</td>";
@@ -498,9 +501,9 @@
             $("thead > tr > th > span").click(function (arg) {
                 console.log(arg.target)
                 if(arg.target.id == "Datasets") {
-                    sortNewCol = headings.length;
+                    sortNewCol = -1;
                 } else if(arg.target.id == "Databases") {
-                    sortNewCol = headings.length + 1;
+                    sortNewCol = -2;
                 } else {
                     sortNewCol = headings.indexOf(arg.target.id);
                 }
@@ -527,14 +530,8 @@
 
                 //Change heatmap
                 heatmapObj = []
-                for(let i=other.length; i<headings.length; ++i) {
+                for(let i=datasetsStart; i<headings.length; ++i) {
                     //Just insert customs before databases
-                    if(i == databasesStart) {
-                        for(let j=0; j<customDatasets.length; ++j) {
-                            heatmapObj.push({name: customDatasets[j].name, url: "", present: (customDatasets[j].indices[circindex] != -1), datasetType: 2})
-                        }
-                    }
-
                     metaIndex[i] = matrix[i][circindex];
                     present = (metaIndex[i] != -1);
                     let url = "";
@@ -686,12 +683,31 @@
                     //Add to lms
                     lmsPanel.addCustomDataset(name, scaledData, matchedIndices);
                     
-                    customDatasets.push({name: name, data: matchedData, indices: matchedIndices});
+                    headings.splice(databasesStart, 0, name);
+                    matrix.splice(databasesStart, 0, matchedIndices);
+                    let inserted = false;
+                    for(let i=0; i<showCols.length; ++i) {
+                        if(showCols[i] >= databasesStart) {
+                            if(!inserted) {
+                                showCols.splice(i, 0, databasesStart);
+                                inserted = true;
+                            } else {
+                                ++showCols[i];
+                            }
+                            
+                        }
+                    }
+                    console.log(showCols);
+                    ++databasesStart;
+                    ++datasetsCustomNum;
+                    resetDropdowns();
+                    makeTable();
+                    //customDatasets.push({name: name, data: matchedData, indices: matchedIndices});
 
                     //Close and reset form
                     $("#myUploadModal").modal('toggle');
                     $(uploadForm.elements["name"]).val("");
-                    $(uploadForm.elements["name"]).attr("placeholder", "New dataset" + (customDatasets.length ? " " + (customDatasets.length + 1) : ""));
+                    $(uploadForm.elements["name"]).attr("placeholder", "New dataset" + (datasetsCustomNum ? " " + (datasetsCustomNum + 1) : ""));
                 }
             });
         });
