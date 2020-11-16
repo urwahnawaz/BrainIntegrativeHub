@@ -697,7 +697,10 @@
                             
                         }
                     }
-                    console.log(showCols);
+
+                    for(let i=0; i<searchCols.length; ++i) if(searchCols[i] >= databasesStart) ++searchCols[i];
+
+                    if(sortCurrCol >= databasesStart) ++sortCurrCol;
                     ++databasesStart;
                     ++datasetsCustomNum;
                     resetDropdowns();
