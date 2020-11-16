@@ -9,7 +9,7 @@ class GenomeBrowser {
             noOptions: true,
             noHelp: true,
             disableDefaultFeaturePopup: true,
-            noTrackAdder: true,
+            noTrackAdder: false,
             noTrackEditor: true,
             noOptionsnoHelp: true,
 
@@ -33,6 +33,10 @@ class GenomeBrowser {
                 stylesheet_uri: '//www.biodalliance.org/stylesheets/gencode2.xml',
                 collapseSuperGroups: true,
                 trixURI: '//www.biodalliance.org/datasets/GRCh38/gencode.v21.annotation.ix'
+            },{
+                name: 'Circs',
+                desc: 'Circular RNAs listed in NeuroCirc', 
+                bwgURI : './resources/data/out.bb',
             },{
                 name: 'Repeats',
                 desc: 'Repeat annotation from UCSC', 
