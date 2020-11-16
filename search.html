@@ -195,9 +195,9 @@
         var qtlIndices = undefined;
 
         //TODO: this is only non self-describing data 
-        let datasets = ["Gokool", "Liu", "Org", "ESC_FBN", "SY5Y"];
-        let datasets1 = ["Gokool", "Liu"];
-        let datasets2 = ["Org", "ESC_FBN", "SY5Y"]
+        let datasets = ["Brain1.PFC-CB", "Brain2.DLPFC", "OrgMaturation", "NeurDiff1.hESC", "NeurDiff2.SY5Y"];
+        let datasets1 = ["Brain1.PFC-CB", "Brain2.DLPFC"];
+        let datasets2 = ["OrgMaturation", "NeurDiff1.hESC", "NeurDiff2.SY5Y"]
         let databases = ["CircAtlas2", "CircBase", "CircFunBase", "Circpedia2", "RNADb"];
         let other = ["circ_id", "chr", "start_hg38", "end_hg38", "start_hg19", "end_hg19", "strand", "gene_symbol", "ensembl_id"]
         let headings = other.concat(datasets).concat(databases);
@@ -317,6 +317,7 @@
 
             hdf5Data = f.get("data");
             matrix = [];
+            console.log(hdf5Data.keys);
             for(let h of headings) matrix.push([...hdf5Data.get(h).value]);
             indices = new Array(matrix[0].length);
 
@@ -325,8 +326,8 @@
                 let dataset = urlsGroup.get(k);
                 urls[k] = {urls: dataset.value, home: dataset.attrs.home, prefix: dataset.attrs.prefix}
             }
-            qtlIndices = [...f.get("tables/QTL Analysis Brain/Liu/indices").value];
-            hdf5QTL = f.get("tables/QTL Analysis Brain/Liu/QTL");
+            qtlIndices = [...f.get("tables/QTL Analysis Brain/Brain2.DLPFC/indices").value];
+            hdf5QTL = f.get("tables/QTL Analysis Brain/Brain2.DLPFC/QTL");
             qtlTable = new QTLPanel("allpanels", 2, "QTL analysis brain", hdf5QTL.attrs.heading.split(","));
             
             lmsMeta = {};

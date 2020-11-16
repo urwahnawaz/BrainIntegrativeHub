@@ -42,8 +42,8 @@ class LMSPanel {
         let names = Object.keys(self.data);
         console.log("resetting options")
         console.log(names);
-        self._setOptions("lmsselect1", names, "Gokool");
-        self._setOptions("lmsselect2", names, "Liu")
+        self._setOptions("lmsselect1", names, "Brain1.PFC-CB");
+        self._setOptions("lmsselect2", names, "Brain2.DLPFC")
     }
 
     setCircIndex(circIndex) {
