@@ -439,6 +439,8 @@
                     indices.sort((a, b) => f(g(a, datasetsStart, databasesStart), g(b, datasetsStart, databasesStart)));
                 } else if(sortCurrCol == -2) {
                     indices.sort((a, b) => f(g(a, databasesStart, headings.length), g(b, databasesStart, headings.length)));
+                } else if(sortCurrCol >= datasetsStart){
+                    indices.sort((a, b) => f(matrix[sortCurrCol][a] >= 0, matrix[sortCurrCol][b] >= 0));
                 } else {
                     indices.sort((a, b) => f(matrix[sortCurrCol][a], matrix[sortCurrCol][b]));
                 }
