@@ -196,10 +196,8 @@
         let other = ["circ_id", "chr", "start_hg38", "end_hg38", "start_hg19", "end_hg19", "strand", "gene_symbol", "ensembl_id"]
         let headings = other.concat(datasets).concat(databases);
         let datasetsStart = other.length;
-        let datasetsEnd = other.length + datasets.length;
-        let datasets1End = other.length + datasets1.length;
-        let databasesStart = datasetsEnd;
-        let databasesEnd = datasetsEnd + databases.length;
+        let datasets2Start = other.length + datasets1.length;
+        let databasesStart = other.length + datasets.length;
         let matrix = undefined;
         let indices = undefined;
         
@@ -422,14 +420,14 @@
                 let f = (sortClassOrder[sortCurrIndex] == "asc" ? ((a, b) => (a > b ? 1 : (b > a ? -1 : 0))) : ((a, b) => (a > b ? -1 : (b > a ? 1 : 0))));
                 let g = (a, start, end) => { //would be better to have isDataset[x] rather than checking range?
                     let sum = 0; 
-                    for(let j of showCols) if(j >= start && j < end) sum += matrix[j][a];
+                    for(let j of showCols) if(j >= start && j < end) sum += (matrix[j][a] >= 0);
                     return sum;
                 }
 
                 if(sortCurrCol == headings.length) {
-                    indices.sort((a, b) => f(g(a, datasetsStart, datasetsEnd), g(b, datasetsStart, datasetsEnd)));
+                    indices.sort((a, b) => f(g(a, datasetsStart, databasesStart), g(b, datasetsStart, databasesStart)));
                 } else if(sortCurrCol == headings.length+1) {
-                    indices.sort((a, b) => f(g(a, databasesStart, databasesEnd), g(b, databasesStart, databasesEnd)));
+                    indices.sort((a, b) => f(g(a, databasesStart, headings.length), g(b, databasesStart, headings.length)));
                 } else {
                     indices.sort((a, b) => f(matrix[sortCurrCol][a], matrix[sortCurrCol][b]));
                 }
@@ -541,13 +539,13 @@
                             }
                         }
                     }
-                    heatmapObj.push({name: headings[i], url: url, present: present, datasetType: ((i < datasetsEnd) ? (i < datasets1End ? 1 : 2) : 0)});
+                    heatmapObj.push({name: headings[i], url: url, present: present, datasetType: ((i < databasesStart) ? (i < datasets2Start ? 1 : 2) : 0)});
                 }
                 heatmap.update(heatmapObj);
 
                 //Change metadata panels
                 metadataObj = {};
-                for(let i=datasetsStart; i<datasetsEnd; ++i) metadataObj[headings[i]] = metaIndex[i];
+                for(let i=datasetsStart; i<databasesStart; ++i) metadataObj[headings[i]] = metaIndex[i];
                 for (let p of panels) p.setCircId(matrix[0][circindex], metadataObj);
 
                 //Change QTL table
