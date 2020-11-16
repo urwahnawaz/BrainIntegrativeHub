@@ -21,6 +21,7 @@
 
     <link href="resources/data/out.hdf5" />
     <script src="https://cdn.jsdelivr.net/gh/usnistgov/jsfive@master/dist/hdf5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
     <script src="resources/js/circviewer.js"></script>
     <script src="resources/js/genomebrowser.js"></script>
@@ -105,16 +106,16 @@
                 <div id="myUploadModalBody" class="modal-body">
                     Adds additional columns visible only to you locally, NOT shared with external server.<br>
                     If you want others to benefit from this dataset, contact Voineagu Lab.<br><br>
-                    <form>
+                    <form id="my_upload_form">
                         Dataset Name<br>
-                        <input type="text" required><br><br>
+                        <input type="text" name="name" placeholder="New dataset"><br><br>
                         Select CPM Matrix 
-                        <input type="file" id="myFile" name="filename" required><br>
+                        <input type="file" name="cpm" accept=".csv" required><br>
                         Select Metadata 
-                        <input type="file" id="myFile" name="filename" required><br>
+                        <input type="file" name="meta" accept=".csv"><br>
 
                         CPM Threshold<br>
-                        <input type="number" id="quantity" name="quantity" min="0" max="1.0" step="0.05" value="0.05" required><br><br>
+                        <input type="number" id="quantity" name="threshold" min="0" max="1.0" step="0.05" value="0.05" required><br><br>
                         <input type="submit">
                     </form>
                     <div class="modal-footer">
@@ -200,6 +201,7 @@
         let databasesStart = other.length + datasets.length;
         let matrix = undefined;
         let indices = undefined;
+        let customDatasets = [];
         
         let showCols = [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
         let searchCols = [0, 7, 8, -2];
@@ -526,6 +528,13 @@
                 //Change heatmap
                 heatmapObj = []
                 for(let i=other.length; i<headings.length; ++i) {
+                    //Just insert customs before databases
+                    if(i == databasesStart) {
+                        for(let j=0; j<customDatasets.length; ++j) {
+                            heatmapObj.push({name: customDatasets[j].name, url: "", present: (customDatasets[j].indices[circindex] != -1), datasetType: 2})
+                        }
+                    }
+
                     metaIndex[i] = matrix[i][circindex];
                     present = (metaIndex[i] != -1);
                     let url = "";
@@ -541,6 +550,7 @@
                     }
                     heatmapObj.push({name: headings[i], url: url, present: present, datasetType: ((i < databasesStart) ? (i < datasets2Start ? 1 : 2) : 0)});
                 }
+
                 heatmap.update(heatmapObj);
 
                 //Change metadata panels
@@ -611,10 +621,79 @@
 
         $("#my_upload_button").click(function() {
             $("#myUploadModal").modal('toggle');
+        });
 
-            //1. add to "customDatasets" array which is automatically added in makeTable. CustomDatasets have trailing "X" for deleting them
-            //2. Compute LMS scaled values from CPM matrix and add to LMS panel object (need set function)
-            //3. Create extra panelManager that reads from this CSV instead of HDF5
+        $("#my_upload_form").submit(function(e) {
+            e.preventDefault();
+            let uploadForm = this;
+
+            //Get name for new dataset
+            let name = $(uploadForm.elements["name"]).val();
+            if(!name) name = $(uploadForm.elements["name"]).attr("placeholder");
+
+            //Read cpm csv
+            const coordRegex = /(chr[^:_\-]+)[:_\-]([0-9]+).([0-9]+)/gi;
+            Papa.parse(uploadForm.elements["cpm"].files[0], {
+                dynamicTyping: true,
+                complete: function(results) {
+                    //Calculate scaled version
+                    let csvData = results.data;
+                    let matchedData = [];
+                    let matchedIndices = new Array(matrix[0].length).fill(-1);
+                    for(let i=1; i<csvData.length; ++i) {
+                        if(!csvData[i][0]) continue;
+                        let matchIdGroup = coordRegex.exec(csvData[i][0]);
+                        if(!matchIdGroup) continue;
+                        for(let j=0; j<matrix[0].length; ++j) {
+                            if(matchIdGroup[1] == matrix[1][j] && matchIdGroup[2] == matrix[4][j] && matchIdGroup[3] == matrix[5][j]) {
+                                matchedData.push(csvData[i]);
+                                matchedIndices[j] = matchedData.length-1;
+                                break;
+                            }
+                        }
+                    }
+
+                    //Convert non-numeric to zero
+                    for(let i=0; i<matchedData.length; ++i) {
+                        for(let j=0; j<matchedData.length; ++j) {
+                            if($.type(matchedData[i][j]) === "string") {
+                                matchedData[i][j] = 0.0;
+                            }
+                        }
+                    }
+
+                    //Get mean of logs for each row
+                    let scaledData = new Array(matchedData.length);
+                    for(let i=0; i<matchedData.length; ++i) {
+                        scaledData[i] = 0;
+                        for(let j=0; j<matchedData[i].length; ++j) scaledData[i] += Math.log2(matchedData[i][j] + 0.01);
+                        scaledData[i] /= matchedData[i].length;
+                    }
+
+                    //Get overall mean
+                    let mean = 0;
+                    for(let i=0; i<scaledData.length; ++i) mean += scaledData[i];
+                    mean /= scaledData.length;
+
+                    //Get overall sd
+                    let sd = 0;
+                    for(let i=0; i<scaledData.length; ++i) sd += Math.pow(scaledData[i] - mean, 2);
+                    sd = Math.sqrt(sd / scaledData.length);
+
+                    //Calculate Z-Score
+                    for(let i=0; i<scaledData.length; ++i) scaledData[i] = (scaledData[i] - mean) / sd;
+
+                    //Add to lms
+                    lmsPanel.addCustomDataset(name, scaledData, matchedIndices);
+                    
+                    customDatasets.push({name: name, data: matchedData, indices: matchedIndices});
+
+                    //Close and reset form
+                    $("#myUploadModal").modal('toggle');
+                    $(uploadForm.elements["name"]).val("");
+                    $(uploadForm.elements["name"]).attr("placeholder", "New dataset" + (customDatasets.length ? " " + (customDatasets.length + 1) : ""));
+                }
+            });
         });
 
         const streamSaver = window.streamSaver
@@ -622,7 +701,6 @@
             const fileStream = streamSaver.createWriteStream('neurocirc.csv');
             const writer = fileStream.getWriter();
             const encoder = new TextEncoder();
-            
 
             //CSV header
             let row = new Array(showCols.length);

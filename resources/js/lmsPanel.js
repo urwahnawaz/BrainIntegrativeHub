@@ -19,18 +19,31 @@ class LMSPanel {
                 }
             }
         }
-        
 
         self.plot = new Plot("lmsplot");
-
-        let names = Object.keys(self.data);
-        self._setOptions("lmsselect1", names, "Gokool");
-        self._setOptions("lmsselect2", names, "Liu")
+        self.resetOptions();
         $('#lmsselect1').on('change', () => self.update());
         $('#lmsselect2').on('change', () => self.update());
 
         self.preventUpdates = false;
         self.update();
+    }
+
+    addCustomDataset(name, scaled, meta) {
+        var self = this;
+        self.data[name] = scaled;
+        self.metas[name] = meta;
+        self.resetOptions();
+        console.log("added dataset " + name)
+    }
+
+    resetOptions() {
+        var self = this;
+        let names = Object.keys(self.data);
+        console.log("resetting options")
+        console.log(names);
+        self._setOptions("lmsselect1", names, "Gokool");
+        self._setOptions("lmsselect2", names, "Liu")
     }
 
     setCircIndex(circIndex) {
@@ -42,7 +55,6 @@ class LMSPanel {
         let setChart = false;
         for(let i=0; i<names.length; ++i) {
             let curr1 = names[i];
-            console.log(curr1);
             let meta1 = self.metas[curr1][circIndex];
             $('#lmsselect1').children().eq(i).attr("hidden",meta1 == -1);
             $('#lmsselect2').children().eq(i).attr("hidden",meta1 == -1);
@@ -60,7 +72,6 @@ class LMSPanel {
             }
         }
         if(!setChart) self.circIndex = undefined;
-
         
         self.preventUpdates = false;
         
@@ -89,7 +100,7 @@ class LMSPanel {
             let meta1 = self.metas[curr1][i];
             let meta2 = self.metas[curr2][i];
             if(meta1 != -1 && meta2 != -1) {
-                plotData.push({x: data1[meta1], y: data2[meta2]});
+                plotData.push({x: data1[meta1]/*this ends up undefined? meta1 probs out of range?*/, y: data2[meta2]});
             }
         }
         self.plot.updateScatter(plotData, curr1, curr2);
@@ -98,17 +109,13 @@ class LMSPanel {
 
     _setOptions(id, names, defaultName=undefined) {
         $("#" + id).empty();
-        let index = 0;
-        if(defaultName) {
-            let found = names.indexOf(defaultName);
-            if(found == -1) names.unshift(defaultName);
-            else index = found;
-        }
+        if(!defaultName && names.length > 0) defaultName = names[0];
+        if(defaultName && !names.includes(defaultName)) names.unshift(defaultName);
         for (let n of names) $('#' + id).append('<option value="' + n + '">' + n + '</option>');
-        $("#" + id).prop('selectedIndex', index);
-        $("#" + id).selectpicker("refresh");
 
-        
+        $("#" + id).selectpicker("refresh");
+        if(defaultName) $("#" + id).val(defaultName);
+        $("#" + id).selectpicker("refresh");
     }
 
     
