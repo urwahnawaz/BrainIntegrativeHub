@@ -3,8 +3,15 @@
 #Papers included:
 #Maass2017 Memczak2013 Rybak2015 Salzman2013
 
+#TODO: rewrite so databases are circiters but datasets/metadata are in predefined csv format
+#Makes sense to separate them since databases can be updated (and should have an update function) 
+# whereas datasets cannot be and it should be easy to add more
+
+#TODO: add multiple dtype support to jsfive
+
 from collections import Counter
-import csv, datetime, re, os, h5py, sys, math
+import csv, datetime, re, os, h5py, sys, math, subprocess
+from subprocess import DEVNULL, STDOUT, check_call
 from sortedcontainers import SortedSet
 from matplotlib import pyplot
 from upsetplot import from_contents, plot
@@ -33,17 +40,19 @@ from iterators.sy5yiter import SY5YIter
 nmDist = 10 #Maximum difference in coordinates to be considered a near match
 
 def isInDataset(circ, iters):
+    count = 0
     for i in range(len(iters)):
         if iters[i].isDataset and circ._meta[i] != CircRow.META_INDEX_CIRC_NOT_IN_DB:
-            return True
+            count += 1
+            if(count >= 2): return True
     return False
 
 def shouldMerge(circ1, circ2):
     cmp = circ1.hsa.cmp(circ2.hsa)
     return ((cmp == CircHSAGroup.CMP_EQUAL) or (cmp == CircHSAGroup.CMP_UNKNOWN and circ1.group.nearEqual(circ2.group, nmDist)))
 
-def mustMerge(circ1):
-    return circ1.group.strand == '.'
+def mustMerge(circIter, circ1):
+    return (not circIter.isDataset) or circ1.group.strand == '.'
 
 def generateOutput(inputIterators):
     ss = SortedSet()
@@ -57,9 +66,9 @@ def generateOutput(inputIterators):
                     ss[pos].merge(circ)
                 elif((pos+1) < len(ss) and shouldMerge(circ, ss[pos+1])):
                     ss[pos+1].merge(circ)
-                elif not mustMerge(circ):
+                elif not mustMerge(circIter, circ):
                         ss.add(circ)
-            elif not mustMerge(circ):
+            elif not mustMerge(circIter, circ):
                 ss.add(circ)
         print("(total merged circrnas: %d)" % (len(ss)))
     return ss
@@ -158,7 +167,7 @@ def annotateEnsemblNCBI(iter):
 
         if newer: circ.gene = newer
         if not circ.geneId and circ.gene: 
-            circ.geneId = ids.get(circ.gene, None)
+            circ.geneId = ids.get(circ.gene, "")
 
 
 def annotateEnsembl(iter):
@@ -170,7 +179,7 @@ def annotateEnsembl(iter):
         dic[match.group(2)] = match.group(1)
 
     for circ in iter:
-        if not circ.geneId: circ.geneId = dic.get(circ.gene, dic.get(str(circ.gene) + "1", None))
+        if not circ.geneId: circ.geneId = dic.get(circ.gene, dic.get(str(circ.gene) + "1", ""))
 
 def annotateEnsemblBiomart(iter):
     dic = {}
@@ -180,7 +189,7 @@ def annotateEnsemblBiomart(iter):
         rev[line[0]] = line[4]
 
     for circ in iter:
-        if not circ.geneId and circ.gene: circ.geneId = dic.get(circ.gene, None)
+        if not circ.geneId and circ.gene: circ.geneId = dic.get(circ.gene, "")
         if not circ.gene and circ.geneId: circ.gene = rev.get(circ.geneId, "")
 
 def filterOutputToList(iter, circIters):
@@ -192,12 +201,12 @@ def filterOutputToList(iter, circIters):
         if not isInDataset(circ, circIters): 
             countExcludedDs += 1
             circ._error = "ERROR: not in novel datasets"
-        elif not circ.group.hasId(): 
+        elif not circ.group.hasId(1) or not circ.group.hasId(0):
             countExcluded38 += 1
             circ._error = "ERROR: no hg38 liftover"
-        elif not circ.geneId: 
+        elif not circ.geneId and not circ.gene: 
             countExcludedEns += 1
-            circ._error = "ERROR: no Ensembl ID found for gene symbol/alias: " + str(circ.gene)
+            circ._error = "ERROR: no Ensembl ID or gene symbol/alias found: " + str(circ.gene) + " - " + str(circ.geneId)
         else: ret.append(circ)
     return ret, countExcludedDs, countExcludedEns, countExcluded38
 
@@ -216,13 +225,27 @@ def outputComparisonCSVs(ss, li, circIters):
         error = [x for x in ss2.intersection(ss) if x._error]
         writeCSV("outError.csv", error, datasetsMap, databasesMap, True)
 
+def outputTrack(iter):
+    with open("./out.bed", 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile, delimiter='\t', quotechar='\"', quoting=csv.QUOTE_NONE)
+        for circ in iter:
+            writer.writerow([circ.group.ch, circ.group.versions[1].start, circ.group.versions[1].end])
+
+    sortedBed = open("./sorted.bed", "w")
+    proc1 = subprocess.run(["sort", "-k1,1", "-k2,2n", "out.bed"], stdout=sortedBed, stderr=STDOUT)
+    #proc2 = subprocess.run(["./utility/bedGraphToBigWig", "./sorted.bed", "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes", "./out.bw"], stdout=subprocess.PIPE, stderr=STDOUT)
+    proc2 = subprocess.run(["./utility/bedToBigBed", "-type=bed3", "./sorted.bed", "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes", "./out.bb"], stdout=subprocess.PIPE, stderr=STDOUT)
+
+    if os.path.exists("./out.bed"): os.remove("./out.bed")
+    if os.path.exists("./sorted.bed"): os.remove("./sorted.bed")
+
 if __name__ == '__main__':
     circIters = [
         CircLiuIter("./data/Liu"),
         CircGokoolIter("./data/Gokool"),
         ESC_FBNIter("./data/ESC_FBN/Processed"),
-        OrgIter("./data/ORG/Processed"),
         SY5YIter("./data/SY5Y/Processed"),
+        OrgIter("./data/ORG/Processed"),
         Circpedia2Iter("./data/CIRCpedia2"), 
         CircBaseIter("./data/Circbase"), 
         CircRNADbIter("./data/circRNADb"), 
@@ -235,12 +258,28 @@ if __name__ == '__main__':
 
     print(datetime.datetime.now().strftime("%H:%M:%S") + " Annotating and Filtering")
 
+    # 1.
+    # This step creates circrows for each entry and merges to existing if within 10 bases (checks left first then right of closest)
+    # It follows that datasets/databases we iterate through first end up being the "official" coordinates
+    # Less than/greater than is determined by 1. hg38, 2. hg19 to find this nearest match
+    # Entries with different HSA codes referring to the same database are not merged
+    # Merging involves finding the union of all tissue expressions, database/dataset presence and URLs
+    # This presence is represented as an index from the original source, used for later metadata steps
     ss = generateOutput(circIters)
+
+    #2. These steps attempt to convert gene name synonyms to the official gene name and also find ensembl ID
     annotateEnsemblNCBI(ss)
     annotateEnsemblBiomart(ss)
 
+    # 3.
+    # This step filters out entries that don't have a gene name, ensembl id, hg38 or hg19 coordinates
     li, countExcludedDs, countExcludedEns, countExcluded38 = filterOutputToList(ss, circIters)
 
+    # 4. 
+    # This step writes everything to file, including metadata
+    # Some very large matrices (e.g. CPM) use chunk compression for now, so we only decompress a ~page at a time
+    # Metadata is reordered based on overall neurocirc order (useful for chunk compression)
+    # Metadata pertaining to rows that have been filtered out in step 3. is not included
     writeHDF5(circIters, li)
 
     print("> Filtered %d [not in novel datasets]" % (countExcludedDs))
@@ -254,4 +293,5 @@ if __name__ == '__main__':
 
     print("%d circrnas written" % (len(li)))
 
-    outputComparisonCSVs(ss, li, circIters)
+    #outputComparisonCSVs(ss, li, circIters)
+    outputTrack(li)

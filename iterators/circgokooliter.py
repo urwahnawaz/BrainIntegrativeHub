@@ -9,7 +9,7 @@ from expression import Expression
 from circrow import CircRow
 
 class CircGokoolIter(AbstractMetaIter):
-    name = "Gokool"
+    name = "Brain1.PFC-CB"
     isDataset = True
     url = "https://www.biologicalpsychiatryjournal.com/article/S0006-3223(19)31581-1/"
 
@@ -59,4 +59,3 @@ class CircGokoolIter(AbstractMetaIter):
         for line in self.read_file.itertuples():
             if not str(line[0+1]).startswith("ch") or line[8+1] == ".": continue
             fileFrom.write(line[2+1] + '\t' + str(line[3+1]) + '\t' + str(line[4+1]) + '\t' + line[8+1] + '\n')
-            

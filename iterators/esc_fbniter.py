@@ -8,7 +8,7 @@ from circrangegroup import CircRangeGroup
 from expression import Expression
 
 class ESC_FBNIter(AbstractMetaIter):
-    name = "ESC_FBN"
+    name = "NeurDiff1.hESC"
     isDataset = True
 
     def __init__(self, directory):

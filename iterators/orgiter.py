@@ -8,7 +8,7 @@ from circrangegroup import CircRangeGroup
 from expression import Expression
 
 class OrgIter(AbstractMetaIter):
-    name = "Org"
+    name = "OrgMaturation"
     isDataset = True
 
     def __init__(self, directory):

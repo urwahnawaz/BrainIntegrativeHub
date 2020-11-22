@@ -9,7 +9,7 @@ from circrangegroup import CircRangeGroup
 from expression import Expression
 
 class CircLiuIter(AbstractMetaIter):
-    name = "Liu"
+    name = "Brain2.DLPFC"
     isDataset = True
     url = "https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1701-8"
 

@@ -5,7 +5,7 @@ class CircRangeGroup:
     def __init__(self, ch, strand, versions):
         self.ch = ch
         self.strand = strand
-        self.versions = versions
+        self.versions = versions #TODO: strand can change in liftover!
 
     def toArray(self):
         ret = [str(self.ch)]

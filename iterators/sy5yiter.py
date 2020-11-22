@@ -8,7 +8,7 @@ from circrangegroup import CircRangeGroup
 from expression import Expression
 
 class SY5YIter(AbstractMetaIter):
-    name = "SY5Y"
+    name = "NeurDiff2.SY5Y"
     isDataset = True
 
     def __init__(self, directory):
