@@ -5,36 +5,41 @@ from sortedcontainers import SortedSet
 class CircRow:
     META_INDEX_CIRC_NOT_IN_DB = -1
 
-    def __init__(self, group, hsa, gene, db_id, meta_index, url=""):
+    def __init__(self, group, hsa, gene, db_id, meta_index, url="", geneId=""):
         self.group = group
         self.hsa = hsa
         self.gene = gene
-        self.expressions = SortedSet()
-        self._meta = [CircRow.META_INDEX_CIRC_NOT_IN_DB] * (AbstractDB.id_max + 1)
+        self._meta = [CircRow.META_INDEX_CIRC_NOT_IN_DB] * (db_id + 1)
         self._meta[db_id] = meta_index
-        self.geneId = ""
-        self.mergeCount = 0
+        self.geneId = geneId
         self._error = ""
-        self._url = [""] * (AbstractDB.id_max + 1)
+        self._url = [""] * (db_id + 1)
         self._url[db_id] = url
 
-    def merge(self, other):
-        #Add other tissues/studies, transfer reads to existing if undefined
-        for val in other.expressions:
-            pos = self.expressions.bisect_left(val)
-            if pos >= 0 and pos < len(self.expressions) and self.expressions[pos] == val:
-                if val.reads != -1 and self.expressions[pos].reads == -1:
-                    self.expressions[pos].reads = val.reads
-            else:
-                self.addExpression(val)
-        for i in range(len(other._meta)): self._meta[i] = max(self._meta[i], other._meta[i])
-        for i in range(len(other._meta)): 
-            if(not self._url[i]): self._url[i] = other._url[i]
-        self.hsa.merge(other.hsa)
-        self.mergeCount += other.mergeCount + (0 if (self.group == other.group) else 1) #Only counting non exact merges
+    def getMeta(self, id):
+        return -1 if id >= len(self._meta) else self._meta[id]
     
-    def addExpression(self, value):
-        self.expressions.add(value)
+    def setMeta(self, id, value):
+        if id >= len(self._meta):
+            self._meta.extend([-1] * (id + 1 - len(self._meta)))
+        self._meta[id] = value
+
+    def merge(self, other):
+        shouldSwap = False if len(self._meta) >= len(other._meta) else True
+
+        newMeta = other._meta if shouldSwap else self._meta
+        oldMeta = self._meta if shouldSwap else other._meta
+        for i in range(len(oldMeta)): 
+            newMeta[i] = max(self._meta[i], other._meta[i])
+        self._meta = newMeta
+
+        newURL = other._url if shouldSwap else self._url
+        oldURL = self._url if shouldSwap else other._url
+        for i in range(len(oldURL)): 
+            if(not newURL[i]): newURL[i] = oldURL[i]
+        self._url = newURL
+
+        self.hsa.merge(other.hsa)
 
     def toArray(self):
         return ["NA"] + self.group.toArray() + [self.gene]

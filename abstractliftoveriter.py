@@ -8,8 +8,8 @@ from circrange import CircRange
 class AbstractLiftoverIter(AbstractDB):
     required = ["hg19", "hg38"]
 
-    def __init__(self, directory):
-        super().__init__()
+    def __init__(self, name, directory):
+        super().__init__(name)
 
         self.directory = directory
         self.read_file_lift = [None] * len(AbstractLiftoverIter.required)
@@ -66,8 +66,11 @@ class AbstractLiftoverIter(AbstractDB):
                 liftTo = AbstractLiftoverIter.required[i]
                 if(liftTo != refGenome):
                     #Perform liftover
-                    proc = subprocess.run(["./utility/liftOver", nameFrom, self._getChainLocation(refGenome, liftTo), self.read_file_lift[i].name, self.read_file_lift[i].name + ".unmap"], stdout=DEVNULL, stderr=STDOUT) #liftOver oldFile map.chain newFile unMapped
-                    print("Running liftover: " + ' '.join(proc.args))
+                    try:
+                        proc = subprocess.run(["./utility/liftOver", nameFrom, self._getChainLocation(refGenome, liftTo), self.read_file_lift[i].name, self.read_file_lift[i].name + ".unmap"], stdout=DEVNULL, stderr=STDOUT) #liftOver oldFile map.chain newFile unMapped
+                        print("Running liftover: " + ' '.join(proc.args))
+                    except:
+                        print("Could not liftover (make sure /utilities contains compatible binaries)")
 
             unmapName = self.read_file_lift[i].name + ".unmap"
             self.read_file_lift[i] = open(self.read_file_lift[i].name, 'r')

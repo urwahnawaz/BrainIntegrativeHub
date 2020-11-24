@@ -9,13 +9,10 @@ from circrow import CircRow
 from circhsa import CircHSA
 from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
-from expression import Expression
 
 class CircRicIter(AbstractLiftoverIter):
-    name = "CircRic"
-
     def __init__(self, directory):
-        super().__init__(directory)
+        super().__init__("CircRic", directory)
 
         self.read_file = open(os.path.join(directory, "circRNA_expression.csv"), 'r')
         self.read_obj = csv.reader(self.read_file, delimiter=',')
@@ -41,7 +38,6 @@ class CircRicIter(AbstractLiftoverIter):
 
             group = CircRangeGroup(ch="chr" + str(match.group(1)), strand='+', versions=super().__next__())
             ret = CircRow(group=group, hsa=ids, gene=line[5], db_id = self.id, meta_index=self.meta_index)
-            ret.addExpression(Expression("Brain", "CircRic", int(line[4])))
             return ret
 
     def _toBedFile(self, fileFrom):

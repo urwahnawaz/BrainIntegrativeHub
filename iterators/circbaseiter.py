@@ -5,13 +5,11 @@ from circrow import CircRow
 from circhsa import CircHSA
 from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
-from expression import Expression
 
 #can generate link using id e.g. http://www.circbase.org/cgi-bin/singlerecord.cgi?id=hsa_circ_0114324
 #Can also generate link using position
 
 class CircBaseIter(AbstractLiftoverIter):
-    name = "CircBase"
     url = "http://www.circbase.org/"
     urlPrefix = "http://www.circbase.org/cgi-bin/singlerecord.cgi?id="
     hasIndividualURLs = True
@@ -19,7 +17,7 @@ class CircBaseIter(AbstractLiftoverIter):
     studies = ["Rybak2015", "Maass2017"]
 
     def __init__(self, directory):
-        super().__init__(directory)
+        super().__init__("CircBase", directory)
 
         self.currFile = 0
         self.read_files = [open(os.path.join(self.directory, n), 'r') for n in CircBaseIter.files]
@@ -51,16 +49,6 @@ class CircBaseIter(AbstractLiftoverIter):
 
             group = CircRangeGroup(ch=match.group(1), strand=line[1], versions=super().__next__())
             ret = CircRow(group=group, hsa=ids, gene=line[10], db_id = self.id, meta_index=self.meta_index, url=line[2])
-
-            tissues = line[5].replace(" ", "").split(',')
-            expressions = line[6].replace(" ", "").split(',')
-            for i in range(len(tissues)):
-                tissue = tissues[i].replace("_", " ")
-                if expressions[i] == "NA":
-                    continue
-                expression = float(expressions[i])
-                ret.addExpression(Expression(self.matcher.getTissueFromSynonym(tissue).name, CircBaseIter.studies[self.currFile], expression))
-
             return ret
 
     def _toBedFile(self, fileFrom):

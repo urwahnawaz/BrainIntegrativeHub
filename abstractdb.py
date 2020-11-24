@@ -1,35 +1,30 @@
 import itertools
-from circtissuematcher import CircTissueMatcher
 import h5py
 import numpy as np
 
 class AbstractDB:
-    name = "Unknown"
     url = ""
     urlPrefix = ""
-    isDataset = False
-    hasMetadata = False
     hasIndividualURLs = False
-
-    matcher = CircTissueMatcher("./data")
 
     id_iter = itertools.count()
     id_max = 0
 
-    def __init__(self):
+    def __init__(self, name):
         self.id = AbstractDB.id_max = next(AbstractDB.id_iter)
+        self.name = name
 
     def reduceIndices(self, rows):
         #Fix _meta indices, must do after filtering metadata
         fixed = 0
         for i in range(len(rows)):
-            if rows[i]._meta[self.id] >= 0:
-                rows[i]._meta[self.id] = fixed
+            if rows[i].getMeta(self.id) >= 0:
+                rows[i].setMeta(self.id, fixed)
                 fixed += 1
 
     def writeHDF5URLs(self, hdf5Group, rows):
         if(self.hasIndividualURLs): 
-            urls = [r._url[self.id] for r in rows if r._meta[self.id] >= 0]
+            urls = [r._url[self.id] for r in rows if r.getMeta(self.id) >= 0]
             arr = np.array([u.encode() for u in urls], dtype="S" + str(len(max(urls, key=len))))
             ds = hdf5Group.create_dataset(self.name, data=arr, chunks=arr.shape, compression="gzip", compression_opts=9)
             ds.attrs.create("prefix", self.urlPrefix)

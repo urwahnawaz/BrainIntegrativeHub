@@ -1,0 +1,71 @@
+datasets:
+    -   name: Brain1.PFC-CB
+        reference: hg19
+        url: "https://www.biologicalpsychiatryjournal.com/article/S0006-3223(19)31581-1/"
+        dir: "./data/Gokool"
+        isBrain: true
+        main: "gok.csv"
+        meta: "gok_meta.csv"
+        matrices: 
+            -   type: CPM
+                path: "gok_circ_cpm.csv"
+            -   type: CI
+                path: "gok_ci.csv"
+            -   type: SJ
+                path: "gok_sj_cpm.csv"
+
+    -   name: Brain2.DLPFC
+        reference: hg19
+        url: "https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1701-8"
+        dir: "./data/Liu"
+        isBrain: true
+        main: "liu.csv"
+        qtl: "liu_qtl.csv"
+        matrices: 
+            -   type: CPM
+                path: "liu_cpm.csv"
+
+    -   name: NeurDiff1.hESC
+        reference: hg19
+        dir: "./data/ESC_FBN/"
+        main: "esc_fbn.csv"
+        meta: "esc_fbn_meta.csv"
+        matrices: 
+            -   type: CPM
+                path: "esc_fbn_cpm.csv"
+
+    -   name: NeurDiff2.SY5Y
+        reference: hg19
+        dir: "./data/SY5Y/"
+        main: "sy5y.csv"
+        meta: "sy5y_meta.csv"
+        matrices: 
+            -   type: CPM
+                path: "sy5y_cpm.csv"
+
+    -   name: OrgMaturation
+        reference: hg19
+        dir: "./data/Org/"
+        main: "org.csv"
+        meta: "org_meta.csv"
+        matrices: 
+            -   type: CPM
+                path: "org_cpm.csv"
+
+panels:
+    -   name: "CircRNA expression in human brain tissue"
+        type: METADATA
+        datasets: [Brain1.PFC-CB, Brain2.DLPFC]
+        description: >
+            This section allows detailed exploration of the data in the Brain1.PFC-CB (Gokool et al.[link to pub]) dataset. CircRNA expression values (in Counts per Million ; CPM) and circularization index values (CI)  can be plotted against metadata variables selected from the drop-down menu. A boxplot is generated for categorical metadata variables and a scatterplot is generated for numerical variables. In the case of numerical variables, a second categorical variable can be selected to color the datapoints – eg. CI vs Age plot with data points colored by Brain Region.
+            A scatterplot of circular RNA vs linear RNA expression shows the relation
+            SNPs associated with the expression of the circRNAs are displayed in a table, with data from Brain2. DLPFC (Liu et al. [link to pub]).
+
+    -   name: "CircRNA expression during neuronal differentiation"
+        datasets: [NeurDiff1.hESC, NeurDiff2.SY5Y]
+        description: >
+            includes interactive plots that allow the user to explore the expression of the circRNA of interest (CPM) in the NeurDiff1.hESC and NeurDiff2.SY5Y datasets.
+
+    -   name: "CircRNA expression during cellular maturation in brain organoids"
+        description: ""
+        datasets: [OrgMaturation]

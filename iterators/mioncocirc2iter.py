@@ -5,14 +5,12 @@ from circrow import CircRow
 from circhsa import CircHSA
 from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
-from expression import Expression
 
 class MiOncoCirc2Iter(AbstractLiftoverIter):
-    name = "MiOncoCirc2"
     tissues = ["ACC","BLCA","BRCA","CHOL","COLO","ESCA","GBM","HCC","HNSC","KDNY","LUNG","MBL","NRBL","OV","PAAD","PRAD","SARC","SECR","SKCM"]
 
     def __init__(self, directory):
-        super().__init__(directory)
+        super().__init__("MiOncoCirc2", directory)
 
         self.read_file = open(os.path.join(self.directory, "v0.1.release.txt"), 'r')
         self.read_obj = csv.reader(self.read_file, delimiter='\t')
@@ -33,8 +31,6 @@ class MiOncoCirc2Iter(AbstractLiftoverIter):
 
             group = CircRangeGroup(ch="chr" + line[0], strand='+', versions=super().__next__())
             ret = CircRow(group=group, hsa=ids, gene=line[4], db_id = self.id)
-
-            ret.addExpression(Expression("Human", "MiOncoCirc2", int(line[3])))
             
             return ret
 

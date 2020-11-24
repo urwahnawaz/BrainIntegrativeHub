@@ -5,16 +5,14 @@ from circrow import CircRow
 from circhsa import CircHSA
 from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
-from expression import Expression
 
 class Circpedia2Iter(AbstractLiftoverIter):
-    name = "Circpedia2"
     url = "https://www.picb.ac.cn/rnomics/circpedia"
     urlPrefix = "https://www.picb.ac.cn/rnomics/circpedia/browser/%3Fdata%3Dhuman_hg38%26tracks%3DDNA%252CknownGene%252CHeLa_S3_poly(A)-_circ%252CHeLa_S3_poly(A)-%26highlight%3D%26loc%3D"
     hasIndividualURLs = True
 
     def __init__(self, directory):
-        super().__init__(directory)
+        super().__init__("Circpedia2", directory)
 
         self.read_file = open(os.path.join(directory, "human_hg38_All_circRNA.csv"), 'r')
         self.read_obj = csv.reader(self.read_file, delimiter=',')
@@ -40,11 +38,7 @@ class Circpedia2Iter(AbstractLiftoverIter):
             if(group.versions[1]):
                 formattedURL = group.ch + "%25" + str(group.versions[1].start) + ".." + str(group.versions[1].end) #chr9%253A135882815..135883078
             ret = CircRow(group=group, hsa=ids, gene=line[2], db_id = self.id, meta_index=self.meta_index, url=formattedURL)
-            tissue = self.matcher.getTissueFromSynonym(line[9].lower())
-
-            if tissue:
-                ret.addExpression(Expression(tissue.name, "Circpedia2", float(line[6])))
-                
+ 
             return ret
 
     def _toBedFile(self, fileFrom):

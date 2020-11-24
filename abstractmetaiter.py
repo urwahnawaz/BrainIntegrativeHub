@@ -1,85 +1,89 @@
 from abstractliftoveriter import AbstractLiftoverIter
-import csv, math, h5py
+import csv, math, h5py, os
 import numpy as np
 
 class AbstractMetaIter(AbstractLiftoverIter):
-    def __init__(self, directory, measures, measureNames, table, tableKeys, metadata, groupName):
-        super().__init__(directory)
-        self.measures = measures
-        self.measureNames = measureNames
-        self.table = table
-        self.tableKeys = tableKeys
+    def __init__(self, name, directory, matrices, metadata, qtl):
+        super().__init__(name, directory)
+        self.matrices = matrices
         self.metadata = metadata
-        self.groupName = groupName
-        self.hasMetadata = True
+        self.qtl = qtl
+        self.keys = []
 
-    def writeHDF5Metadata(self, rootCharts, rootTables, rows):
-        which = [row._meta[self.id] for row in rows if row._meta[self.id] > -1]
-        root = rootTables if self.table else rootCharts         
-        experiment = root.create_group(self.groupName + "/" + self.name)
-        
-        if len(self.measures):
-            matrices = experiment.create_group("matrices")
-            matrices.attrs.create("default", self.measureNames[0])
-            for i in range(len(self.measures)):
-                self._writeHDF5Matrix(self.measures[i], matrices, experiment, self.measureNames[i], which)
+    def writeHDF5Metadata(self, root, rows):
+        if not len(self.keys):
+            raise "Must read circular rnas before selecting metadata"
+
+        keyToIndexFiltered = {}
+        index = 0
+        for row in rows:
+            if row.getMeta(self.id) != -1:
+                keyToIndexFiltered[self.keys[index][:-2]] = index #TODO: for now we are removing strand
+                index += 1
+
+        experimentGroup = root.create_group(self.name)        
+        if len(self.matrices):
+            matrixGroup = experimentGroup.create_group("matrices")
+            matrixGroup.attrs.create("default", self.matrices[0]["type"])
+            for i in range(len(self.matrices)):
+                heading, mdata1, mdata2 = self._getAsMatrix(os.path.join(self.directory, self.matrices[i]["path"]), keyToIndexFiltered)
+                arr = np.array(mdata2, dtype="f4")
+
+                if self.metadata:
+                    self._writeHDF5Matrix(heading, arr, matrixGroup, experimentGroup, self.matrices[i]["type"])
+            
+                if i == 0:
+                    self._writeHDF5Scaled(arr, experimentGroup)
         
         if self.metadata:
-            samples = experiment.create_group("samples")
+            samples = experimentGroup.create_group("samples")
             self._writeHDF5Columns(self.metadata, samples)
 
-        if self.table:
-            self._writeHDF5CSVTable(self.table, self.tableKeys, experiment, which, rows)
+        if self.qtl:
+            self._writeHDF5CSVTable(self.qtl, experimentGroup, keyToIndexFiltered, rows)
 
-    def _writeHDF5Matrix(self, fileName, entryGroup, idGroup, datasetName, which, noneType="NA"):
+    def _getAsMatrix(self, fileName, keyToIndexFiltered, noneType="NA"):
         #Writes matrix in overall row order
-        heading = []
-        lines = [None] * len(which)
-        sortedWhich = sorted(which)
-        indexOfWhich = [None] * (max(which) + 1)
-        for i in range(len(which)): indexOfWhich[which[i]] = i
-        m = -1
-        n = 0
+        heading = None
+        lines = [None] * len(keyToIndexFiltered)
         for line in csv.reader(open(fileName, 'r'), delimiter=','):
-            if m == -1:
-                heading = line[1:]
-            elif n >= len(which):
-                break
-            elif sortedWhich[n] == m:
-                lines[indexOfWhich[sortedWhich[n]]] = line
-                n += 1
-            m += 1
+            if not heading: heading = line[1:]
+            else:
+                index = keyToIndexFiltered.get(line[0][:-2], -1)
+                if index >= 0:
+                    lines[index] = line
 
         mdata1 = []
         mdata2 = []
         for line in lines:
             mdata1.append(line[0])
             mdata2.append(tuple([(line[i] if line[i] != noneType else -1.0) for i in range(1, len(line))]))
+        return heading, mdata1, mdata2
 
+
+    def _writeHDF5Matrix(self, heading, arr, entryGroup, idGroup, datasetName):
         # Note chunks are 100kb, and include whole rows
-        arr = np.array(mdata2, dtype="f4")
         ds = entryGroup.create_dataset(datasetName, data=arr, chunks=(min(arr.shape[0], math.floor(10000/len(heading))), arr.shape[1]), compression="gzip", compression_opts=9)
-        colMeans = [np.mean([arr[i][j] for i in range(len(arr))]) for j in range(len(arr[0]))]
-        colSTDs = [np.std([arr[i][j] for i in range(len(arr))]) for j in range(len(arr[0]))]
-        #ds.attrs.create("sd", colSTDs)
-        #ds.attrs.create("mean", colMeans)
-
-        # Write log mean scale (but only for CPM)
-        if datasetName == "CPM":
-            logs = [np.mean([math.log2(abs(arr[i][j]) + 0.01) for j in range(len(arr[0]))]) for i in range(len(arr))]
-            logMean = np.mean(logs)
-            logSd = np.std(logs)
-            arr2 = np.array([((x - logMean) / logSd) for x in logs], dtype="f4")
-            idGroup.create_dataset("scaled", data=arr2, compression="gzip", compression_opts=9)
-
+        
         if not "sample_id" in idGroup:
             idGroup.attrs.create("sample_id", np.array([h.encode() for h in heading], dtype="S" + str(len(max(heading, key=len)))))
+
+    #Only call this on cpm
+    def _writeHDF5Scaled(self, arr, idGroup):
+        colMeans = [np.mean([arr[i][j] for i in range(len(arr))]) for j in range(len(arr[0]))]
+        colSTDs = [np.std([arr[i][j] for i in range(len(arr))]) for j in range(len(arr[0]))]
+
+        logs = [np.mean([math.log2(abs(arr[i][j]) + 0.01) for j in range(len(arr[0]))]) for i in range(len(arr))]
+        logMean = np.mean(logs)
+        logSd = np.std(logs)
+        arr2 = np.array([((x - logMean) / logSd) for x in logs], dtype="f4")
+        idGroup.create_dataset("scaled", data=arr2, compression="gzip", compression_opts=9)
 
     def _writeHDF5Columns(self, fileName, hdf5Group, noneType="NA"):
         heading = []
         isHeading = True
         lines = []
-        for line in csv.reader(open(fileName, 'r'), delimiter=','):
+        for line in csv.reader(open(os.path.join(self.directory, fileName), 'r'), delimiter=','):
             if isHeading:
                 heading = line
                 isHeading = False
@@ -114,40 +118,18 @@ class AbstractMetaIter(AbstractLiftoverIter):
                 raise("ERROR no type resolved for " + heading[i])
         hdf5Group.attrs.create("default", heading[1])
 
-    #Note QTL is random order!!
-    def _writeHDF5CSVTable(self, fileName, fileNameKeys, hdf5Group, which, rows, noneType="NA"):
+    def _writeHDF5CSVTable(self, fileName, hdf5Group, keyToIndexFiltered, rows, noneType="NA"):
         heading = []
-        lines = [[] for i in range(len(which))]
-        sortedWhich = sorted(which)
-        indexOfWhich = [None] * (max(which) + 1)
-        for i in range(len(which)): indexOfWhich[which[i]] = i
-
-        logs = [0.0] * len(which)
-        keyObj = {}
-        keyIter = csv.reader(open(fileNameKeys, 'r'), delimiter=',').__iter__()
-        next(keyIter)
+        lines = [[] for i in range(len(keyToIndexFiltered))]
         
-        #Get indices for all keys
-        n = 0
-        m = 0
-        for key in keyIter:
-            if sortedWhich[n] == m:
-                where = indexOfWhich[sortedWhich[n]]
-                keyObj[key[0][:-2]] = where
-                logs[where] = float(key[5])
-                n += 1
-            m += 1
-
-
-        qtlIter = open(fileName, 'r').readlines().__iter__()
+        qtlIter = open(os.path.join(self.directory, fileName), 'r').readlines().__iter__()
         heading = next(qtlIter).rstrip("\n")
 
         #Now we know where to put everything that comes in
         for qtl in qtlIter:
-            keyFiltered = qtl.split(',', 1)[0]
-            if keyFiltered in keyObj:
-                lines[keyObj[keyFiltered]].append(qtl.rstrip("\n"))
-        
+            index = keyToIndexFiltered.get(qtl.split(',', 1)[0], -1)
+            if index >= 0:
+                lines[index].append(qtl.rstrip("\n"))
         fixed = 0
         j = 0
         qtlIndices = [None] * len(lines)
@@ -157,7 +139,7 @@ class AbstractMetaIter(AbstractLiftoverIter):
 
         hdf5Group.create_dataset("indices", data=np.array(qtlIndices, dtype="i4"), compression="gzip", compression_opts=9)
 
-        mdata = []
+        mdata = [] #TODO: seems to be problem with qtl matching -> no strand in qtl table!
         for i in range(len(lines)):
             if len(lines[i]) > 0:
                 for subline in lines[i]:
@@ -165,11 +147,5 @@ class AbstractMetaIter(AbstractLiftoverIter):
         
         arr = np.array(mdata, dtype="S" + str(len(max(mdata, key=len))))
         ds = hdf5Group.create_dataset("QTL", data=arr, compression="gzip", compression_opts=9)
-        ds.attrs.create("heading", heading)
-
-        #TODO since liu is only dataset here hardcode scale calculation
-        logMean = np.mean(logs)
-        logSd = np.std(logs)
-        arr2 = np.array([((x - logMean) / logSd) for x in logs], dtype="f4")
-        hdf5Group.create_dataset("scaled", data=arr2, compression="gzip", compression_opts=9)
+        ds.attrs.create("heading", heading) 
         

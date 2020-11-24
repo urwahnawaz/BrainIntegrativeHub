@@ -10,12 +10,13 @@
 #TODO: add multiple dtype support to jsfive
 
 from collections import Counter
-import csv, datetime, re, os, h5py, sys, math, subprocess
+import csv, datetime, re, os, h5py, sys, math, subprocess, json
 from subprocess import DEVNULL, STDOUT, check_call
 from sortedcontainers import SortedSet
 from matplotlib import pyplot
 from upsetplot import from_contents, plot
 import numpy as np
+import oyaml as yaml
 
 from circrow import CircRow
 from circhsa import CircHSA
@@ -23,6 +24,9 @@ from circrangegroup import CircRangeGroup
 from circrange import CircRange
 from circhsagroup import CircHSAGroup
 from abstractliftoveriter import AbstractLiftoverIter
+from circdatasetiter import CircDatasetIter
+from abstractmetaiter import AbstractMetaIter
+
 from iterators.circbaseiter import CircBaseIter
 from iterators.circpedia2iter import Circpedia2Iter
 from iterators.circrnadbiter import CircRNADbIter
@@ -30,21 +34,14 @@ from iterators.circfunbaseiter import CircFunBaseIter
 from iterators.circriciter import CircRicIter
 from iterators.circatlas2iter import CircAtlas2Iter
 from iterators.circatlas2browseriter import CircAtlas2BrowserIter
-from iterators.circgokooliter import CircGokoolIter
-from iterators.circliuiter import CircLiuIter
 from iterators.mioncocirc2iter import MiOncoCirc2Iter
-from iterators.esc_fbniter import ESC_FBNIter
-from iterators.orgiter import OrgIter
-from iterators.sy5yiter import SY5YIter
 
 nmDist = 10 #Maximum difference in coordinates to be considered a near match
 
 def isInDataset(circ, iters):
-    count = 0
     for i in range(len(iters)):
-        if iters[i].isDataset and circ._meta[i] != CircRow.META_INDEX_CIRC_NOT_IN_DB:
-            count += 1
-            if(count >= 2): return True
+        if isinstance(iters[i], CircDatasetIter) and circ.getMeta(i) != CircRow.META_INDEX_CIRC_NOT_IN_DB:
+            return True
     return False
 
 def shouldMerge(circ1, circ2):
@@ -52,7 +49,7 @@ def shouldMerge(circ1, circ2):
     return ((cmp == CircHSAGroup.CMP_EQUAL) or (cmp == CircHSAGroup.CMP_UNKNOWN and circ1.group.nearEqual(circ2.group, nmDist)))
 
 def mustMerge(circIter, circ1):
-    return (not circIter.isDataset) or circ1.group.strand == '.'
+    return (not isinstance(circIter, CircDatasetIter)) or circ1.group.strand == '.'
 
 def generateOutput(inputIterators):
     ss = SortedSet()
@@ -76,40 +73,51 @@ def generateOutput(inputIterators):
 def writeIntersectionPlot(inputIterators, iter):
     contents = {}
     for circIter in inputIterators:
-        contents[circIter.name] = [c for c in iter if (c._meta[circIter.id] != CircRow.META_INDEX_CIRC_NOT_IN_DB)]
+        contents[circIter.name] = [c for c in iter if (c.getMeta(circIter.id) != CircRow.META_INDEX_CIRC_NOT_IN_DB)]
     
     df = from_contents(contents)
     plot(df, facecolor="red", sort_by="cardinality", show_counts='%d')
-    pyplot.savefig('out.png')
+    pyplot.savefig('./output/out.png')
 
 #View using https://ncnr.nist.gov/ncnrdata/view/nexus-hdf-viewer.html
 #Note JS reader DOES NOT support track_order
-def writeHDF5(circIters, iter, outFile="out.hdf5"):
+def writeHDF5(circIters, iter, panelMetadata, outFile="output/out.hdf5"):
     root = h5py.File(outFile,'w')
 
     longestId = len(max(iter, key=lambda x:len(x.group.toId())).group.toId())
     longestGene = len(max(iter, key=lambda x:len(x.gene)).gene)
     longestEnsembl = len(max(iter, key=lambda x:len(x.geneId)).geneId)
 
+    headingsObj = []
+    headings = ["circ_id", "chr", "start_hg19", "end_hg19", "start_hg38", "end_hg38", "strand", "gene_symbol", "ensembl_id"]
     data = root.create_group("data")
-    data.create_dataset("circ_id", data=np.array([circ.group.toId().encode() for circ in iter], dtype='S%d'%longestId), compression="gzip", compression_opts=9)
-    data.create_dataset("chr", data=np.array([circ.group.ch.encode() for circ in iter], dtype='S5'), compression="gzip", compression_opts=9)
-    data.create_dataset("start_hg19", data=np.array([circ.group.versions[0].start for circ in iter], dtype='i4'), compression="gzip", compression_opts=9)
-    data.create_dataset("end_hg19", data=np.array([circ.group.versions[0].end for circ in iter], dtype='i4'), compression="gzip", compression_opts=9)
-    data.create_dataset("start_hg38", data=np.array([circ.group.versions[1].start for circ in iter], dtype='i4'), compression="gzip", compression_opts=9)
-    data.create_dataset("end_hg38", data=np.array([circ.group.versions[1].end for circ in iter], dtype='i4'), compression="gzip", compression_opts=9)
-    data.create_dataset("strand", data=np.array([circ.group.strand.encode() for circ in iter], dtype='S1'), compression="gzip", compression_opts=9)
-    data.create_dataset("gene_symbol", data=np.array([circ.gene.encode() for circ in iter], dtype='S%d'%longestGene), compression="gzip", compression_opts=9)
-    data.create_dataset("ensembl_id", data=np.array([circ.geneId.encode() for circ in iter], dtype='S%d'%longestEnsembl), compression="gzip", compression_opts=9)
-    
+    data.create_dataset(headings[0], data=np.array([circ.group.toId().encode() for circ in iter], dtype='S%d'%longestId), compression="gzip", compression_opts=9)
+    data.create_dataset(headings[1], data=np.array([circ.group.ch.encode() for circ in iter], dtype='S5'), compression="gzip", compression_opts=9)
+    data.create_dataset(headings[2], data=np.array([circ.group.versions[0].start for circ in iter], dtype='i4'), compression="gzip", compression_opts=9)
+    data.create_dataset(headings[3], data=np.array([circ.group.versions[0].end for circ in iter], dtype='i4'), compression="gzip", compression_opts=9)
+    data.create_dataset(headings[4], data=np.array([circ.group.versions[1].start for circ in iter], dtype='i4'), compression="gzip", compression_opts=9)
+    data.create_dataset(headings[5], data=np.array([circ.group.versions[1].end for circ in iter], dtype='i4'), compression="gzip", compression_opts=9)
+    data.create_dataset(headings[6], data=np.array([circ.group.strand.encode() for circ in iter], dtype='S1'), compression="gzip", compression_opts=9)
+    data.create_dataset(headings[7], data=np.array([circ.gene.encode() for circ in iter], dtype='S%d'%longestGene), compression="gzip", compression_opts=9)
+    data.create_dataset(headings[8], data=np.array([circ.geneId.encode() for circ in iter], dtype='S%d'%longestEnsembl), compression="gzip", compression_opts=9)
+
+    for i in range(9): headingsObj.append({"name": headings[i], "isDatabase": False, "isDataset": False, "isBrainDataset": False})
+
     urls = root.create_group("urls")
-    charts = root.create_group("charts")
-    tables = root.create_group("tables")
+    metadata = root.create_group("metadata")
+
+    datasetCount
     for i in range(len(circIters)):
-        if(circIters[i].hasMetadata): circIters[i].writeHDF5Metadata(charts, tables, iter)
+        if isinstance(circIters[i], AbstractMetaIter): circIters[i].writeHDF5Metadata(metadata, iter)
         circIters[i].reduceIndices(iter)
         circIters[i].writeHDF5URLs(urls, iter)
-        data.create_dataset(circIters[i].name, data=np.array([int(circ._meta[i]) for circ in iter], dtype="i4"), compression="gzip", compression_opts=9)
+        data.create_dataset(circIters[i].name, data=np.array([int(circ.getMeta(i)) for circ in iter], dtype="i4"), compression="gzip", compression_opts=9)
+        
+        isDataset = isinstance(circIters[i], CircDatasetIter)
+        isBrainDataset = isDataset and circIters[i].isBrainDataset
+        headingsObj.append({"name": circIters[i].name, "isDatabase": not isDataset, "isDataset": isDataset, "isBrainDataset": isBrainDataset})
+    #data.attrs.create("headings", json.dumps(headingsObj, sort_keys=False, separators=(',', ':')))
+    metadata.attrs.create("panels", panelMetadata)    
 
 def writeCSV(fileName, iter, datasetsMap, databasesMap, writeError=False):
     #"","chr","hg38.start","hg38.end","hg19.coord","score","strand","hg38.coord","hg38.id","DS.gok","DS.liu","DS.sy5y","DS.esc","DS.org","nDS","DB.atlas","DB.pedia","DB.base","DB.fun","nDB"
@@ -120,8 +128,8 @@ def writeCSV(fileName, iter, datasetsMap, databasesMap, writeError=False):
         for circ in iter:
             id19 = circ.group.toId(0)
             id38 = circ.group.toId(1)
-            dsBools = [(circ._meta[datasetsMap[i]] != CircRow.META_INDEX_CIRC_NOT_IN_DB) for i in range(len(datasetsMap))]
-            dbBools = [(circ._meta[databasesMap[i]] != CircRow.META_INDEX_CIRC_NOT_IN_DB) for i in range(len(databasesMap))]
+            dsBools = [(circ.getMeta(datasetsMap[i]) != CircRow.META_INDEX_CIRC_NOT_IN_DB) for i in range(len(datasetsMap))]
+            dbBools = [(circ.getMeta(databasesMap[i]) != CircRow.META_INDEX_CIRC_NOT_IN_DB) for i in range(len(databasesMap))]
             dsStrings = [("TRUE" if x else "FALSE") for x in dsBools]
             dbStrings = [("TRUE" if x else "FALSE") for x in dbBools]
             dsCount = sum(x == True for x in dsBools)
@@ -139,8 +147,8 @@ def readCSV(fileName, datasetsMap, databasesMap):
         if (not hg19) or (strand == "."): continue
         group = CircRangeGroup(line[1], strand, [CircRange(int(hg19.group(1)), int(hg19.group(2))), CircRange(int(line[2]), int(line[3]))])
         circ = CircRow(group, CircHSAGroup(), "", 0, -1)
-        for i in range(len(datasetsMap)): circ._meta[datasetsMap[i]] = (1 if line[i + 9] == "TRUE" else -1)
-        for i in range(len(databasesMap)): circ._meta[databasesMap[i]] = (1 if line[i + 15] == "TRUE" else -1)
+        for i in range(len(datasetsMap)): circ.setMeta(datasetsMap[i], (1 if line[i + 9] == "TRUE" else -1))
+        for i in range(len(databasesMap)): circ.setMeta(databasesMap[i], (1 if line[i + 15] == "TRUE" else -1))
         output.add(circ)
     return output
 
@@ -226,34 +234,39 @@ def outputComparisonCSVs(ss, li, circIters):
         writeCSV("outError.csv", error, datasetsMap, databasesMap, True)
 
 def outputTrack(iter):
-    with open("./out.bed", 'w', newline='') as csvfile:
+    with open("./output/out.bed", 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter='\t', quotechar='\"', quoting=csv.QUOTE_NONE)
         for circ in iter:
             writer.writerow([circ.group.ch, circ.group.versions[1].start, circ.group.versions[1].end])
 
-    sortedBed = open("./sorted.bed", "w")
-    proc1 = subprocess.run(["sort", "-k1,1", "-k2,2n", "out.bed"], stdout=sortedBed, stderr=STDOUT)
+    sortedBed = open("./output/sorted.bed", "w")
+    proc1 = subprocess.run(["sort", "-k1,1", "-k2,2n", "./output/out.bed"], stdout=sortedBed, stderr=STDOUT)
     #proc2 = subprocess.run(["./utility/bedGraphToBigWig", "./sorted.bed", "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes", "./out.bw"], stdout=subprocess.PIPE, stderr=STDOUT)
-    proc2 = subprocess.run(["./utility/bedToBigBed", "-type=bed3", "./sorted.bed", "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes", "./out.bb"], stdout=subprocess.PIPE, stderr=STDOUT)
+    proc2 = subprocess.run(["./utility/bedToBigBed", "-type=bed3", "./output/sorted.bed", "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes", "./output/out.bb"], stdout=subprocess.PIPE, stderr=STDOUT)
 
-    if os.path.exists("./out.bed"): os.remove("./out.bed")
-    if os.path.exists("./sorted.bed"): os.remove("./sorted.bed")
+    if os.path.exists("./output/out.bed"): os.remove("./output/out.bed")
+    if os.path.exists("./output/sorted.bed"): os.remove("./output/sorted.bed")
 
 if __name__ == '__main__':
-    circIters = [
-        CircLiuIter("./data/Liu"),
-        CircGokoolIter("./data/Gokool"),
-        ESC_FBNIter("./data/ESC_FBN/Processed"),
-        SY5YIter("./data/SY5Y/Processed"),
-        OrgIter("./data/ORG/Processed"),
+    with open("./input.yaml", 'r') as stream:
+        circIters = []
+        panelMetadata = ""
+        try:
+            inputObj = yaml.safe_load(stream)
+            panelMetadata = json.dumps(inputObj["panels"], sort_keys=False, separators=(',', ':'))
+            for dataset in inputObj["datasets"]:
+                circIters.append(CircDatasetIter(dataset["name"], dataset["dir"], dataset["main"], dataset.get("matrices", []), dataset.get("meta", None), dataset.get("qtl", None), dataset["reference"], dataset.get("isBrain", False)))
+        
+        except yaml.YAMLError as exc:
+            print(exc)
+            exit(1)
+
+    circIters += [
         Circpedia2Iter("./data/CIRCpedia2"), 
         CircBaseIter("./data/Circbase"), 
         CircRNADbIter("./data/circRNADb"), 
         CircFunBaseIter("./data/CircFunBase"),
-        CircAtlas2BrowserIter("./data/circAtlas2"), #No tissue info without individual php calls 
-        #CircAtlas2Iter("./data/circAtlas2"), #No strand info
-        #CircRicIter("./data/CircRic"), #No strand info
-        #MiOncoCirc2Iter("./data/MiOncoCirc2") #No strand or tissue info
+        CircAtlas2BrowserIter("./data/circAtlas2"),
     ]
 
     print(datetime.datetime.now().strftime("%H:%M:%S") + " Annotating and Filtering")
@@ -280,7 +293,7 @@ if __name__ == '__main__':
     # Some very large matrices (e.g. CPM) use chunk compression for now, so we only decompress a ~page at a time
     # Metadata is reordered based on overall neurocirc order (useful for chunk compression)
     # Metadata pertaining to rows that have been filtered out in step 3. is not included
-    writeHDF5(circIters, li)
+    writeHDF5(circIters, li, panelMetadata)
 
     print("> Filtered %d [not in novel datasets]" % (countExcludedDs))
     print("> Filtered %d [no hg38]" % (countExcluded38))

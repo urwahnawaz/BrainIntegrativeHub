@@ -5,17 +5,15 @@ from circrow import CircRow
 from circhsa import CircHSA
 from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
-from expression import Expression
 
 class CircAtlas2BrowserIter(AbstractLiftoverIter):
-    name = "CircAtlas2"
     url = "http://159.226.67.237:8080/new/index.php"
     urlPrefix = "http://159.226.67.237:8080/new/circ_detail.php?ID="
     hasIndividualURLs = True
     #tissues = ['Bone Marrow','Brain','Colon','Heart','Kidney','Liver','Lung','Placental','Prostate','Skeletal Muscle','Small Intestine','Spleen','Spinal Cord','Stomach','Testis','Thymus','Uterus','Pancreas','Retina']
 
     def __init__(self, directory):
-        super().__init__(directory)
+        super().__init__("CircAtlas2", directory)
 
         self.read_file_main = open(os.path.join(directory, "browse_species_human.txt"), 'r')
 
@@ -43,10 +41,6 @@ class CircAtlas2BrowserIter(AbstractLiftoverIter):
 
             group = CircRangeGroup(ch=match.group(1), strand=line["strand"], versions=super().__next__())
             ret = CircRow(group=group, hsa=ids, gene=gene, db_id = self.id, meta_index=self.meta_index, url=line["name"])
-
-            #Ntis isn't actually a tissue ID, need to make individual calls to get this info
-            #tissue = CircAtlas2BrowserIter.tissues[int(line["ntis"]) - 1]
-            #ret.addExpression(Expression(self.matcher.getTissueFromSynonym(tissue).name, "circAtlas", float(line["score"])))
             return ret
     
     def _toBedFile(self, fileFrom):

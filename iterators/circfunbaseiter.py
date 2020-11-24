@@ -5,19 +5,17 @@ from circrow import CircRow
 from circhsa import CircHSA
 from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
-from expression import Expression
 
 #TODO Can generate link from name e.g. http://bis.zju.edu.cn/CircFunBase/detail.php?name=circ_000458
 #Can also search by position using cgi form only
 
 class CircFunBaseIter(AbstractLiftoverIter):
-    name = "CircFunBase"
     url = "http://bis.zju.edu.cn/CircFunBase"
     urlPrefix = "http://bis.zju.edu.cn/CircFunBase/detail.php?name="
     hasIndividualURLs = True
 
     def __init__(self, directory):
-        super().__init__(directory)
+        super().__init__("CircFunBase", directory)
 
         self.read_file = open(os.path.join(directory, "Homo_sapiens_circ.txt"), 'r')
         self.read_obj = csv.reader(self.read_file, delimiter='\t')
@@ -47,8 +45,6 @@ class CircFunBaseIter(AbstractLiftoverIter):
             group = CircRangeGroup(ch=match.group(1), strand='.', versions=super().__next__())
             ret = CircRow(group=group, hsa=ids, gene=line[3], db_id = self.id, meta_index = self.meta_index, url=line[0])
 
-            if "brain" in line[2]:
-                ret.addExpression(Expression(self.matcher.getTissueFromSynonym("Brain").name, line[5]))
             return ret
     def _toBedFile(self, fileFrom):
         next(self.read_obj)

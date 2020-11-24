@@ -5,16 +5,14 @@ from circrow import CircRow
 from circhsa import CircHSA
 from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
-from expression import Expression
 
 class CircRNADbIter(AbstractLiftoverIter):
-    name = "RNADb"
     url = "http://reprod.njmu.edu.cn/cgi-bin/circrnadb/circRNADb.php"
     urlPrefix = "http://reprod.njmu.edu.cn/cgi-bin/circrnadb/detail_info.php?circ_id="
     hasIndividualURLs = True
 
     def __init__(self, directory):
-        super().__init__(directory)
+        super().__init__("RNADb", directory)
 
         self.read_file = open(os.path.join(directory, "circRNA_dataset.txt"), 'r')
         self.read_obj = csv.reader(self.read_file, delimiter='\t')
@@ -37,7 +35,6 @@ class CircRNADbIter(AbstractLiftoverIter):
 
             group = CircRangeGroup(ch=line[1], strand=line[4], versions=super().__next__())
             ret = CircRow(group=group, hsa=ids, gene=line[5], db_id = self.id, meta_index=self.meta_index, url=line[0])
-            ret.addExpression(Expression(self.matcher.getTissueFromSynonym("Brain").name, "CircRNADb"))
             return ret
 
     def _toBedFile(self, fileFrom):
