@@ -106,7 +106,6 @@ def writeHDF5(circIters, iter, panelMetadata, outFile="output/out.hdf5"):
     urls = root.create_group("urls")
     metadata = root.create_group("metadata")
 
-    datasetCount
     for i in range(len(circIters)):
         if isinstance(circIters[i], AbstractMetaIter): circIters[i].writeHDF5Metadata(metadata, iter)
         circIters[i].reduceIndices(iter)
@@ -116,7 +115,7 @@ def writeHDF5(circIters, iter, panelMetadata, outFile="output/out.hdf5"):
         isDataset = isinstance(circIters[i], CircDatasetIter)
         isBrainDataset = isDataset and circIters[i].isBrainDataset
         headingsObj.append({"name": circIters[i].name, "isDatabase": not isDataset, "isDataset": isDataset, "isBrainDataset": isBrainDataset})
-    #data.attrs.create("headings", json.dumps(headingsObj, sort_keys=False, separators=(',', ':')))
+    data.attrs.create("headings", json.dumps(headingsObj, sort_keys=False, separators=(',', ':')))
     metadata.attrs.create("panels", panelMetadata)    
 
 def writeCSV(fileName, iter, datasetsMap, databasesMap, writeError=False):
