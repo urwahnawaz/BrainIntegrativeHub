@@ -15,21 +15,24 @@ class AbstractMetaIter(AbstractLiftoverIter):
             raise "Must read circular rnas before selecting metadata"
 
         keyToIndexFiltered = {}
-        index = 0
+        counter = 0
         for row in rows:
-            if row.getMeta(self.id) != -1:
-                keyToIndexFiltered[self.keys[index][:-2]] = index #TODO: for now we are removing strand
-                index += 1
+            index = row.getMeta(self.id)
+            if index != -1:
+                keyToIndexFiltered[self.keys[index][:-2]] = counter #TODO: for now we are removing strand
+                counter += 1
 
         experimentGroup = root.create_group(self.name)        
         if len(self.matrices):
-            matrixGroup = experimentGroup.create_group("matrices")
-            matrixGroup.attrs.create("default", self.matrices[0]["type"])
+            matrixGroup = None
+            if self.metadata:
+                matrixGroup = experimentGroup.create_group("matrices")
+                matrixGroup.attrs.create("order", [m["type"] for m in self.matrices])
             for i in range(len(self.matrices)):
                 heading, mdata1, mdata2 = self._getAsMatrix(os.path.join(self.directory, self.matrices[i]["path"]), keyToIndexFiltered)
                 arr = np.array(mdata2, dtype="f4")
 
-                if self.metadata:
+                if matrixGroup:
                     self._writeHDF5Matrix(heading, arr, matrixGroup, experimentGroup, self.matrices[i]["type"])
             
                 if i == 0:
@@ -116,7 +119,7 @@ class AbstractMetaIter(AbstractLiftoverIter):
                     continue
             else:
                 raise("ERROR no type resolved for " + heading[i])
-        hdf5Group.attrs.create("default", heading[1])
+        hdf5Group.attrs.create("order", [heading[i] for i in range(1, len(heading))])
 
     def _writeHDF5CSVTable(self, fileName, hdf5Group, keyToIndexFiltered, rows, noneType="NA"):
         heading = []

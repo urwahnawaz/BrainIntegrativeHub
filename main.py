@@ -10,7 +10,7 @@
 #TODO: add multiple dtype support to jsfive
 
 from collections import Counter
-import csv, datetime, re, os, h5py, sys, math, subprocess, json
+import csv, datetime, re, os, h5py, sys, math, subprocess
 from subprocess import DEVNULL, STDOUT, check_call
 from sortedcontainers import SortedSet
 from matplotlib import pyplot
@@ -81,27 +81,30 @@ def writeIntersectionPlot(inputIterators, iter):
 
 #View using https://ncnr.nist.gov/ncnrdata/view/nexus-hdf-viewer.html
 #Note JS reader DOES NOT support track_order
-def writeHDF5(circIters, iter, panelMetadata, outFile="output/out.hdf5"):
+def writeHDF5(circIters, iter, inputObj, outFile="output/out.hdf5"):
+    #h5py.get_config().track_order = True
     root = h5py.File(outFile,'w')
 
     longestId = len(max(iter, key=lambda x:len(x.group.toId())).group.toId())
     longestGene = len(max(iter, key=lambda x:len(x.gene)).gene)
     longestEnsembl = len(max(iter, key=lambda x:len(x.geneId)).geneId)
 
-    headingsObj = []
-    headings = ["circ_id", "chr", "start_hg19", "end_hg19", "start_hg38", "end_hg38", "strand", "gene_symbol", "ensembl_id"]
+    defaultVisible = [0, 1, 2, 3, 6, 7, 8]
+    defaultSearchable = [0, 7, 8]
+    isDatabase = [0] * 9
+    isDataset = [0] * 9
+    isBrainDataset = [0] * 9
+    dataOrder = ["circ_id", "chr", "start_hg19", "end_hg19", "start_hg38", "end_hg38", "strand", "gene_symbol", "ensembl_id"]
     data = root.create_group("data")
-    data.create_dataset(headings[0], data=np.array([circ.group.toId().encode() for circ in iter], dtype='S%d'%longestId), compression="gzip", compression_opts=9)
-    data.create_dataset(headings[1], data=np.array([circ.group.ch.encode() for circ in iter], dtype='S5'), compression="gzip", compression_opts=9)
-    data.create_dataset(headings[2], data=np.array([circ.group.versions[0].start for circ in iter], dtype='i4'), compression="gzip", compression_opts=9)
-    data.create_dataset(headings[3], data=np.array([circ.group.versions[0].end for circ in iter], dtype='i4'), compression="gzip", compression_opts=9)
-    data.create_dataset(headings[4], data=np.array([circ.group.versions[1].start for circ in iter], dtype='i4'), compression="gzip", compression_opts=9)
-    data.create_dataset(headings[5], data=np.array([circ.group.versions[1].end for circ in iter], dtype='i4'), compression="gzip", compression_opts=9)
-    data.create_dataset(headings[6], data=np.array([circ.group.strand.encode() for circ in iter], dtype='S1'), compression="gzip", compression_opts=9)
-    data.create_dataset(headings[7], data=np.array([circ.gene.encode() for circ in iter], dtype='S%d'%longestGene), compression="gzip", compression_opts=9)
-    data.create_dataset(headings[8], data=np.array([circ.geneId.encode() for circ in iter], dtype='S%d'%longestEnsembl), compression="gzip", compression_opts=9)
-
-    for i in range(9): headingsObj.append({"name": headings[i], "isDatabase": False, "isDataset": False, "isBrainDataset": False})
+    data.create_dataset(dataOrder[0], data=np.array([circ.group.toId().encode() for circ in iter], dtype='S%d'%longestId), compression="gzip", compression_opts=9)
+    data.create_dataset(dataOrder[1], data=np.array([circ.group.ch.encode() for circ in iter], dtype='S5'), compression="gzip", compression_opts=9)
+    data.create_dataset(dataOrder[2], data=np.array([circ.group.versions[0].start for circ in iter], dtype='i4'), compression="gzip", compression_opts=9)
+    data.create_dataset(dataOrder[3], data=np.array([circ.group.versions[0].end for circ in iter], dtype='i4'), compression="gzip", compression_opts=9)
+    data.create_dataset(dataOrder[4], data=np.array([circ.group.versions[1].start for circ in iter], dtype='i4'), compression="gzip", compression_opts=9)
+    data.create_dataset(dataOrder[5], data=np.array([circ.group.versions[1].end for circ in iter], dtype='i4'), compression="gzip", compression_opts=9)
+    data.create_dataset(dataOrder[6], data=np.array([circ.group.strand.encode() for circ in iter], dtype='S1'), compression="gzip", compression_opts=9)
+    data.create_dataset(dataOrder[7], data=np.array([circ.gene.encode() for circ in iter], dtype='S%d'%longestGene), compression="gzip", compression_opts=9)
+    data.create_dataset(dataOrder[8], data=np.array([circ.geneId.encode() for circ in iter], dtype='S%d'%longestEnsembl), compression="gzip", compression_opts=9)
 
     urls = root.create_group("urls")
     metadata = root.create_group("metadata")
@@ -112,11 +115,31 @@ def writeHDF5(circIters, iter, panelMetadata, outFile="output/out.hdf5"):
         circIters[i].writeHDF5URLs(urls, iter)
         data.create_dataset(circIters[i].name, data=np.array([int(circ.getMeta(i)) for circ in iter], dtype="i4"), compression="gzip", compression_opts=9)
         
-        isDataset = isinstance(circIters[i], CircDatasetIter)
-        isBrainDataset = isDataset and circIters[i].isBrainDataset
-        headingsObj.append({"name": circIters[i].name, "isDatabase": not isDataset, "isDataset": isDataset, "isBrainDataset": isBrainDataset})
-    data.attrs.create("headings", json.dumps(headingsObj, sort_keys=False, separators=(',', ':')))
-    metadata.attrs.create("panels", panelMetadata)    
+        isDatasetCurr = isinstance(circIters[i], CircDatasetIter)
+        
+        isDataset.append(int(isDatasetCurr))
+        isDatabase.append(int(not isDatasetCurr))
+        isBrainDataset.append(int(isDatasetCurr and circIters[i].isBrainDataset))
+        dataOrder.append(circIters[i].name)
+        defaultVisible.append(i + 9)
+    
+    data.attrs.create("order", dataOrder)
+    data.attrs.create("isDataset", isDataset)
+    data.attrs.create("isDatabase", isDatabase)
+    data.attrs.create("isBrainDataset", isBrainDataset)
+    data.attrs.create("defaultVisible", defaultVisible)
+    data.attrs.create("defaultSearchable", defaultSearchable)
+
+    panels = root.create_group("panels")
+    panelOrder = []
+    for panelGroup in inputObj["panels"]:
+        group = panels.create_group(panelGroup["name"])
+        group.attrs.create("description", panelGroup["description"])
+        group.attrs.create("type", panelGroup["type"])
+        for panelDataset in panelGroup["datasets"]:
+            group[panelDataset] = metadata[panelDataset]
+        panelOrder.append(panelGroup["name"])
+    panels.attrs.create("order", panelOrder)
 
 def writeCSV(fileName, iter, datasetsMap, databasesMap, writeError=False):
     #"","chr","hg38.start","hg38.end","hg19.coord","score","strand","hg38.coord","hg38.id","DS.gok","DS.liu","DS.sy5y","DS.esc","DS.org","nDS","DB.atlas","DB.pedia","DB.base","DB.fun","nDB"
@@ -249,10 +272,9 @@ def outputTrack(iter):
 if __name__ == '__main__':
     with open("./input.yaml", 'r') as stream:
         circIters = []
-        panelMetadata = ""
+        inputObj = None
         try:
             inputObj = yaml.safe_load(stream)
-            panelMetadata = json.dumps(inputObj["panels"], sort_keys=False, separators=(',', ':'))
             for dataset in inputObj["datasets"]:
                 circIters.append(CircDatasetIter(dataset["name"], dataset["dir"], dataset["main"], dataset.get("matrices", []), dataset.get("meta", None), dataset.get("qtl", None), dataset["reference"], dataset.get("isBrain", False)))
         
@@ -263,9 +285,9 @@ if __name__ == '__main__':
     circIters += [
         Circpedia2Iter("./data/CIRCpedia2"), 
         CircBaseIter("./data/Circbase"), 
-        CircRNADbIter("./data/circRNADb"), 
-        CircFunBaseIter("./data/CircFunBase"),
-        CircAtlas2BrowserIter("./data/circAtlas2"),
+        #CircRNADbIter("./data/circRNADb"), 
+        #CircFunBaseIter("./data/CircFunBase"),
+        #CircAtlas2BrowserIter("./data/circAtlas2"),
     ]
 
     print(datetime.datetime.now().strftime("%H:%M:%S") + " Annotating and Filtering")
@@ -292,7 +314,7 @@ if __name__ == '__main__':
     # Some very large matrices (e.g. CPM) use chunk compression for now, so we only decompress a ~page at a time
     # Metadata is reordered based on overall neurocirc order (useful for chunk compression)
     # Metadata pertaining to rows that have been filtered out in step 3. is not included
-    writeHDF5(circIters, li, panelMetadata)
+    writeHDF5(circIters, li, inputObj)
 
     print("> Filtered %d [not in novel datasets]" % (countExcludedDs))
     print("> Filtered %d [no hg38]" % (countExcluded38))
