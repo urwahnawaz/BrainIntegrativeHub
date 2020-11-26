@@ -49,6 +49,8 @@ class MetaPanel {
         return cache.data;
     }
 
+    //Should centrallise caching and asynchronously hot load first page when makeTable is called
+    //OR open modal immediately but show circle spinning
     _getMatrixRowChunkCached(datasetName, matrixName, row) {
         var self = this;
         let matrix = self.hdf5Group.get(datasetName + "/matrices/" + matrixName);

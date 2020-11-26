@@ -5,6 +5,7 @@ class LMSPanel {
         self.parentId = parentId;
         self.elementId = self.parentId + "lms";
         self.name = name;
+        self.circIndex = -1;
         document.getElementById(self.parentId).children[childIndex].insertAdjacentHTML("afterEnd", self._generateHTML());
         self.metas = metas;
         self.data = {}
@@ -62,7 +63,7 @@ class LMSPanel {
                 }
             }
         }
-        if(!setChart) self.circIndex = undefined;
+        if(!setChart) self.circIndex = -1;
         
         self.preventUpdates = false;
         
@@ -80,7 +81,9 @@ class LMSPanel {
         var self = this;
 
         if(self.preventUpdates) return;
-        if(!self.circIndex) return;
+        if(self.circIndex == -1) return;
+
+        
 
         let curr1 = $("#lmsselect1").val();
         let curr2 = $("#lmsselect2").val();
