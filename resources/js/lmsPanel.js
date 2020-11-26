@@ -8,16 +8,10 @@ class LMSPanel {
         document.getElementById(self.parentId).children[childIndex].insertAdjacentHTML("afterEnd", self._generateHTML());
         self.metas = metas;
         self.data = {}
-        for(let type of ["charts", "tables"]) {
-            let typeGroup = hdf5Group.get(type);
-            for(let panel of typeGroup.keys) {
-                let panelGroup = typeGroup.get(panel);
-                for(let experiment of panelGroup.keys) {
-                    let experimentGroup = panelGroup.get(experiment)
-                    let scaled = experimentGroup.get("scaled");
-                    self.data[experiment] = [...scaled.value];
-                }
-            }
+        for(let experiment of hdf5Group.keys) {
+            let experimentGroup = hdf5Group.get(experiment);
+            let scaled = experimentGroup.get("scaled");
+            self.data[experiment] = [...scaled.value];
         }
 
         self.plot = new Plot("lmsplot");
@@ -34,14 +28,11 @@ class LMSPanel {
         self.data[name] = scaled;
         self.metas[name] = meta;
         self.resetOptions();
-        console.log("added dataset " + name)
     }
 
     resetOptions() {
         var self = this;
         let names = Object.keys(self.data);
-        console.log("resetting options")
-        console.log(names);
         self._setOptions("lmsselect1", names, "Brain1.PFC-CB");
         self._setOptions("lmsselect2", names, "Brain2.DLPFC")
     }

@@ -21,7 +21,6 @@ class CustomPanel {
     addCustomDataset(name, dataMatrix, metadataMatrix) {
         let self = this;
         self.datasets[name] = {data: dataMatrix, meta: metadataMatrix};
-        console.log(self.datasets);
     }
 
     //assigns all callbacks to general, plot agnostic helper functions

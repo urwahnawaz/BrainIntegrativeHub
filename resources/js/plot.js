@@ -1,6 +1,6 @@
 //D3 plot drawing only
 class Plot {
-    constructor(elementId, jitterWidth = 50) {
+    constructor(elementId, jitterWidth=50) {
         var self = this;
 
         self.elementId = elementId;
@@ -11,12 +11,10 @@ class Plot {
         self.rangePad = 20;
         self.boxPadding = 10;
 
-        // set the dimensions and margins of the graph
-        self.margin = { top: 50, right: 100, bottom: 100, left: 80 };
-        self.width = 800 - self.margin.left - self.margin.right
-        self.height = 400 - self.margin.top - self.margin.bottom
+        self.setDimensions();
 
         self.zeroCountNum = 0
+        self.title = "";
 
         // append the svg object to the body of the page
         self.svg = d3.select("#" + self.elementId)
@@ -26,6 +24,15 @@ class Plot {
             .append("g")
             .attr("transform",
                 "translate(" + self.margin.left + "," + self.margin.top + ")");
+    }
+
+    setDimensions(width=800, height=400, right=100, left=80, top=50, bottom=100) {
+        var self = this;
+
+        // set the dimensions and margins of the graph
+        self.margin = { top: top, right: right, bottom: bottom, left: left };
+        self.width = width - self.margin.left - self.margin.right;
+        self.height = height - self.margin.top - self.margin.bottom;
     }
 
     removeScatterHighlight() {
@@ -49,10 +56,18 @@ class Plot {
             .attr("stroke", "white")
     }
 
+    addYAxisCallback(callback) {
+        this.yAxisCallback = callback;
+    }
+
+    setTitle(title) {
+        this.title = title;
+    }
+
     //Expects [{x, y, z=undefined}...] where x and y are numeric, z is optional string for coloring
-    updateScatter(data, xName, yName, title = "") {
+    updateScatter(data, xName, yName) {
         var self = this;
-        self._update(data, xName, yName, title);
+        self._update(data, xName, yName);
 
         // Show the X scale
         self.x = d3.scaleLinear()
@@ -115,9 +130,9 @@ class Plot {
     }
 
     //Expects [{x, y}...] where x is string and y is numeric
-    updateBox(data, xName, yName, title = "") {
+    updateBox(data, xName, yName) {
         var self = this;
-        self._update(data, xName, yName, title);
+        self._update(data, xName, yName);
 
         while (self.cachedJitter.length < data.length) self.cachedJitter.push(- self.jitterWidth / 2 + Math.random() * self.jitterWidth);
 
@@ -205,8 +220,32 @@ class Plot {
         self._addTooltip();
     }
 
+    updateDisabled(text="No Data") {
+        var self = this;
+
+        //Clear graph already exists
+        d3.selectAll("#" + self.elementId + " > svg > g > *").remove();
+
+        // Show the disabled label
+        self.svg.append("text")
+            .attr("transform", "translate(" + (self.width / 2) + " ," + (self.height / 2) + ")")
+            .style("text-anchor", "middle")
+            .text(text);
+
+        // Show dummy axis
+        self.y = d3.scaleLinear().range([self.height - self.rangePad, self.rangePad])
+        self.svg.append("g").call(d3.axisLeft(self.y));
+
+        self.x = d3.scaleLinear().range([self.rangePad, self.width - self.rangePad])
+        self.svg.append("g")
+            .attr("transform", "translate(0," + self.height + ")")
+            .call(d3.axisBottom(self.x))
+
+        self._addTitle();
+    }
+
     //Internal function for shared axis creation
-    _update(data, xName, yName, title = "") {
+    _update(data, xName, yName) {
         var self = this;
 
         //Clear graph already exists
@@ -217,10 +256,10 @@ class Plot {
             .domain(data.length == 1 ? [0, 2 * data[0].y] : d3.extent(data, d => d.y))
             .range([self.height - self.rangePad, self.rangePad])
 
-        self.svg.append("g").call(d3.axisLeft(self.y))
+        self.svg.append("g").call(d3.axisLeft(self.y));
 
         // Show the Y label
-        self.svg.append("text")
+        let yScale = self.svg.append("text")
             .attr("transform", "rotate(-90)")
             .attr("y", 0 - self.margin.left)
             .attr("x", 0 - (self.height / 2))
@@ -228,21 +267,34 @@ class Plot {
             .style("text-anchor", "middle")
             .text(yName);
 
+        if(self.yAxisCallback) {
+            yScale
+                .style("cursor", "pointer")
+                .on("click", () => self.yAxisCallback())
+        }
+
         // Show the X label
         self.svg.append("text")
             .attr("transform", "translate(" + (self.width / 2) + " ," + (self.height + self.margin.top) + ")")
             .style("text-anchor", "middle")
             .text(xName);
 
+        self._addTitle();
+
+        self._addDownloadButton();
+        
+        
+    }
+
+    _addTitle() {
+        var self = this;
         // Show title
         self.svg.append("text")
             .attr("transform",
                 "translate(" + (self.width / 2) + " ," +
                 -self.margin.top / 2 + ")")
             .style("text-anchor", "middle")
-            .text(title);
-
-        self._addDownloadButton();
+            .text(self.title);
     }
 
     _addTooltip() {

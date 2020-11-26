@@ -24,6 +24,14 @@ class PlotControls {
 
     }
 
+    incrimentScale() {
+        let count = $('#scaleselect' + this.elementId + ' option').length 
+        let curr = $('#scaleselect' + this.elementId).prop('selectedIndex');
+        $('#scaleselect' + this.elementId).prop('selectedIndex', (curr + 1) % count);
+        $('#scaleselect' + this.elementId).selectpicker("refresh");
+        this.onChange();
+    }
+
     setScaleDisabled(value) {
         $('#scaleselect' + this.elementId).attr('disabled', value);
         $('#scaleselect' + this.elementId).selectpicker('refresh');
@@ -36,6 +44,11 @@ class PlotControls {
 
     setDatasets(obj) {
         this._setOptionsToggle('datasetselect' + this.elementId, obj);
+        this.onDatasetChange();
+    }
+
+    setDataset(dataset) {
+        this._setOptions('datasetselect' + this.elementId, [dataset], dataset);
         this.onDatasetChange();
     }
 

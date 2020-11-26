@@ -1,15 +1,42 @@
 class QTLPanel {
-    constructor(parentId, childIndex, name, heading) {
+    constructor(parentId, uniqueId, hdf5Group, name) {
         var self = this;
-        self.heading = heading;
+
         self.parentId = parentId;
-        self.elementId = self.parentId + "qtl";
+        self.elementId = uniqueId;
+        self.hdf5Group = hdf5Group;
         self.name = name;
-        document.getElementById(self.parentId).children[childIndex].insertAdjacentHTML("afterEnd", self._generateHTML());
+
+        //Force first group only for now
+        self.dataset = hdf5Group.keys[0];
+        self.hdf5QTL = hdf5Group.get(hdf5Group.keys[0]);
+        self.hdf5QTLDS = self.hdf5QTL.get("QTL");
+        self.heading = self.hdf5QTLDS.attrs.heading.split(",");
+        self.indices = [...self.hdf5QTL.get("indices").value];
+
+        document.getElementById(self.parentId).insertAdjacentHTML("beforeend", self._generateHTML());
     }
 
-    setData(rows=undefined) {
+    setCircId(circId, metaObj) {
         var self = this;
+
+        let rows = undefined;
+        let index = metaObj[self.dataset];
+        if(index >= 0) {
+            let qtlCalcIndex = self.indices[index]
+            if(qtlCalcIndex >= 0) {
+                let end = -1;
+                for(let i = index + 1; i < self.indices.length; ++i) {
+                    if(self.indices[i] >= 0) {
+                        end = self.indices[i];
+                        break;
+                    }
+                }
+                rows = self.hdf5QTLDS.value.slice(qtlCalcIndex, (end == -1 ? self.hdf5QTLDS.shape[0] : end));
+                for(let i=0; i<rows.length; ++i) rows[i] = rows[i].split(",");
+            }
+        }
+
         if(rows) {
             let qtlContents = "";
             qtlContents += '<thead>';
@@ -44,10 +71,10 @@ class QTLPanel {
                         <div class="panel-body">
                             <div class="col-md-2">
                             <select class="selectpicker">
-                            <option>Liu</option>
+                            <option>${this.dataset}</option>
                             </select>
                         </div>
-                        <br><br>
+                        <br><br><br>
                         <table class="table qtltable" id="${this.elementId + "table"}"></table>
                         </div>
                     </div>
