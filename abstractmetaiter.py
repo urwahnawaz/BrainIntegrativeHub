@@ -126,13 +126,13 @@ class AbstractMetaIter(AbstractLiftoverIter):
         lines = [[] for i in range(len(keyToIndexFiltered))]
         
         qtlIter = open(os.path.join(self.directory, fileName), 'r').readlines().__iter__()
-        heading = next(qtlIter).rstrip("\n")
+        heading = next(qtlIter).rstrip("\n").split(",", 1)[1]
 
         #Now we know where to put everything that comes in
         for qtl in qtlIter:
             index = keyToIndexFiltered.get(qtl.split(',', 1)[0], -1)
             if index >= 0:
-                lines[index].append(qtl.rstrip("\n"))
+                lines[index].append(qtl.rstrip("\n").split(",", 1)[1])
         fixed = 0
         j = 0
         qtlIndices = [None] * len(lines)

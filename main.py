@@ -38,6 +38,17 @@ from iterators.mioncocirc2iter import MiOncoCirc2Iter
 
 nmDist = 10 #Maximum difference in coordinates to be considered a near match
 
+def isUnreliable(circ, iters):
+    ds = 0
+    db = 0
+    for i in range(len(iters)):
+        if circ.getMeta(i) != CircRow.META_INDEX_CIRC_NOT_IN_DB:
+            if isinstance(iters[i], CircDatasetIter):
+                ds += 1
+            else:
+                db += 1
+    return ds <= 1 and db == 0
+
 def isInDataset(circ, iters):
     for i in range(len(iters)):
         if isinstance(iters[i], CircDatasetIter) and circ.getMeta(i) != CircRow.META_INDEX_CIRC_NOT_IN_DB:
@@ -134,7 +145,11 @@ def writeHDF5(circIters, iter, inputObj, outFile="output/out.hdf5"):
     panelOrder = []
     for panelGroup in inputObj["panels"]:
         group = panels.create_group(panelGroup["name"])
-        group.attrs.create("description", panelGroup["description"])
+        description = panelGroup["description"]
+        for dataset in inputObj["datasets"]:
+            description = description.replace("href=" + dataset["name"], 'href="' + dataset.get("url", "") + '" target="_blank"')
+
+        group.attrs.create("description", description)
         group.attrs.create("type", panelGroup["type"])
         for panelDataset in panelGroup["datasets"]:
             group[panelDataset] = metadata[panelDataset]
@@ -228,9 +243,9 @@ def filterOutputToList(iter, circIters):
     countExcludedEns = 0
     countExcluded38 = 0
     for circ in iter:
-        if not isInDataset(circ, circIters): 
+        if isUnreliable(circ, circIters): 
             countExcludedDs += 1
-            circ._error = "ERROR: not in novel datasets"
+            circ._error = "ERROR: unreliable (in single novel dataset and no database)"
         elif not circ.group.hasId(1) or not circ.group.hasId(0):
             countExcluded38 += 1
             circ._error = "ERROR: no hg38 liftover"
@@ -259,12 +274,12 @@ def outputTrack(iter):
     with open("./output/out.bed", 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter='\t', quotechar='\"', quoting=csv.QUOTE_NONE)
         for circ in iter:
-            writer.writerow([circ.group.ch, circ.group.versions[1].start, circ.group.versions[1].end])
+            writer.writerow([circ.group.ch, circ.group.versions[1].start, circ.group.versions[1].end, circ.group.toId()])
 
     sortedBed = open("./output/sorted.bed", "w")
     proc1 = subprocess.run(["sort", "-k1,1", "-k2,2n", "./output/out.bed"], stdout=sortedBed, stderr=STDOUT)
     #proc2 = subprocess.run(["./utility/bedGraphToBigWig", "./sorted.bed", "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes", "./out.bw"], stdout=subprocess.PIPE, stderr=STDOUT)
-    proc2 = subprocess.run(["./utility/bedToBigBed", "-type=bed3", "./output/sorted.bed", "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes", "./output/out.bb"], stdout=subprocess.PIPE, stderr=STDOUT)
+    proc2 = subprocess.run(["./utility/bedToBigBed", "-type=bed4", "./output/sorted.bed", "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes", "./output/out.bb"], stdout=subprocess.PIPE, stderr=STDOUT)
 
     if os.path.exists("./output/out.bed"): os.remove("./output/out.bed")
     if os.path.exists("./output/sorted.bed"): os.remove("./output/sorted.bed")
@@ -276,7 +291,7 @@ if __name__ == '__main__':
         try:
             inputObj = yaml.safe_load(stream)
             for dataset in inputObj["datasets"]:
-                circIters.append(CircDatasetIter(dataset["name"], dataset["dir"], dataset["main"], dataset.get("matrices", []), dataset.get("meta", None), dataset.get("qtl", None), dataset["reference"], dataset.get("isBrain", False)))
+                circIters.append(CircDatasetIter(dataset["name"], dataset["dir"], dataset["main"], dataset.get("matrices", []), dataset.get("meta", None), dataset.get("qtl", None), dataset["reference"], dataset.get("isBrain", False), dataset.get("url", "")))
         
         except yaml.YAMLError as exc:
             print(exc)
@@ -285,9 +300,9 @@ if __name__ == '__main__':
     circIters += [
         Circpedia2Iter("./data/CIRCpedia2"), 
         CircBaseIter("./data/Circbase"), 
-        #CircRNADbIter("./data/circRNADb"), 
-        #CircFunBaseIter("./data/CircFunBase"),
-        #CircAtlas2BrowserIter("./data/circAtlas2"),
+        CircRNADbIter("./data/circRNADb"), 
+        CircFunBaseIter("./data/CircFunBase"),
+        CircAtlas2BrowserIter("./data/circAtlas2"),
     ]
 
     print(datetime.datetime.now().strftime("%H:%M:%S") + " Annotating and Filtering")
@@ -316,9 +331,9 @@ if __name__ == '__main__':
     # Metadata pertaining to rows that have been filtered out in step 3. is not included
     writeHDF5(circIters, li, inputObj)
 
-    print("> Filtered %d [not in novel datasets]" % (countExcludedDs))
-    print("> Filtered %d [no hg38]" % (countExcluded38))
-    print("> Filtered %d [no ensembl]" % (countExcludedEns))
+    print("> Filtered %d [unreliable]" % (countExcludedDs))
+    print("> Filtered %d [liftover]" % (countExcluded38))
+    print("> Filtered %d [ensembl]" % (countExcludedEns))
     
     print(datetime.datetime.now().strftime("%H:%M:%S") + " Writing outputs")
 

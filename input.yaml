@@ -56,11 +56,11 @@ panels:
     -   name: "CircRNA expression in human brain tissue"
         type: META
         description: >
-            This section allows detailed exploration of the data in the Brain1.PFC-CB (Gokool et al.[link to pub]) dataset. CircRNA expression values (in Counts per Million ; CPM) and circularization index values (CI)  can be plotted against metadata variables selected from the drop-down menu. A boxplot is generated for categorical metadata variables and a scatterplot is generated for numerical variables. In the case of numerical variables, a second categorical variable can be selected to color the datapoints – eg. CI vs Age plot with data points colored by Brain Region.
+            This section allows detailed exploration of the data in the Brain1.PFC-CB (<a href=Brain1.PFC-CB>Gokool et al.</a>) dataset. CircRNA expression values (in Counts per Million ; CPM) and circularization index values (CI)  can be plotted against metadata variables selected from the drop-down menu. A boxplot is generated for categorical metadata variables and a scatterplot is generated for numerical variables. In the case of numerical variables, a second categorical variable can be selected to color the datapoints – eg. CI vs Age plot with data points colored by Brain Region.
             A scatterplot of circular RNA vs linear RNA expression shows the relation
-            SNPs associated with the expression of the circRNAs are displayed in a table, with data from Brain2. DLPFC (Liu et al. [link to pub]).
+            SNPs associated with the expression of the circRNAs are displayed in a table, with data from Brain2.DLPFC (<a href=Brain2.DLPFC>Liu et al.</a>).
         datasets: [Brain1.PFC-CB]
-        
+
     -   name: "QTL Analysis Brain"
         type: QTL
         description: ""

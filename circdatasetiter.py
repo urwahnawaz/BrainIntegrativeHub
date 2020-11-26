@@ -8,13 +8,14 @@ from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 
 class CircDatasetIter(AbstractMetaIter):
-    def __init__(self, name, directory, main, matrices, metadata, qtl, reference, isBrainDataset):
+    def __init__(self, name, directory, main, matrices, metadata, qtl, reference, isBrainDataset, url):
         super().__init__(name, directory, matrices, metadata, qtl)
 
         self.fileName = os.path.join(self.directory, main)
         self.read_file = open(self.fileName, 'r')
         self.read_obj = csv.reader(self.read_file, delimiter=',')
         self.isBrainDataset = isBrainDataset
+        self.url = url
 
         self.meta_index = -1
         self._updateLiftover(os.path.getmtime(self.fileName), reference)
