@@ -65,9 +65,9 @@ class Plot {
     }
 
     //Expects [{x, y, z=undefined}...] where x and y are numeric, z is optional string for coloring
-    updateScatter(data, xName, yName) {
+    updateScatter(data, xName, yName, dataset) {
         var self = this;
-        self._update(data, xName, yName);
+        self._update(data, xName, yName, dataset);
 
         // Show the X scale
         self.x = d3.scaleLinear()
@@ -130,9 +130,9 @@ class Plot {
     }
 
     //Expects [{x, y}...] where x is string and y is numeric
-    updateBox(data, xName, yName) {
+    updateBox(data, xName, yName, dataset) {
         var self = this;
-        self._update(data, xName, yName);
+        self._update(data, xName, yName, dataset);
 
         while (self.cachedJitter.length < data.length) self.cachedJitter.push(- self.jitterWidth / 2 + Math.random() * self.jitterWidth);
 
@@ -245,7 +245,7 @@ class Plot {
     }
 
     //Internal function for shared axis creation
-    _update(data, xName, yName) {
+    _update(data, xName, yName, dataset) {
         var self = this;
 
         //Clear graph already exists
@@ -279,14 +279,14 @@ class Plot {
             .style("text-anchor", "middle")
             .text(xName);
 
-        self._addTitle();
+        self._addTitle(dataset);
 
         self._addDownloadButton();
         
         
     }
 
-    _addTitle() {
+    _addTitle(dataset) {
         var self = this;
         // Show title
         self.svg.append("text")
@@ -294,7 +294,7 @@ class Plot {
                 "translate(" + (self.width / 2) + " ," +
                 -self.margin.top / 2 + ")")
             .style("text-anchor", "middle")
-            .text(self.title);
+            .text(self.title ? self.title : dataset);
     }
 
     _addTooltip() {

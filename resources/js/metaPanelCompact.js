@@ -7,8 +7,6 @@ class MetaPanelCompact extends MetaPanel {
         self.plot2 = new Plot(self.elementId + "plot2");
         self.controls2 = new PlotControls(self.elementId + "controls2");
 
-        self.plot.setTitle(self.datasets[0]);
-        self.plot2.setTitle(self.datasets[1]);
         self.plot.setDimensions(550, 400, 0, 70);
         self.plot2.setDimensions(550, 400, 0, 70);
 

@@ -99,8 +99,11 @@ class MetaPanel {
         let matrices = self.hdf5Group.get(dataset + "/matrices");
         let samples = self.hdf5Group.get(dataset + "/samples");
 
-        controls.setYAxis(matrices.keys, matrices.attrs["order"][0]);
-        controls.setColorings(samples.keys.filter(k=>$.type(samples.get(k).value[0]) === "string"), "None");
+        let coloring = samples.attrs["order"].filter(k=>$.type(samples.get(k).value[0]) === "string");
+        coloring.unshift("None");
+
+        controls.setYAxis(matrices.attrs["order"], matrices.attrs["order"][0]);
+        controls.setColorings(coloring, coloring.length > 1 ? coloring[1] : coloring[0]);
 
         self._setXAxis(controls, matrices, samples, plot);
 
@@ -109,7 +112,7 @@ class MetaPanel {
     }
 
     _setXAxis(controls, matrices, samples, plot) {
-        controls.setXAxis(samples.keys, samples.attrs["order"][0]);
+        controls.setXAxis(samples.attrs["order"], samples.attrs["order"][0]);
     }
 
     _onPlotChange(controls, plot) {
@@ -163,9 +166,9 @@ class MetaPanel {
         }
 
         if(xAxisIsString) {
-            plot.updateBox(plotData, xAxisLabel, yAxisLabel);
+            plot.updateBox(plotData, xAxisLabel, yAxisLabel, dataset);
         } else {
-            plot.updateScatter(plotData, xAxisLabel, yAxisLabel);
+            plot.updateScatter(plotData, xAxisLabel, yAxisLabel, dataset);
         }
     }
 

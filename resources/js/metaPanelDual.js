@@ -30,7 +30,7 @@ class MetaPanelDual extends MetaPanel {
     _setXAxis(controls, matrices, samples, plot) {
         var self = this;
         if(plot==self.plot2) {
-            let matrixNames = matrices.keys;
+            let matrixNames = matrices.attrs["order"];
             matrixNames.splice(matrixNames.indexOf('CI'), 1);
             controls.setXAxis(matrixNames, matrixNames[1]);
         } else {

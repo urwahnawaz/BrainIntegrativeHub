@@ -21,7 +21,6 @@ class PlotControls {
 
         self.onDatasetChange = ()=>{throw "not implimented";};
         self.onChange = ()=>{throw "not implimented";};
-
     }
 
     incrimentScale() {
@@ -43,6 +42,13 @@ class PlotControls {
     }
 
     setDatasets(obj) {
+        if(obj.length == 1) {
+            $('#datasetlabel' + this.elementId).text(obj[0].name);
+            
+        } else {
+            $('#datasetlabel' + this.elementId).text("Select Dataset");
+            $(`[data-id="${'datasetselect' + this.elementId}"]`).show();
+        }
         this._setOptionsToggle('datasetselect' + this.elementId, obj);
         this.onDatasetChange();
     }
@@ -88,7 +94,19 @@ class PlotControls {
         return $('#coloringselect' + this.elementId).val();
     }
 
+    _hideSingleOptions(id, shouldHide) {
+        let hidableParent = $("#" + id).parent().parent('.hidable');
+        if(hidableParent) {
+            if(shouldHide) {
+                $(hidableParent).hide();
+            } else {
+                $(hidableParent).show(); 
+            } 
+        }
+    }
+
     _setOptions(id, names, defaultName=undefined) {
+        this._hideSingleOptions(id, names.length == 1);
         $("#" + id).empty();
         if(!defaultName && names.length > 0) defaultName = names[0];
         if(defaultName && !names.includes(defaultName)) names.unshift(defaultName);
@@ -101,6 +119,7 @@ class PlotControls {
     }
 
     _setOptionsToggle(id, obj) {
+        this._hideSingleOptions(id, obj.length == 1);
         $("#" + id).empty();
         for (let o of obj) $('#' + id).append('<option value="' + o.name + '"' + (o.disabled ? 'disabled' : '') + '>' + o.name + '</option>');
         let defaultName = $("#" + id + ' option:not([disabled]):first').val();
@@ -111,24 +130,30 @@ class PlotControls {
 
     _generateHTML() {
         return /*html*/`
-            <div>Select Dataset</div>
-            <select id="datasetselect${this.elementId}" class="selectpicker">
-            </select>
-            <br><br>
-            <div>Select ${this.yAxisAlias}</div>
-            <select id="yaxisselect${this.elementId}" class="selectpicker">
-            </select>
-            <br><br>
-            <div>Select ${this.xAxisAlias}</div>
-            <select id="xaxisselect${this.elementId}" class="selectpicker">
-            </select>
-            <br><br>
-            <div>Select Scale</div>
-            <select id="scaleselect${this.elementId}" class="selectpicker">
-                <option>Linear</option>
-                <option>Log e</option>
-                <option>Log 10</option>
-            </select>
+            <span class="hidable">
+                <div id="datasetlabel${this.elementId}">Select Dataset</div>
+                <select id="datasetselect${this.elementId}" class="selectpicker"></select>
+                <br><br>
+            </span>
+            <span class="hidable">
+                <div>Select ${this.yAxisAlias}</div>
+                <select id="yaxisselect${this.elementId}" class="selectpicker">
+                </select>
+                <br><br>
+            </span>
+            <span class="hidable">
+                <div>Select ${this.xAxisAlias}</div>
+                <select id="xaxisselect${this.elementId}" class="selectpicker">
+                </select>
+                <br><br>
+            </span>
+            <span class="hidable">
+                <div>Select Scale</div>
+                <select id="scaleselect${this.elementId}" class="selectpicker">
+                    <option>Linear</option>
+                    <option>Log e</option>
+                    <option>Log 10</option>
+                </select>
             <br><br>
             <div>Select ${this.coloringVariableAlias}</div>
             <select id="coloringselect${this.elementId}" class="selectpicker">
