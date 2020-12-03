@@ -26,7 +26,6 @@
     <script src="resources/js/circviewer.js"></script>
     <script src="resources/js/genomebrowser.js"></script>
     <script src="resources/js/heatmap.js"></script>
-    <script src="resources/js/qtlPanel.js"></script>
     <script src="resources/js/lmsPanel.js"></script>
     <script src="resources/js/customPanel.js"></script>
 
@@ -79,11 +78,14 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
-                                        <a data-toggle="collapse" href="#collapse2">Presence in brain datasets and circrna databases</a>
+                                        <a data-toggle="collapse" href="#collapse2">Detection in Brain Datasets and circRNA Database</a>
                                     </h4>
                                 </div>
                                 <div id="collapse2" class="panel-collapse collapse in">
                                     <div class="panel-body">
+                                        <div>
+                                            Orange/Blue boxes show circRNA presence in the brain dataset or circRNA database. Gray – absence. Click on a database to navigate to the corresponding circRNA page in that database. Click on a dataset to navigate to the respective publication.
+                                        </div>
                                         <div id="myHeatmap" align="center"></div>
                                     </div>
                                 </div>
@@ -154,6 +156,9 @@
             <br>
             <br>
             <div>
+                  <div class="well">
+                    Search NeuroCirc by Gene Symbol, Ensembl Gene ID, or circRNA coordinates based on the hg38 or hg19 genome assemblies. Select the search field from the drop-down menu on the right. Click on a circRNA to display detailed information and interactive plots.
+                    </div>
                 <div class="row">
                     <div class="col-md-10">
                         <label id="myDisplay" data-domain="">
@@ -167,6 +172,7 @@
                         <button id="my_search_button" type="submit"><i class="fas fa-search"></i></button>
                     </div>
                   </div>
+                  
             </div>
 
             <!-- Main Table -->
@@ -189,7 +195,6 @@
     <script>
         var genomebrowser = undefined;
         var metaPanels = [];
-        var qtlPanels = [];
         var hdf5Data = undefined;
         var urls = {};
         var heatmap = undefined;
@@ -300,20 +305,12 @@
             let i = 0;
             for(let group of hdf5Panels.attrs.order) {
                 let groupObj = hdf5Panels.get(group);
-                let groupType = groupObj.attrs.type;
-                if(groupType == "META") {
-                    let datasets = groupObj.keys;
-                    if(MetaPanelDual.isDataDual(groupObj)) {
-                        metaPanels.push(new MetaPanelDual("allpanels", "allpanels" + (i), groupObj, group));
-                    } else if(MetaPanelCompact.isDataCompact(groupObj)) {
-                        metaPanels.push(new MetaPanelCompact("allpanels", "allpanels" + (i), groupObj, group));
-                    } else {
-                        metaPanels.push(new MetaPanel("allpanels", "allpanels" + (i), groupObj, group));
-                    }
-                } else if(groupType == "QTL") {
-                    qtlPanels.push(new QTLPanel("allpanels", "allpanels" + (i), groupObj, group))
+                if(MetaPanelDual.isDataDual(groupObj)) {
+                    metaPanels.push(new MetaPanelDual("allpanels", "allpanels" + (i), groupObj, group));
+                } else if(MetaPanelCompact.isDataCompact(groupObj)) {
+                    metaPanels.push(new MetaPanelCompact("allpanels", "allpanels" + (i), groupObj, group));
                 } else {
-                    throw "Unsupported panel type";
+                    metaPanels.push(new MetaPanel("allpanels", "allpanels" + (i), groupObj, group));
                 }
                 ++i;
             }
@@ -340,7 +337,7 @@
             
             lmsMeta = {};
             for(let i=0; i<dataOrder.length; ++i) if(isDataset[i]) lmsMeta[dataOrder[i]] = matrix[i];
-            lmsPanel = new LMSPanel("allpanels", 1, "Dataset comparison (z-score)", f.get("metadata"), lmsMeta);
+            lmsPanel = new LMSPanel("allpanels", 1, "CircRNA expression across datasets", f.get("metadata"), lmsMeta);
 
             customPanel = new CustomPanel("allpanels", "Custom Datasets");
 
@@ -561,7 +558,6 @@
                 metadataObj = {};
                 for(let i=0; i<dataOrder.length; ++i) if(isDataset[i]) metadataObj[dataOrder[i]] = metaIndex[i];
                 for (let p of metaPanels) p.setCircId(matrix[0][circindex], metadataObj);
-                for(let p of qtlPanels) p.setCircId(matrix[0][circindex], metadataObj)
                 customPanel.setCircId(matrix[0][circindex], metadataObj);
 
                 lmsPanel.setCircIndex(circindex);

@@ -83,8 +83,6 @@ class LMSPanel {
         if(self.preventUpdates) return;
         if(self.circIndex == -1) return;
 
-        
-
         let curr1 = $("#lmsselect1").val();
         let curr2 = $("#lmsselect2").val();
         let data1 = self.data[curr1];
@@ -124,11 +122,16 @@ class LMSPanel {
                     </div>
                     <div id="${this.elementId + "collapse"}" class="panel-collapse collapse in">
                         <div class="panel-body">
+                            <div>
+                                This section displays pairwise comparisons of circRNA expression in the five datasets. Select the datasets to display on the X and Y axes. Datasets where the circRNA was not detected are blocked-out for selection. The scatterplot displays z-score transformed mean expression values (across all samples in the dataset). Dots represent all circRNAs detected in both datasets. The circRNA of interest is highlighted in orange. 
+                            </div>
+                            <br>
+                            <br>
                             <div class="col-md-2">
                                 <div>Select Y Axis</div>
-                                <select class="selectpicker" id="lmsselect2"></select><br><br>
+                                <select class="selectpicker" id="lmsselect2"></select><br><br><br>
                                 <div>Select X Axis</div>
-                                <select class="selectpicker" id="lmsselect1"></select><br><br>
+                                <select class="selectpicker" id="lmsselect1"></select><br><br><br>
                             </div>
                             <div class="col-md-9 col-md-offset-1">
                                 <div id="lmsplot"></div>

@@ -19,12 +19,17 @@ class MetaPanelDual extends MetaPanel {
     }
 
     static isDataDual(hdf5Group) {
+        let hasMatrices = false;
         for(let d of hdf5Group.keys) {
-            if(hdf5Group.get(d + "/matrices").keys.length <= 1) {
-                return false;
+            let group = hdf5Group.get(d);
+            if(group.keys.includes("matrices")) {
+                hasMatrices = true;
+                if(group.get("matrices").keys.length <= 1) {
+                    return false;
+                }
             }
         }
-        return true;
+        return hasMatrices;
     }
 
     _setXAxis(controls, matrices, samples, plot) {

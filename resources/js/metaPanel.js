@@ -10,10 +10,34 @@ class MetaPanel {
         self.name = name;
         self.description = hdf5Group.attrs.description;
         
-        self.datasets = self.hdf5Group.keys;
-        self.currIndex = {};
+        self.datasets = [];
+        self.currIndex = undefined;
 
         document.getElementById(self.parentId).insertAdjacentHTML("beforeend", self._generateHTML());
+
+        self.qtls = [];
+        self.indices = {}
+        for(let d of hdf5Group.keys) {
+            let group = hdf5Group.get(d);
+            if(group.keys.includes("QTL")) {
+                self.qtls.push(d);
+                self.indices[d] = [...group.get("indices").value];
+            }
+
+            if(group.keys.includes("matrices")) {
+                self.datasets.push(d);
+            }
+        }
+
+        if(self.qtls.length > 0) {
+            console.log(document.getElementById(self.elementId + "panel").childNodes[1].childNodes[3].childNodes[1]);
+            document.getElementById(self.elementId + "panel").childNodes[1].childNodes[3].childNodes[1].insertAdjacentHTML("beforeend", self._generateQTLHTML());
+            let hidableParent = $("#" + this.elementId + "qtl").parent().parent('.hidable');
+            if(hidableParent && self.qtls.length == 1) {
+                    hidableParent.hide();
+            }
+            $("#" + this.elementId + "qtl").selectpicker("refresh");
+        }
 
         self.plot = new Plot(self.elementId + "plot");
         self.controls = new PlotControls(self.elementId + "controls", "Measure", "Metadata Variable", "Second Metadata Variable");
@@ -172,13 +196,63 @@ class MetaPanel {
         }
     }
 
+    _onQTLChange() {
+        var self = this;
+
+        if(self.qtls.length == 0) return;
+
+        let rows = undefined;
+        let dataset = $("#" + self.elementId + "qtl").val();
+        let datasetObj = self.hdf5Group.get(dataset + "/QTL");
+        let heading = datasetObj.attrs.heading.split(",");
+        let index = self.currIndex[dataset];
+
+        if(index >= 0) {
+            let indices = self.indices[dataset];
+            let qtlCalcIndex = indices[index]
+            if(qtlCalcIndex >= 0) {
+                let end = -1;
+                for(let i = index + 1; i < indices.length; ++i) {
+                    if(indices[i] >= 0) {
+                        end = indices[i];
+                        break;
+                    }
+                }
+                rows = datasetObj.value.slice(qtlCalcIndex, (end == -1 ? datasetObj.shape[0] : end));
+                for(let i=0; i<rows.length; ++i) rows[i] = rows[i].split(",");
+            }
+        }
+
+        let qtlContents = "";
+        qtlContents += '<thead>';
+        qtlContents += "<tr>";
+        for(let h of heading) qtlContents += `<th>${h}</th>`
+        qtlContents += "</tr>";
+        qtlContents += '</thead>';
+        qtlContents += '<tbody>';
+        if(rows) {
+            for(let r of rows) {
+                qtlContents += "<tr>";
+                for(let v of r) qtlContents += `<td>${v}</td>`
+                qtlContents += "</tr>";
+            }
+            $("#" + this.elementId + "noqtl").hide();
+        } else {
+            $("#" + this.elementId + "noqtl").show();
+        }
+        qtlContents += '</tbody>';
+
+        document.getElementById(self.elementId + "table").innerHTML = qtlContents;
+    }
+
     setCircId(circId, obj) {
         let self = this;
         self.supressChanges = true;
-        let found = false;
         self.currCircId = circId;
+        self.currIndex = obj;
+
+        let found = false;
         for(let d of self.datasets) {
-            self.currIndex[d] = obj[d];
             found |= (self.currIndex[d] >= 0);
         }
 
@@ -186,6 +260,8 @@ class MetaPanel {
        
         self.supressChanges = false;
         self._onPlotChange(self.controls, self.plot, false);
+
+        self._onQTLChange();
 
         if(found) {
             $('#' + this.elementId + "panel").show()
@@ -197,6 +273,28 @@ class MetaPanel {
     setControlDatasets(controls, datasets) {
         var self = this;
         controls.setDatasets(datasets.map(d => {return {name: d, disabled: (self.currIndex[d] < 0)};}));
+    }
+
+    _generateQTLHTML() {
+        return /*html*/`
+            <hr class="mt-1 mb-1"/>
+            <span class="hidable">
+                <div class="col-md-2">
+                    <select id="${this.elementId + "qtl"}" class="selectpicker">
+                        ${this.qtls.map(v => "<option>" + v + "</option>")}
+                    </select>
+                </div>
+                <br><br>
+            </span>
+            <div class="row justify-content-center">
+                <div class="text-center">${this.qtls.length == 1 ? this.qtls[0] : ""}</div>
+                <br><br>
+                <div class="col-auto">
+                    <table class="table qtltable" id="${this.elementId + "table"}"></table>
+                </div>
+                <div id="${this.elementId + "noqtl"}" class="text-center">No Data</div>
+            </div>
+            `
     }
 
     _generateHTML() {

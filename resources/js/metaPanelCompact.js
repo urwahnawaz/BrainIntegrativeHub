@@ -19,13 +19,17 @@ class MetaPanelCompact extends MetaPanel {
     }
 
     static isDataCompact(hdf5Group) {
-        if(hdf5Group.keys.length != 2) return false;
+        let matricesCount = 0;
         for(let d of hdf5Group.keys) {
-            if(hdf5Group.get(d + "/samples").keys.length > 1) {
-                return false;
+            let group = hdf5Group.get(d);
+            if(group.keys.includes("matrices")) {
+                ++matricesCount;
+                if(group.get("samples").keys.length > 1) {
+                    return false;
+                }
             }
         }
-        return true;
+        return matricesCount==2;
     }
 
     setCircId(circId, obj) {

@@ -264,7 +264,6 @@ html, body {margin:0;padding:0;height:100%}
   .qtltable {
     overflow:auto;
     max-height:400px;
-    display:block;
     width:100%;
   } 
 
@@ -289,4 +288,8 @@ html, body {margin:0;padding:0;height:100%}
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+ }
+
+ .well {
+  border-radius: 0px;
  }
