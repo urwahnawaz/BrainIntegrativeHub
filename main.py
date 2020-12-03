@@ -156,38 +156,15 @@ def writeHDF5(circIters, iter, inputObj, outFile="output/out.hdf5"):
         panelOrder.append(panelGroup["name"])
     panels.attrs.create("order", panelOrder)
 
-def writeCSV(fileName, iter, datasetsMap, databasesMap, writeError=False):
+def writeCSV(fileName, iter, writeError=False):
     #"","chr","hg38.start","hg38.end","hg19.coord","score","strand","hg38.coord","hg38.id","DS.gok","DS.liu","DS.sy5y","DS.esc","DS.org","nDS","DB.atlas","DB.pedia","DB.base","DB.fun","nDB"
     #"1","chr1",9972018,9981170,"chr1_10032076_10041228_+",0,"+","chr1_9972018_9981170_+","chr1_9972018_9981170",TRUE,TRUE,FALSE,FALSE,FALSE,2,TRUE,TRUE,TRUE,FALSE,3
     with open(fileName, 'w', newline='') as csvfile:
         i = 1
         writer = csv.writer(csvfile, delimiter=',', quotechar='\"', quoting=csv.QUOTE_NONNUMERIC)
         for circ in iter:
-            id19 = circ.group.toId(0)
-            id38 = circ.group.toId(1)
-            dsBools = [(circ.getMeta(datasetsMap[i]) != CircRow.META_INDEX_CIRC_NOT_IN_DB) for i in range(len(datasetsMap))]
-            dbBools = [(circ.getMeta(databasesMap[i]) != CircRow.META_INDEX_CIRC_NOT_IN_DB) for i in range(len(databasesMap))]
-            dsStrings = [("TRUE" if x else "FALSE") for x in dsBools]
-            dbStrings = [("TRUE" if x else "FALSE") for x in dbBools]
-            dsCount = sum(x == True for x in dsBools)
-            dbCount = sum(x == True for x in dbBools)
-            writer.writerow([str(i), circ.group.ch, circ.group.versions[1].start, circ.group.versions[1].end, id19, 0, circ.group.strand, id38, id38[:-1]] + dsStrings + [dsCount] + dbStrings + [dbCount] + ([circ._error] if writeError else []))
+            writer.writerow([str(i), circ.group.toId()] + ([circ._error] if writeError else []))
             i += 1
-
-def readCSV(fileName, datasetsMap, databasesMap):
-    #"","chr","hg38.start","hg38.end","hg19.coord","score","strand","hg38.coord","hg38.id","DS.gok","DS.liu","DS.sy5y","DS.esc","DS.org","nDS","DB.atlas","DB.pedia","DB.base","DB.fun","nDB"
-    #"1","chr1",9972018,9981170,"chr1_10032076_10041228_+",0,"+","chr1_9972018_9981170_+","chr1_9972018_9981170_",True,True,False,False,False,2,True,True,True,False,3
-    output = SortedSet()
-    for line in csv.reader(open(fileName, 'r'), delimiter=','):
-        hg19 = re.search(r'_([0-9]+)_([0-9]+)_', line[4])
-        strand = line[6]
-        if (not hg19) or (strand == "."): continue
-        group = CircRangeGroup(line[1], strand, [CircRange(int(hg19.group(1)), int(hg19.group(2))), CircRange(int(line[2]), int(line[3]))])
-        circ = CircRow(group, CircHSAGroup(), "", 0, -1)
-        for i in range(len(datasetsMap)): circ.setMeta(datasetsMap[i], (1 if line[i + 9] == "TRUE" else -1))
-        for i in range(len(databasesMap)): circ.setMeta(databasesMap[i], (1 if line[i + 15] == "TRUE" else -1))
-        output.add(circ)
-    return output
 
 def annotateEnsemblNCBI(iter):
     ##tax_id	GeneID	Symbol	LocusTag	Synonyms	dbXrefs	chromosome	map_location	description	type_of_gene	Symbol_from_nomenclature_authority	Full_name_from_nomenclature_authority	Nomenclature_status	Other_designations	Modification_date	Feature_type
@@ -198,10 +175,10 @@ def annotateEnsemblNCBI(iter):
     for line in csv.reader(open("./data/Homo_sapiens.gene_info", 'r'), delimiter='\t'):
         gene = line[2]
         id = re.search(r'Ensembl:([A-Z0-9]+)', line[5])
+        for synonym in line[4].split('|'): synonyms[synonym] = gene
         if not id: continue
         ids[gene] = id.group(1)
         genes[id.group(1)] = gene
-        for synonym in line[4].split('|'): synonyms[synonym] = gene
 
     for circ in iter:
         newer = None
@@ -251,24 +228,9 @@ def filterOutputToList(iter, circIters):
             circ._error = "ERROR: no hg38 liftover"
         elif not circ.geneId and not circ.gene: 
             countExcludedEns += 1
-            circ._error = "ERROR: no Ensembl ID or gene symbol/alias found: " + str(circ.gene) + " - " + str(circ.geneId)
+            circ._error = "ERROR: no Ensembl ID and gene symbol/alias found"
         else: ret.append(circ)
     return ret, countExcludedDs, countExcludedEns, countExcluded38
-
-def outputComparisonCSVs(ss, li, circIters):
-    names = [v.name for v in circIters]
-    datasets = ["Gokool", "Liu", "SY5Y", "ESC_FBN", "Org"]
-    databases = ["CircAtlas2", "Circpedia2", "CircBase", "CircFunBase"]
-    datasetsMap = [names.index(v) for v in datasets]
-    databasesMap = [names.index(v) for v in databases]
-    if -1 not in datasetsMap and -1 not in databasesMap: 
-        writeCSV("outPy.csv", li, datasetsMap, databasesMap)
-        ss2 = readCSV("./data/neuroCirc.csv", datasetsMap, databasesMap)
-        writeCSV("outR.csv", ss2, datasetsMap, databasesMap)
-        missing = ss2.difference(ss)
-        writeCSV("outMissing.csv", missing, datasetsMap, databasesMap)
-        error = [x for x in ss2.intersection(ss) if x._error]
-        writeCSV("outError.csv", error, datasetsMap, databasesMap, True)
 
 def outputTrack(iter):
     with open("./output/out.bed", 'w', newline='') as csvfile:
@@ -342,5 +304,5 @@ if __name__ == '__main__':
 
     print("%d circrnas written" % (len(li)))
 
-    #outputComparisonCSVs(ss, li, circIters)
+    writeCSV("./output/outError.csv", [x for x in ss if x._error], True)
     outputTrack(li)
