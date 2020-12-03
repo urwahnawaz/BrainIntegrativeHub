@@ -40,7 +40,7 @@ class MetaPanel {
         }
 
         self.plot = new Plot(self.elementId + "plot");
-        self.controls = new PlotControls(self.elementId + "controls", "Measure", "Metadata Variable", "Second Metadata Variable");
+        self.controls = new PlotControls(self.elementId + "controls", "Metadata Variable", "Expression Measure", "Second Metadata Variable");
         self.controls.onDatasetChange = ()=>self._onPlotDatasetChange(self.controls, self.plot);
         self.controls.onChange = ()=>self._onPlotChange(self.controls, self.plot);
 
