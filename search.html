@@ -351,7 +351,7 @@
 
         function updateSearchPos() {
             if(searchCols.length > 0 && searchCols[searchCols.length-1] < 0) {
-                searchPos = searchTerm.match(/(chr[^:]+):([0-9]+)-([0-9]+)/i);
+                searchPos = $("#myInput").val().trim().match(/(chr[^:]+):([0-9]+)-([0-9]+)/i);
             } else {
                 searchPos = undefined;
             }
@@ -437,7 +437,6 @@
                 } else {
                     indices.sort((a, b) => f(matrix[sortCurrCol][a], matrix[sortCurrCol][b]));
                 }
-
             }
             
             let total=0;
@@ -451,9 +450,9 @@
                     //Skip if not in interval
                     if(matrix[1][sortIndex] == searchPos[1]) {
                         if(genomicSearchSystem == -1) { //hg19
-                            if(matrix[4][sortIndex] >= searchPos[2] && matrix[5][sortIndex] <= searchPos[3]) shouldInclude = true;
-                        } else { //hg38
                             if(matrix[2][sortIndex] >= searchPos[2] && matrix[3][sortIndex] <= searchPos[3]) shouldInclude = true;
+                        } else { //hg38
+                            if(matrix[4][sortIndex] >= searchPos[2] && matrix[5][sortIndex] <= searchPos[3]) shouldInclude = true;
                         } 
                     }
                 } else if(searchTerm) {
