@@ -23,7 +23,12 @@ class Plot {
             .attr("height", self.height + self.margin.top + self.margin.bottom)
             .append("g")
             .attr("transform",
-                "translate(" + self.margin.left + "," + self.margin.top + ")");
+                "translate(" + self.margin.left + "," + self.margin.top + ")")
+
+            d3.select("#" + self.elementId)
+                .on("mouseenter", () => self._setDownloadButtonVisibility(true))
+                .on("mouseleave", () => self._setDownloadButtonVisibility(false))
+        self.shouldShowDownloadButton = false;
     }
 
     setDimensions(width=800, height=400, right=80, left=60, top=50, bottom=100) {
@@ -282,8 +287,6 @@ class Plot {
         self._addTitle(dataset);
 
         self._addDownloadButton();
-        
-        
     }
 
     _addTitle(dataset) {
@@ -360,16 +363,42 @@ class Plot {
 
     _addDownloadButton() {
         var self = this;
-        self.downloadButton = self.svg.append('text')
-            .attr('font-family', 'FontAwesome')
-            .attr('font-size', "20px")
-            .text(function(d) { return '\uf019' })
-            .style("cursor", "pointer")
-            .attr("transform",
+        self.downloadButton = self.svg.append('g')
+        .attr("fill-opacity", self.shouldShowDownloadButton ? 1 : 0)
+        .attr("transform",
                 "translate(" + (self.width) + " ," +
                 (self.height + self.margin.bottom/2) + ")")
-            .on("click", () => console.log(self._toImg()))
-            
+        
+        //PNG
+        self.downloadButton.append('text')
+            .attr('font-family', 'FontAwesome')
+            .attr('font-size', "20px")
+            .text(function(d) { return '\uf1c5' })
+            .style("cursor", "pointer")
+            .attr("transform",
+                "translate(" + -25 + " ," +
+                0 + ")")
+            .on("click", () => window.alert("PNG not implimented yet")) 
+
+
+        //SVG
+        self.downloadButton.append('text')
+            .attr('font-family', 'FontAwesome')
+            .attr('font-size', "20px")
+            .text(function(d) { return '\uf5cb' })
+            .style("cursor", "pointer")
+            .attr("transform",
+                "translate(" + 0 + " ," +
+                0 + ")")
+            .on("click", () => self._toImg())
+
+        
+    }
+
+    _setDownloadButtonVisibility(value) {
+        var self = this;
+        self.shouldShowDownloadButton = value;
+        self.downloadButton.attr("fill-opacity", value ? 1 : 0)
     }
 
     _toImg() {
@@ -379,10 +408,9 @@ class Plot {
         self._addDownloadButton(); //Readd
         var linkSource = 'data:image/svg+xml;base64,' + btoa(xml);
         var downloadLink = document.createElement("a");
-        console.log(downloadLink);
         downloadLink.href = linkSource;
         downloadLink.download = "chart.svg";
         downloadLink.click();
-        //downloadLink.remove();
+        downloadLink.remove();
     }
 }
