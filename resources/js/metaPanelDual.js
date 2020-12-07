@@ -72,7 +72,7 @@ class MetaPanelDual extends MetaPanel {
                 </div>
                 <div id="${this.elementId + "collapse"}" class="panel-collapse collapse in">
                     <div class="panel-body">
-                        <div>${this.description}</div><br><br>
+                        <div class="panel-description">${this.description}</div><br><br>
                         <div class="row">
                             <div class="col-md-2">
                                 <div id="${this.elementId + "controls"}"></div>

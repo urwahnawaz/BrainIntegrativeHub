@@ -30,7 +30,6 @@ class MetaPanel {
         }
 
         if(self.qtls.length > 0) {
-            console.log(document.getElementById(self.elementId + "panel").childNodes[1].childNodes[3].childNodes[1]);
             document.getElementById(self.elementId + "panel").childNodes[1].childNodes[3].childNodes[1].insertAdjacentHTML("beforeend", self._generateQTLHTML());
             let hidableParent = $("#" + this.elementId + "qtl").parent().parent('.hidable');
             if(hidableParent && self.qtls.length == 1) {
@@ -55,6 +54,12 @@ class MetaPanel {
                 ret[matrix] = {id: -1, data: undefined};
             }
             self.rowCache[dataset] = ret;
+        }
+
+        self.names = {};
+        for(let dataset of self.datasets) {
+            let currName = self.hdf5Group.get(dataset).attrs["name"];
+            self.names[dataset] = currName ? currName : dataset;
         }
     }
 
@@ -190,9 +195,9 @@ class MetaPanel {
         }
 
         if(xAxisIsString) {
-            plot.updateBox(plotData, xAxisLabel, yAxisLabel, dataset);
+            plot.updateBox(plotData, xAxisLabel, yAxisLabel, self.names[dataset]);
         } else {
-            plot.updateScatter(plotData, xAxisLabel, yAxisLabel, dataset);
+            plot.updateScatter(plotData, xAxisLabel, yAxisLabel, self.names[dataset]);
         }
     }
 
@@ -200,6 +205,8 @@ class MetaPanel {
         var self = this;
 
         if(self.qtls.length == 0) return;
+
+        $("#" + this.elementId + "qtltitle").text("CircQTL:" + self.qtls[0])
 
         let rows = undefined;
         let dataset = $("#" + self.elementId + "qtl").val();
@@ -275,7 +282,7 @@ class MetaPanel {
         controls.setDatasets(datasets.map(d => {return {name: d, disabled: (self.currIndex[d] < 0)};}));
     }
 
-    _generateQTLHTML() {
+    _generateQTLHTML() { //TODO: generalize for more than one QTL
         return /*html*/`
             <hr class="mt-1 mb-1"/>
             <span class="hidable">
@@ -287,7 +294,7 @@ class MetaPanel {
                 <br><br>
             </span>
             <div class="row justify-content-center">
-                <div class="text-center">${this.qtls.length == 1 ? this.qtls[0] : ""}</div>
+                <div id="${this.elementId + "qtltitle"}" class="text-center"></div>
                 <br><br>
                 <div class="col-auto">
                     <table class="table qtltable" id="${this.elementId + "table"}"></table>
@@ -308,7 +315,7 @@ class MetaPanel {
                     </div>
                     <div id="${this.elementId + "collapse"}" class="panel-collapse collapse in">
                         <div class="panel-body">
-                            <div>${this.description}</div><br><br>
+                            <div class="panel-description">${this.description}</div><br><br>
                             <div class="col-md-2">
                                 <div id="${this.elementId + "controls"}"></div>
                             </div>

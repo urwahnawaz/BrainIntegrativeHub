@@ -26,7 +26,7 @@ class Plot {
                 "translate(" + self.margin.left + "," + self.margin.top + ")");
     }
 
-    setDimensions(width=800, height=400, right=100, left=80, top=50, bottom=100) {
+    setDimensions(width=800, height=400, right=80, left=60, top=50, bottom=100) {
         var self = this;
 
         // set the dimensions and margins of the graph
@@ -81,7 +81,7 @@ class Plot {
         var categoriesZ = undefined;
         if (data[0].z) {
             categoriesZ = self._getCategories(data, d => d.z)
-            let colors = categoriesZ.length < 3 ? ["#1f78b4", "#b2df8a"] : colorbrewer["Paired"][Math.max(3, categoriesZ.length)];
+            let colors = ["#377eb8","#4daf4a","#ff7f00","#ffff33","#a65628","#984ea3", "#f781bf","#999999", "#e41a1c"];
             if (colors) {
                 pointColorScale = d3.scaleOrdinal()
                     .domain(data.map(d => d.z))
@@ -91,7 +91,7 @@ class Plot {
                     .data(categoriesZ)
                     .enter()
                     .append("g")
-                    .attr("transform", function (d, i) { return "translate(" + (self.width + 20) + "," + ((28 * i)) + ")"; });
+                    .attr("transform", function (d, i) { return "translate(" + (self.width) + "," + ((28 * i)) + ")"; });
 
                 legend.append("circle")
                     .style("fill", function (d, i) { return pointColorScale(d); })

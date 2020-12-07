@@ -95,7 +95,7 @@ class LMSPanel {
                 plotData.push({x: data1[meta1]/*this ends up undefined? meta1 probs out of range?*/, y: data2[meta2]});
             }
         }
-        self.plot.updateScatter(plotData, curr1, curr2, curr2 + " vs " + curr1);
+        self.plot.updateScatter(plotData, curr1, curr2, "Z-Score Transformed Mean Log2 (Expression)");
         self.plot.addScatterHighlight({x: data1[self.metas[curr1][self.circIndex]], y: data2[self.metas[curr2][self.circIndex]]})
     }
 
@@ -122,7 +122,7 @@ class LMSPanel {
                     </div>
                     <div id="${this.elementId + "collapse"}" class="panel-collapse collapse in">
                         <div class="panel-body">
-                            <div>
+                            <div class="panel-description">
                                 This section displays pairwise comparisons of circRNA expression in the five datasets. Select the datasets to display on the X and Y axes. Datasets where the circRNA was not detected are blocked-out for selection. The scatterplot displays z-score transformed mean expression values (across all samples in the dataset). Dots represent all circRNAs detected in both datasets. The circRNA of interest is highlighted in orange. 
                             </div>
                             <br>

@@ -83,7 +83,7 @@
                                 </div>
                                 <div id="collapse2" class="panel-collapse collapse in">
                                     <div class="panel-body">
-                                        <div>
+                                        <div class="panel-description">
                                             Orange/Blue boxes show circRNA presence in the brain dataset or circRNA database. Gray – absence. Click on a database to navigate to the corresponding circRNA page in that database. Click on a dataset to navigate to the respective publication.
                                         </div>
                                         <div id="myHeatmap" align="center"></div>
@@ -222,6 +222,12 @@
         let searchTerm = "";
         let searchPos = undefined;
 
+        let coordinateStarts = [];
+        let coordinateEnds = [];
+        let coordinateNames = [];
+        let chrIndex;
+        let defaultCoord;
+
         //TODO convert to promises. Very hacky 
         var awaitAll = 0;
         function incAwaitAll() {
@@ -238,8 +244,12 @@
 
             let optSearch = optOther;
             optSearch += '<optgroup label="Genomic range" data-max-options="1">';
-            optSearch += '<option value="-1">hg19</option>';
-            optSearch += '<option value="-2">hg38</option>';
+
+            let c = 0;
+            for(let n of coordinateNames) {
+                optSearch += `<option value="${-c-1}">${n}</option>`;
+                ++c;
+            }
             optSearch += '</optgroup>';
 
             let optAll = optOther;
@@ -322,12 +332,29 @@
             isBrainDataset = hdf5Data.attrs.isBrainDataset;
             showCols = hdf5Data.attrs.defaultVisible;
             searchCols = hdf5Data.attrs.defaultSearchable;
-            searchCols.push(-2); //Add hg38 to searchable columns
-
+            
             matrix = [];
 
-            for(let h of dataOrder) matrix.push([...hdf5Data.get(h).value]);
+            let c = 0;
+            const regex = /(start|end)_(.+)/;
+            for(let h of dataOrder) {
+                matrix.push([...hdf5Data.get(h).value]);
+                let coord = h.match(regex);
+                if(coord) {
+                    if(coord[1] == "start") {
+                        coordinateStarts.push(c);
+                        coordinateNames.push(coord[2]);
+                    } else {
+                        coordinateEnds.push(c);
+                    }
+                }
+                ++c;
+            }
             indices = new Array(matrix[0].length);
+            chrIndex = dataOrder.indexOf("chr");
+            defaultCoord = hdf5Data.attrs.defaultCoord;
+
+            searchCols.push(-defaultCoord-1);
 
             let urlsGroup = f.get("urls");
             for(let k of urlsGroup.keys) {
@@ -440,7 +467,7 @@
             }
             
             let total=0;
-            let genomicSearchSystem = searchCols[searchCols.length-1];
+            let genomicSearchSystem = searchCols.length && searchCols[searchCols.length-1] < 0 ? -searchCols[searchCols.length-1]-1 : undefined;
             for(let i=0; i<matrix[0].length; ++i) {
                 let sortIndex = indices[i];
 
@@ -449,11 +476,11 @@
                     shouldInclude = false;
                     //Skip if not in interval
                     if(matrix[1][sortIndex] == searchPos[1]) {
-                        if(genomicSearchSystem == -1) { //hg19
-                            if(matrix[2][sortIndex] >= searchPos[2] && matrix[3][sortIndex] <= searchPos[3]) shouldInclude = true;
-                        } else { //hg38
-                            if(matrix[4][sortIndex] >= searchPos[2] && matrix[5][sortIndex] <= searchPos[3]) shouldInclude = true;
-                        } 
+                        if(genomicSearchSystem !== undefined) {
+                            if(matrix[coordinateStarts[genomicSearchSystem]][sortIndex] >= searchPos[2] && matrix[coordinateEnds[genomicSearchSystem]][sortIndex] >= searchPos[3]) {
+                                shouldInclude = true;
+                            }
+                        }
                     }
                 } else if(searchTerm) {
                     //Skip if doesn't match search
@@ -524,9 +551,8 @@
                 }
                 let circindex = parseInt(arg.currentTarget.getAttribute("data-index"));
 
-                genomebrowser.setPosition(matrix[1][circindex], matrix[4][circindex], matrix[5][circindex]); 
-                //TODO: put in db, these would also be used for e.g. hg38 search - Maybe just have "default reference" (we don't need hg19 in metadata)
-                
+                genomebrowser.setPosition(matrix[chrIndex][circindex], matrix[coordinateStarts[defaultCoord]][circindex], matrix[coordinateEnds[defaultCoord]][circindex]); 
+
                 let metaIndex = new Array(dataOrder.length);
 
                 //Change heatmap

@@ -293,3 +293,7 @@ html, body {margin:0;padding:0;height:100%}
  .well {
   border-radius: 0px;
  }
+
+.panel-description {
+  font-size: 15px;
+}
