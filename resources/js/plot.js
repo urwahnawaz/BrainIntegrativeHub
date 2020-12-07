@@ -31,7 +31,7 @@ class Plot {
         self.shouldShowDownloadButton = false;
     }
 
-    setDimensions(width=800, height=400, right=80, left=60, top=50, bottom=100) {
+    setDimensions(width=800, height=400, right=80, left=80, top=50, bottom=100) {
         var self = this;
 
         // set the dimensions and margins of the graph
