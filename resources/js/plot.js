@@ -15,6 +15,18 @@ class Plot {
 
         self.zeroCountNum = 0
         self.title = "";
+        self.shouldShowDownloadButton = false;
+    }
+
+    setDimensions(width=800, height=400, right=80, left=80, top=50, bottom=100) {
+        var self = this;
+
+        d3.selectAll("#" + self.elementId + " > svg > g > *").remove();
+
+        // set the dimensions and margins of the graph
+        self.margin = { top: top, right: right, bottom: bottom, left: left };
+        self.width = width - self.margin.left - self.margin.right;
+        self.height = height - self.margin.top - self.margin.bottom;
 
         // append the svg object to the body of the page
         self.svg = d3.select("#" + self.elementId)
@@ -28,16 +40,6 @@ class Plot {
             d3.select("#" + self.elementId)
                 .on("mouseenter", () => self._setDownloadButtonVisibility(true))
                 .on("mouseleave", () => self._setDownloadButtonVisibility(false))
-        self.shouldShowDownloadButton = false;
-    }
-
-    setDimensions(width=800, height=400, right=80, left=80, top=50, bottom=100) {
-        var self = this;
-
-        // set the dimensions and margins of the graph
-        self.margin = { top: top, right: right, bottom: bottom, left: left };
-        self.width = width - self.margin.left - self.margin.right;
-        self.height = height - self.margin.top - self.margin.bottom;
     }
 
     removeScatterHighlight() {
@@ -376,7 +378,7 @@ class Plot {
             .text(function(d) { return '\uf1c5' })
             .style("cursor", "pointer")
             .attr("transform",
-                "translate(" + -25 + " ," +
+                "translate(" + -50 + " ," +
                 0 + ")")
             .on("click", () => self._savePNG()) 
 
@@ -388,7 +390,7 @@ class Plot {
             .text(function(d) { return '\uf5cb' })
             .style("cursor", "pointer")
             .attr("transform",
-                "translate(" + 0 + " ," +
+                "translate(" + -25 + " ," +
                 0 + ")")
             .on("click", () => self._saveSVG())
     }
