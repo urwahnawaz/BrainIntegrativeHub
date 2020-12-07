@@ -23,12 +23,16 @@ class AbstractDB:
                 fixed += 1
 
     def writeHDF5URLs(self, hdf5Group, rows):
-        if(self.hasIndividualURLs): 
+        hasIndividual = self.hasIndividualURLs
+        if(hasIndividual): 
             urls = [r._url[self.id] for r in rows if r.getMeta(self.id) >= 0]
-            arr = np.array([u.encode() for u in urls], dtype="S" + str(len(max(urls, key=len))))
-            ds = hdf5Group.create_dataset(self.name, data=arr, chunks=arr.shape, compression="gzip", compression_opts=9)
-            ds.attrs.create("prefix", self.urlPrefix)
-            ds.attrs.create("home", self.url)
-        elif(self.url):
+            if len(urls) == 0: 
+                hasIndividual = False
+            else:
+                arr = np.array([u.encode() for u in urls], dtype="S" + str(len(max(urls, key=len))))
+                ds = hdf5Group.create_dataset(self.name, data=arr, chunks=arr.shape, compression="gzip", compression_opts=9)
+                ds.attrs.create("prefix", self.urlPrefix)
+                ds.attrs.create("home", self.url)
+        if not hasIndividual:
             ds = hdf5Group.create_dataset(self.name, data=h5py.Empty("S1"))
             ds.attrs.create("home", self.url)

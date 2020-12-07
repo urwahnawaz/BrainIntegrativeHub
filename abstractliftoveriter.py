@@ -86,9 +86,15 @@ class AbstractLiftoverIter(AbstractDB):
     def _toBedFile(self, fileFrom):
         raise "Not implimented"
 
-    def _browserToBedHelper(self, line, strand):
+    def _browserToBedHelper(self, line, strand, offset=0):
         match = re.search(r'(chr[^:]+):(\d+)\-(\d+)', line)
-        return self._browserArgsToBedHelper(match.group(1), match.group(2), match.group(3), strand) if match else None
+
+        if not match:
+            return None
+        elif(offset):
+            return self._browserArgsToBedHelper(match.group(1), str(int(match.group(2))+offset), str(int(match.group(3))+offset), strand)
+        else:
+            return self._browserArgsToBedHelper(match.group(1), match.group(2), match.group(3), strand)
 
     def _browserArgsToBedHelper(self, chr, start, end, strand):
         return ("%s\t%s\t%s\t%s\t%s:%s-%s_%s\n" % (chr, start, end, strand, chr, start, end, strand))

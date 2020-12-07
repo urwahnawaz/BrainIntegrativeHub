@@ -1,5 +1,5 @@
 datasets:
-    -   name: Brain1.PFC-CB
+    -   id: Brain1.PFC-CB
         reference: hg19
         url: "https://www.biologicalpsychiatryjournal.com/article/S0006-3223(19)31581-1/"
         dir: "./data/Gokool"
@@ -14,7 +14,7 @@ datasets:
             -   type: SJ
                 path: "gok_sj_cpm.csv"
 
-    -   name: Brain2.DLPFC
+    -   id: Brain2.DLPFC
         reference: hg19
         url: "https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1701-8"
         dir: "./data/Liu"
@@ -25,7 +25,7 @@ datasets:
             -   type: CPM
                 path: "liu_cpm.csv"
 
-    -   name: NeurDiff1.hESC
+    -   id: NeurDiff1.hESC
         reference: hg19
         dir: "./data/ESC_FBN/"
         main: "esc_fbn.csv"
@@ -34,7 +34,7 @@ datasets:
             -   type: CPM
                 path: "esc_fbn_cpm.csv"
 
-    -   name: NeurDiff2.SY5Y
+    -   id: NeurDiff2.SY5Y
         reference: hg19
         dir: "./data/SY5Y/"
         main: "sy5y.csv"
@@ -43,7 +43,8 @@ datasets:
             -   type: CPM
                 path: "sy5y_cpm.csv"
 
-    -   name: OrgMaturation
+    -   id: OrgMaturation
+        name: Organoid Maturation
         reference: hg19
         dir: "./data/Org/"
         main: "org.csv"
@@ -54,25 +55,17 @@ datasets:
 
 panels:
     -   name: "CircRNA expression in human brain tissue"
-        type: META
         description: >
-            This section allows detailed exploration of the data in the Brain1.PFC-CB (<a href=Brain1.PFC-CB>Gokool et al.</a>) dataset. CircRNA expression values (in Counts per Million ; CPM) and circularization index values (CI)  can be plotted against metadata variables selected from the drop-down menu. A boxplot is generated for categorical metadata variables and a scatterplot is generated for numerical variables. In the case of numerical variables, a second categorical variable can be selected to color the datapoints – eg. CI vs Age plot with data points colored by Brain Region.
+            This section allows detailed exploration of the data in the Brain1.PFC-CB (<a href=Brain1.PFC-CB>Gokool et al.</a>) dataset. CircRNA expression values (in Counts per Million ; CPM) and circularization index values (CI) can be plotted against metadata variables selected from the drop-down menu. A boxplot is generated for categorical metadata variables and a scatterplot is generated for numerical variables. In the case of numerical variables, a second categorical variable can be selected to color the datapoints – eg. CI vs Age plot with data points colored by Brain Region.
             A scatterplot of circular RNA vs linear RNA expression shows the relation
             SNPs associated with the expression of the circRNAs are displayed in a table, with data from Brain2.DLPFC (<a href=Brain2.DLPFC>Liu et al.</a>).
-        datasets: [Brain1.PFC-CB]
-
-    -   name: "QTL Analysis Brain"
-        type: QTL
-        description: ""
-        datasets: [Brain2.DLPFC]
+        datasets: [Brain1.PFC-CB, Brain2.DLPFC]
     
     -   name: "CircRNA expression during neuronal differentiation"
-        type: META
         datasets: [NeurDiff1.hESC, NeurDiff2.SY5Y]
         description: >
             includes interactive plots that allow the user to explore the expression of the circRNA of interest (CPM) in the NeurDiff1.hESC and NeurDiff2.SY5Y datasets.
 
     -   name: "CircRNA expression during cellular maturation in brain organoids"
-        type: META
         description: ""
         datasets: [OrgMaturation]

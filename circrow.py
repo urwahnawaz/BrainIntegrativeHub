@@ -41,6 +41,10 @@ class CircRow:
 
         self.hsa.merge(other.hsa)
 
+        if not self.gene and other.gene: self.gene = other.gene
+        if not self.geneId and other.geneId: self.geneId = other.geneId
+        if self.group.strand == '.' and other.group.strand != '.': self.group.strand = other.group.strand
+
     def toArray(self):
         return ["NA"] + self.group.toArray() + [self.gene]
 

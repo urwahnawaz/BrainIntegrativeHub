@@ -3,12 +3,13 @@ import csv, math, h5py, os
 import numpy as np
 
 class AbstractMetaIter(AbstractLiftoverIter):
-    def __init__(self, name, directory, matrices, metadata, qtl):
+    def __init__(self, name, nameLong, directory, matrices, metadata, qtl):
         super().__init__(name, directory)
         self.matrices = matrices
         self.metadata = metadata
         self.qtl = qtl
         self.keys = []
+        self.nameLong = nameLong
 
     def writeHDF5Metadata(self, root, rows):
         if not len(self.keys):
@@ -22,7 +23,8 @@ class AbstractMetaIter(AbstractLiftoverIter):
                 keyToIndexFiltered[self.keys[index][:-2]] = counter #TODO: for now we are removing strand
                 counter += 1
 
-        experimentGroup = root.create_group(self.name)        
+        experimentGroup = root.create_group(self.name)
+        experimentGroup.attrs.create("name", self.nameLong) 
         if len(self.matrices):
             matrixGroup = None
             if self.metadata:

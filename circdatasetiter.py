@@ -8,8 +8,8 @@ from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 
 class CircDatasetIter(AbstractMetaIter):
-    def __init__(self, name, directory, main, matrices, metadata, qtl, reference, isBrainDataset, url):
-        super().__init__(name, directory, matrices, metadata, qtl)
+    def __init__(self, name, nameLong, directory, main, matrices, metadata, qtl, reference, isBrainDataset, url):
+        super().__init__(name, nameLong, directory, matrices, metadata, qtl)
 
         self.fileName = os.path.join(self.directory, main)
         self.read_file = open(self.fileName, 'r')
@@ -34,8 +34,8 @@ class CircDatasetIter(AbstractMetaIter):
     def _nextMatch(self, iter):
         while True:
             line = next(iter)
-            match = re.search(r'(chr[^:_|\-]+).(\d+).(\d+).([\.+-])', line[0])
-            if not match or match.group(4) == ".": continue
+            match = re.search(r'(chr[^:_|\-]+).(\d+).(\d+).([\.+\-])', line[0])
+            if not match: continue# or match.group(4) == ".": continue #removing strand check means many get removed as unreliable?
             return line, match
 
     def _toBedFile(self, fileFrom):

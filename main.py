@@ -36,7 +36,7 @@ from iterators.circatlas2iter import CircAtlas2Iter
 from iterators.circatlas2browseriter import CircAtlas2BrowserIter
 from iterators.mioncocirc2iter import MiOncoCirc2Iter
 
-nmDist = 10 #Maximum difference in coordinates to be considered a near match
+nmDist = 1 #Maximum difference in coordinates to be considered a near match
 
 def isUnreliable(circ, iters):
     ds = 0
@@ -60,7 +60,7 @@ def shouldMerge(circ1, circ2):
     return ((cmp == CircHSAGroup.CMP_EQUAL) or (cmp == CircHSAGroup.CMP_UNKNOWN and circ1.group.nearEqual(circ2.group, nmDist)))
 
 def mustMerge(circIter, circ1):
-    return (not isinstance(circIter, CircDatasetIter)) or circ1.group.strand == '.'
+    return (not isinstance(circIter, CircDatasetIter))
 
 def generateOutput(inputIterators):
     ss = SortedSet()
@@ -105,7 +105,7 @@ def writeHDF5(circIters, iter, inputObj, outFile="output/out.hdf5"):
     isDatabase = [0] * 9
     isDataset = [0] * 9
     isBrainDataset = [0] * 9
-    dataOrder = ["circ_id", "chr", "start_hg19", "end_hg19", "start_hg38", "end_hg38", "strand", "gene_symbol", "ensembl_id"]
+    dataOrder = ["circ_id_hg38", "chr", "start_hg19", "end_hg19", "start_hg38", "end_hg38", "strand", "gene_symbol", "ensembl_id"]
     data = root.create_group("data")
     data.create_dataset(dataOrder[0], data=np.array([circ.group.toId().encode() for circ in iter], dtype='S%d'%longestId), compression="gzip", compression_opts=9)
     data.create_dataset(dataOrder[1], data=np.array([circ.group.ch.encode() for circ in iter], dtype='S5'), compression="gzip", compression_opts=9)
@@ -134,6 +134,7 @@ def writeHDF5(circIters, iter, inputObj, outFile="output/out.hdf5"):
         dataOrder.append(circIters[i].name)
         defaultVisible.append(i + 9)
     
+    data.attrs.create("defaultCoord", 1)
     data.attrs.create("order", dataOrder)
     data.attrs.create("isDataset", isDataset)
     data.attrs.create("isDatabase", isDatabase)
@@ -147,10 +148,9 @@ def writeHDF5(circIters, iter, inputObj, outFile="output/out.hdf5"):
         group = panels.create_group(panelGroup["name"])
         description = panelGroup["description"]
         for dataset in inputObj["datasets"]:
-            description = description.replace("href=" + dataset["name"], 'href="' + dataset.get("url", "") + '" target="_blank"')
+            description = description.replace("href=" + dataset["id"], 'href="' + dataset.get("url", "") + '" target="_blank"')
 
         group.attrs.create("description", description)
-        group.attrs.create("type", panelGroup["type"])
         for panelDataset in panelGroup["datasets"]:
             group[panelDataset] = metadata[panelDataset]
         panelOrder.append(panelGroup["name"])
@@ -223,6 +223,8 @@ def filterOutputToList(iter, circIters):
         if isUnreliable(circ, circIters): 
             countExcludedDs += 1
             circ._error = "ERROR: unreliable (in single novel dataset and no database)"
+        elif circ.group.strand == '.':
+            circ._error = "ERROR: no strand"
         elif not circ.group.hasId(1) or not circ.group.hasId(0):
             countExcluded38 += 1
             circ._error = "ERROR: no hg38 liftover"
@@ -253,7 +255,7 @@ if __name__ == '__main__':
         try:
             inputObj = yaml.safe_load(stream)
             for dataset in inputObj["datasets"]:
-                circIters.append(CircDatasetIter(dataset["name"], dataset["dir"], dataset["main"], dataset.get("matrices", []), dataset.get("meta", None), dataset.get("qtl", None), dataset["reference"], dataset.get("isBrain", False), dataset.get("url", "")))
+                circIters.append(CircDatasetIter(dataset["id"], dataset.get("name", ""), dataset["dir"], dataset["main"], dataset.get("matrices", []), dataset.get("meta", None), dataset.get("qtl", None), dataset["reference"], dataset.get("isBrain", False), dataset.get("url", "")))
         
         except yaml.YAMLError as exc:
             print(exc)
