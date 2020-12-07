@@ -378,7 +378,7 @@ class Plot {
             .attr("transform",
                 "translate(" + -25 + " ," +
                 0 + ")")
-            .on("click", () => window.alert("PNG not implimented yet")) 
+            .on("click", () => self._savePNG()) 
 
 
         //SVG
@@ -390,9 +390,7 @@ class Plot {
             .attr("transform",
                 "translate(" + 0 + " ," +
                 0 + ")")
-            .on("click", () => self._toImg())
-
-        
+            .on("click", () => self._saveSVG())
     }
 
     _setDownloadButtonVisibility(value) {
@@ -401,15 +399,39 @@ class Plot {
         self.downloadButton.attr("fill-opacity", value ? 1 : 0)
     }
 
-    _toImg() {
+    _saveSVG() {
+        var self = this;
+        let svg = self._toSVG();
+        self._save(svg, "svg");
+    }
+
+    _savePNG() {
+        var self = this;
+        var canvas = document.createElement( "canvas" );
+        canvas.width = 1920; //full HD regardless of window size
+	    canvas.height = canvas.width * ((self.height + self.margin.top + self.margin.bottom) / (self.width + self.margin.left + self.margin.right));
+        var ctx = canvas.getContext( "2d" );
+        var img = document.createElement( "img" );
+        img.setAttribute( "src", self._toSVG());
+        img.onload = function() {
+            ctx.clearRect ( 0, 0, canvas.width, canvas.height );
+		    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            self._save(canvas.toDataURL( "image/png" ), "png");
+        };
+    }
+
+    _toSVG() {
         var self = this;
         self.downloadButton.remove() //Remove since we don't want this in image
         var xml = new XMLSerializer().serializeToString(this.svg.node().parentNode);
-        self._addDownloadButton(); //Readd
-        var linkSource = 'data:image/svg+xml;base64,' + btoa(xml);
+        self._addDownloadButton(); //Re-add
+        return 'data:image/svg+xml;base64,' + btoa(xml);
+    }
+
+    _save(blobString, extension) {
         var downloadLink = document.createElement("a");
-        downloadLink.href = linkSource;
-        downloadLink.download = "chart.svg";
+        downloadLink.href = blobString;
+        downloadLink.download = "chart." + extension;
         downloadLink.click();
         downloadLink.remove();
     }
