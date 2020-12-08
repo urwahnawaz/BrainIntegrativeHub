@@ -21,7 +21,6 @@ class Heatmap {
             .attr("viewBox", `0 0 ${self.width + self.margin.left + self.margin.right} ${ self.height + self.margin.top + self.margin.bottom}`)
             // Class to make it responsive.
             .classed("svg-content-responsive", true)
-            .append("svg")
             .append("g")
             .attr("transform",
                 "translate(" + self.margin.left + "," + self.margin.top + ")");
@@ -31,7 +30,7 @@ class Heatmap {
         let self = this;
 
         //Clear graph already exists
-        d3.selectAll("#" + self.elementId + " > svg > g > *").remove();
+        d3.selectAll("#" + self.elementId + " > div > svg > g > *").remove();
 
         // Show the X label
         /*self.svg.append("text")
