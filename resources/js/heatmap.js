@@ -6,15 +6,22 @@ class Heatmap {
         self.elementId = elementId;
         
         // set the dimensions and margins of the heatmap
-        self.margin = { top: 50, right: 0, bottom: 10, left: 0 }
+        self.margin = { top: 50, right: 100, bottom: 10, left: 100 }
         self.width = 800 - self.margin.left - self.margin.right,
         self.height = 250 - self.margin.top - self.margin.bottom;
     
         // append the svg object to the body of the page
         self.svg = d3.select("#" + self.elementId)
+            .append("div")
+            // Container class to make it responsive.
+            .classed("svg-container", true) 
             .append("svg")
-            .attr("width", self.width + self.margin.left + self.margin.right)
-            .attr("height", self.height + self.margin.top + self.margin.bottom)
+            // Responsive SVG needs these 2 attributes and no width and height attr.
+            .attr("preserveAspectRatio", "xMinYMin meet")
+            .attr("viewBox", `0 0 ${self.width + self.margin.left + self.margin.right} ${ self.height + self.margin.top + self.margin.bottom}`)
+            // Class to make it responsive.
+            .classed("svg-content-responsive", true)
+            .append("svg")
             .append("g")
             .attr("transform",
                 "translate(" + self.margin.left + "," + self.margin.top + ")");
