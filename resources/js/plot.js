@@ -21,7 +21,7 @@ class Plot {
     setDimensions(width=800, height=400, right=80, left=80, top=50, bottom=100) {
         var self = this;
 
-        d3.selectAll("#" + self.elementId + " > div > svg > g > *").remove();
+        self._removeAll();
 
         // set the dimensions and margins of the graph
         self.margin = { top: top, right: right, bottom: bottom, left: left };
@@ -237,7 +237,7 @@ class Plot {
         var self = this;
 
         //Clear graph already exists
-        d3.selectAll("#" + self.elementId + " > div > svg > g > *").remove();
+        self._removePlot();
 
         // Show the disabled label
         self.svg.append("text")
@@ -257,12 +257,20 @@ class Plot {
         self._addTitle();
     }
 
+    _removeAll() {
+        d3.selectAll("#" + this.elementId + " > *").remove();
+    }
+
+    _removePlot() {
+        d3.selectAll("#" + this.elementId + " > div > svg > g > *").remove();
+    }
+
     //Internal function for shared axis creation
     _update(data, xName, yName, dataset) {
         var self = this;
 
         //Clear graph already exists
-        d3.selectAll("#" + self.elementId + " > div > svg > g > *").remove();
+        self._removePlot();
 
         //Create y scale
         self.y = d3.scaleLinear()
