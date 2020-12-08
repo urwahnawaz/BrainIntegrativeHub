@@ -21,7 +21,7 @@ class Plot {
     setDimensions(width=800, height=400, right=80, left=80, top=50, bottom=100) {
         var self = this;
 
-        d3.selectAll("#" + self.elementId + " > svg > g > *").remove();
+        d3.selectAll("#" + self.elementId + " > div > svg > g > *").remove();
 
         // set the dimensions and margins of the graph
         self.margin = { top: top, right: right, bottom: bottom, left: left };
@@ -30,9 +30,15 @@ class Plot {
 
         // append the svg object to the body of the page
         self.svg = d3.select("#" + self.elementId)
+            .append("div")
+            // Container class to make it responsive.
+            .classed("svg-container", true) 
             .append("svg")
-            .attr("width", self.width + self.margin.left + self.margin.right)
-            .attr("height", self.height + self.margin.top + self.margin.bottom)
+            // Responsive SVG needs these 2 attributes and no width and height attr.
+            .attr("preserveAspectRatio", "xMinYMin meet")
+            .attr("viewBox", `0 0 ${width} ${height}`)
+            // Class to make it responsive.
+            .classed("svg-content-responsive", true)
             .append("g")
             .attr("transform",
                 "translate(" + self.margin.left + "," + self.margin.top + ")")
@@ -231,7 +237,7 @@ class Plot {
         var self = this;
 
         //Clear graph already exists
-        d3.selectAll("#" + self.elementId + " > svg > g > *").remove();
+        d3.selectAll("#" + self.elementId + " > div > svg > g > *").remove();
 
         // Show the disabled label
         self.svg.append("text")
@@ -256,7 +262,7 @@ class Plot {
         var self = this;
 
         //Clear graph already exists
-        d3.selectAll("#" + self.elementId + " > svg > g > *").remove();
+        d3.selectAll("#" + self.elementId + " > div > svg > g > *").remove();
 
         //Create y scale
         self.y = d3.scaleLinear()
