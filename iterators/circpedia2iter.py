@@ -1,12 +1,12 @@
 import csv, re, os
 
-from abstractliftoveriter import AbstractLiftoverIter
+from abstractdb import AbstractDB
 from circrow import CircRow
 from circhsa import CircHSA
 from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 
-class Circpedia2Iter(AbstractLiftoverIter):
+class Circpedia2Iter(AbstractDB):
     url = "https://www.picb.ac.cn/rnomics/circpedia"
     urlPrefix = "https://www.picb.ac.cn/rnomics/circpedia/browser/%3Fdata%3Dhuman_hg38%26tracks%3DDNA%252CknownGene%252CHeLa_S3_poly(A)-_circ%252CHeLa_S3_poly(A)-%26highlight%3D%26loc%3D"
     hasIndividualURLs = True

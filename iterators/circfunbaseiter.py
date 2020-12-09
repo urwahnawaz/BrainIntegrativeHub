@@ -1,15 +1,12 @@
 import csv, re, os
 
-from abstractliftoveriter import AbstractLiftoverIter
+from abstractdb import AbstractDB
 from circrow import CircRow
 from circhsa import CircHSA
 from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 
-#TODO Can generate link from name e.g. http://bis.zju.edu.cn/CircFunBase/detail.php?name=circ_000458
-#Can also search by position using cgi form only
-
-class CircFunBaseIter(AbstractLiftoverIter):
+class CircFunBaseIter(AbstractDB):
     url = "http://bis.zju.edu.cn/CircFunBase"
     urlPrefix = "http://bis.zju.edu.cn/CircFunBase/detail.php?name="
     hasIndividualURLs = True

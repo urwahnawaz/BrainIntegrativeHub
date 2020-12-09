@@ -1,5 +1,4 @@
 
-from abstractdb import AbstractDB
 from sortedcontainers import SortedSet
 
 class CircRow:

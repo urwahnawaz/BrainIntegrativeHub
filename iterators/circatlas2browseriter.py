@@ -1,12 +1,12 @@
 import csv, re, os, json
 
-from abstractliftoveriter import AbstractLiftoverIter
+from abstractdb import AbstractDB
 from circrow import CircRow
 from circhsa import CircHSA
 from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 
-class CircAtlas2BrowserIter(AbstractLiftoverIter):
+class CircAtlas2BrowserIter(AbstractDB):
     url = "http://159.226.67.237:8080/new/index.php"
     urlPrefix = "http://159.226.67.237:8080/new/circ_detail.php?ID="
     hasIndividualURLs = True

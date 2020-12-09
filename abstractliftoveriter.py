@@ -2,10 +2,10 @@ import os, re, subprocess, shutil
 
 from subprocess import DEVNULL, STDOUT, check_call
 from tempfile import mkstemp
-from abstractdb import AbstractDB
+from abstractsource import AbstractSource
 from circrange import CircRange
 
-class AbstractLiftoverIter(AbstractDB):
+class AbstractLiftoverIter(AbstractSource):
     required = ["hg19", "hg38"]
 
     def __init__(self, name, directory):

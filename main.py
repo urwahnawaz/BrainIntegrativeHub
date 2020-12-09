@@ -22,6 +22,7 @@ from circhsagroup import CircHSAGroup
 from abstractliftoveriter import AbstractLiftoverIter
 from circdatasetiter import CircDatasetIter
 from abstractmetaiter import AbstractMetaIter
+from abstractdb import AbstractDB
 
 from iterators.circbaseiter import CircBaseIter
 from iterators.circpedia2iter import Circpedia2Iter
@@ -32,7 +33,7 @@ from iterators.circatlas2iter import CircAtlas2Iter
 from iterators.circatlas2browseriter import CircAtlas2BrowserIter
 from iterators.mioncocirc2iter import MiOncoCirc2Iter
 
-nmDist = 1 #Maximum difference in coordinates to be considered a near match
+nmDist = 10 #Maximum difference in coordinates to be considered a near match
 
 def getCount(circ, iters):
     ds = 0
@@ -56,12 +57,12 @@ def isInDataset(circ, iters):
             return True
     return False
 
-def shouldMerge(circ1, circ2):
+def shouldMerge(circ1, circ2, allowUnknownStrand=False):
     cmp = circ1.hsa.cmp(circ2.hsa)
-    return ((cmp == CircHSAGroup.CMP_EQUAL) or (cmp == CircHSAGroup.CMP_UNKNOWN and circ1.group.nearEqual(circ2.group, nmDist)))
+    return ((cmp == CircHSAGroup.CMP_EQUAL) or (cmp == CircHSAGroup.CMP_UNKNOWN and circ1.group.nearEqual(circ2.group, nmDist, allowUnknownStrand)))
 
 def mustMerge(circIter, circ1):
-    return (not isinstance(circIter, CircDatasetIter))
+    return (isinstance(circIter, AbstractDB) and circ1.group.strand != ".")
 
 def generateOutput(inputIterators):
     ss = SortedSet()
@@ -225,7 +226,6 @@ def mergeUnknownStrands(iter, iters):
     first = None
     second = None
     last = None
-
     i = 1
     while True:
         if i >= len(iter): break
@@ -238,21 +238,19 @@ def mergeUnknownStrands(iter, iters):
             continue
         first = curr.group.toId()[:-2]
 
-        if last == second or (second and not last):
-            if first == last:
-                ds1, db1 = getCount(ss.__getitem__(i), iters)
-                ds2, db2 = getCount(ss.__getitem__(i-1), iters)
-                if (ds1 + db1) >= (ds2 + db2):
-                    ss.__getitem__(i).merge(ss.__getitem__(i-2))
-                else:
-                    ss.__getitem__(i-1).merge(ss.__getitem__(i-2))
-                ss.__delitem__(i-2)
-                allStrands += 1
-            else: #Order is + -
-                if ss.__getitem__(i-1).group.strand == '.':
-                    ss.__getitem__(i).merge(ss.__getitem__(i-1))
-                    ss.__delitem__(i-1)
-                bothStrands += 1
+        if first == second and first == last:
+            ds1, db1 = getCount(ss.__getitem__(i), iters)
+            ds2, db2 = getCount(ss.__getitem__(i-1), iters)
+            if (ds1 + db1) >= (ds2 + db2):
+                ss.__getitem__(i).merge(ss.__getitem__(i-2))
+            else:
+                ss.__getitem__(i-1).merge(ss.__getitem__(i-2))
+            ss.__delitem__(i-2)
+            allStrands += 1
+        elif second == last and ss.__getitem__(i-2).group.strand == '.':
+            ss.__getitem__(i-1).merge(ss.__getitem__(i-2))
+            ss.__delitem__(i-2)
+            bothStrands += 1
         i += 1
 
     print(str(bothStrands) + " strands confidently fixed, " + str(allStrands) + " guessed")

@@ -52,12 +52,12 @@ class CircRangeGroup:
                 return (self.ch, self.versions[i], self.strand) == (other.ch, other.versions[i], other.strand)
         return False
     
-    def nearEqual(self, other, dist):
+    def nearEqual(self, other, dist, allowUnknownStrand):
         if not isinstance(other, CircRangeGroup):
             raise NotImplemented
         for i in range(len(self.versions)-1, -1, -1):
             if(self.versions[i] and other.versions[i]):
-                one = (self.ch == other.ch and self.strand == other.strand)
+                one = (self.ch == other.ch and (self.strand == other.strand or (allowUnknownStrand and (self.strand == "." or other.strand == "."))))
                 two = (abs(self.versions[i].start - other.versions[i].start) <= dist)
                 three =  (abs(self.versions[i].end - other.versions[i].end) <= dist)
                 return (one and two and three)

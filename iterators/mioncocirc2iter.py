@@ -1,12 +1,12 @@
 import csv, re, os
 
-from abstractliftoveriter import AbstractLiftoverIter
+from abstractdb import AbstractDB
 from circrow import CircRow
 from circhsa import CircHSA
 from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 
-class MiOncoCirc2Iter(AbstractLiftoverIter):
+class MiOncoCirc2Iter(AbstractDB):
     tissues = ["ACC","BLCA","BRCA","CHOL","COLO","ESCA","GBM","HCC","HNSC","KDNY","LUNG","MBL","NRBL","OV","PAAD","PRAD","SARC","SECR","SKCM"]
 
     def __init__(self, directory):

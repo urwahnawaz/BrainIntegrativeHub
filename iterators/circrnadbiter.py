@@ -1,12 +1,12 @@
 import csv, re, os
 
-from abstractliftoveriter import AbstractLiftoverIter
+from abstractdb import AbstractDB
 from circrow import CircRow
 from circhsa import CircHSA
 from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 
-class CircRNADbIter(AbstractLiftoverIter):
+class CircRNADbIter(AbstractDB):
     url = "http://reprod.njmu.edu.cn/cgi-bin/circrnadb/circRNADb.php"
     urlPrefix = "http://reprod.njmu.edu.cn/cgi-bin/circrnadb/detail_info.php?circ_id="
     hasIndividualURLs = True
