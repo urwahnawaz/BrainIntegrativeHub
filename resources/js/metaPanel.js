@@ -113,8 +113,9 @@ class MetaPanel {
         return this.hdf5Group.get(dataset + "/samples/" + xAxis).value;
     }
 
-    _scalePlotData(plotData, func, offset, plot) {
+    _scalePlotData(plotData, func, offset, plot, scale, labels) {
         for(let i=0; i<plotData.length; ++i) plotData[i].y = func(plotData[i].y + offset);
+        labels.yAxisLabel += (" (" + scale + ")")
     }
 
     _onPlotDatasetChange(controls, plot) {
@@ -181,12 +182,10 @@ class MetaPanel {
         }
 
         let scale = controls.getSelectedScale();
-        let yAxisLabel = yAxis;
-        let xAxisLabel = xAxis;
+        let labels = {yAxisLabel: yAxis, xAxisLabel: xAxis};
         if(scale != "Linear") {
             let func = (scale == "Log e" ? Math.log : Math.log10);
-            self._scalePlotData(plotData, func, 0.1, plot);
-            yAxisLabel += (" (" + scale + ")")
+            self._scalePlotData(plotData, func, 0.1, plot, scale, labels);
         }
 
         let sampleNames = self.hdf5Group.get(dataset).attrs["sample_id"];
@@ -195,9 +194,9 @@ class MetaPanel {
         }
 
         if(xAxisIsString) {
-            plot.updateBox(plotData, xAxisLabel, yAxisLabel, self.names[dataset]);
+            plot.updateBox(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset]);
         } else {
-            plot.updateScatter(plotData, xAxisLabel, yAxisLabel, self.names[dataset]);
+            plot.updateScatter(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset]);
         }
     }
 

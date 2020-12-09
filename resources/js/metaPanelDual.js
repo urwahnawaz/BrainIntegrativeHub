@@ -47,9 +47,13 @@ class MetaPanelDual extends MetaPanel {
         return (plot==this.plot2) ? this._getPlotDataY(dataset, xAxis, yRow) : super._getPlotDataX(dataset, xAxis, yRow, plot);
     }
 
-    _scalePlotData(plotData, func, offset, plot) {
-        super._scalePlotData(plotData, func, offset);
-        if(plot==this.plot2) for(let i=0; i<plotData.length; ++i) plotData[i].x = func(plotData[i].x + offset);
+    _scalePlotData(plotData, func, offset, plot, scale, labels) {
+        super._scalePlotData(plotData, func, offset, plot, scale, labels);
+        if(plot==this.plot2) {
+            for(let i=0; i<plotData.length; ++i) plotData[i].x = func(plotData[i].x + offset);
+            console.log(labels);
+            labels.xAxisLabel += (" (" + scale + ")");
+        }
     }
 
     setCircId(circId, obj) {
