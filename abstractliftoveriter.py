@@ -62,7 +62,7 @@ class AbstractLiftoverIter(AbstractDB):
 
         #Create all other maps and unmaps
         for i in range(len(AbstractLiftoverIter.required)):
-            if((os.path.getsize(self.read_file_lift[i].name) <= 0 or lastModified >= os.path.getmtime(self.read_file_lift[i].name))):
+            if ((os.path.getsize(self.read_file_lift[i].name) <= 0 or lastModified >= os.path.getmtime(self.read_file_lift[i].name))):
                 liftTo = AbstractLiftoverIter.required[i]
                 if(liftTo != refGenome):
                     #Perform liftover
@@ -92,7 +92,7 @@ class AbstractLiftoverIter(AbstractDB):
         if not match:
             return None
         elif(offset):
-            return self._browserArgsToBedHelper(match.group(1), str(int(match.group(2))+offset), str(int(match.group(3))+offset), strand)
+            return self._browserArgsToBedHelper(match.group(1), str(int(match.group(2))+offset), match.group(3), strand)
         else:
             return self._browserArgsToBedHelper(match.group(1), match.group(2), match.group(3), strand)
 

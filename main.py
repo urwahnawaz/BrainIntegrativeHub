@@ -3,10 +3,6 @@
 #Papers included:
 #Maass2017 Memczak2013 Rybak2015 Salzman2013
 
-#TODO: rewrite so databases are circiters but datasets/metadata are in predefined csv format
-#Makes sense to separate them since databases can be updated (and should have an update function) 
-# whereas datasets cannot be and it should be easy to add more
-
 #TODO: add multiple dtype support to jsfive
 
 from collections import Counter
@@ -38,7 +34,7 @@ from iterators.mioncocirc2iter import MiOncoCirc2Iter
 
 nmDist = 1 #Maximum difference in coordinates to be considered a near match
 
-def isUnreliable(circ, iters):
+def getCount(circ, iters):
     ds = 0
     db = 0
     for i in range(len(iters)):
@@ -47,6 +43,11 @@ def isUnreliable(circ, iters):
                 ds += 1
             else:
                 db += 1
+    return ds, db
+
+
+def isUnreliable(circ, iters):
+    ds, db = getCount(circ, iters)
     return ds <= 1 and db == 0
 
 def isInDataset(circ, iters):
@@ -182,10 +183,14 @@ def annotateEnsemblNCBI(iter):
 
     for circ in iter:
         newer = None
-        if circ.gene:
-            newer = synonyms.get(circ.gene, None)
-        if not newer and circ.geneId:
+
+        if circ.geneId:
             newer = genes.get(circ.geneId, None)
+            if not newer:
+                circ.geneId = ""
+
+        if circ.gene and not newer:
+            newer = synonyms.get(circ.gene, None)
 
         if newer: circ.gene = newer
         if not circ.geneId and circ.gene: 
@@ -214,13 +219,55 @@ def annotateEnsemblBiomart(iter):
         if not circ.geneId and circ.gene: circ.geneId = dic.get(circ.gene, "")
         if not circ.gene and circ.geneId: circ.gene = rev.get(circ.geneId, "")
 
+def mergeUnknownStrands(iter, iters):
+    allStrands = 0
+    bothStrands = 0
+    first = None
+    second = None
+    last = None
+
+    i = 1
+    while True:
+        if i >= len(iter): break
+
+        last = second
+        second = first
+        curr = iter.__getitem__(i)
+        if not curr.group.hasId(): 
+            i += 1
+            continue
+        first = curr.group.toId()[:-2]
+
+        if last == second or (second and not last):
+            if first == last:
+                ds1, db1 = getCount(ss.__getitem__(i), iters)
+                ds2, db2 = getCount(ss.__getitem__(i-1), iters)
+                if (ds1 + db1) >= (ds2 + db2):
+                    ss.__getitem__(i).merge(ss.__getitem__(i-2))
+                else:
+                    ss.__getitem__(i-1).merge(ss.__getitem__(i-2))
+                ss.__delitem__(i-2)
+                allStrands += 1
+            else: #Order is + -
+                if ss.__getitem__(i-1).group.strand == '.':
+                    ss.__getitem__(i).merge(ss.__getitem__(i-1))
+                    ss.__delitem__(i-1)
+                bothStrands += 1
+        i += 1
+
+    print(str(bothStrands) + " strands confidently fixed, " + str(allStrands) + " guessed")
+
+
 def filterOutputToList(iter, circIters):
     ret = []
     countExcludedDs = 0
     countExcludedEns = 0
     countExcluded38 = 0
     for circ in iter:
-        if isUnreliable(circ, circIters): 
+        if not circ.geneId and not circ.gene: 
+            countExcludedEns += 1
+            circ._error = "ERROR: no Ensembl ID and gene symbol/alias found"
+        elif isUnreliable(circ, circIters): 
             countExcludedDs += 1
             circ._error = "ERROR: unreliable (in single novel dataset and no database)"
         elif circ.group.strand == '.':
@@ -228,9 +275,6 @@ def filterOutputToList(iter, circIters):
         elif not circ.group.hasId(1) or not circ.group.hasId(0):
             countExcluded38 += 1
             circ._error = "ERROR: no hg38 liftover"
-        elif not circ.geneId and not circ.gene: 
-            countExcludedEns += 1
-            circ._error = "ERROR: no Ensembl ID and gene symbol/alias found"
         else: ret.append(circ)
     return ret, countExcludedDs, countExcludedEns, countExcluded38
 
@@ -262,8 +306,8 @@ if __name__ == '__main__':
             exit(1)
 
     circIters += [
-        Circpedia2Iter("./data/CIRCpedia2"), 
         CircBaseIter("./data/Circbase"), 
+        Circpedia2Iter("./data/CIRCpedia2"), 
         CircRNADbIter("./data/circRNADb"), 
         CircFunBaseIter("./data/CircFunBase"),
         CircAtlas2BrowserIter("./data/circAtlas2"),
@@ -286,6 +330,7 @@ if __name__ == '__main__':
 
     # 3.
     # This step filters out entries that don't have a gene name, ensembl id, hg38 or hg19 coordinates
+    mergeUnknownStrands(ss, circIters)
     li, countExcludedDs, countExcludedEns, countExcluded38 = filterOutputToList(ss, circIters)
 
     # 4. 

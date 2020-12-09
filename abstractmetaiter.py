@@ -25,29 +25,40 @@ class AbstractMetaIter(AbstractLiftoverIter):
 
         experimentGroup = root.create_group(self.name)
         experimentGroup.attrs.create("name", self.nameLong) 
+
+        sampleToIndex = None
+        sampleHeadings = None
+        if self.metadata:
+            samples = experimentGroup.create_group("samples")
+            sampleHeadings = self._writeHDF5Columns(self.metadata, samples)
+            sampleToIndex = {}
+            for i in range(len(sampleHeadings)):
+                sampleToIndex[sampleHeadings[i]] = i
+
         if len(self.matrices):
             matrixGroup = None
             if self.metadata:
                 matrixGroup = experimentGroup.create_group("matrices")
                 matrixGroup.attrs.create("order", [m["type"] for m in self.matrices])
             for i in range(len(self.matrices)):
-                heading, mdata1, mdata2 = self._getAsMatrix(os.path.join(self.directory, self.matrices[i]["path"]), keyToIndexFiltered)
+                heading, mdata2 = self._getAsMatrix(os.path.join(self.directory, self.matrices[i]["path"]), keyToIndexFiltered, sampleToIndex)
                 arr = np.array(mdata2, dtype="f4")
 
+                if sampleHeadings: heading = sampleHeadings
+
                 if matrixGroup:
-                    self._writeHDF5Matrix(heading, arr, matrixGroup, experimentGroup, self.matrices[i]["type"])
-            
+                    if not "sample_id" in experimentGroup:
+                        experimentGroup.attrs.create("sample_id", np.array([h.encode() for h in heading], dtype="S" + str(len(max(heading, key=len)))))
+                    matrixGroup.create_dataset(self.matrices[i]["type"], data=arr, chunks=(min(arr.shape[0], math.floor(10000/len(heading))), arr.shape[1]), compression="gzip", compression_opts=9)
+
                 if i == 0:
                     self._writeHDF5Scaled(arr, experimentGroup)
         
-        if self.metadata:
-            samples = experimentGroup.create_group("samples")
-            self._writeHDF5Columns(self.metadata, samples)
-
         if self.qtl:
             self._writeHDF5CSVTable(self.qtl, experimentGroup, keyToIndexFiltered, rows)
 
-    def _getAsMatrix(self, fileName, keyToIndexFiltered, noneType="NA"):
+    
+    def _getAsMatrix(self, fileName, keyToIndexFiltered, sampleToIndex, noneType="NA"):
         #Writes matrix in overall row order
         heading = None
         lines = [None] * len(keyToIndexFiltered)
@@ -56,22 +67,21 @@ class AbstractMetaIter(AbstractLiftoverIter):
             else:
                 index = keyToIndexFiltered.get(line[0][:-2], -1)
                 if index >= 0:
-                    lines[index] = line
+                    fromLine = line[1:]
+                    if sampleToIndex:
+                        toLine = [-1] * len(sampleToIndex)
+                        for i in range(len(fromLine)):
+                            subIndex = sampleToIndex.get(heading[i], -1)
+                            if subIndex != -1:
+                                toLine[subIndex] = fromLine[i]
+                        lines[index] = toLine
+                    else:
+                        lines[index] = fromLine
 
-        mdata1 = []
         mdata2 = []
         for line in lines:
-            mdata1.append(line[0])
-            mdata2.append(tuple([(line[i] if line[i] != noneType else -1.0) for i in range(1, len(line))]))
-        return heading, mdata1, mdata2
-
-
-    def _writeHDF5Matrix(self, heading, arr, entryGroup, idGroup, datasetName):
-        # Note chunks are 100kb, and include whole rows
-        ds = entryGroup.create_dataset(datasetName, data=arr, chunks=(min(arr.shape[0], math.floor(10000/len(heading))), arr.shape[1]), compression="gzip", compression_opts=9)
-        
-        if not "sample_id" in idGroup:
-            idGroup.attrs.create("sample_id", np.array([h.encode() for h in heading], dtype="S" + str(len(max(heading, key=len)))))
+            mdata2.append(tuple([(line[i] if line[i] != noneType else -1.0) for i in range(len(line))]))
+        return heading, mdata2
 
     #Only call this on cpm
     def _writeHDF5Scaled(self, arr, idGroup):
@@ -122,6 +132,8 @@ class AbstractMetaIter(AbstractLiftoverIter):
             else:
                 raise("ERROR no type resolved for " + heading[i])
         hdf5Group.attrs.create("order", [heading[i] for i in range(1, len(heading))])
+
+        return [lines[i][0] for i in range(len(lines))] #Return headings to copy this order
 
     def _writeHDF5CSVTable(self, fileName, hdf5Group, keyToIndexFiltered, rows, noneType="NA"):
         heading = []

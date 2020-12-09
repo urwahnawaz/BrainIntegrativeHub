@@ -43,7 +43,7 @@ class Circpedia2Iter(AbstractLiftoverIter):
 
     def _toBedFile(self, fileFrom):
         for line in self.read_obj:
-            bed = self._browserToBedHelper(line[4], line[5])
+            bed = self._browserToBedHelper(line[4], line[5], 1)
             if bed:
                 fileFrom.write(bed)
         self.read_file.seek(0)

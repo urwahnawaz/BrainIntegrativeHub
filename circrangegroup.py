@@ -57,7 +57,7 @@ class CircRangeGroup:
             raise NotImplemented
         for i in range(len(self.versions)-1, -1, -1):
             if(self.versions[i] and other.versions[i]):
-                one = (self.ch == other.ch and (self.strand == other.strand or self.strand == '.' or other.strand == '.'))
+                one = (self.ch == other.ch and self.strand == other.strand)
                 two = (abs(self.versions[i].start - other.versions[i].start) <= dist)
                 three =  (abs(self.versions[i].end - other.versions[i].end) <= dist)
                 return (one and two and three)

@@ -5,7 +5,7 @@ from sortedcontainers import SortedSet
 class CircRow:
     META_INDEX_CIRC_NOT_IN_DB = -1
 
-    def __init__(self, group, hsa, gene, db_id, meta_index, url="", geneId=""):
+    def __init__(self, group, hsa, gene, db_id, meta_index, url="", geneId="", annotationAccuracy=0):
         self.group = group
         self.hsa = hsa
         self.gene = gene
@@ -15,6 +15,7 @@ class CircRow:
         self._error = ""
         self._url = [""] * (db_id + 1)
         self._url[db_id] = url
+        self.annotationAccuracy = annotationAccuracy
 
     def getMeta(self, id):
         return -1 if id >= len(self._meta) else self._meta[id]
@@ -41,9 +42,14 @@ class CircRow:
 
         self.hsa.merge(other.hsa)
 
-        if not self.gene and other.gene: self.gene = other.gene
-        if not self.geneId and other.geneId: self.geneId = other.geneId
-        if self.group.strand == '.' and other.group.strand != '.': self.group.strand = other.group.strand
+        inaccurate = other.annotationAccuracy > self.annotationAccuracy
+        if (not self.gene or inaccurate) and other.gene:
+            self.gene = other.gene
+            if inaccurate: self.geneId = ""
+
+        if (not self.geneId or inaccurate) and other.geneId: 
+            self.geneId = other.geneId
+            if inaccurate: self.gene = ""
 
     def toArray(self):
         return ["NA"] + self.group.toArray() + [self.gene]

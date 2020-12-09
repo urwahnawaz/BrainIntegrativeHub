@@ -28,8 +28,6 @@ class CircRNADbIter(AbstractLiftoverIter):
             line = next(self.read_obj)
             self.meta_index += 1
 
-            if "normal brain tissue" not in line[13]: continue
-
             ids = CircHSAGroup()
             ids.addCircHSA(CircHSA("circRNADb", line[0]))
 
@@ -40,6 +38,5 @@ class CircRNADbIter(AbstractLiftoverIter):
     def _toBedFile(self, fileFrom):
         next(self.read_obj)
         for line in self.read_obj:
-            if "normal brain tissue" not in line[13]: continue
             fileFrom.write(line[1] + '\t' + line[2] + '\t' + line[3] + '\t' + line[4] + '\n')
         self.read_file.seek(0)
