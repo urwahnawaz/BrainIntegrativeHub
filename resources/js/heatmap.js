@@ -49,6 +49,7 @@ class Heatmap {
 
         boxes.append("text")
             .attr("fill", "black")
+            .attr("font-size", "10px")
             .attr("transform", `translate(${boxWidth/2},-10)rotate(-90)`)
             .text(d => d.name);
             
