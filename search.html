@@ -632,7 +632,7 @@
             if(!name) name = $(uploadForm.elements["name"]).attr("placeholder");
 
             //Read cpm csv
-            const coordRegex = /(chr[^:_\-]+)[:_\-]([0-9]+).([0-9]+)/gi;
+            const coordRegex = /(chr[^:_\-]+)[:_\-]([0-9]+).([0-9]+).([+\-.])/;
             Papa.parse(uploadForm.elements["cpm"].files[0], {
                 dynamicTyping: true,
                 complete: function(results) {
@@ -645,7 +645,7 @@
                         let matchIdGroup = coordRegex.exec(csvData[i][0]);
                         if(!matchIdGroup) continue;
                         for(let j=0; j<matrix[0].length; ++j) {
-                            if(matchIdGroup[1] == matrix[1][j] && matchIdGroup[2] == matrix[2][j] && matchIdGroup[3] == matrix[3][j]) {
+                            if(matchIdGroup[1] == matrix[1][j] && matchIdGroup[2] == matrix[2][j] && matchIdGroup[3] == matrix[3][j] && matchIdGroup[4] == matrix[6][j]) {
                                 matchedData.push(csvData[i]);
                                 matchedIndices[j] = matchedData.length-1;
                                 break;
