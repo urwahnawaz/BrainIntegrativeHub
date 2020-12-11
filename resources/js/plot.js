@@ -259,10 +259,12 @@ class Plot {
 
     _removeAll() {
         d3.selectAll("#" + this.elementId + " > *").remove();
+        this.downloadButton = undefined
     }
 
     _removePlot() {
         d3.selectAll("#" + this.elementId + " > div > svg > g > *").remove();
+        this.downloadButton = undefined
     }
 
     //Internal function for shared axis creation
@@ -412,7 +414,7 @@ class Plot {
     _setDownloadButtonVisibility(value) {
         var self = this;
         self.shouldShowDownloadButton = value;
-        self.downloadButton.attr("fill-opacity", value ? 1 : 0)
+        if(self.downloadButton) self.downloadButton.attr("fill-opacity", value ? 1 : 0)
     }
 
     _saveSVG() {

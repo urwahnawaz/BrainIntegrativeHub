@@ -229,6 +229,8 @@
         let chrIndex;
         let defaultCoord;
 
+        let lmsPanel = undefined;
+
         //TODO convert to promises. Very hacky 
         var awaitAll = 0;
         function incAwaitAll() {
@@ -684,6 +686,8 @@
                     for(let i=0; i<scaledData.length; ++i) scaledData[i] = (scaledData[i] - mean) / sd;
 
                     //Add to lms
+                    lmsPanel.addCustomDataset(name, scaledData, matchedIndices);
+                    
                     let insertPoint = isDatabase.indexOf(1);
                     dataOrder.splice(insertPoint, 0, name);
                     isDataset.splice(insertPoint, 0, 1);
@@ -698,7 +702,6 @@
                             } else {
                                 ++showCols[i];
                             }
-                            
                         }
                     }
 
