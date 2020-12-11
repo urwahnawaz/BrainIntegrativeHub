@@ -478,7 +478,7 @@
                     //Skip if not in interval
                     if(matrix[1][sortIndex] == searchPos[1]) {
                         if(genomicSearchSystem !== undefined) {
-                            if(matrix[coordinateStarts[genomicSearchSystem]][sortIndex] >= searchPos[2] && matrix[coordinateEnds[genomicSearchSystem]][sortIndex] >= searchPos[3]) {
+                            if(matrix[coordinateStarts[genomicSearchSystem]][sortIndex] >= parseInt(searchPos[2]) && matrix[coordinateEnds[genomicSearchSystem]][sortIndex] <= parseInt(searchPos[3])) {
                                 shouldInclude = true;
                             }
                         }
