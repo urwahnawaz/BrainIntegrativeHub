@@ -258,13 +258,16 @@ class Plot {
     }
 
     _removeAll() {
+        this._removePlot();
         d3.selectAll("#" + this.elementId + " > *").remove();
-        this.downloadButton = undefined
     }
 
     _removePlot() {
         d3.selectAll("#" + this.elementId + " > div > svg > g > *").remove();
-        this.downloadButton = undefined
+        this.downloadButton = undefined;
+        this.currData = undefined;
+        this.currXName = undefined;
+        this.currYName = undefined;
     }
 
     //Internal function for shared axis creation
@@ -273,6 +276,9 @@ class Plot {
 
         //Clear graph already exists
         self._removePlot();
+        self.currData = data;
+        self.currXName = xName;
+        self.currYName = yName;
 
         //Create y scale
         self.y = d3.scaleLinear()
@@ -394,7 +400,7 @@ class Plot {
             .text(function(d) { return '\uf1c5' })
             .style("cursor", "pointer")
             .attr("transform",
-                "translate(" + -50 + " ," +
+                "translate(" + -90 + " ," +
                 0 + ")")
             .on("click", () => self._savePNG()) 
 
@@ -406,9 +412,20 @@ class Plot {
             .text(function(d) { return '\uf5cb' })
             .style("cursor", "pointer")
             .attr("transform",
-                "translate(" + -25 + " ," +
+                "translate(" + -60 + " ," +
                 0 + ")")
             .on("click", () => self._saveSVG())
+
+        //CSV
+        self.downloadButton.append('text')
+            .attr('font-family', 'FontAwesome')
+            .attr('font-size', "20px")
+            .text(function(d) { return '\uf6dd' })
+            .style("cursor", "pointer")
+            .attr("transform",
+                "translate(" + -30 + " ," +
+                0 + ")")
+            .on("click", () => self._saveCSV())
     }
 
     _setDownloadButtonVisibility(value) {
@@ -423,7 +440,7 @@ class Plot {
         self._save(svg, "svg");
     }
 
-    _savePNG() {
+    _savePNG() { //TODO: this method does not work in firefox
         var self = this;
         var canvas = document.createElement( "canvas" );
         canvas.width = 1920; //full HD regardless of window size
@@ -444,6 +461,25 @@ class Plot {
         var xml = new XMLSerializer().serializeToString(this.svg.node().parentNode);
         self._addDownloadButton(); //Re-add
         return 'data:image/svg+xml;base64,' + btoa(xml);
+    }
+
+    _saveCSV() {
+        var self = this;
+        var csv = 'data:text/csv;charset=utf-8,';
+        if(self.currData.length) {
+            if(self.currData[0].name) {
+                csv += `,${self.currYName},${self.currXName}\r\n`
+                for(let d of self.currData) {
+                    csv += `${d.name},${d.y},${d.x}\r\n`;
+                }
+            } else {
+                csv += `${self.currYName},${self.currXName}\r\n`
+                for(let d of self.currData) {
+                    csv += `${d.y},${d.x}\r\n`;
+                }
+            }
+        }
+        self._save(csv.replace(/\n/g, "%0D%0A"), "csv");
     }
 
     _save(blobString, extension) {
