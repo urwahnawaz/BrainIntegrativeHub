@@ -214,6 +214,7 @@ class MetaPanel {
         let index = self.currIndex[dataset];
 
         if(index >= 0) {
+            $("#" + this.elementId + "noqtl").text("No Significant QTLs");
             let indices = self.indices[dataset];
             let qtlCalcIndex = indices[index]
             if(qtlCalcIndex >= 0) {
@@ -227,6 +228,8 @@ class MetaPanel {
                 rows = datasetObj.value.slice(qtlCalcIndex, (end == -1 ? datasetObj.shape[0] : end));
                 for(let i=0; i<rows.length; ++i) rows[i] = rows[i].split(",");
             }
+        } else {
+            $("#" + this.elementId + "noqtl").text("No Data");
         }
 
         let qtlContents = "";
@@ -298,7 +301,7 @@ class MetaPanel {
                 <div class="col-auto">
                     <table class="table qtltable" id="${this.elementId + "table"}"></table>
                 </div>
-                <div id="${this.elementId + "noqtl"}" class="text-center">No Data</div>
+                <div id="${this.elementId + "noqtl"}" class="text-center"></div>
             </div>
             `
     }
