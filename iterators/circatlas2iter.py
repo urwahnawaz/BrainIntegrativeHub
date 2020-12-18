@@ -8,16 +8,22 @@ from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 
 class CircAtlas2Iter(AbstractDB):
-    name = "CircAtlas2DL"
     url = "http://159.226.67.237:8080/new/index.php"
+    urlPrefix = "http://159.226.67.237:8080/new/circ_detail.php?ID="
+    hasIndividualURLs = True
 
     def __init__(self, directory):
-        super().__init__()
+        super().__init__("CircAtlas2", directory)
 
         self.directory = directory
-        self.read_obj = csv.reader(open(os.path.join(directory, "hg38_hg19_v2.0.txt"), 'r'), delimiter='\t')
+
+        #self._updateFileZip("http://159.226.67.237:8080/new/download_file.php", os.path.join(self.directory, "human_bed_v2.0.txt"))
+
+        self.read_file = open(os.path.join(self.directory, "human_bed_v2.0.txt"), 'r')
+        self.read_obj = csv.reader(self.read_file, delimiter='\t')
         
-        next(self.read_obj)
+        self.meta_index = -1
+        self._updateLiftover(os.path.getmtime(os.path.join(self.directory, "human_bed_v2.0.txt")), "hg38")
         next(self.read_obj)
 
     def __iter__(self):
@@ -26,23 +32,27 @@ class CircAtlas2Iter(AbstractDB):
     def __next__(self):
         while(True):
             line = next(self.read_obj)
-            hg38Match = re.search(r'(chr[^:]+):(\d+)\|(\d+)', line[2])
-            hg19Match = re.search(r'(chr[^:]+):(\d+)\|(\d+)', line[3])
-            if not (hg38Match or hg19Match):
-                continue
+            
+            self.meta_index += 1
 
             ids = CircHSAGroup()
-            if(line[1] != '-'): ids.addCircHSA(CircHSA("circAltas", line[1]))
-            if(line[4] != '-'): ids.addCircHSA(CircHSA("circBase", line[4]))
-            if(line[5] != '-'): ids.addCircHSA(CircHSA("circRNADb", line[5]))
-            if(line[6] != '-'): ids.addCircHSA(CircHSA("Circpedia2", line[6])) #Circpedia2 or deepbase2?
 
-            hg19 = CircRange(start=int(hg19Match.group(2)), end=int(hg19Match.group(3))) if hg19Match else None
-            hg38 = CircRange(start=int(hg38Match.group(2)), end=int(hg38Match.group(3))) if hg38Match else None
-            group = CircRangeGroup(ch=hg19Match.group(1) if hg19Match else hg38Match.group(1), strand='+', versions=[hg19, hg38])
+            match = re.search(r'hsa-([^_]+)_[0-9]+', line[4])
 
-            gene = re.search(r'-([^_]+)', line[1])
-            ret = CircRow(group=group, hsa=ids, gene=gene.group(1) if gene else None, db_id = self.id, meta_index=self.meta_index, annotationAccuracy=999)
+            gene = match.group(1) if match else ""
+            if gene == "intergenic": gene = ""
+
+            group = CircRangeGroup(ch=line[0], strand=line[3], versions=super().__next__())
+            ret = CircRow(group=group, hsa=ids, gene=gene, db_id=self.id, meta_index=self.meta_index, url=line[4])
             return ret
 
-            #I think it might be the strand that is preventing merges
+    def _toBedFile(self, fileFrom):
+        next(self.read_obj)
+        try:
+            while True:
+                line = next(self.read_obj)
+                fileFrom.write(self._browserArgsToBedHelper(line[0], line[1], line[2], line[3]))
+        except StopIteration:
+            pass
+        self.read_file.seek(0)
+        

@@ -33,7 +33,7 @@ class CircRangeGroup:
             raise NotImplemented
         for i in range(len(self.versions)-1, -1, -1):
             if(self.versions[i] and other.versions[i]):
-                return (self.ch, self.versions[i]) < (other.ch, other.versions[i])
+                return (i, self.ch, self.versions[i], self.strand) < (i, other.ch, other.versions[i], other.strand)
         return False
         
     def __gt__(self, other):
@@ -41,7 +41,7 @@ class CircRangeGroup:
             raise NotImplemented
         for i in range(len(self.versions)-1, -1, -1):
             if(self.versions[i] and other.versions[i]):
-                return (self.ch, self.versions[i]) > (other.ch, other.versions[i])
+                return (i, self.ch, self.versions[i], self.strand) > (i, other.ch, other.versions[i], other.strand)
         return False
 
     def __eq__(self, other):
@@ -51,20 +51,9 @@ class CircRangeGroup:
             if(self.versions[i] and other.versions[i]):
                 return (self.ch, self.versions[i], self.strand) == (other.ch, other.versions[i], other.strand)
         return False
-    
-    def nearEqual(self, other, dist, allowUnknownStrand):
-        if not isinstance(other, CircRangeGroup):
-            raise NotImplemented
-        for i in range(len(self.versions)-1, -1, -1):
-            if(self.versions[i] and other.versions[i]):
-                one = (self.ch == other.ch and (self.strand == other.strand or (allowUnknownStrand and (self.strand == "." or other.strand == "."))))
-                two = (abs(self.versions[i].start - other.versions[i].start) <= dist)
-                three =  (abs(self.versions[i].end - other.versions[i].end) <= dist)
-                return (one and two and three)
-        return False
 
     def __hash__(self):
         for i in range(len(self.versions)-1, -1, -1):
             if(self.versions[i]):
-                return hash(self.ch) ^ hash(self.strand) ^ hash(self.versions[i]) ^ hash(AbstractLiftoverIter.required[i])
+                return hash(self.ch) ^ hash(self.strand) ^ hash(self.versions[i]) ^ hash(i)
         return -1

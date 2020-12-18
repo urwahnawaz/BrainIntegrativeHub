@@ -6,6 +6,9 @@ from circhsa import CircHSA
 from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 
+#See current build, circbase coordinates are completely wrong almost like mismatch between 19/38?
+
+
 #can generate link using id e.g. http://www.circbase.org/cgi-bin/singlerecord.cgi?id=hsa_circ_0114324
 #Can also generate link using position
 
@@ -23,10 +26,7 @@ class CircBaseIter(AbstractDB):
         self.read_obj = csv.reader(self.read_file, delimiter='\t')
 
         self.meta_index = -1
-
         self._updateLiftover(os.path.getmtime(os.path.join(self.directory, "hsa_hg19_circRNA.txt")), "hg19")
-
-        self.read_file.seek(0)
         next(self.read_obj)
 
     def __iter__(self):
@@ -39,15 +39,19 @@ class CircBaseIter(AbstractDB):
             self.meta_index += 1
 
             ids = CircHSAGroup()
-            ids.addCircHSA(CircHSA("circBase", line[4]))
+            #ids.addCircHSA(CircHSA("circBase", line[4]))
 
             group = CircRangeGroup(ch=line[0], strand=line[3], versions=super().__next__())
-            ret = CircRow(group=group, hsa=ids, gene=line[11] if line[11] != "None" else "", db_id = self.id, meta_index=self.meta_index, url=line[4])
+            ret = CircRow(group=group, hsa=ids, gene=line[11] if line[11]!="None" else "", db_id = self.id, meta_index=self.meta_index, url=line[4])
             return ret
 
     def _toBedFile(self, fileFrom):
         next(self.read_obj)
-        for line in self.read_obj:
-            fileFrom.write(self._browserArgsToBedHelper(line[0], line[1], line[2], line[3]))
+        try:
+            while True:
+                line = next(self.read_obj)
+                fileFrom.write(self._browserArgsToBedHelper(line[0], line[1], line[2], line[3], 1))
+        except StopIteration:
+            pass
         self.read_file.seek(0)
         

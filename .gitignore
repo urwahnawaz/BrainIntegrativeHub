@@ -1,4 +1,4 @@
 utility/
-data/
 output/
 __pycache__/
+.vscode

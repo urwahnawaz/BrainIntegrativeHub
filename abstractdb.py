@@ -15,7 +15,7 @@ class AbstractDB(AbstractLiftoverIter):
         if os.path.exists(destination):
             url_time = parsedate(r.headers['Last-Modified']).astimezone()
             file_time = datetime.datetime.fromtimestamp(os.path.getmtime(destination)).astimezone()
-            if url_time <= file_time: shouldUpdate = False 
+            if url_time <= file_time: shouldUpdate = False
 
         if shouldUpdate:
             print("Downloading " + self.name)
@@ -24,3 +24,6 @@ class AbstractDB(AbstractLiftoverIter):
             with open(destination, 'wb') as fd:
                 for chunk in r.iter_content(4096):
                     fd.write(chunk)
+
+    def updateFileRequest():
+        return

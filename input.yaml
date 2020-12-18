@@ -1,5 +1,5 @@
 datasets:
-    -   id: Brain1.PFC-CB
+    -   id: Brain1.CTX.CB
         reference: hg19
         url: "https://www.biologicalpsychiatryjournal.com/article/S0006-3223(19)31581-1/"
         dir: "./data/Gokool"
@@ -56,15 +56,15 @@ datasets:
 panels:
     -   name: "CircRNA expression in human brain tissue"
         description: >
-            This section allows detailed exploration of the data in the Brain1.PFC-CB (<a href=Brain1.PFC-CB>Gokool et al.</a>) dataset. CircRNA expression values (in Counts per Million ; CPM) and circularization index values (CI) can be plotted against metadata variables selected from the drop-down menu. A boxplot is generated for categorical metadata variables and a scatterplot is generated for numerical variables. In the case of numerical variables, a second categorical variable can be selected to color the datapoints – eg. CI vs Age plot with data points colored by Brain Region.
+            This section allows detailed exploration of the data in the Brain1.CTX.CB (<a href=Brain1.CTX.CB>Gokool et al.</a>) dataset. CircRNA expression values (in Counts per Million ; CPM) and circularization index values (CI) can be plotted against metadata variables selected from the drop-down menu. A boxplot is generated for categorical metadata variables and a scatterplot is generated for numerical variables. In the case of numerical variables, a second categorical variable can be selected to color the datapoints – eg. CI vs Age plot with data points colored by Brain Region.
             A scatterplot of circular RNA vs linear RNA expression shows the relation
             SNPs associated with the expression of the circRNAs are displayed in a table, with data from Brain2.DLPFC (<a href=Brain2.DLPFC>Liu et al.</a>).
-        datasets: [Brain1.PFC-CB, Brain2.DLPFC]
+        datasets: [Brain1.CTX.CB, Brain2.DLPFC]
     
     -   name: "CircRNA expression during neuronal differentiation"
         datasets: [NeurDiff1.hESC, NeurDiff2.SY5Y]
         description: >
-            includes interactive plots that allow the user to explore the expression of the circRNA of interest (CPM) in the NeurDiff1.hESC and NeurDiff2.SY5Y datasets.
+            This section includes interactive plots that allow the user to explore the expression of the circRNA of interest (CPM) in the NeurDiff1.hESC and NeurDiff2.SY5Y datasets.
 
     -   name: "CircRNA expression during cellular maturation in brain organoids"
         description: ""

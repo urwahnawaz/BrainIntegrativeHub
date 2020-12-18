@@ -1,9 +1,6 @@
 #!/usr/bin/python
 
-#Papers included:
-#Maass2017 Memczak2013 Rybak2015 Salzman2013
-
-#TODO: add multiple dtype support to jsfive
+#TODO: add multiple dtype and track order support to jsfive
 
 from collections import Counter
 import csv, datetime, re, os, h5py, sys, math, subprocess
@@ -28,12 +25,7 @@ from iterators.circbaseiter import CircBaseIter
 from iterators.circpedia2iter import Circpedia2Iter
 from iterators.circrnadbiter import CircRNADbIter
 from iterators.circfunbaseiter import CircFunBaseIter
-from iterators.circriciter import CircRicIter
 from iterators.circatlas2iter import CircAtlas2Iter
-from iterators.circatlas2browseriter import CircAtlas2BrowserIter
-from iterators.mioncocirc2iter import MiOncoCirc2Iter
-
-nmDist = 10 #Maximum difference in coordinates to be considered a near match
 
 def getCount(circ, iters):
     ds = 0
@@ -46,20 +38,14 @@ def getCount(circ, iters):
                 db += 1
     return ds, db
 
-
 def isUnreliable(circ, iters):
     ds, db = getCount(circ, iters)
     return ds <= 1 and db == 0
 
-def isInDataset(circ, iters):
-    for i in range(len(iters)):
-        if isinstance(iters[i], CircDatasetIter) and circ.getMeta(i) != CircRow.META_INDEX_CIRC_NOT_IN_DB:
-            return True
-    return False
-
-def shouldMerge(circ1, circ2, allowUnknownStrand=False):
-    cmp = circ1.hsa.cmp(circ2.hsa)
-    return ((cmp == CircHSAGroup.CMP_EQUAL) or (cmp == CircHSAGroup.CMP_UNKNOWN and circ1.group.nearEqual(circ2.group, nmDist, allowUnknownStrand)))
+def shouldMerge(circ1, circ2):
+    #cmp = circ1.hsa.cmp(circ2.hsa)
+    #return ((cmp == CircHSAGroup.CMP_EQUAL) or (cmp == CircHSAGroup.CMP_UNKNOWN and circ1.group == circ2.group))
+    return circ1.group == circ2.group
 
 def mustMerge(circIter, circ1):
     return (isinstance(circIter, AbstractDB) and circ1.group.strand != ".")
@@ -70,17 +56,13 @@ def generateOutput(inputIterators):
         print(datetime.datetime.now().strftime("%H:%M:%S") + " Merging " + circIter.name)
         for circ in circIter:
             pos = ss.bisect_left(circ)
-            #Compare circbase codes (hsa_circ_xxxx) if available, otherwise compare BSJ coordinates
-            if(pos >= 0 and pos < len(ss)):
-                if(shouldMerge(circ, ss[pos])):
-                    ss[pos].merge(circ)
-                elif((pos+1) < len(ss) and shouldMerge(circ, ss[pos+1])):
-                    ss[pos+1].merge(circ)
-                elif not mustMerge(circIter, circ):
-                        ss.add(circ)
-            elif not mustMerge(circIter, circ):
+            if pos < len(ss) and circ == ss[pos]:
+                ss[pos].merge(circ)
+            elif isinstance(circIter, CircDatasetIter) or circ.group.strand == ".":
                 ss.add(circ)
+
         print("(total merged circrnas: %d)" % (len(ss)))
+    mergeUnknownStrands(ss, circIters)
     return ss
 
 def writeIntersectionPlot(inputIterators, iter):
@@ -93,7 +75,6 @@ def writeIntersectionPlot(inputIterators, iter):
     pyplot.savefig('./output/out.png')
 
 #View using https://ncnr.nist.gov/ncnrdata/view/nexus-hdf-viewer.html
-#Note JS reader DOES NOT support track_order
 def writeHDF5(circIters, iter, inputObj, outFile="output/out.hdf5"):
     #h5py.get_config().track_order = True
     root = h5py.File(outFile,'w')
@@ -197,84 +178,62 @@ def annotateEnsemblNCBI(iter):
         if not circ.geneId and circ.gene: 
             circ.geneId = ids.get(circ.gene, "")
 
+def mergeUnknownStrands(iter, circIters):
+    allStrandsDatasets = 0
+    bothStrandsDatasets = 0
 
-def annotateEnsembl(iter):
-    #1	havana	gene	11869	14409	.	+	.	gene_id "ENSG00000223972"; gene_version "5"; gene_name "DDX11L1"; gene_source "havana"; gene_biotype "transcribed_unprocessed_pseudogene";
-    dic = {}
-    for line in csv.reader(open("./data/Homo_sapiens.GRCh38.101.gtf", 'r'), delimiter='\t'):
-        if len(line) < 9: continue
-        match = re.search(r'gene_id \"([^\"]+)\".*gene_name \"([^\"]+)\";', line[8])
-        dic[match.group(2)] = match.group(1)
-
-    for circ in iter:
-        if not circ.geneId: circ.geneId = dic.get(circ.gene, dic.get(str(circ.gene) + "1", ""))
-
-def annotateEnsemblBiomart(iter):
-    dic = {}
-    rev = {}
-    for line in csv.reader(open("./data/mart_export.txt", 'r'), delimiter='\t'):
-        dic[line[4]] = line[0]
-        rev[line[0]] = line[4]
-
-    for circ in iter:
-        if not circ.geneId and circ.gene: circ.geneId = dic.get(circ.gene, "")
-        if not circ.gene and circ.geneId: circ.gene = rev.get(circ.geneId, "")
-
-def mergeUnknownStrands(iter, iters):
-    allStrands = 0
-    bothStrands = 0
-    first = None
-    second = None
-    last = None
+    allStrandsDatabases = 0
+    bothStrandsDatabases = 0
     i = 1
     while True:
         if i >= len(iter): break
-
-        last = second
-        second = first
         curr = iter.__getitem__(i)
-        if not curr.group.hasId(): 
+        if curr.group.strand == "." and curr.group.hasId():
+            currStrandless = curr.group.toId()[:-2]
+            ds, db = getCount(curr, circIters)
+            prev1 = iter.__getitem__(i-1)
+            prev2 = iter.__getitem__(i-2) if i >= 2 else None
+            if prev2 and prev2.group.hasId() and prev2.group.toId().startswith(currStrandless):
+                #Choose either prev1 or prev2 to resolve strandless
+                
+                ds1, db1 = getCount(prev1, circIters)
+                ds2, db2 = getCount(prev2, circIters)
+                if (prev1.annotationAccuracy, (ds1 + db1)) >= (prev2.annotationAccuracy, (ds2 + db2)):
+                    prev1.merge(curr)
+                else:
+                    prev2.merge(curr)
+                allStrandsDatasets += ds
+                allStrandsDatabases += db
+            elif prev1.group.hasId() and prev1.group.toId().startswith(currStrandless):
+                #Only one known strand, simple to resolve
+                prev1.merge(curr)
+                bothStrandsDatasets += ds
+                bothStrandsDatabases += 1
+            iter.__delitem__(i)
+        else: 
             i += 1
-            continue
-        first = curr.group.toId()[:-2]
-
-        if first == second and first == last:
-            ds1, db1 = getCount(ss.__getitem__(i), iters)
-            ds2, db2 = getCount(ss.__getitem__(i-1), iters)
-            if (ds1 + db1) >= (ds2 + db2):
-                ss.__getitem__(i).merge(ss.__getitem__(i-2))
-            else:
-                ss.__getitem__(i-1).merge(ss.__getitem__(i-2))
-            ss.__delitem__(i-2)
-            allStrands += 1
-        elif second == last and ss.__getitem__(i-2).group.strand == '.':
-            ss.__getitem__(i-1).merge(ss.__getitem__(i-2))
-            ss.__delitem__(i-2)
-            bothStrands += 1
-        i += 1
-
-    print(str(bothStrands) + " strands confidently fixed, " + str(allStrands) + " guessed")
-
+                
+    print("Datasets: " + str(bothStrandsDatasets) + " strands confidently fixed, " + str(allStrandsDatasets) + " guessed")
+    print("Databases: " + str(bothStrandsDatabases) + " strands confidently fixed, " + str(allStrandsDatabases) + " guessed")
 
 def filterOutputToList(iter, circIters):
     ret = []
     countExcludedDs = 0
-    countExcludedEns = 0
     countExcluded38 = 0
+    countExcludedEns = 0
+
     for circ in iter:
-        if not circ.geneId and not circ.gene: 
-            countExcludedEns += 1
-            circ._error = "ERROR: no Ensembl ID and gene symbol/alias found"
-        elif isUnreliable(circ, circIters): 
+        if isUnreliable(circ, circIters): 
             countExcludedDs += 1
             circ._error = "ERROR: unreliable (in single novel dataset and no database)"
-        elif circ.group.strand == '.':
-            circ._error = "ERROR: no strand"
         elif not circ.group.hasId(1) or not circ.group.hasId(0):
             countExcluded38 += 1
             circ._error = "ERROR: no hg38 liftover"
+        elif not circ.geneId and not circ.gene: 
+            countExcludedEns += 1
+            circ._error = "ERROR: no Ensembl ID and gene symbol/alias found"
         else: ret.append(circ)
-    return ret, countExcludedDs, countExcludedEns, countExcluded38
+    return ret, countExcludedDs, countExcluded38, countExcludedEns
 
 def outputTrack(iter):
     with open("./output/out.bed", 'w', newline='') as csvfile:
@@ -284,7 +243,6 @@ def outputTrack(iter):
 
     sortedBed = open("./output/sorted.bed", "w")
     proc1 = subprocess.run(["sort", "-k1,1", "-k2,2n", "./output/out.bed"], stdout=sortedBed, stderr=STDOUT)
-    #proc2 = subprocess.run(["./utility/bedGraphToBigWig", "./sorted.bed", "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes", "./out.bw"], stdout=subprocess.PIPE, stderr=STDOUT)
     proc2 = subprocess.run(["./utility/bedToBigBed", "-type=bed4", "./output/sorted.bed", "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes", "./output/out.bb"], stdout=subprocess.PIPE, stderr=STDOUT)
 
     if os.path.exists("./output/out.bed"): os.remove("./output/out.bed")
@@ -308,28 +266,24 @@ if __name__ == '__main__':
         Circpedia2Iter("./data/CIRCpedia2"), 
         CircRNADbIter("./data/circRNADb"), 
         CircFunBaseIter("./data/CircFunBase"),
-        CircAtlas2BrowserIter("./data/circAtlas2"),
+        CircAtlas2Iter("./data/circAtlas2"),
     ]
 
     print(datetime.datetime.now().strftime("%H:%M:%S") + " Annotating and Filtering")
 
     # 1.
-    # This step creates circrows for each entry and merges to existing if within 10 bases (checks left first then right of closest)
-    # It follows that datasets/databases we iterate through first end up being the "official" coordinates
+    # This step creates circrows for each entry and merges exact coordinate/strand matches
     # Less than/greater than is determined by 1. hg38, 2. hg19 to find this nearest match
-    # Entries with different HSA codes referring to the same database are not merged
-    # Merging involves finding the union of all tissue expressions, database/dataset presence and URLs
+    # Merging involves finding the union of all database/dataset presence and URLs
     # This presence is represented as an index from the original source, used for later metadata steps
     ss = generateOutput(circIters)
 
     #2. These steps attempt to convert gene name synonyms to the official gene name and also find ensembl ID
     annotateEnsemblNCBI(ss)
-    annotateEnsemblBiomart(ss)
 
     # 3.
-    # This step filters out entries that don't have a gene name, ensembl id, hg38 or hg19 coordinates
-    mergeUnknownStrands(ss, circIters)
-    li, countExcludedDs, countExcludedEns, countExcluded38 = filterOutputToList(ss, circIters)
+    # This step filters out entries that are are only in one dataset, don't have a gene name, ensembl id, hg38 coordinates
+    li, countExcludedDs, countExcluded38, countExcludedEns = filterOutputToList(ss, circIters)
 
     # 4. 
     # This step writes everything to file, including metadata

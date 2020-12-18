@@ -47,7 +47,11 @@ class CircFunBaseIter(AbstractDB):
         next(self.read_obj)
         for line in self.read_obj:
             if line[1] == "-": continue
-            bed = self._browserToBedHelper(line[1], '.')
+            bed = self._browserToBedHelper(line[1], '.') 
+            #Problem is if they are not identical they will not be next to eachother in ss
+            #Better to search using bisect for each strand or increase radius (have sliding windows for + and - and . strands)
+            #If we set start offset to 1, it drops to 0
+            #If we set start offset to 0, 700+ merges
             if bed:
                 fileFrom.write(bed)
         self.read_file.seek(0)

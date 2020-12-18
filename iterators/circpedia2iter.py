@@ -14,6 +14,8 @@ class Circpedia2Iter(AbstractDB):
     def __init__(self, directory):
         super().__init__("Circpedia2", directory)
 
+        self._updateFile("https://www.picb.ac.cn/rnomics/circpedia/static/download_cache/human_hg38_All_circRNA.csv", os.path.join(directory, "human_hg38_All_circRNA.csv"))
+
         self.read_file = open(os.path.join(directory, "human_hg38_All_circRNA.csv"), 'r')
         self.read_obj = csv.reader(self.read_file, delimiter=',')
 

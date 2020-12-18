@@ -30,7 +30,7 @@ class CircRow:
         newMeta = other._meta if shouldSwap else self._meta
         oldMeta = self._meta if shouldSwap else other._meta
         for i in range(len(oldMeta)): 
-            newMeta[i] = max(self._meta[i], other._meta[i])
+            newMeta[i] = max(oldMeta[i], newMeta[i])
         self._meta = newMeta
 
         newURL = other._url if shouldSwap else self._url
@@ -42,6 +42,9 @@ class CircRow:
         self.hsa.merge(other.hsa)
 
         inaccurate = other.annotationAccuracy > self.annotationAccuracy
+        if inaccurate: 
+            self.annotationAccuracy = other.annotationAccuracy
+
         if (not self.gene or inaccurate) and other.gene:
             self.gene = other.gene
             if inaccurate: self.geneId = ""
@@ -49,12 +52,12 @@ class CircRow:
         if (not self.geneId or inaccurate) and other.geneId: 
             self.geneId = other.geneId
             if inaccurate: self.gene = ""
-
+        
     def toArray(self):
         return ["NA"] + self.group.toArray() + [self.gene]
 
     def __str__(self):
-        return ("chr%s:%d-%d %s" % (str(self.group.ch), self.group.versions[0].start, self.group.versions[0].end, self.gene))
+        return ("%s:%d-%d %s" % (str(self.group.ch), self.group.versions[0].start, self.group.versions[0].end, self.gene))
 
     def __lt__(self, other):
         if not isinstance(other, CircRow):
@@ -72,7 +75,7 @@ class CircRow:
         if not isinstance(other, CircRow):
             raise NotImplementedError
 
-        return self.group.nearEqual(other.group, 10)
+        return self.group == other.group
 
     def __hash__(self):
         return hash(self.group)

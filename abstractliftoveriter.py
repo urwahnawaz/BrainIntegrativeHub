@@ -1,4 +1,4 @@
-import os, re, subprocess, shutil
+import os, re, subprocess, shutil, csv
 
 from subprocess import DEVNULL, STDOUT, check_call
 from tempfile import mkstemp
@@ -22,47 +22,32 @@ class AbstractLiftoverIter(AbstractSource):
         return self
 
     def __next__(self):
-        #TODO we no longer nead to read unmap files, just read BED name field
-        #Update reference first
-        self.curr_version[self.refGenomeIndex] = self._getCircRangeFromBed(next(self.read_obj_lift[self.refGenomeIndex]))
+        original = self.read_obj_lift_latest[self.refGenomeIndex]
+        self.curr_version[self.refGenomeIndex] = CircRange(start=int(original[1]), end=int(original[2]))
 
         for i in range(len(self.read_obj_lift)):
                 if i == self.refGenomeIndex: continue
-                if self.latest_unmap[i] and self.latest_unmap[i] == self.curr_version[self.refGenomeIndex]:
-                    #Wait since current reference matches unmapped
-                    self.curr_version[i] = None
-                    self.latest_unmap[i] = self._getNextUnmap(self.read_obj_lift_unmap[i])
-                    self.curr_version[i] = None
+                lifted = self.read_obj_lift_latest[i]
+                if lifted[4] == original[4]:
+                    self.curr_version[i] = CircRange(start=int(lifted[1]), end=int(lifted[2]))
+                    self.read_obj_lift_latest[i] = next(self.read_obj_lift[i])
                 else:
-                    #Include since entry is mapped
-                    self.curr_version[i] = self._getCircRangeFromBed(next(self.read_obj_lift[i]))
+                    self.curr_version[i] = None
+        
+        self.read_obj_lift_latest[self.refGenomeIndex] = next(self.read_obj_lift[self.refGenomeIndex])
 
         #Return all liftovers, contains None where conversions failed
         return self.curr_version.copy()
 
-    def _getNextUnmap(self, iter):
-        line = "#"
-        try:
-            while line.startswith('#'):
-                line = next(iter)
-        except StopIteration:
-            return None
-        return self._getCircRangeFromBed(line)
-        
-    def _getCircRangeFromBed(self, line):
-        values = line.split()
-        return CircRange(start=int(values[1]), end=int(values[2]))
-
     def _updateLiftover(self, lastModified, refGenome):
         self.refGenomeIndex = AbstractLiftoverIter.required.index(refGenome)
-        self.read_file_lift_unmap = [None] * len(AbstractLiftoverIter.required)
         nameFrom = os.path.join(self.directory, "liftover." + refGenome)
         with open(nameFrom, 'w') as fileFrom:
             self._toBedFile(fileFrom)
 
         #Create all other maps and unmaps
         for i in range(len(AbstractLiftoverIter.required)):
-            if ((os.path.getsize(self.read_file_lift[i].name) <= 0 or lastModified >= os.path.getmtime(self.read_file_lift[i].name))):
+            if True or ((os.path.getsize(self.read_file_lift[i].name) <= 0 or lastModified >= os.path.getmtime(self.read_file_lift[i].name))):
                 liftTo = AbstractLiftoverIter.required[i]
                 if(liftTo != refGenome):
                     #Perform liftover
@@ -72,31 +57,29 @@ class AbstractLiftoverIter(AbstractSource):
                     except:
                         print("Could not liftover (make sure /utilities contains compatible binaries)")
 
-            unmapName = self.read_file_lift[i].name + ".unmap"
             self.read_file_lift[i] = open(self.read_file_lift[i].name, 'r')
-            self.read_file_lift_unmap[i] = open(unmapName, 'r') if os.path.isfile(unmapName) else None
         
         #Create read objects
-        self.read_obj_lift = [fp.__iter__() for fp in self.read_file_lift]
-        self.read_obj_lift_unmap = [fp.__iter__() if fp else None for fp in self.read_file_lift_unmap]
-        self.latest_unmap = [self._getNextUnmap(it) if it else None for it in self.read_obj_lift_unmap]
+        self.read_obj_lift = [csv.reader(fp, delimiter="\t") for fp in self.read_file_lift]
+        self.read_obj_lift_latest = [next(it) for it in self.read_obj_lift]
         self.curr_version = [None] * len(AbstractLiftoverIter.required)
         
-    
     def _toBedFile(self, fileFrom):
         raise "Not implimented"
 
     def _browserToBedHelper(self, line, strand, offset=0):
         match = re.search(r'(chr[^:]+):(\d+)\-(\d+)', line)
-
         if not match:
             return None
         elif(offset):
             return self._browserArgsToBedHelper(match.group(1), str(int(match.group(2))+offset), match.group(3), strand)
-        else:
-            return self._browserArgsToBedHelper(match.group(1), match.group(2), match.group(3), strand)
+        return self._browserArgsToBedHelper(match.group(1), match.group(2), match.group(3), strand)
 
-    def _browserArgsToBedHelper(self, chr, start, end, strand):
+    def _browserArgsToBedHelper(self, chr, start, end, strand, startOffset=0, endOffset=0):
+        if startOffset or endOffset:
+            s = str(int(start) + startOffset)
+            e = str(int(end) + endOffset)
+            return ("%s\t%s\t%s\t%s\t%s:%s-%s_%s\n" % (chr, s, e, strand, chr, s, e, strand))
         return ("%s\t%s\t%s\t%s\t%s:%s-%s_%s\n" % (chr, start, end, strand, chr, start, end, strand))
     
     def _getChainLocation(self, fromName, toName):

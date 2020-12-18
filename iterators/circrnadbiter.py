@@ -38,5 +38,5 @@ class CircRNADbIter(AbstractDB):
     def _toBedFile(self, fileFrom):
         next(self.read_obj)
         for line in self.read_obj:
-            fileFrom.write(line[1] + '\t' + line[2] + '\t' + line[3] + '\t' + line[4] + '\n')
+            fileFrom.write(self._browserArgsToBedHelper(line[1], line[2], line[3], line[4], 1))
         self.read_file.seek(0)
