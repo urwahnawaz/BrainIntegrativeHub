@@ -47,12 +47,12 @@ class AbstractLiftoverIter(AbstractSource):
 
         #Create all other maps and unmaps
         for i in range(len(AbstractLiftoverIter.required)):
-            if True or ((os.path.getsize(self.read_file_lift[i].name) <= 0 or lastModified >= os.path.getmtime(self.read_file_lift[i].name))):
+            if ((os.path.getsize(self.read_file_lift[i].name) <= 0 or lastModified >= os.path.getmtime(self.read_file_lift[i].name))):
                 liftTo = AbstractLiftoverIter.required[i]
                 if(liftTo != refGenome):
                     #Perform liftover
                     try:
-                        proc = subprocess.run(["./utility/liftOver", nameFrom, self._getChainLocation(refGenome, liftTo), self.read_file_lift[i].name, self.read_file_lift[i].name + ".unmap"], stdout=DEVNULL, stderr=STDOUT) #liftOver oldFile map.chain newFile unMapped
+                        proc = subprocess.run(["./utilities/liftOver", nameFrom, self._getChainLocation(refGenome, liftTo), self.read_file_lift[i].name, self.read_file_lift[i].name + ".unmap"], stdout=DEVNULL, stderr=STDOUT) #liftOver oldFile map.chain newFile unMapped
                         print("Running liftover: " + ' '.join(proc.args))
                     except:
                         print("Could not liftover (make sure /utilities contains compatible binaries)")

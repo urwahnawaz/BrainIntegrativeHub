@@ -1,4 +1,8 @@
-utility/
 output/
+utilities/*
 __pycache__/
-.vscode
+.vscode/
+liftover.*
+
+data/Circbase/hsa_hg19_circRNA.txt
+data/CircPedia2/human_hg38_All_circRNA.csv

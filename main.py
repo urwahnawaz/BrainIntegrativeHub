@@ -243,7 +243,7 @@ def outputTrack(iter):
 
     sortedBed = open("./output/sorted.bed", "w")
     proc1 = subprocess.run(["sort", "-k1,1", "-k2,2n", "./output/out.bed"], stdout=sortedBed, stderr=STDOUT)
-    proc2 = subprocess.run(["./utility/bedToBigBed", "-type=bed4", "./output/sorted.bed", "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes", "./output/out.bb"], stdout=subprocess.PIPE, stderr=STDOUT)
+    proc2 = subprocess.run(["./utilities/bedToBigBed", "-type=bed4", "./output/sorted.bed", "http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.chrom.sizes", "./output/out.bb"], stdout=subprocess.PIPE, stderr=STDOUT)
 
     if os.path.exists("./output/out.bed"): os.remove("./output/out.bed")
     if os.path.exists("./output/sorted.bed"): os.remove("./output/sorted.bed")
