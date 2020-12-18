@@ -285,6 +285,9 @@ if __name__ == '__main__':
     # This step filters out entries that are are only in one dataset, don't have a gene name, ensembl id, hg38 coordinates
     li, countExcludedDs, countExcluded38, countExcludedEns = filterOutputToList(ss, circIters)
 
+    if not os.path.exists('output'):
+        os.makedirs('output')
+
     # 4. 
     # This step writes everything to file, including metadata
     # Some very large matrices (e.g. CPM) use chunk compression for now, so we only decompress a ~page at a time
