@@ -297,3 +297,7 @@ html, body {margin:0;padding:0;height:100%}
 .panel-description {
   font-size: 15px;
 }
+
+.container .jumbotron, .container-fluid .jumbotron {
+  border-radius: 0px;
+ }
