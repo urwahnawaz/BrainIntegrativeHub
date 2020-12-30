@@ -10,7 +10,7 @@ CircRNA expression in bulk brain tissue samples:
 
 CircRNA expression duriing neuronal differentiation:
 - <b> Zhang et al. </b> carried out differentiation of human ES cells to forebrain neurons for 14 days (NeurDiff1.hESC)
-- <b> Rybak-Wolf et al. </b> differentiated neuroblastoma SH-SY5Y cells to neurons for 2, 4 or 8 days. 
+- <b> Rybak-Wolf et al. </b> differentiated neuroblastoma SH-SY5Y cells to neurons for 2, 4 or 8 days (NeurDiff2.SY5Y)
 
 CircRNA expression data in human brain organoids:
 - <b> Sloan et al </b> carried out an organoid maturation timecourse (100- 495 days) with immunopanning of tyrosine hydroxylase positive neurons and astro-cytes at each time-point. circRNA quantification was carried out in Gokool et al. [10]. 
@@ -29,7 +29,7 @@ Consistent gene symbols were assigned using synonyms from NCBI.
 The home page of NeuroCirc allows the user to search circRNAs by gene symbol, Ensembl Gene ID, or circRNA coordinates on the hg19 or hg38 genome assemblies. 
 Search results can be downloaded as a .csv file.
 This page also provides the option to upload a new dataset in NeuroCirc.
-![alt-text](https://github.com/Voineagulab/TDAview/blob/master/example%20files/Climate%20Change/fig.png)
+![alt-text](https://github.com/Voineagulab/NeuroCirc/upload/master/resources/images/search.jpg)
 
 ## Interactive data exploration
 For each circRNA, NeuroCirc displays the following panels. Each panel includes a brief description of the data displayed and interactive plotting options.
