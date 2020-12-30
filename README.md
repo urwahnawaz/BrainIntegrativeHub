@@ -27,7 +27,8 @@ Consistent gene symbols were assigned using synonyms from NCBI.
 
 ## Search options
 The home page of NeuroCirc allows the user to search circRNAs by gene symbol, Ensembl Gene ID, or circRNA coordinates on the hg19 or hg38 genome assemblies. 
-Search results can be downloaded as a .csv file.
+Search results can be sorted by each column, as well as the total number of positive datasets or databases. Search results can be downloaded as a .csv file.
+<br>
 This page also provides the option to upload a new dataset in NeuroCirc.
 <br>
 <br>
@@ -35,15 +36,16 @@ This page also provides the option to upload a new dataset in NeuroCirc.
 
 ## Interactive data exploration
 For each circRNA, NeuroCirc displays the following panels. Each panel includes a brief description of the data displayed and interactive plotting options.
-- A genome browser track of the corresponding hg38 genomic coordinates
-- Detection in Brain Datasets and circRNA Databases
-- CircRNA expression across datasets
-- CircRNA expression in human brain tissue
-- CircRNA expression during neuronal differentiation
+- A genome browser track of the corresponding hg38 genomic coordinates.
+- Detection in Brain Datasets and circRNA Databases.
+- CircRNA expression across datasets.
+- CircRNA expression in human brain tissue.
+- CircRNA expression during neuronal differentiation.
 - CircRNA ex-pression during cellular maturation in brain organoids” allow the user to explore the expression of the circRNA of interest in the differentiation time-course datasets and the organoid maturation timecourse data respectively.
 - If the user uploads a circRNA expression dataset, it can be explored in a separate panel.
 <br>
 <br>
+![alt-text](https://github.com/Voineagulab/NeuroCirc/blob/master/resources/images/example.png)
 
 ## Saving the results
 For each panel, the data displayed can be downloaded as a .csv file, and the corresponging plot as an image file (either .svg or .png).
