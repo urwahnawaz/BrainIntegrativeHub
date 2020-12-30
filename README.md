@@ -45,7 +45,7 @@ For each circRNA, NeuroCirc displays the following panels. Each panel includes a
 - If the user uploads a circRNA expression dataset, it can be explored in a separate panel.
 <br>
 <br>
-![alt-text](https://github.com/Voineagulab/NeuroCirc/blob/master/resources/images/example.png)
+![alt-text](https://github.com/Voineagulab/NeuroCirc/blob/master/resources/images/search.png)
 
 ## Saving the results
 For each panel, the data displayed can be downloaded as a .csv file, and the corresponging plot as an image file (either .svg or .png).
