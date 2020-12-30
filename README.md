@@ -43,7 +43,7 @@ For each circRNA, NeuroCirc displays the following panels. Each panel includes a
 - CircRNA expression during neuronal differentiation.
 - CircRNA ex-pression during cellular maturation in brain organoids” allow the user to explore the expression of the circRNA of interest in the differentiation time-course datasets and the organoid maturation timecourse data respectively.
 - If the user uploads a circRNA expression dataset, it can be explored in a separate panel.
-![alt-text](https://github.com/Voineagulab/NeuroCirc/blob/master/resources/images/example.png)
+![alt-text](https://github.com/Voineagulab/NeuroCirc/blob/master/resources/images/Example.png)
 <br>
 <br>
 
