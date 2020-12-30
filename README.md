@@ -3,7 +3,7 @@ NeuroCirc is a web-based resource that integrates multiple datasets of circRNA e
 
 ## Datasets
 CircRNA expression in bulk brain tissue samples:
-- <b> Gokool et al. <b/> comprises 197 samples of frontal cortex, temporal cortex and cerebellum of autism cases and controls (Brain1.CTX-CB).
+- <b> Gokool et al. </b> comprises 197 samples of frontal cortex, temporal cortex and cerebellum of autism cases and controls (Brain1.CTX-CB).
 - Liu et al. includes 589 samples from dorsolateral pre-frontal cortex of schizophrenia cases and controls (Brain2.DLPFC). 
 CircRNA expression duriing neuronal differentiation:
 - Zhang et al. carried out differentiation of human ES cells to forebrain neurons for 14 days (NeurDiff1.hESC)
