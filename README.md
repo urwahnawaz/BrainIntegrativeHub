@@ -21,10 +21,7 @@ NeuroCirc contains the union of circRNAs from the core datasets described above,
 <br> The union of circRNAs were annotated using the following databases: CircAtlas2.0, CIRCpedia, CircBase, CircFunBase, and RNAdb. For consistency, the gene symbol and Ensembl ID for all circRNAs were annotated using CircAtlas – the most recent of the databases; for circRNAs not present in CircAtlas, the annotation from the original study was retained. 
 Consistent gene symbols were assigned using synonyms from NCBI. 
 - <b> Filtering</b>
-<br> CircRNAs were filtered out if: 
-   <br> they were present in a single dataset and no database
-   <br> coordinates could not be lifted to hg38
-   <br> the coordinates did not correspond to an annotated gene. 
+<br> CircRNAs were filtered out if: (a) they were present in a single dataset and no database, (b) coordinates could not be lifted to hg38 or (c) the coordinates did not correspond to an annotated gene. 
 
 ## Search options
 The home page of NeuroCirc allows the user to search circRNAs by gene symbol, Ensembl Gene ID, or circRNA coordinates on the hg19 or hg38 genome assemblies. 
