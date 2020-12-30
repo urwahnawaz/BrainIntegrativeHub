@@ -17,14 +17,14 @@ These datasets can be downloaded from:
 The user also has the option to upload their own datasets which are then integrated in NeuroCirc in the same manner as the five core datasets. However, these data don not persist in NeuroCirc, they are only available for the session in which they are uploaded.
 ## Data Processing 
 NeuroCirc contains the union of circRNAs from the core datasets described above, and (optionally) the user-provided dataset, processed as follows.
-- Annotation
+- <b> Annotation</b>
 The union of circRNAs were annotated using the following databases: CircAtlas2.0, CIRCpedia, CircBase, CircFunBase, and RNAdb. For consistency, the gene symbol and Ensembl ID for all circRNAs were annotated using CircAtlas – the most recent of the databases; for circRNAs not present in CircAtlas, the annotation from the original study was retained. 
 Consistent gene symbols were assigned using synonyms from NCBI. 
-- Filtering
-CircRNAs were filtered out if
- - they were present in a single dataset and no database
- - coordinates could not be lifted to hg38
- - the coordinates did not correspond to an annotated gene. 
+- <b> Filtering</b>
+CircRNAs were filtered out if: 
+   they were present in a single dataset and no database
+   coordinates could not be lifted to hg38
+   the coordinates did not correspond to an annotated gene. 
 
 ## Search options
 The home page of NeuroCirc allows the user to search circRNAs by gene symbol, Ensembl Gene ID, or circRNA coordinates on the hg19 or hg38 genome assemblies. 
