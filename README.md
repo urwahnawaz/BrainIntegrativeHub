@@ -6,8 +6,8 @@ CircRNA expression in bulk brain tissue samples:
 - Gokool et al. comprises 197 samples of frontal cortex, temporal cortex and cerebellum of autism cases and controls (Brain1.CTX-CB).
 - Liu et al. includes 589 samples from dorsolateral pre-frontal cortex of schizophrenia cases and controls (Brain2.DLPFC). 
 CircRNA expression duriing neuronal differentiation:
-- Zhang et al., which carried out differentiation of human ES cells to forebrain neurons for 14 days (NeurDiff1.hESC)
-- Rybak-Wolf et al. , which differentiated neuroblastoma SH-SY5Y cells to neurons for 2, 4 or 8 days. 
+- Zhang et al. carried out differentiation of human ES cells to forebrain neurons for 14 days (NeurDiff1.hESC)
+- Rybak-Wolf et al. differentiated neuroblastoma SH-SY5Y cells to neurons for 2, 4 or 8 days. 
 CircRNA expression data in human brain organoids:
 Sloan et al carried out an organoid maturation timecourse (100- 495 days) with immunopanning of tyrosine hydroxylase positive neurons and astro-cytes at each time-point. circRNA quantification was carried out in Gokool et al. [10]. 
 These datasets can be downloaded from: 
