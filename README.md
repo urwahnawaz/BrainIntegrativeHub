@@ -4,12 +4,15 @@ NeuroCirc is a web-based resource that integrates multiple datasets of circRNA e
 ## Datasets
 CircRNA expression in bulk brain tissue samples:
 - <b> Gokool et al. </b> comprises 197 samples of frontal cortex, temporal cortex and cerebellum of autism cases and controls (Brain1.CTX-CB).
-- Liu et al. includes 589 samples from dorsolateral pre-frontal cortex of schizophrenia cases and controls (Brain2.DLPFC). 
+- <b> Liu et al. includes 589 samples from dorsolateral pre-frontal cortex of schizophrenia cases and controls (Brain2.DLPFC). 
+
 CircRNA expression duriing neuronal differentiation:
-- Zhang et al. carried out differentiation of human ES cells to forebrain neurons for 14 days (NeurDiff1.hESC)
-- Rybak-Wolf et al. differentiated neuroblastoma SH-SY5Y cells to neurons for 2, 4 or 8 days. 
+- <b> Zhang et al. </b> carried out differentiation of human ES cells to forebrain neurons for 14 days (NeurDiff1.hESC)
+- <b> Rybak-Wolf et al. </b> differentiated neuroblastoma SH-SY5Y cells to neurons for 2, 4 or 8 days. 
+
 CircRNA expression data in human brain organoids:
-Sloan et al carried out an organoid maturation timecourse (100- 495 days) with immunopanning of tyrosine hydroxylase positive neurons and astro-cytes at each time-point. circRNA quantification was carried out in Gokool et al. [10]. 
+- <b> Sloan et al </b> carried out an organoid maturation timecourse (100- 495 days) with immunopanning of tyrosine hydroxylase positive neurons and astro-cytes at each time-point. circRNA quantification was carried out in Gokool et al. [10]. 
+
 These datasets can be downloaded from: 
 The user also has the option to upload their own datasets which are then integrated in NeuroCirc in the same manner as the five core datasets. However, these data don not persist in NeuroCirc, they are only available for the session in which they are uploaded.
 ## Data Processing 
