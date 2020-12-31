@@ -28,35 +28,35 @@ datasets:
     -   id: NeurDiff1.hESC
         reference: hg19
         url: "https://www.sciencedirect.com/science/article/pii/S2211124716303291"
-        dir: "./data/ESC_FBN/"
+        dir: "./data/Zhang/"
         annotationAccuracy: -1
-        main: "esc_fbn.csv"
-        meta: "esc_fbn_meta.csv"
+        main: "zhang.csv"
+        meta: "zhang_meta.csv"
         matrices: 
             -   type: CPM
-                path: "esc_fbn_cpm.csv"
+                path: "zhang_cpm.csv"
 
     -   id: NeurDiff2.SY5Y
         reference: hg19
         url: "https://pubmed.ncbi.nlm.nih.gov/25921068/"
-        dir: "./data/SY5Y/"
+        dir: "./data/Rybak-Wolf/"
         annotationAccuracy: -1
-        main: "sy5y.csv"
-        meta: "sy5y_meta.csv"
+        main: "rybak-wolf.csv"
+        meta: "rybak-wolf_meta.csv"
         matrices: 
             -   type: CPM
-                path: "sy5y_cpm.csv"
+                path: "rybak-wolf_cpm.csv"
 
     -   id: OrgMaturation
         name: Organoid Maturation
         reference: hg19
         url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5890820/"
-        dir: "./data/Org/"
-        main: "org.csv"
-        meta: "org_meta.csv"
+        dir: "./data/Sloan/"
+        main: "sloan.csv"
+        meta: "sloan_meta.csv"
         matrices: 
             -   type: CPM
-                path: "org_cpm.csv"
+                path: "sloan_cpm.csv"
 
 panels:
     -   name: "CircRNA expression in human brain tissue"
