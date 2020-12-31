@@ -37,6 +37,8 @@ This page also provides the option to upload a new dataset in NeuroCirc.
 ## Interactive data exploration
 For each circRNA, NeuroCirc displays a genome browser track of the corresponding hg38 genomic coordinates, followed by several interactive the panels. Each panel includes a brief description of the data displayed and interactive plotting options.
 
+-Detection in Brain Datasets and circRNA Databases
+
 ![alt-text](https://github.com/Voineagulab/NeuroCirc/blob/master/resources/images/example1.png)
 <br>
 
@@ -55,7 +57,7 @@ For each circRNA, NeuroCirc displays a genome browser track of the corresponding
 <br>
 
 - CircRNA ex-pression during cellular maturation in brain organoids” allow the user to explore the expression of the circRNA of interest in the differentiation time-course datasets and the organoid maturation timecourse data respectively.
-<br>
+
 ![alt-text](https://github.com/Voineagulab/NeuroCirc/blob/master/resources/images/example6.png)
 <br>
 
