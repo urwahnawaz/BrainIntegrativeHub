@@ -5,15 +5,15 @@ https://voineagulab.github.io/NeuroCirc/index.html
 
 ## CircRNA expression datasets
 CircRNA expression in bulk brain tissue samples:
-- <b> Gokool et al. </b> comprises 197 samples of frontal cortex, temporal cortex and cerebellum of autism cases and controls (Brain1.CTX-CB).
-- <b> Liu et al.</b> includes 589 samples from dorsolateral pre-frontal cortex of schizophrenia cases and controls (Brain2.DLPFC). 
+- <b> [Gokool et al.](https://pubmed.ncbi.nlm.nih.gov/31570194/) </b> comprises 197 samples of frontal cortex, temporal cortex and cerebellum of autism cases and controls (Brain1.CTX-CB).
+- <b> [Liu et al.](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1701-8) </b> includes 589 samples from dorsolateral pre-frontal cortex of schizophrenia cases and controls (Brain2.DLPFC). 
 
 CircRNA expression duriing neuronal differentiation:
-- <b> Zhang et al. </b> carried out differentiation of human ES cells to forebrain neurons for 14 days (NeurDiff1.hESC)
-- <b> Rybak-Wolf et al. </b> differentiated neuroblastoma SH-SY5Y cells to neurons for 2, 4 or 8 days (NeurDiff2.SY5Y)
+- <b> [Zhang et al.](https://www.sciencedirect.com/science/article/pii/S2211124716303291) </b> carried out differentiation of human ES cells to forebrain neurons for 14 days (NeurDiff1.hESC)
+- <b> [Rybak-Wolf et al.](https://pubmed.ncbi.nlm.nih.gov/25921068/) </b> differentiated neuroblastoma SH-SY5Y cells to neurons for 2, 4 or 8 days (NeurDiff2.SY5Y)
 
 CircRNA expression data in human brain organoids (Org):
-- <b> Sloan et al </b> carried out an organoid maturation timecourse (100- 495 days) with immunopanning of tyrosine hydroxylase positive neurons and astro-cytes at each time-point. circRNA quantification was carried out in Gokool et al. 
+- <b> [Sloan et al.](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5890820/) </b> carried out an organoid maturation timecourse (100- 495 days) with immunopanning of tyrosine hydroxylase positive neurons and astro-cytes at each time-point. circRNA quantification was carried out in Gokool et al. 
 
 These datasets can be downloaded from: https://github.com/Voineagulab/NeuroCirc/tree/master/pipeline/data
 The user also has the option to upload their own datasets which are then integrated in NeuroCirc in the same manner as the five core datasets. However, these data do not persist in NeuroCirc, they are only available for the session in which they are uploaded.
