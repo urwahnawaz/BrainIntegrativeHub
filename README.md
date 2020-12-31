@@ -37,7 +37,7 @@ This page also provides the option to upload a new dataset in NeuroCirc.
 ## Interactive data exploration
 For each circRNA, NeuroCirc displays a genome browser track of the corresponding hg38 genomic coordinates, followed by several interactive the panels. Each panel includes a brief description of the data displayed and interactive plotting options.
 
--Detection in Brain Datasets and circRNA Databases
+- Detection in Brain Datasets and circRNA Databases
 
 ![alt-text](https://github.com/Voineagulab/NeuroCirc/blob/master/resources/images/example1.png)
 <br>
@@ -62,9 +62,6 @@ For each circRNA, NeuroCirc displays a genome browser track of the corresponding
 <br>
 
 - If the user uploads a circRNA expression dataset, it can be explored in a separate panel.
-
-<br>
-<br>
 
 ## Saving the results
 For each panel, the data displayed can be downloaded as a .csv file, and the corresponging plot as an image file (either .svg or .png).
