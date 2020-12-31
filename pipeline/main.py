@@ -236,6 +236,9 @@ def filterOutputToList(iter, circIters):
     return ret, countExcludedDs, countExcluded38, countExcludedEns
 
 def outputTrack(iter):
+    if not os.path.exists("./utilities/bedToBigBed"):
+            raise "Could not find ./utilities/bedToBigBed. Please download the UCSC bedToBigBed tool and place it in utilities folder."
+
     with open("./output/out.bed", 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter='\t', quotechar='\"', quoting=csv.QUOTE_NONE)
         for circ in iter:

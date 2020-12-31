@@ -45,6 +45,10 @@ class AbstractLiftoverIter(AbstractSource):
         with open(nameFrom, 'w') as fileFrom:
             self._toBedFile(fileFrom)
 
+
+        if not os.path.exists("./utilities/liftOver"):
+            raise "Could not find ./utilities/liftOver. Please download the UCSC liftover tool and place it in utilities folder."
+
         #Create all other maps and unmaps
         for i in range(len(AbstractLiftoverIter.required)):
             if ((os.path.getsize(self.read_file_lift[i].name) <= 0 or lastModified >= os.path.getmtime(self.read_file_lift[i].name))):

@@ -1,5 +1,6 @@
 output/
 utilities/*
+!*utilities/README.txt
 __pycache__/
 .vscode/
 liftover.*
