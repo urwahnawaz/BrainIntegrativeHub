@@ -8,7 +8,7 @@ from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 
 class CircDatasetIter(AbstractMetaIter):
-    def __init__(self, name, nameLong, directory, main, matrices, metadata, qtl, reference, isBrainDataset, url):
+    def __init__(self, name, nameLong, directory, main, matrices, metadata, qtl, reference, isBrainDataset, url, annotationAccuracy):
         super().__init__(name, nameLong, directory, matrices, metadata, qtl)
 
         self.fileName = os.path.join(self.directory, main)
@@ -16,6 +16,7 @@ class CircDatasetIter(AbstractMetaIter):
         self.read_obj = csv.reader(self.read_file, delimiter=',')
         self.isBrainDataset = isBrainDataset
         self.url = url
+        self.annotationAccuracy = annotationAccuracy
 
         self.meta_index = -1
         self._updateLiftover(os.path.getmtime(self.fileName), reference)
@@ -29,7 +30,7 @@ class CircDatasetIter(AbstractMetaIter):
         self.meta_index += 1
         group = CircRangeGroup(ch=match.group(1), strand=match.group(4), versions=super().__next__())
         self.keys.append(line[0])
-        return CircRow(group=group, hsa=CircHSAGroup(), gene=line[1], geneId=line[2], db_id=self.id, meta_index=self.meta_index)
+        return CircRow(group=group, hsa=CircHSAGroup(), gene=line[1], geneId=line[2], db_id=self.id, meta_index=self.meta_index, annotationAccuracy=self.annotationAccuracy)
 
     def _nextMatch(self, iter):
         while True:

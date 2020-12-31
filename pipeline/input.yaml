@@ -29,6 +29,7 @@ datasets:
         reference: hg19
         url: "https://www.sciencedirect.com/science/article/pii/S2211124716303291"
         dir: "./data/ESC_FBN/"
+        annotationAccuracy: -1
         main: "esc_fbn.csv"
         meta: "esc_fbn_meta.csv"
         matrices: 
@@ -39,6 +40,7 @@ datasets:
         reference: hg19
         url: "https://pubmed.ncbi.nlm.nih.gov/25921068/"
         dir: "./data/SY5Y/"
+        annotationAccuracy: -1
         main: "sy5y.csv"
         meta: "sy5y_meta.csv"
         matrices: 
@@ -65,7 +67,8 @@ panels:
             metadata variables selected from the drop-down menu. A boxplot is generated for categorical metadata variables and a 
             scatterplot is generated for numerical variables. In the case of numerical variables, a second categorical variable can 
             be selected to color the datapoints – eg. CI vs Age plot with data points colored by Brain Region.
-            A scatterplot of circular RNA vs linear RNA expression shows the relation
+            A scatterplot of circular RNA vs linear RNA expression shows the relationship between circRNA expression in CPM and the 
+            parental linear RNA expression quantified based on the expression of the upstream and downstream linear junctions (SJ), normalised as CPM.
             SNPs associated with the expression of the circRNAs are displayed in a table, with data from Brain2.DLPFC 
             (<a href=Brain2.DLPFC>Liu et al.</a>).
 
