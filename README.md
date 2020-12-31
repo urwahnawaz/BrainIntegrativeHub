@@ -38,12 +38,23 @@ This page also provides the option to upload a new dataset in NeuroCirc.
 For each circRNA, NeuroCirc displays the following panels. Each panel includes a brief description of the data displayed and interactive plotting options.
 - A genome browser track of the corresponding hg38 genomic coordinates.
 - Detection in Brain Datasets and circRNA Databases.
+<br>
+![alt-text](https://github.com/Voineagulab/NeuroCirc/blob/master/resources/images/example1.png)
 - CircRNA expression across datasets.
+<br>
+![alt-text](https://github.com/Voineagulab/NeuroCirc/blob/master/resources/images/example2.png)
 - CircRNA expression in human brain tissue.
+<br>
+![alt-text](https://github.com/Voineagulab/NeuroCirc/blob/master/resources/images/example3.png)
+![alt-text](https://github.com/Voineagulab/NeuroCirc/blob/master/resources/images/example4.png)
 - CircRNA expression during neuronal differentiation.
+<br>
+![alt-text](https://github.com/Voineagulab/NeuroCirc/blob/master/resources/images/example5.png)
 - CircRNA ex-pression during cellular maturation in brain organoids” allow the user to explore the expression of the circRNA of interest in the differentiation time-course datasets and the organoid maturation timecourse data respectively.
+<br>
+![alt-text](https://github.com/Voineagulab/NeuroCirc/blob/master/resources/images/example6.png)
 - If the user uploads a circRNA expression dataset, it can be explored in a separate panel.
-![alt-text](https://github.com/Voineagulab/NeuroCirc/blob/master/resources/images/Example.png)
+
 <br>
 <br>
 
