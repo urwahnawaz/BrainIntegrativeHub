@@ -12,8 +12,8 @@ CircRNA expression duriing neuronal differentiation:
 - <b> Zhang et al. </b> carried out differentiation of human ES cells to forebrain neurons for 14 days (NeurDiff1.hESC)
 - <b> Rybak-Wolf et al. </b> differentiated neuroblastoma SH-SY5Y cells to neurons for 2, 4 or 8 days (NeurDiff2.SY5Y)
 
-CircRNA expression data in human brain organoids:
-- <b> Sloan et al </b> carried out an organoid maturation timecourse (100- 495 days) with immunopanning of tyrosine hydroxylase positive neurons and astro-cytes at each time-point. circRNA quantification was carried out in Gokool et al. [10]. 
+CircRNA expression data in human brain organoids (Org):
+- <b> Sloan et al </b> carried out an organoid maturation timecourse (100- 495 days) with immunopanning of tyrosine hydroxylase positive neurons and astro-cytes at each time-point. circRNA quantification was carried out in Gokool et al. 
 
 These datasets can be downloaded from: https://github.com/Voineagulab/NeuroCirc/tree/master/pipeline/data
 The user also has the option to upload their own datasets which are then integrated in NeuroCirc in the same manner as the five core datasets. However, these data do not persist in NeuroCirc, they are only available for the session in which they are uploaded.
