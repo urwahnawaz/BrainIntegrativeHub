@@ -40,6 +40,7 @@ For each circRNA, NeuroCirc displays the following panels. Each panel includes a
 - Detection in Brain Datasets and circRNA Databases.
 <br>
 ![alt-text](https://github.com/Voineagulab/NeuroCirc/blob/master/resources/images/example1.png)
+<br>
 - CircRNA expression across datasets.
 <br>
 ![alt-text](https://github.com/Voineagulab/NeuroCirc/blob/master/resources/images/example2.png)
