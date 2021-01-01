@@ -20,7 +20,7 @@ class AbstractMetaIter(AbstractLiftoverIter):
         for row in rows:
             index = row.getMeta(self.id)
             if index != -1:
-                keyToIndexFiltered[self.keys[index][:-2]] = counter #TODO: for now we are removing strand
+                keyToIndexFiltered[self.keys[index]] = counter
                 counter += 1
 
         experimentGroup = root.create_group(self.name)
@@ -65,7 +65,7 @@ class AbstractMetaIter(AbstractLiftoverIter):
         for line in csv.reader(open(fileName, 'r'), delimiter=','):
             if not heading: heading = line[1:]
             else:
-                index = keyToIndexFiltered.get(line[0][:-2], -1)
+                index = keyToIndexFiltered.get(line[0], -1)
                 if index >= 0:
                     fromLine = line[1:]
                     if sampleToIndex:
@@ -140,13 +140,14 @@ class AbstractMetaIter(AbstractLiftoverIter):
         lines = [[] for i in range(len(keyToIndexFiltered))]
         
         qtlIter = open(os.path.join(self.directory, fileName), 'r').readlines().__iter__()
-        heading = next(qtlIter).rstrip("\n").split(",", 1)[1]
+        heading = next(qtlIter).rstrip("\n").replace('"', '').split(",", 1)[1]
 
         #Now we know where to put everything that comes in
         for qtl in qtlIter:
-            index = keyToIndexFiltered.get(qtl.split(',', 1)[0], -1)
+            split = qtl.rstrip("\n").replace('"', '').split(',', 1)
+            index = keyToIndexFiltered.get(split[0], -1)
             if index >= 0:
-                lines[index].append(qtl.rstrip("\n").split(",", 1)[1])
+                lines[index].append(split[1])
         fixed = 0
         j = 0
         qtlIndices = [None] * len(lines)
@@ -156,7 +157,7 @@ class AbstractMetaIter(AbstractLiftoverIter):
 
         hdf5Group.create_dataset("indices", data=np.array(qtlIndices, dtype="i4"), compression="gzip", compression_opts=9)
 
-        mdata = [] #TODO: seems to be problem with qtl matching -> no strand in qtl table!
+        mdata = []
         for i in range(len(lines)):
             if len(lines[i]) > 0:
                 for subline in lines[i]:

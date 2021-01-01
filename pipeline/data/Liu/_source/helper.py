@@ -21,3 +21,11 @@ if __name__ == '__main__':
         id = match.group(1) + "_" + match.group(2) + "_" + match.group(3) + "_" + line[1+1]
         write_file1.writerow([id, gene, ""])
         write_file2.writerow([id, math.pow(2, float(line[4+1]))]) #can ONLY re-log2 this to stay valid
+
+
+    iter = csv.reader(open("./liu_qtl_full.csv", 'r'), delimiter=',')
+    next(iter)
+    write_file3 = csv.writer(open("liu_qtl.csv", 'w', newline=''), delimiter=',', quotechar='\"', quoting=csv.QUOTE_NONNUMERIC)
+    write_file3.writerow(["circRNA ID","SNP","circQTL Beta","circQTL Tstat","circQTL P-value","circQTL empirical P-value"])
+    for line in iter:
+        write_file3.writerow([line[0] + "_" + line[2]] + [line[1]] + line[4:])
