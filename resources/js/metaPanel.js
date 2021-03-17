@@ -214,6 +214,11 @@ class MetaPanel {
             plotData = plotData.filter((value, index) => filterValues[index] == filterSelected);
         }
 
+        if(plotData.length == 0) {
+            plot.updateDisabled();
+            return;
+        }
+
         if(xAxisIsString) {
             plot.updateBox(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset]);
         } else {
