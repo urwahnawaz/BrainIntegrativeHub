@@ -6,6 +6,7 @@ datasets:
         isBrain: true
         main: "gok.csv"
         meta: "gok_meta.csv"
+        brainRegionFilter: "BroadRegionID"
         matrices: 
             -   type: CPM
                 path: "gok_circ_cpm.csv"

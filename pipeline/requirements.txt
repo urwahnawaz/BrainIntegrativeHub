@@ -1,6 +1,6 @@
 h5py
-pyplot
+matplotlib
 numpy
-SortedSet
+sortedcontainers
 oyaml
 upsetplot

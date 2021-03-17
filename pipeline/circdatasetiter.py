@@ -8,8 +8,8 @@ from circhsagroup import CircHSAGroup
 from circrangegroup import CircRangeGroup
 
 class CircDatasetIter(AbstractMetaIter):
-    def __init__(self, name, nameLong, directory, main, matrices, metadata, qtl, reference, isBrainDataset, url, annotationAccuracy):
-        super().__init__(name, nameLong, directory, matrices, metadata, qtl)
+    def __init__(self, name, nameLong, directory, main, matrices, metadata, qtl, reference, isBrainDataset, url, annotationAccuracy, brainRegionFilter):
+        super().__init__(name, nameLong, directory, matrices, metadata, qtl, brainRegionFilter)
 
         self.fileName = os.path.join(self.directory, main)
         self.read_file = open(self.fileName, 'r')

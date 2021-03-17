@@ -14,6 +14,7 @@ class PlotControls {
         self.xAxisId = "xAxis" + self.elementId;
 
         $('#datasetselect' + self.elementId).on('change', () => self.onDatasetChange());
+        $('#regionselect' + self.elementId).on('change', () => self.onChange());
         $('#xaxisselect' + self.elementId).on('change', () => self.onChange());
         $('#yaxisselect' + self.elementId).on('change', () => self.onChange());
         $('#scaleselect' + self.elementId).on('change', () => self.onChange());
@@ -53,6 +54,11 @@ class PlotControls {
         this.onDatasetChange();
     }
 
+    setRegions(names) {
+        this._setOptions('regionselect' + this.elementId, names);
+        this.onChange();
+    }
+
     setDataset(dataset) {
         this._setOptions('datasetselect' + this.elementId, [dataset], dataset);
         this.onDatasetChange();
@@ -76,6 +82,10 @@ class PlotControls {
 
     getSelectedDataset() {
         return $('#datasetselect' + this.elementId).val();
+    }
+
+    getSelectedRegion() {
+        return $('#regionselect' + this.elementId).val();
     }
 
     getSelectedYAxis() {
@@ -133,6 +143,11 @@ class PlotControls {
             <span class="hidable">
                 <div id="datasetlabel${this.elementId}">Select Dataset</div>
                 <select id="datasetselect${this.elementId}" class="selectpicker"></select>
+                <br><br>
+            </span>
+            <span class="hidable">
+                <div id="regionlabel${this.elementId}">Select Brain Region</div>
+                <select id="regionselect${this.elementId}" class="selectpicker"></select>
                 <br><br>
             </span>
             <span class="hidable">

@@ -3,11 +3,12 @@ import csv, math, h5py, os
 import numpy as np
 
 class AbstractMetaIter(AbstractLiftoverIter):
-    def __init__(self, name, nameLong, directory, matrices, metadata, qtl):
+    def __init__(self, name, nameLong, directory, matrices, metadata, qtl, brainRegionFilter):
         super().__init__(name, directory)
         self.matrices = matrices
         self.metadata = metadata
         self.qtl = qtl
+        self.brainRegionFilter = brainRegionFilter
         self.keys = []
         self.nameLong = nameLong
 
@@ -57,6 +58,8 @@ class AbstractMetaIter(AbstractLiftoverIter):
         if self.qtl:
             self._writeHDF5CSVTable(self.qtl, experimentGroup, keyToIndexFiltered, rows)
 
+        if self.brainRegionFilter:
+            experimentGroup.attrs.create("brainRegionFilter", self.brainRegionFilter) 
     
     def _getAsMatrix(self, fileName, keyToIndexFiltered, sampleToIndex, noneType="NA"):
         #Writes matrix in overall row order

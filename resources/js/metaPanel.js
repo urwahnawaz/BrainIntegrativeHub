@@ -57,9 +57,17 @@ class MetaPanel {
         }
 
         self.names = {};
+        self.brainRegions = {};
         for(let dataset of self.datasets) {
             let currName = self.hdf5Group.get(dataset).attrs["name"];
             self.names[dataset] = currName ? currName : dataset;
+
+            let currRegions = new Set(["All"]);
+            let currBrainRegionFilters = self.hdf5Group.get(dataset).attrs["brainRegionFilter"];
+            if(currBrainRegionFilters) {
+                self.hdf5Group.get(dataset + "/samples/" + currBrainRegionFilters).value.forEach(item => currRegions.add(item))
+            }
+            self.brainRegions[dataset] = {key: currBrainRegionFilters, values: Array.from(currRegions)};
         }
     }
 
@@ -126,6 +134,8 @@ class MetaPanel {
 
         self.supressChanges = true;
 
+        controls.setRegions(self.brainRegions[dataset].values);
+
         let matrices = self.hdf5Group.get(dataset + "/matrices");
         let samples = self.hdf5Group.get(dataset + "/samples");
 
@@ -191,6 +201,17 @@ class MetaPanel {
         let sampleNames = self.hdf5Group.get(dataset).attrs["sample_id"];
         for(let i=0; i<plotData.length; ++i) {
             plotData[i].name = sampleNames[i];
+        }
+
+        //Filter by selected region
+        let currRegionKey = self.brainRegions[dataset].key;
+        let filterSelected = controls.getSelectedRegion();
+        
+        if(currRegionKey && filterSelected != "All") {
+            console.log(currRegionKey);
+            console.log(filterSelected);
+            let filterValues = self.hdf5Group.get(dataset + "/samples/" + currRegionKey).value;
+            plotData = plotData.filter((value, index) => filterValues[index] == filterSelected);
         }
 
         if(xAxisIsString) {
