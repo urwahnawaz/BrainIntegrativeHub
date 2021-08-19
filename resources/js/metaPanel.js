@@ -70,12 +70,13 @@ class MetaPanel {
             self.brainRegions[dataset] = {key: currBrainRegionFilters, values: Array.from(currRegions)};
         }
 
-        //let url = "http://127.0.0.1:8887/resources/data/" + matrix.attrs["datalake"];
-
-
-        let LFS = location.href.match(/https?:\/\/([^\.]+)\.github\.io\/([^\/]+)/i);
-        if(LFS) {
-            self.dataLakeURLGenerator = (path) => `https://github.com/${LFS[1]}/${LFS[2]}/releases/download/data/${path.split(".", 1)[0]}`
+        let files = {
+            "BrainSeq_RPKM.matrix":"https://firebasestorage.googleapis.com/v0/b/test-908bc.appspot.com/o/BrainSeq_RPKM.matrix?alt=media&token=e49659bc-b2cd-44d8-bee9-a63f66051ec3",
+            "BrainSpan_RPKM.matrix":"https://firebasestorage.googleapis.com/v0/b/test-908bc.appspot.com/o/BrainSpan_RPKM.matrix?alt=media&token=4ecdcb8d-49c1-451b-81ed-200f496c5ef5",
+            "GTEx_TPM.matrix":"https://firebasestorage.googleapis.com/v0/b/test-908bc.appspot.com/o/GTEx_TPM.matrix?alt=media&token=1dcd8095-38e3-4249-aabf-c8b0137d3609"
+        }
+        if(location.origin.includes("github")) {
+            self.dataLakeURLGenerator = (path) => files[path];
         } else {
             self.dataLakeURLGenerator = (path) => `${location.origin}/resources/data/${path}`; 
         }
