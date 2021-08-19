@@ -75,7 +75,7 @@ class MetaPanel {
 
         let LFS = location.href.match(/https?:\/\/([^\.]+)\.github\.io\/([^\/]+)/i);
         if(LFS) {
-            self.dataLakeURLGenerator = (path) => `https://github.com/${LFS[1]}/${LFS[2]}/blob/gh-pages/${path}?raw=true`;
+            self.dataLakeURLGenerator = (path) => `https://github.com/${LFS[1]}/${LFS[2]}/raw/datalake/resources/data/${path}`;
         } else {
             self.dataLakeURLGenerator = (path) => `${location.origin}/resources/data/${path}`; 
         }
