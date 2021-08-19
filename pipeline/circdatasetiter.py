@@ -25,8 +25,10 @@ class CircDatasetIter(AbstractMetaIter):
         return self
 
     def __next__(self):
-        line = next(self.read_obj)
-        self.meta_index += 1
-        versionlessEnsemblID = line[0].split('.', 1)[0]
-        self.keys.append(versionlessEnsemblID)
-        return CircRow(gene="", geneId=versionlessEnsemblID, db_id=self.id, meta_index=self.meta_index, annotationAccuracy=self.annotationAccuracy)
+        while True:
+            line = next(self.read_obj)
+            self.meta_index += 1
+            if line[0]:
+                versionlessEnsemblID = line[0].split('.', 1)[0]
+                self.keys.append(versionlessEnsemblID)
+                return CircRow(gene="", geneId=versionlessEnsemblID, db_id=self.id, meta_index=self.meta_index, annotationAccuracy=self.annotationAccuracy)

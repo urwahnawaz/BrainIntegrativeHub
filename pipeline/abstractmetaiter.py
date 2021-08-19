@@ -53,8 +53,15 @@ class AbstractMetaIter(AbstractSource):
                             experimentGroup.attrs.create("sample_id", np.array([h.encode() for h in heading], dtype="S" + str(len(max(heading, key=len)))))
                         except:
                             print("Too many sample headers to include as hdf5 attribute for experiment " + self.name)
-                    matrixGroup.create_dataset(self.matrices[i]["type"], data=arr, chunks=(min(arr.shape[0], math.floor(10000/len(heading))), arr.shape[1]), compression="gzip", compression_opts=9)
-
+                    #matrixGroup.create_dataset(self.matrices[i]["type"], data=arr, chunks=(min(arr.shape[0], math.floor(10000/len(heading))), arr.shape[1]), compression="gzip", compression_opts=9)
+                    ds = matrixGroup.create_dataset(self.matrices[i]["type"], data=h5py.Empty("S1"))
+                    lakeFileName = self.name + "_" + self.matrices[i]["type"] + ".matrix"
+                    ds.attrs.create("datalake", lakeFileName)
+                    ds.attrs.create("shape", arr.shape)
+                    output_file = open("./output/" + lakeFileName, 'wb')
+                    arr.tofile(output_file)
+                    output_file.close()
+                
                 if i == 0:
                     self._writeHDF5Scaled(arr, experimentGroup)
         
@@ -120,6 +127,8 @@ class AbstractMetaIter(AbstractSource):
                 try:
                     # Attempt to parse all as this type
                     colType = allTypes[k]
+
+                    #TODO: important to not skip over values here - check neurocirc
                     values = [colType(lines[j][i]) if (lines[j][i] and lines[j][i] != noneType) else allDefaults[k] for j in range(len(lines))]
 
                     # No exception so correct type, fix values for hdf5

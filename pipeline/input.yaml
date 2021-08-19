@@ -6,9 +6,23 @@ datasets:
         matrices: 
             -   type: RPKM
                 path: "brainspan_matrix_rpkm.csv"
+    -   id: GTEx
+        url: "https://gtexportal.org/"
+        dir: "./data/GTEx/"
+        meta: "gtex_metadata_brainOnly2.csv"
+        matrices: 
+            -   type: TPM
+                path: "gtex_tpm_matrix_brainOnly2.csv"
+    -   id: BrainSeq
+        url: "https://www.brainrnaseq.org/"
+        dir: "./data/BrainSeq/"
+        meta: "brainseq_metadata.csv"
+        matrices: 
+            -   type: RPKM
+                path: "brainseq_matrix_rpkm.csv"
 panels:
     -   name: "Explore all metadata in human brain tissue"
-        datasets: [BrainSpan]
+        datasets: [BrainSpan, GTEx, BrainSeq]
         description: >
             This section allows detailed exploration of all datasets, including <a href=BrainSpan>BrainSpan</a>.
             Expression values (for instance, in Transcripts per Million ; TPM) can be plotted against metadata variables selected from the drop-down menu. 

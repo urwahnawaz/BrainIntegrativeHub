@@ -43,8 +43,8 @@ class MetaPanelDual extends MetaPanel {
         }
     }
     
-    _getPlotDataX(dataset, xAxis, yRow, plot) {
-        return (plot==this.plot2) ? this._getPlotDataY(dataset, xAxis, yRow) : super._getPlotDataX(dataset, xAxis, yRow, plot);
+    _getPlotDataX(dataset, xAxis, yRow, plot, callback) {
+        return (plot==this.plot2) ? this._getPlotDataY(dataset, xAxis, yRow, callback) : super._getPlotDataX(dataset, xAxis, yRow, plot, callback);
     }
 
     _scalePlotData(plotData, func, offset, plot, scale, labels) {

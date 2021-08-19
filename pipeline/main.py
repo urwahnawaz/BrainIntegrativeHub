@@ -92,8 +92,10 @@ def writeHDF5(circIters, iter, inputObj, outFile="output/out.hdf5"):
         isDataset.append(int(isDatasetCurr))
         isDatabase.append(int(not isDatasetCurr))
         isBrainDataset.append(int(isDatasetCurr and circIters[i].isBrainDataset))
-        defaultVisible.append(i + len(dataOrder))
+        defaultVisible.append(len(dataOrder))
         dataOrder.append(circIters[i].name)
+
+    #Interleave binary files
     
     data.attrs.create("defaultCoord", 1)
     data.attrs.create("order", dataOrder)
