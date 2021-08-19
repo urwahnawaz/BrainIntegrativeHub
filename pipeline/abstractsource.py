@@ -10,9 +10,10 @@ class AbstractSource:
     id_iter = itertools.count()
     id_max = 0
 
-    def __init__(self, name):
+    def __init__(self, name, directory):
         self.id = AbstractSource.id_max = next(AbstractSource.id_iter)
         self.name = name
+        self.directory = directory
 
     def reduceIndices(self, rows):
         #Fix _meta indices, must do after filtering metadata

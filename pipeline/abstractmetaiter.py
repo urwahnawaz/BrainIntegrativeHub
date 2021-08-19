@@ -1,8 +1,8 @@
-from abstractliftoveriter import AbstractLiftoverIter
+from abstractsource import AbstractSource
 import csv, math, h5py, os
 import numpy as np
 
-class AbstractMetaIter(AbstractLiftoverIter):
+class AbstractMetaIter(AbstractSource):
     def __init__(self, name, nameLong, directory, matrices, metadata, qtl, brainRegionFilter):
         super().__init__(name, directory)
         self.matrices = matrices
@@ -43,13 +43,16 @@ class AbstractMetaIter(AbstractLiftoverIter):
                 matrixGroup.attrs.create("order", [m["type"] for m in self.matrices])
             for i in range(len(self.matrices)):
                 heading, mdata2 = self._getAsMatrix(os.path.join(self.directory, self.matrices[i]["path"]), keyToIndexFiltered, sampleToIndex)
-                arr = np.array(mdata2, dtype="f4")
+                arr = np.array(mdata2, dtype="<f4")
 
                 if sampleHeadings: heading = sampleHeadings
 
                 if matrixGroup:
                     if not "sample_id" in experimentGroup:
-                        experimentGroup.attrs.create("sample_id", np.array([h.encode() for h in heading], dtype="S" + str(len(max(heading, key=len)))))
+                        try:
+                            experimentGroup.attrs.create("sample_id", np.array([h.encode() for h in heading], dtype="S" + str(len(max(heading, key=len)))))
+                        except:
+                            print("Too many sample headers to include as hdf5 attribute for experiment " + self.name)
                     matrixGroup.create_dataset(self.matrices[i]["type"], data=arr, chunks=(min(arr.shape[0], math.floor(10000/len(heading))), arr.shape[1]), compression="gzip", compression_opts=9)
 
                 if i == 0:
@@ -66,9 +69,11 @@ class AbstractMetaIter(AbstractLiftoverIter):
         heading = None
         lines = [None] * len(keyToIndexFiltered)
         for line in csv.reader(open(fileName, 'r'), delimiter=','):
-            if not heading: heading = line[1:]
+            if not heading: 
+                heading = line[1:]
             else:
-                index = keyToIndexFiltered.get(line[0], -1)
+                versionlessEnsemblID = line[0].split('.', 1)[0]
+                index = keyToIndexFiltered.get(versionlessEnsemblID, -1)
                 if index >= 0:
                     fromLine = line[1:]
                     if sampleToIndex:
@@ -99,12 +104,10 @@ class AbstractMetaIter(AbstractLiftoverIter):
 
     def _writeHDF5Columns(self, fileName, hdf5Group, noneType="NA"):
         heading = []
-        isHeading = True
         lines = []
         for line in csv.reader(open(os.path.join(self.directory, fileName), 'r'), delimiter=','):
-            if isHeading:
+            if not heading:
                 heading = line
-                isHeading = False
             else:
                 lines.append(line)
         heading[0] = "circ_id"
@@ -117,15 +120,13 @@ class AbstractMetaIter(AbstractLiftoverIter):
                 try:
                     # Attempt to parse all as this type
                     colType = allTypes[k]
-                    values = [colType(lines[j][i]) for j in range(
-                        len(lines)) if lines[j][i] != noneType]
+                    values = [colType(lines[j][i]) if (lines[j][i] and lines[j][i] != noneType) else allDefaults[k] for j in range(len(lines))]
 
                     # No exception so correct type, fix values for hdf5
-                    colTypeNp = allTypesNp[k] + (str(len(max(values, key=len)))if allTypes[k] == str else "")
-                    for m in range(len(values)):
-                        if m == noneType: values[m] = allDefaults[k]
-                        elif colType == str: values[m] = values[m].encode()
-
+                    colTypeNp = allTypesNp[k] + (str(len(max(values, key=len))) if allTypes[k] == str else "")
+                    if colType == str:
+                        for m in range(len(values)):
+                            values[m] = values[m].encode()
                     # Write dataset
                     arr = np.array(values, dtype=colTypeNp)
                     hdf5Group.create_dataset(heading[i], data=arr, chunks=arr.shape, compression="gzip", compression_opts=9)
@@ -133,8 +134,9 @@ class AbstractMetaIter(AbstractLiftoverIter):
                 except:
                     continue
             else:
-                raise("ERROR no type resolved for " + heading[i])
-        hdf5Group.attrs.create("order", [heading[i] for i in range(1, len(heading))])
+                # TODO Completely empty column, remove
+                heading.pop(i)
+        hdf5Group.attrs.create("order", [heading[j] for j in range(1, len(heading))])
 
         return [lines[i][0] for i in range(len(lines))] #Return headings to copy this order
 

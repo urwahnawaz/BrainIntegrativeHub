@@ -1,2 +1,0 @@
-Please download "liftOver" and "bedToBigBed" executables for your platform (http://hgdownload.soe.ucsc.edu/admin/exe/) and place them here.
-Note liftOver requires a license for commercial use (https://genome-store.ucsc.edu/).

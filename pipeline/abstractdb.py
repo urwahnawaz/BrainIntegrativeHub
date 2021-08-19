@@ -1,10 +1,10 @@
-from abstractliftoveriter import AbstractLiftoverIter
+from abstractsource import AbstractSource
 import requests
 import datetime
 from dateutil.parser import parse as parsedate
 import os
 
-class AbstractDB(AbstractLiftoverIter):
+class AbstractDB(AbstractSource):
     def __init__(self, name, directory):
         super().__init__(name, directory)
 

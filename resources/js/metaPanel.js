@@ -143,7 +143,8 @@ class MetaPanel {
         coloring.unshift("None");
 
         controls.setYAxis(matrices.attrs["order"], matrices.attrs["order"][0]);
-        controls.setColorings(coloring, coloring.length > 1 ? coloring[1] : coloring[0]);
+        controls.setColorings(coloring, coloring[0]);
+        //controls.setColorings(coloring, coloring.length > 1 ? coloring[1] : coloring[0]);
 
         self._setXAxis(controls, matrices, samples, plot);
 
@@ -198,11 +199,13 @@ class MetaPanel {
             self._scalePlotData(plotData, func, 0.1, plot, scale, labels);
         }
 
-        let sampleNames = self.hdf5Group.get(dataset).attrs["sample_id"];
-        for(let i=0; i<plotData.length; ++i) {
-            plotData[i].name = sampleNames[i];
+        if(self.hdf5Group.keys.includes("sample_id")) {
+            let sampleNames = self.hdf5Group.get(dataset).attrs["sample_id"];
+            for(let i=0; i<plotData.length; ++i) plotData[i].name = sampleNames[i];
+        } else {
+            for(let i=0; i<plotData.length; ++i) plotData[i].name = i;
         }
-
+        
         //Filter by selected region
         let currRegionKey = self.brainRegions[dataset].key;
         let filterSelected = controls.getSelectedRegion();

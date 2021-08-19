@@ -4,13 +4,11 @@ from sortedcontainers import SortedSet
 class CircRow:
     META_INDEX_CIRC_NOT_IN_DB = -1
 
-    def __init__(self, group, hsa, gene, db_id, meta_index, url="", geneId="", annotationAccuracy=0):
-        self.group = group
-        self.hsa = hsa
-        self.gene = gene
+    def __init__(self, geneId, db_id, meta_index, url="", gene="", annotationAccuracy=0):
         self._meta = [CircRow.META_INDEX_CIRC_NOT_IN_DB] * (db_id + 1)
         self._meta[db_id] = meta_index
         self.geneId = geneId
+        self.gene = gene
         self._error = ""
         self._url = [""] * (db_id + 1)
         self._url[db_id] = url
@@ -39,8 +37,6 @@ class CircRow:
             if(not newURL[i]): newURL[i] = oldURL[i]
         self._url = newURL
 
-        self.hsa.merge(other.hsa)
-
         inaccurate = other.annotationAccuracy > self.annotationAccuracy
         if inaccurate: 
             self.annotationAccuracy = other.annotationAccuracy
@@ -54,28 +50,28 @@ class CircRow:
             if inaccurate: self.gene = ""
         
     def toArray(self):
-        return ["NA"] + self.group.toArray() + [self.gene]
+        return ["NA"] + [self.gene]
 
     def __str__(self):
-        return ("%s:%d-%d %s" % (str(self.group.ch), self.group.versions[0].start, self.group.versions[0].end, self.gene))
+        return ("%s" % (self.geneId))
 
     def __lt__(self, other):
         if not isinstance(other, CircRow):
             raise NotImplementedError
 
-        return self.group < other.group
+        return self.geneId < other.geneId
 
     def __gt__(self, other):
         if not isinstance(other, CircRow):
             raise NotImplementedError
 
-        return self.group > other.group
+        return self.geneId > other.geneId
 
     def __eq__(self, other):
         if not isinstance(other, CircRow):
             raise NotImplementedError
 
-        return self.group == other.group
+        return self.geneId == other.geneId
 
     def __hash__(self):
-        return hash(self.group)
+        return hash(self.geneId)
