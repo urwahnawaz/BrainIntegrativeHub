@@ -92,7 +92,8 @@ class Plot {
 
         var pointColorScale = undefined;
         var categoriesZ = undefined;
-        if (data[0].z) {
+
+        if (data[data.length-1].z) {
             categoriesZ = self._getCategories(data, d => d.z)
             let colors = ["#377eb8","#4daf4a","#ff7f00","#ffff33","#a65628","#984ea3", "#f781bf","#999999", "#e41a1c"];
             if (colors) {
