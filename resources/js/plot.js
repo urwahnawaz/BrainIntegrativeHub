@@ -234,7 +234,7 @@ class Plot {
         self._addTooltip();
     }
 
-    updateDisabled(text="No Data") {
+    updateDisabled(text="No data") {
         var self = this;
 
         //Clear graph already exists

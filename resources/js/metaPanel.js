@@ -4,6 +4,8 @@ class MetaPanel {
     constructor(parentId, uniqueId, hdf5Group, name) {
         var self = this;
 
+        self.suppressChanges = 0;
+
         self.parentId = parentId;
         self.elementId = uniqueId;
         self.hdf5Group = hdf5Group;
@@ -69,18 +71,6 @@ class MetaPanel {
             }
             self.brainRegions[dataset] = {key: currBrainRegionFilters, values: Array.from(currRegions)};
         }
-
-        let files = {
-            "BrainSeq_RPKM.matrix":"https://firebasestorage.googleapis.com/v0/b/test-908bc.appspot.com/o/BrainSeq_RPKM.matrix?alt=media&token=e49659bc-b2cd-44d8-bee9-a63f66051ec3",
-            "BrainSpan_RPKM.matrix":"https://firebasestorage.googleapis.com/v0/b/test-908bc.appspot.com/o/BrainSpan_RPKM.matrix?alt=media&token=4ecdcb8d-49c1-451b-81ed-200f496c5ef5",
-            "GTEx_TPM.matrix":"https://firebasestorage.googleapis.com/v0/b/test-908bc.appspot.com/o/GTEx_TPM.matrix?alt=media&token=1dcd8095-38e3-4249-aabf-c8b0137d3609"
-        }
-        if(location.origin.includes("github")) {
-            self.dataLakeURLGenerator = (path) => files[path];
-        } else {
-            self.dataLakeURLGenerator = (path) => `${location.origin}/resources/data/${path}`; 
-        }
-        //self._getMatrixRowDataLake();
     }
 
     _getMatrixRowCached(datasetName, matrixName, row) {
@@ -129,32 +119,93 @@ class MetaPanel {
         console.log(this.hdf5Group);
         let matrix = this.hdf5Group.get(datasetName + "/matrices/" + matrixName);
 
-        let url = this.dataLakeURLGenerator(matrix.attrs["datalake"]);
+        let url = "https://laughing-noether-c70ca8.netlify.app/" + matrix.attrs["datalake"];
 
         let shape = matrix.attrs["shape"];
         let rowStart = row * shape[1];
         let rowEnd = Math.min(rowStart + shape[1], shape[0] * shape[1]);
-        let request = `bytes=${rowStart * 32}-${rowEnd * 32 - 1}`;
-        console.log(row)
-        console.log(shape);
-        console.log(request)
+
+        let start = rowStart * 32;
+        let end = rowEnd * 32;
 
         fetch(url, {
             method: "GET",
-            cache: "default",
+            cache: "force-cache",
             headers: {
-                "Range": request
+                "Range": `bytes=${start}-${end-1}`,
             }
         })
         .then(res => res.arrayBuffer())
         .then(buff => {
-            let array = new Float32Array(buff);
-            callback(array.slice(0, shape[1])) //Throwing away a lot, could cache  this
-        })
+            let array = new Float32Array(buff.slice(0, end));
+            console.log(buff.byteLength - (end-start));
+            callback(array) //Throwing away a lot, could cache  this
+        });
+    }
+
+    _getMatrixRowDataLakeCached(datasetName="BrainSeq", matrixName="RPKM", row=0, callback=console.log) {
+        let matrix = this.hdf5Group.get(datasetName + "/matrices/" + matrixName);
+
+        let shape = matrix.attrs["shape"];
+        let rowStart = row * shape[1];
+        let rowEnd = Math.min(rowStart + shape[1], shape[0] * shape[1]);
+        let chunkRows = 1; //e.g. could be page size but then sorting would break
+        let chunkSize = chunkRows * shape[1];
+        let chunkCurr = Math.floor(row / chunkRows);
+        let chunkStart = chunkCurr * chunkSize;
+        let chunkEnd = Math.min(chunkStart + chunkSize, shape[0] * shape[1]);
+        
+        function abortableFetch(request, opts) {
+            const controller = new AbortController();
+            const signal = controller.signal;
+          
+            return {
+              abort: () => controller.abort(),
+              ready: fetch(request, { ...opts, signal })
+            };
+        }
+
+        let cache = this.rowCache[datasetName][matrixName];
+        if(cache.id == chunkCurr) {
+            console.log(`used cached chunk ${chunkCurr}`);
+            callback(cache.data.slice(rowStart - chunkStart, rowEnd - chunkStart));
+        } else {
+            let start = chunkStart * 32;
+            let end = chunkEnd * 32;
+
+            let f = abortableFetch("https://laughing-noether-c70ca8.netlify.app/" + matrix.attrs["datalake"], {
+                method: "GET",
+                cache: "force-cache",
+                headers: {
+                    "Range": `bytes=${start}-${end-1}`,
+                }
+            });
+
+            f.ready.then(res => {
+                if(res.status != "206") {
+                    f.abort();
+                    throw "Response was not partial"
+                }
+                return res.arrayBuffer()
+            })
+            .then(buff => {
+                console.log(end);
+                console.log(buff.byteLength);
+                console.log(`bytes=${start}-${end-1}`)
+                let array = new Float32Array(buff.slice(0, end));
+                console.log("no cached chunk");
+                cache.data = array;
+                cache.id = chunkCurr;
+                callback(cache.data.slice(rowStart - chunkStart, rowEnd - chunkStart));
+            }, (e) => {
+                console.log(e);
+                callback(null)
+            });
+        }
     }
 
     _getPlotDataY(dataset, yAxis, yRow, plot, callback) {
-        this._getMatrixRowDataLake(dataset, yAxis, yRow, callback);
+        this._getMatrixRowDataLakeCached(dataset, yAxis, yRow, callback);
     }
 
     _getPlotDataX(dataset, xAxis, yRow, plot, callback) {
@@ -172,7 +223,7 @@ class MetaPanel {
         let dataset = controls.getSelectedDataset();
         if(!dataset) return;
 
-        self.supressChanges = true;
+        self.suppressChanges++;
 
         controls.setRegions(self.brainRegions[dataset].values);
 
@@ -188,7 +239,7 @@ class MetaPanel {
 
         self._setXAxis(controls, matrices, samples, plot);
 
-        self.supressChanges = false;
+        self.suppressChanges--;
         self._onPlotChange(controls, plot);
     }
 
@@ -199,7 +250,7 @@ class MetaPanel {
     _onPlotChange(controls, plot) {
         var self = this;
 
-        if(self.supressChanges) return;
+        if(self.suppressChanges > 0) return;
 
         let dataset = controls.getSelectedDataset();
 
@@ -207,13 +258,19 @@ class MetaPanel {
             plot.updateDisabled();
             return;
         }
+
+        plot.updateDisabled("Fetching data...");
         
         let yAxis = controls.getSelectedYAxis();
         let yRow = self.currIndex[dataset];
         self._getPlotDataY(dataset, yAxis, yRow, plot, (y) => {
+            if(!y) plot.updateDisabled("Data could not be retrieved");
+
             let xAxis = controls.getSelectedXAxis();
             
             self._getPlotDataX(dataset, xAxis, yRow, plot, (x) => {
+                if(!x) plot.updateDisabled("Data could not be retrieved");
+
                 let xAxisIsString = $.type(x[0]) === "string";
                 controls.setColoringDisabled(xAxisIsString);
 
@@ -326,7 +383,7 @@ class MetaPanel {
 
     setCircId(circId, obj) {
         let self = this;
-        self.supressChanges = true;
+        self.suppressChanges++;
         self.currCircId = circId;
         self.currIndex = obj;
 
@@ -337,7 +394,7 @@ class MetaPanel {
 
         self.setControlDatasets(self.controls, self.datasets);
        
-        self.supressChanges = false;
+        self.suppressChanges--;
         self._onPlotChange(self.controls, self.plot, false);
 
         self._onQTLChange();
