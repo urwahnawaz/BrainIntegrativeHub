@@ -125,8 +125,8 @@ class MetaPanel {
         let rowStart = row * shape[1];
         let rowEnd = Math.min(rowStart + shape[1], shape[0] * shape[1]);
 
-        let start = rowStart * 32;
-        let end = rowEnd * 32;
+        let start = rowStart * 4;
+        let end = rowEnd * 4;
 
         fetch(url, {
             method: "GET",
@@ -146,6 +146,8 @@ class MetaPanel {
     _getMatrixRowDataLakeCached(datasetName="BrainSeq", matrixName="RPKM", row=0, callback=console.log) {
         let matrix = this.hdf5Group.get(datasetName + "/matrices/" + matrixName);
 
+        let bytesPerFloat = 4;
+
         let shape = matrix.attrs["shape"];
         let rowStart = row * shape[1];
         let rowEnd = Math.min(rowStart + shape[1], shape[0] * shape[1]);
@@ -154,7 +156,6 @@ class MetaPanel {
         let chunkCurr = Math.floor(row / chunkRows);
         let chunkStart = chunkCurr * chunkSize;
         let chunkEnd = Math.min(chunkStart + chunkSize, shape[0] * shape[1]);
-        
         function abortableFetch(request, opts) {
             const controller = new AbortController();
             const signal = controller.signal;
@@ -170,8 +171,8 @@ class MetaPanel {
             console.log(`used cached chunk ${chunkCurr}`);
             callback(cache.data.slice(rowStart - chunkStart, rowEnd - chunkStart));
         } else {
-            let start = chunkStart * 32;
-            let end = chunkEnd * 32;
+            let start = chunkStart * bytesPerFloat;
+            let end = chunkEnd * bytesPerFloat;
 
             let f = abortableFetch("https://laughing-noether-c70ca8.netlify.app/" + matrix.attrs["datalake"], {
                 method: "GET",
@@ -199,7 +200,7 @@ class MetaPanel {
                 callback(cache.data.slice(rowStart - chunkStart, rowEnd - chunkStart));
             }, (e) => {
                 console.log(e);
-                callback(null)
+                callback(null);
             });
         }
     }
@@ -264,66 +265,70 @@ class MetaPanel {
         let yAxis = controls.getSelectedYAxis();
         let yRow = self.currIndex[dataset];
         self._getPlotDataY(dataset, yAxis, yRow, plot, (y) => {
-            if(!y) plot.updateDisabled("Data could not be retrieved");
-
-            let xAxis = controls.getSelectedXAxis();
-            
-            self._getPlotDataX(dataset, xAxis, yRow, plot, (x) => {
-                if(!x) plot.updateDisabled("Data could not be retrieved");
-
-                let xAxisIsString = $.type(x[0]) === "string";
-                controls.setColoringDisabled(xAxisIsString);
-
-                let z = undefined;
-                let plotData = undefined;
-                let coloring = controls.getSelectedColoring();
-                if(!xAxisIsString && coloring != "None") {
-                    if(xAxis == coloring) {
-                        z = x;
+            if(y == null) {
+                plot.updateDisabled("Data could not be retrieved");
+            } else {
+                let xAxis = controls.getSelectedXAxis();
+                
+                self._getPlotDataX(dataset, xAxis, yRow, plot, (x) => {
+                    if(x == null) { 
+                        plot.updateDisabled("Data could not be retrieved");
                     } else {
-                        z = self.hdf5Group.get(dataset + "/samples/" + coloring).value;
+                        let xAxisIsString = $.type(x[0]) === "string";
+                        controls.setColoringDisabled(xAxisIsString);
+
+                        let z = undefined;
+                        let plotData = undefined;
+                        let coloring = controls.getSelectedColoring();
+                        if(!xAxisIsString && coloring != "None") {
+                            if(xAxis == coloring) {
+                                z = x;
+                            } else {
+                                z = self.hdf5Group.get(dataset + "/samples/" + coloring).value;
+                            }
+                            plotData = x.map((v, i) => {return {x: x[i], y: y[i], z: z[i]};});
+                        } else {
+                            plotData = x.map((v, i) => {return {x: x[i], y: y[i]};});
+                        }
+
+                        let scale = controls.getSelectedScale();
+                        let labels = {yAxisLabel: yAxis, xAxisLabel: xAxis};
+                        if(scale != "Linear") {
+                            let func = (scale == "Log e" ? Math.log : Math.log10);
+                            self._scalePlotData(plotData, func, 0.1, plot, scale, labels);
+                        }
+
+                        if(self.hdf5Group.keys.includes("sample_id")) {
+                            let sampleNames = self.hdf5Group.get(dataset).attrs["sample_id"];
+                            for(let i=0; i<plotData.length; ++i) plotData[i].name = sampleNames[i];
+                        } else {
+                            for(let i=0; i<plotData.length; ++i) plotData[i].name = i;
+                        }
+                        
+                        //Filter by selected region
+                        let currRegionKey = self.brainRegions[dataset].key;
+                        let filterSelected = controls.getSelectedRegion();
+                        
+                        if(currRegionKey && filterSelected != "All") {
+                            console.log(currRegionKey);
+                            console.log(filterSelected);
+                            let filterValues = self.hdf5Group.get(dataset + "/samples/" + currRegionKey).value;
+                            plotData = plotData.filter((value, index) => filterValues[index] == filterSelected);
+                        }
+
+                        if(plotData.length == 0) {
+                            plot.updateDisabled();
+                            return;
+                        }
+
+                        if(xAxisIsString) {
+                            plot.updateBox(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset]);
+                        } else {
+                            plot.updateScatter(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset]);
+                        }
                     }
-                    plotData = x.map((v, i) => {return {x: x[i], y: y[i], z: z[i]};});
-                } else {
-                    plotData = x.map((v, i) => {return {x: x[i], y: y[i]};});
-                }
-
-                let scale = controls.getSelectedScale();
-                let labels = {yAxisLabel: yAxis, xAxisLabel: xAxis};
-                if(scale != "Linear") {
-                    let func = (scale == "Log e" ? Math.log : Math.log10);
-                    self._scalePlotData(plotData, func, 0.1, plot, scale, labels);
-                }
-
-                if(self.hdf5Group.keys.includes("sample_id")) {
-                    let sampleNames = self.hdf5Group.get(dataset).attrs["sample_id"];
-                    for(let i=0; i<plotData.length; ++i) plotData[i].name = sampleNames[i];
-                } else {
-                    for(let i=0; i<plotData.length; ++i) plotData[i].name = i;
-                }
-                
-                //Filter by selected region
-                let currRegionKey = self.brainRegions[dataset].key;
-                let filterSelected = controls.getSelectedRegion();
-                
-                if(currRegionKey && filterSelected != "All") {
-                    console.log(currRegionKey);
-                    console.log(filterSelected);
-                    let filterValues = self.hdf5Group.get(dataset + "/samples/" + currRegionKey).value;
-                    plotData = plotData.filter((value, index) => filterValues[index] == filterSelected);
-                }
-
-                if(plotData.length == 0) {
-                    plot.updateDisabled();
-                    return;
-                }
-
-                if(xAxisIsString) {
-                    plot.updateBox(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset]);
-                } else {
-                    plot.updateScatter(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset]);
-                }
-            });
+                });
+            }
         });
     }
 
