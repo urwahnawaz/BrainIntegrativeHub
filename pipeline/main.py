@@ -144,19 +144,21 @@ def annotateEnsemblNCBI(iter):
         genes[id.group(1)] = gene
 
     for circ in iter:
-        newer = None
+        if(circ.geneId): circ.gene = genes.get(circ.geneId, "")
+        
+        #newer = None
 
-        if circ.geneId:
-            newer = genes.get(circ.geneId, None)
-            if not newer:
-                circ.geneId = ""
+        #if circ.geneId:
+        #    newer = genes.get(circ.geneId, None)
+        #    if not newer:
+        #        circ.geneId = ""
 
-        if circ.gene and not newer:
-            newer = synonyms.get(circ.gene, None)
+        #if circ.gene and not newer:
+        #    newer = synonyms.get(circ.gene, None)
 
-        if newer: circ.gene = newer
-        if not circ.geneId and circ.gene: 
-            circ.geneId = ids.get(circ.gene, "")
+        #if newer: circ.gene = newer
+        #if not circ.geneId and circ.gene: 
+        #    circ.geneId = ids.get(circ.gene, "")
 
 if __name__ == '__main__':
     with open("./input.yaml", 'r') as stream:

@@ -20,6 +20,13 @@ datasets:
         matrices: 
             -   type: RPKM
                 path: "brainseq_matrix_rpkm.csv"
+    -   id: PsychENCODE
+        url: "http://resource.psychencode.org/"
+        dir: "./data/PsychENCODE/"
+        meta: ""
+        matrices: 
+            -   type: TPM
+                path: "DER-02_PEC_gene_expression_matrix_tpm_formatted.csv"
 panels:
     -   name: "Explore all metadata in human brain tissue"
         datasets: [BrainSpan, GTEx, BrainSeq]
