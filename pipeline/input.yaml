@@ -1,35 +1,35 @@
 datasets:
     -   id: BrainSpan
         url: "https://www.brainspan.org/"
-        dir: "./data/BrainSpan/"
-        meta: "brainspan_metadata2.csv"
+        dir: "./data/FormattedData/BrainSpan/"
+        meta: "brainspan_metadata_new.csv"
         matrices: 
             -   type: RPKM
                 path: "brainspan_matrix_rpkm.csv"
     -   id: GTEx
         url: "https://gtexportal.org/"
-        dir: "./data/GTEx/"
-        meta: "gtex_metadata_brainOnly2.csv"
+        dir: "./data/FormattedData/Gtex/"
+        meta: "gtex_metadata_brainOnly.csv"
         matrices: 
             -   type: TPM
-                path: "gtex_tpm_matrix_brainOnly2.csv"
+                path: "gtex_tpm_matrix_brainOnly.csv"
     -   id: BrainSeq
         url: "https://www.brainrnaseq.org/"
-        dir: "./data/BrainSeq/"
-        meta: "brainseq_metadata.csv"
+        dir: "./data/FormattedData/BrainSeq/"
+        meta: "brainseq_metadata_new_weighted.csv"
         matrices: 
             -   type: RPKM
                 path: "brainseq_matrix_rpkm.csv"
     -   id: PsychENCODE
         url: "http://resource.psychencode.org/"
-        dir: "./data/PsychENCODE/"
-        meta: ""
+        dir: "./data/FormattedData/PsychENCODE/"
+        meta: "Job-154061626746631166818172835_fixed.csv"
         matrices: 
             -   type: TPM
                 path: "DER-02_PEC_gene_expression_matrix_tpm_formatted.csv"
 panels:
     -   name: "Explore all metadata in human brain tissue"
-        datasets: [BrainSpan, GTEx, BrainSeq]
+        datasets: [BrainSpan, GTEx, BrainSeq, PsychENCODE]
         description: >
             This section allows detailed exploration of all datasets, including <a href=BrainSpan>BrainSpan</a>.
             Expression values (for instance, in Transcripts per Million ; TPM) can be plotted against metadata variables selected from the drop-down menu. 
