@@ -8,8 +8,6 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
-
-    <script language="javascript" src="https://www.biodalliance.org/release-0.13/dalliance-compiled.js"></script>
     
     <script src="https://kit.fontawesome.com/358fab0097.js" crossorigin="anonymous"></script>
 
@@ -188,7 +186,7 @@
 
     <script>
         var metaPanels = [];
-        var hdf5Data = undefined;
+        var hdf5Root = undefined;
         var urls = {};
         var heatmap = undefined;
 
@@ -498,11 +496,13 @@
                 tableContents += `<tr data-index="${sortIndex}">`;
                 for(let j of showCols) {
                     let e = matrix[j][sortIndex];
+                    let o = dataOrder[j];
+                    let opacity = (e != -1 && Object.keys(lmsPanel.data).includes(o)) ? (Math.min(Math.max(lmsPanel.data[o][e], -3), 3) + 3) / 6.0 : 0.01;
                     if (isDataset[j]) {
                         if(isBrainDataset[j]) {
-                            tableContents += `<td class="${(e != -1 ? 'bool yes dataset1' : 'bool no')}"></td>`;
+                            tableContents += `<td style="opacity=${opacity}" class="${(e != -1 ? 'bool yes dataset1' : 'bool no')}"></td>`;
                         } else {
-                            tableContents += `<td class="${(e != -1 ? 'bool yes dataset2' : 'bool no')}"></td>`;
+                            tableContents += `<td style="opacity:${opacity}" class="${(e != -1 ? 'bool yes dataset2' : 'bool no')}"></td>`;
                         }
                     } else if (isDatabase[j]) {
                         tableContents += `<td class="${(e != -1 ? 'bool yes database' : 'bool no')}"></td>`;
@@ -553,8 +553,11 @@
                         metaIndex[i] = matrix[i][circindex];
                         present = (metaIndex[i] != -1);
                         let url = "";
+                        let opacity = 1;
                         if(present) {
-                            let urlObj = urls[dataOrder[i]];
+                            let o = dataOrder[i];
+
+                            let urlObj = urls[o];
                             if(urlObj) {
                                 if(urlObj.prefix) {
                                     url = urlObj.prefix + urlObj.urls[metaIndex[i]];
@@ -562,8 +565,12 @@
                                     url = urlObj.home;
                                 }
                             }
+
+                            if(present && isDataset[i] && Object.keys(lmsPanel.data).includes(o)) {
+                                opacity = (Math.min(Math.max(lmsPanel.data[o][metaIndex[i]], -3), 3) + 3) / 6.0;
+                            }
                         }
-                        heatmapObj.push({name: dataOrder[i], url: url, present: present, datasetType: ((isDataset[i]) ? (isBrainDataset[i] ? 1 : 2) : 0)});
+                        heatmapObj.push({name: dataOrder[i], url: url, present: present, opacity: opacity, datasetType: ((isDataset[i]) ? (isBrainDataset[i] ? 1 : 2) : 0)});
                     }
                 }
 

@@ -17,6 +17,7 @@ datasets:
         url: "https://www.brainrnaseq.org/"
         dir: "./data/FormattedData/BrainSeq/"
         meta: "brainseq_metadata_new_weighted.csv"
+        brainRegionFilter: "Region"
         matrices: 
             -   type: RPKM
                 path: "brainseq_matrix_rpkm.csv"
@@ -28,10 +29,37 @@ datasets:
             -   type: TPM
                 path: "DER-02_PEC_gene_expression_matrix_tpm_formatted.csv"
 panels:
-    -   name: "Explore all metadata in human brain tissue"
-        datasets: [BrainSpan, GTEx, BrainSeq, PsychENCODE]
+    -   name: "Explore all metadata in BrainSpan"
+        datasets: [BrainSpan]
         description: >
             This section allows detailed exploration of all datasets, including <a href=BrainSpan>BrainSpan</a>.
+            Expression values (for instance, in Transcripts per Million ; TPM) can be plotted against metadata variables selected from the drop-down menu. 
+            A boxplot is generated for categorical metadata variables and a scatterplot is generated for numerical variables.  In the case of numerical variables, 
+            a second categorical variable can be selected to color the datapoints – eg. TPM vs Age plot with data points colored by Brain Region.
+            A scatterplot of circular RNA vs linear RNA expression shows the relationship between circRNA expression in CPM and the 
+            parental linear RNA expression quantified based on the expression of the upstream and downstream linear junctions (SJ), normalised as CPM.
+    -   name: "Explore all metadata in GTEx"
+        datasets: [GTEx]
+        description: >
+            This section allows detailed exploration of all datasets, including <a href=GTEx>GTEx</a>.
+            Expression values (for instance, in Transcripts per Million ; TPM) can be plotted against metadata variables selected from the drop-down menu. 
+            A boxplot is generated for categorical metadata variables and a scatterplot is generated for numerical variables.  In the case of numerical variables, 
+            a second categorical variable can be selected to color the datapoints – eg. TPM vs Age plot with data points colored by Brain Region.
+            A scatterplot of circular RNA vs linear RNA expression shows the relationship between circRNA expression in CPM and the 
+            parental linear RNA expression quantified based on the expression of the upstream and downstream linear junctions (SJ), normalised as CPM.
+    -   name: "Explore all metadata in BrainSeq"
+        datasets: [BrainSeq]
+        description: >
+            This section allows detailed exploration of all datasets, including <a href=BrainSeq>BrainSeq</a>.
+            Expression values (for instance, in Transcripts per Million ; TPM) can be plotted against metadata variables selected from the drop-down menu. 
+            A boxplot is generated for categorical metadata variables and a scatterplot is generated for numerical variables.  In the case of numerical variables, 
+            a second categorical variable can be selected to color the datapoints – eg. TPM vs Age plot with data points colored by Brain Region.
+            A scatterplot of circular RNA vs linear RNA expression shows the relationship between circRNA expression in CPM and the 
+            parental linear RNA expression quantified based on the expression of the upstream and downstream linear junctions (SJ), normalised as CPM.
+    -   name: "Explore all metadata in PsychENCODE"
+        datasets: [PsychENCODE]
+        description: >
+            This section allows detailed exploration of all datasets, including <a href=PsychENCODE>PsychENCODE</a>.
             Expression values (for instance, in Transcripts per Million ; TPM) can be plotted against metadata variables selected from the drop-down menu. 
             A boxplot is generated for categorical metadata variables and a scatterplot is generated for numerical variables.  In the case of numerical variables, 
             a second categorical variable can be selected to color the datapoints – eg. TPM vs Age plot with data points colored by Brain Region.

@@ -58,42 +58,7 @@ class Heatmap {
             .attr("width", boxWidth-4)
             .attr("height", boxWidth-4)
             .style("fill", function (d) { return d3.color(!d.present ? "whitesmoke" : (d.datasetType == 1 ? "#ffbe33" : (d.datasetType == 2 ? "#ff9433" : "#2b6da4")))})
-            .on("mouseover", function(d,i) {
-                if(!d.url) {
-                    d3.select(this)
-                        .style("cursor", "default")
-                    return;
-                }
-
-                let selected = this;
-                boxes.selectAll("rect")
-                .interrupt()
-                .transition()
-                .filter(function() {return this != selected;})
-                .duration(250)
-                .style("opacity", 0.5)
-
-                d3.select(this)
-                .style("cursor", "pointer")
-                .interrupt()
-                .transition()
-                .duration(100)
-                .style("opacity", 1.0)
-                
-            })
-            .on("mouseout", function(d, i) {
-                let selected = this;
-
-                d3.select(this)
-                .style("cursor", "default")
-
-                boxes.selectAll("rect")
-                .interrupt()
-                .transition()
-                .filter(function() {return this != selected;})
-                .duration(100)
-                .style("opacity", 1.0)
-            })
+            .style("opacity", function(d) {return d.opacity})
             .on("click", function(d, i) {
                 if(!d.url) return;
                 window.open(d.url, '_blank')
