@@ -63,5 +63,7 @@ class Heatmap {
                 if(!d.url) return;
                 window.open(d.url, '_blank')
             })
+            .append("svg:title")
+            .text(d => d.zscore.toFixed(2));
     }
 }

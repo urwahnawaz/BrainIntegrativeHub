@@ -545,6 +545,7 @@
                         metaIndex[i] = matrix[i][circindex];
                         present = (metaIndex[i] != -1);
                         let url = "";
+                        let zscore = "NA";
                         let opacity = 1;
                         if(present) {
                             let o = dataOrder[i];
@@ -559,10 +560,11 @@
                             }
 
                             if(present && isDataset[i] && Object.keys(lmsPanel.data).includes(o)) {
-                                opacity = (Math.min(Math.max(lmsPanel.data[o][metaIndex[i]], -3), 3) + 3) / 6.0;
+                                zscore = lmsPanel.data[o][metaIndex[i]];
+                                opacity = (Math.min(Math.max(zscore, -3), 3) + 3) / 6.0;
                             }
                         }
-                        heatmapObj.push({name: dataOrder[i], url: url, present: present, opacity: opacity, datasetType: ((isDataset[i]) ? (isBrainDataset[i] ? 1 : 2) : 0)});
+                        heatmapObj.push({name: dataOrder[i], url: url, present: present, opacity: opacity, zscore: zscore, datasetType: ((isDataset[i]) ? (isBrainDataset[i] ? 1 : 2) : 0)});
                     }
                 }
 
