@@ -57,7 +57,7 @@ class Heatmap {
         boxes.append("rect")
             .attr("width", boxWidth-4)
             .attr("height", boxWidth-4)
-            .style("fill", function (d) { return d3.color(!d.present ? "whitesmoke" : (d.datasetType == 1 ? "#ffbe33" : (d.datasetType == 2 ? "#ff9433" : "#2b6da4")))})
+            .style("fill", function (d) { return d3.color(!d.present ? "whitesmoke" : (d.datasetType == 1 ? "#ffbe33" : (d.datasetType == 2 ? "#009b41" : "#2b6da4")))})
             .style("opacity", function(d) {return d.opacity})
             .on("click", function(d, i) {
                 if(!d.url) return;

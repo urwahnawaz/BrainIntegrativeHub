@@ -65,7 +65,7 @@ class Plot {
             .attr("cx", function (d) { return (self.x(d.x)) })
             .attr("cy", function (d) { return (self.y(d.y)) })
             .attr("r", 8)
-            .style("fill", "#ff9433" )
+            .style("fill", "#009b41" )
             .attr("stroke", "white")
     }
 
@@ -230,6 +230,89 @@ class Plot {
             .attr("stroke", "black")
             .on("mouseover", (d) => self._tooltipMouseOver(d))
             .on("mouseleave", (d) => self._tooltipMouseLeave(d))
+
+        self._addTooltip();
+    }
+
+    //Expects [{x, y, z=undefined}...] where x is string and y is numeric, z is optional string for coloring
+    updateViolin(data, xName, yName, dataset) {
+        var self = this;
+        self._update(data, xName, yName, dataset);
+
+        let categoriesX = self._getCategories(data, d => d.x)
+        let multiplePerCategory = (data.length > categoriesX.length);
+        
+        var histogram = d3.histogram()
+        .domain(self.y.domain())
+        .thresholds(self.y.ticks(20))    // resolution of plots
+        .value(d => d)
+
+        let multipleColors = (data[data.length-1].z);
+
+        let violinColorScale = !multipleColors ? () => "#2b6da4" : d3.scaleOrdinal()
+            .domain(categoriesX)
+            .range(["#377eb8","#4daf4a","#ff7f00","#ffff33","#a65628","#984ea3", "#f781bf","#999999", "#e41a1c"]);
+
+        var sumstat = d3.nest()
+        .key(d => d.x + (d.z ? " " + d.z : ""))
+        .sortKeys(d3.ascending)
+        .rollup(d => ({color:violinColorScale(d[0].x),hist:histogram(d.map(g => g.y))}))
+        .entries(data)
+        
+        for(let i=0; i<sumstat.length;++i) {
+            sumstat[i].value.key = sumstat[i].key; 
+            sumstat[i] = sumstat[i].value;
+        }
+
+        // Show the X scale
+        self.x = d3.scaleBand()
+            .range([0, self.width])
+            .domain(sumstat.map(d => d.key))
+            .padding(0.05)
+
+        let xText = self.svg.append("g")
+            .attr("transform", "translate(0," + self.height + ")")
+            .call(d3.axisBottom(self.x))
+            .selectAll("text")
+
+        //Roatate X labels if there are many categories
+        if(sumstat.length >= 10) {
+            xText.attr("y", 0)
+            .attr("x", -9)
+            .attr("dy", ".35em")
+            .style("text-anchor", "end")
+            .attr("transform", "rotate(-90)");
+            //.text(d => d.length <= 10 ? d : d.substring(0, 7) + '...');
+        }
+
+        var maxNum = 0
+        for (let i in sumstat){
+            let allBins = sumstat[i].hist;
+            let lengths = allBins.map(function(a){return a.length;})
+            let longuest = d3.max(lengths)
+            if (longuest > maxNum) { maxNum = longuest }
+        }
+
+        var xNum = d3.scaleLinear()
+        .range([0, self.x.bandwidth()])
+        .domain([-maxNum,maxNum])
+
+        self.svg
+        .selectAll("myViolin")
+        .data(sumstat)
+        .enter()
+        .append("g")
+        .attr("transform", function(d){ return("translate(" + self.x(d.key) +" ,0)") } )
+        .append("path")
+        .style("fill", d => d.color)
+        .datum(d => d.hist)
+        .style("stroke", "none")
+        .attr("d", d3.area()
+            .x0(d =>  xNum(-d.length) )
+            .x1(d => xNum(d.length))
+            .y(d => self.y(d.x0))
+            .curve(d3.curveCatmullRom)
+        )
 
         self._addTooltip();
     }

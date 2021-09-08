@@ -275,17 +275,12 @@ class MetaPanel {
                         plot.updateDisabled("Data could not be retrieved");
                     } else {
                         let xAxisIsString = $.type(x[0]) === "string";
-                        controls.setColoringDisabled(xAxisIsString);
 
                         let z = undefined;
                         let plotData = undefined;
                         let coloring = controls.getSelectedColoring();
-                        if(!xAxisIsString && coloring != "None") {
-                            if(xAxis == coloring) {
-                                z = x;
-                            } else {
-                                z = self.hdf5Group.get(dataset + "/samples/" + coloring).value;
-                            }
+                        if(coloring != "None" && coloring != xAxis) {
+                            z = self.hdf5Group.get(dataset + "/samples/" + coloring).value;
                             plotData = x.map((v, i) => {return {x: x[i], y: y[i], z: z[i]};});
                         } else {
                             plotData = x.map((v, i) => {return {x: x[i], y: y[i]};});
@@ -322,7 +317,7 @@ class MetaPanel {
                         }
 
                         if(xAxisIsString) {
-                            plot.updateBox(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset]);
+                            plot.updateViolin(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset]);
                         } else {
                             plot.updateScatter(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset]);
                         }

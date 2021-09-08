@@ -159,7 +159,7 @@ html, body {margin:0;padding:0;height:100%}
 
   table > tbody > tr > td.bool {
     border-color: white;
-    border-width: 2px;
+    border-width: 3px;
     border-style: solid;
     border-radius: 2.5px;
   }
@@ -177,7 +177,7 @@ html, body {margin:0;padding:0;height:100%}
   }
 
   table > tbody > tr > td.yes.dataset2 {
-    background-color: #ff9433;
+    background-color: #009b41;
   }
 
 

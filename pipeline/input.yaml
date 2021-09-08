@@ -2,7 +2,7 @@ datasets:
     -   id: BrainSpan
         url: "https://www.brainspan.org/"
         dir: "./data/FormattedData/BrainSpan/"
-        meta: "brainspan_metadata_new.csv"
+        meta: "brainspan_metadata.csv"
         matrices: 
             -   type: RPKM
                 path: "brainspan_matrix_rpkm.csv"
@@ -16,7 +16,7 @@ datasets:
     -   id: BrainSeq
         url: "https://www.brainrnaseq.org/"
         dir: "./data/FormattedData/BrainSeq/"
-        meta: "brainseq_metadata_new_weighted.csv"
+        meta: "brainseq_metadata_new_weighted_deconv.csv"
         brainRegionFilter: "Region"
         matrices: 
             -   type: RPKM
@@ -24,7 +24,7 @@ datasets:
     -   id: PsychENCODE
         url: "http://resource.psychencode.org/"
         dir: "./data/FormattedData/PsychENCODE/"
-        meta: "Job-154061626746631166818172835_fixed.csv"
+        meta: "Job-154061626746631166818172835-UpdatedPerScript.csv"
         matrices: 
             -   type: TPM
                 path: "DER-02_PEC_gene_expression_matrix_tpm_formatted.csv"
