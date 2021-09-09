@@ -560,7 +560,7 @@
                             }
 
                             if(present && isDataset[i] && Object.keys(lmsPanel.data).includes(o)) {
-                                zscore = lmsPanel.data[o][metaIndex[i]];
+                                zscore = lmsPanel.data[o][metaIndex[i]].toFixed(2);
                                 opacity = (Math.min(Math.max(zscore, -3), 3) + 3) / 6.0;
                             }
                         }
