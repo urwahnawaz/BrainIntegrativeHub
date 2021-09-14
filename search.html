@@ -807,6 +807,9 @@
             // CSV body
             for(let i = 0; i<matrix[0].length; ++i) {
                 let sortIndex = indices[i];
+
+                if(showPinnedOnly && !pinnedColumn[sortIndex]) continue;
+
                 shouldInclude = false;
                 for(let j of searchCols) {
                     if(j < 0) continue;
