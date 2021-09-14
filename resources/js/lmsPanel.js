@@ -100,10 +100,10 @@ class LMSPanel {
         self.plot.updateScatter(plotData, curr1, curr2, "Z-Score Transformed Mean Log2 (Expression)");
         if(pinned && document.getElementById("showpinned").checked) {
             for(var p of pinned) {
-                let metaIndex = self.metas[curr1][p.row];
-                if(metaIndex >= 0) {
-                    let metaIndex = self.metas[curr1][p.row];
-                    self.plot.addScatterHighlight({x: data1[self.metas[curr1][metaIndex]], y: data2[self.metas[curr2][metaIndex]]}, p.ensembl_id, "#00e04f", "white", 5)
+                let metaIndex1 = self.metas[curr1][p.row];
+                let metaIndex2 = self.metas[curr2][p.row];
+                if(metaIndex1 >= 0 && metaIndex2 >= 0) {
+                    self.plot.addScatterHighlight({x: data1[self.metas[curr1][metaIndex1]], y: data2[self.metas[curr2][metaIndex2]]}, p.ensembl_id, "#00e04f", "white", 5)
                 }
             }
         }

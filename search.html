@@ -533,6 +533,7 @@
             $("#myDisplay")[0].setAttribute('data-domain', total + " result" + (total != 1 ? "s" : ""));
 
             $("thead > tr > th > span").click(function (arg) {
+                pageCurr = 0;
                 if(arg.target.id == "PinHeading") {
                     showPinnedOnly = !showPinnedOnly;
                 } else {
