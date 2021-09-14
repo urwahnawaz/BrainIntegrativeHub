@@ -56,17 +56,20 @@ class Plot {
         }
     }
 
-    addScatterHighlight(point) {
+    addScatterHighlight(point, title="", fill="#ffbf00", stroke="white", radius=8) {
         var self = this;
         self.highlight = self.svg.selectAll("highlight")
             .data([point])
             .enter()
             .append("circle")
+            .style("cursor", "pointer")
             .attr("cx", function (d) { return (self.x(d.x)) })
             .attr("cy", function (d) { return (self.y(d.y)) })
-            .attr("r", 8)
-            .style("fill", "#009b41" )
-            .attr("stroke", "white")
+            .attr("r", radius)
+            .style("fill",  fill)
+            .attr("stroke", stroke)
+            .append("svg:title")
+            .text(title);
     }
 
     addYAxisCallback(callback) {

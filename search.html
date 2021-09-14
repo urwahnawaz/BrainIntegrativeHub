@@ -189,6 +189,10 @@
         var hdf5Root = undefined;
         var urls = {};
         var heatmap = undefined;
+        var existingPinned = localStorage.getItem("pinned");
+        var pinned = existingPinned ? JSON.parse(existingPinned) : [];
+        var pinnedColumn = undefined;
+        var showPinnedOnly = false;
 
         let dataOrder = undefined;
         let isDataset = undefined;
@@ -337,6 +341,18 @@
             indices = new Array(matrix[0].length);
             defaultCoord = hdf5Data.attrs.defaultCoord;
 
+            pinnedColumn = new Array(matrix[0].length).fill(false);
+            for(let p of pinned) {
+                let pinRow = p.row;
+                if(matrix[0][pinRow] != p.ensemble_id || matrix[1][pinRow] != p.gene_symbol) pinRow = matrix[0].indexOf(p.ensembl_id);
+                if(pinRow == -1) pinRow = matrix[1].indexOf(p.gene_symbol);
+                if(pinRow != -1) {
+                    pinnedColumn[pinRow] = true;
+                    if(pinRow != p.row) p.row = pinRow;
+                    else p.archived = true;
+                }
+            }
+
             searchCols.push(-defaultCoord-1);
 
             let urlsGroup = f.get("urls");
@@ -399,6 +415,7 @@
             let tableContents = "";
             tableContents += '<thead>';
             tableContents += "<tr>";
+            tableContents += `<th class="nolegend" style="width:40px;" scope="colgroup" colspan="1"></th>`;//pinned column
             for(let i of showCols) {
                 if(!isDataset[i] && !isDatabase[i]) {
                     let o = dataOrder[i];
@@ -415,6 +432,7 @@
             tableContents += "</tr>";
 
             tableContents += "<tr>";
+            tableContents += `<th><span id="PinHeading"class="unselectable filterable ${showPinnedOnly ? "filtered" : ""}"></th>`; //pinned
             for (let i of showCols) {
                 let h = dataOrder[i];
                 sortClass = ((i == sortCurrCol) ? sortClassOrder[sortCurrIndex] : "both");
@@ -453,6 +471,8 @@
             for(let i=0; i<matrix[0].length; ++i) {
                 let sortIndex = indices[i];
 
+                if(showPinnedOnly && !pinnedColumn[sortIndex]) continue;
+
                 let shouldInclude = true;
                 if(searchPos) {
                     shouldInclude = false;
@@ -486,10 +506,11 @@
                 //total < 50 || total > 100
 
                 tableContents += `<tr data-index="${sortIndex}">`;
+                tableContents += `<td class="Pinned"><i class="Pinned fas fa-thumbtack" style="opacity:${pinnedColumn[sortIndex] ? 0.5 : 0.05};"></i></td>`; //pinned
                 for(let j of showCols) {
                     let e = matrix[j][sortIndex];
                     let o = dataOrder[j];
-                    let opacity = (e != -1 && Object.keys(lmsPanel.data).includes(o)) ? (Math.min(Math.max(lmsPanel.data[o][e], -3), 3) + 3) / 6.0 : 0.01;
+                    let opacity = (e != -1 && Object.keys(lmsPanel.data).includes(o)) ? (Math.min(Math.max(lmsPanel.data[o][e], -3), 3) + 3) / 6.0 : 1;
                     if (isDataset[j]) {
                         if(isBrainDataset[j]) {
                             tableContents += `<td style="opacity=${opacity}" class="${(e != -1 ? 'bool yes dataset1' : 'bool no')}"></td>`;
@@ -512,20 +533,26 @@
             $("#myDisplay")[0].setAttribute('data-domain', total + " result" + (total != 1 ? "s" : ""));
 
             $("thead > tr > th > span").click(function (arg) {
-                if(arg.target.id == "Datasets") {
-                    sortNewCol = -1;
-                } else if(arg.target.id == "Databases") {
-                    sortNewCol = -2;
+                if(arg.target.id == "PinHeading") {
+                    showPinnedOnly = !showPinnedOnly;
                 } else {
-                    sortNewCol = dataOrder.indexOf(arg.target.id);
-                }
+                    sortNewCol = undefined;
+                    if(arg.target.id == "Datasets") {
+                        sortNewCol = -1;
+                    } else if(arg.target.id == "Databases") {
+                        sortNewCol = -2;
+                    } else {
+                        sortNewCol = dataOrder.indexOf(arg.target.id);
+                    }
 
-                if (sortCurrCol == sortNewCol) {
-                    sortCurrIndex = (sortCurrIndex + 1) % 3;
-                } else {
-                    sortCurrIndex = 1;
+                    if (sortCurrCol == sortNewCol) {
+                        sortCurrIndex = (sortCurrIndex + 1) % 3;
+                    } else {
+                        sortCurrIndex = 1;
+                    }
+                    sortCurrCol = sortNewCol;
                 }
-                sortCurrCol = sortNewCol;
+                
                 makeTable();
             });
 
@@ -534,6 +561,18 @@
                     return; //user selected text, not a click
                 }
                 let circindex = parseInt(arg.currentTarget.getAttribute("data-index"));
+
+                if(arg.target.classList.contains("Pinned")) {
+                    if(!pinnedColumn[circindex]) {
+                        pinned.push({row:circindex, ensembl_id:matrix[0][circindex], gene_symbol:matrix[1][circindex], archived:false})
+                    } else {
+                        pinned = pinned.filter(p => p.row != circindex);
+                    }
+                    localStorage.setItem('pinned', JSON.stringify(pinned));
+                    pinnedColumn[circindex] = !pinnedColumn[circindex];
+                    makeTable();
+                    return;
+                }
 
                 let metaIndex = new Array(dataOrder.length);
 
@@ -577,7 +616,7 @@
                 customPanel.setCircId(matrix[0][circindex], metadataObj);
 
                 console.log("setting lms panel")
-                lmsPanel.setCircIndex(circindex);
+                lmsPanel.setCircIndex(circindex, pinned);
                 //Show modal
                 $("#myModalTitle").text("CircRNA: " + matrix[0][circindex]);
                 $("#myModal").modal('toggle');

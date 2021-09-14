@@ -19,6 +19,7 @@ class LMSPanel {
         self.resetOptions();
         $('#lmsselect1').on('change', () => self.update());
         $('#lmsselect2').on('change', () => self.update());
+        $('#showpinned').on('change', () => self.update());
 
         self.preventUpdates = false;
         self.update();
@@ -38,8 +39,9 @@ class LMSPanel {
         self._setOptions("lmsselect2", names);
     }
 
-    setCircIndex(circIndex) {
+    setCircIndex(circIndex, pinned=undefined) {
         var self = this;
+        self.pinned = pinned;
         self.plot.removeScatterHighlight();
         self.preventUpdates = true;
         self.circIndex = circIndex;
@@ -96,6 +98,15 @@ class LMSPanel {
             }
         }
         self.plot.updateScatter(plotData, curr1, curr2, "Z-Score Transformed Mean Log2 (Expression)");
+        if(pinned && document.getElementById("showpinned").checked) {
+            for(var p of pinned) {
+                let metaIndex = self.metas[curr1][p.row];
+                if(metaIndex >= 0) {
+                    let metaIndex = self.metas[curr1][p.row];
+                    self.plot.addScatterHighlight({x: data1[self.metas[curr1][metaIndex]], y: data2[self.metas[curr2][metaIndex]]}, p.ensembl_id, "#00e04f", "white", 5)
+                }
+            }
+        }
         self.plot.addScatterHighlight({x: data1[self.metas[curr1][self.circIndex]], y: data2[self.metas[curr2][self.circIndex]]})
     }
 
@@ -132,6 +143,8 @@ class LMSPanel {
                                 <select class="selectpicker" id="lmsselect2"></select><br><br><br>
                                 <div>Select X Axis</div>
                                 <select class="selectpicker" id="lmsselect1"></select><br><br><br>
+                                <div>Show Pinned</div>
+                                <input id="showpinned" type="checkbox" checked>
                             </div>
                             <div class="col-md-9 col-md-offset-1">
                                 <div id="lmsplot"></div>
