@@ -128,7 +128,6 @@ class Plot {
             .data(data)
             .enter()
             .append("circle")
-            .style("cursor", "pointer")
             .attr("cx", function (d) { return (self.x(d.x)) })
             .attr("cy", function (d) { return (self.y(d.y)) })
             .attr("r", 4)

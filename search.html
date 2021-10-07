@@ -127,7 +127,8 @@
                 </div>
                 <ul class="nav navbar-nav">
                     <li><a href="./index.html">About</a></li>
-                    <li class="active"><a href="./search.html">Search</a></li>
+                    <li><a href="./searchset.html">Gene Set search</a></li>
+                    <li class="active"><a href="./search.html">Single Gene search</a></li>
                 </ul>
             </div>
         </nav>
@@ -295,7 +296,7 @@
                 myProgress.setAttribute('aria-valuenow',pcg);
                 myProgress.setAttribute('style','width:'+Number(pcg)+'%');
             }
-            
+
             //Now we have data in buffer
             var f = new hdf5.File(buffer.buffer, "");
             var hdf5Panels = f.get('panels');

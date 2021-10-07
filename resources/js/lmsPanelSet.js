@@ -1,11 +1,11 @@
-class LMSPanel {
+class LMSPanelSet {
     constructor(parentId, childIndex, name, hdf5Group, metas) {
         var self = this;
 
         self.parentId = parentId;
         self.elementId = self.parentId + "lms";
         self.name = name;
-        self.circIndex = -1;
+        self.searchedEntries = [];
         document.getElementById(self.parentId).children[childIndex].insertAdjacentHTML("afterEnd", self._generateHTML());
         self.metas = metas;
         self.data = {}
@@ -16,10 +16,13 @@ class LMSPanel {
         }
 
         self.plot = new Plot("lmsplot");
+        self.plot.setDimensions(800, 320, 80, 80, 50, 100);
         self.resetOptions();
         $('#lmsselect1').on('change', () => self.update());
         $('#lmsselect2').on('change', () => self.update());
-        $('#showpinned').on('change', () => self.update());
+
+        $("#lmsselect2").val(Object.keys(self.data)[0]);
+        $("#lmsselect1").val(Object.keys(self.data)[1]);
 
         self.preventUpdates = false;
         self.update();
@@ -39,25 +42,26 @@ class LMSPanel {
         self._setOptions("lmsselect2", names);
     }
 
-    setCircIndex(circIndex, pinned=undefined) {
+    setMultiple(searchedEntries) {
         var self = this;
-        self.pinned = pinned;
+        self.searchedEntries = searchedEntries;
         self.plot.removeScatterHighlight();
         self.preventUpdates = true;
-        self.circIndex = circIndex;
         let names = Object.keys(self.data);
         let setChart = false;
+
+        let atLeastOneInDataset = new Array(names.length);
+        for(let i=0; i<names.length; ++i) {
+            atLeastOneInDataset[i] = searchedEntries.some(p => self.metas[names[i]][p.row] != -1);
+            $('#lmsselect1').children().eq(i).attr("hidden", !atLeastOneInDataset[i]);
+            $('#lmsselect2').children().eq(i).attr("hidden", !atLeastOneInDataset[i]);
+        }
+
         for(let i=0; i<names.length; ++i) {
             let curr1 = names[i];
-            let meta1 = self.metas[curr1][circIndex];
-            $('#lmsselect1').children().eq(i).attr("hidden",meta1 == -1);
-            $('#lmsselect2').children().eq(i).attr("hidden",meta1 == -1);
-
             for(let j=i+1; !setChart && j<names.length; ++j) {
                 let curr2 = names[j];
-                let meta2 = self.metas[curr2][circIndex];
-
-                if(meta1 != -1 && meta2 != -1) {
+                if(atLeastOneInDataset[i] && atLeastOneInDataset[j]) {
                     $("#lmsselect2").val(curr1);
                     $("#lmsselect1").val(curr2);
                     setChart = true;
@@ -65,7 +69,6 @@ class LMSPanel {
                 }
             }
         }
-        if(!setChart) self.circIndex = -1;
         
         self.preventUpdates = false;
         
@@ -83,7 +86,6 @@ class LMSPanel {
         var self = this;
 
         if(self.preventUpdates) return;
-        if(self.circIndex == -1) return;
 
         let curr1 = $("#lmsselect1").val();
         let curr2 = $("#lmsselect2").val();
@@ -98,16 +100,13 @@ class LMSPanel {
             }
         }
         self.plot.updateScatter(plotData, curr1, curr2, "Z-Score Transformed Mean Log2 (Expression)");
-        if(self.pinned && document.getElementById("showpinned").checked) {
-            for(var p of self.pinned) {
-                let metaIndex1 = self.metas[curr1][p.row];
-                let metaIndex2 = self.metas[curr2][p.row];
-                if(metaIndex1 >= 0 && metaIndex2 >= 0) {
-                    self.plot.addScatterHighlight({x: data1[self.metas[curr1][metaIndex1]], y: data2[self.metas[curr2][metaIndex2]]}, p.ensembl_id, "#00e04f", "white", 5)
-                }
+        for(var p of self.searchedEntries) {
+            let metaIndex1 = self.metas[curr1][p.row];
+            let metaIndex2 = self.metas[curr2][p.row];
+            if(metaIndex1 >= 0 && metaIndex2 >= 0) {
+                self.plot.addScatterHighlight({x: data1[self.metas[curr1][metaIndex1]], y: data2[self.metas[curr2][metaIndex2]]}, p.label, "#00e04f", "white", 5)
             }
         }
-        self.plot.addScatterHighlight({x: data1[self.metas[curr1][self.circIndex]], y: data2[self.metas[curr2][self.circIndex]]})
     }
 
     _setOptions(id, names, defaultName=undefined) {
@@ -126,11 +125,6 @@ class LMSPanel {
         return /*html*/`
             <div id="${this.elementId + "panel"}" class="panel-group">
                 <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <a data-toggle="collapse" href="#${this.elementId + "collapse"}">${this.name}</a>
-                        </h4>
-                    </div>
                     <div id="${this.elementId + "collapse"}" class="panel-collapse collapse in">
                         <div class="panel-body">
                             <div class="panel-description">
@@ -143,8 +137,6 @@ class LMSPanel {
                                 <select class="selectpicker" id="lmsselect2"></select><br><br><br>
                                 <div>Select X Axis</div>
                                 <select class="selectpicker" id="lmsselect1"></select><br><br><br>
-                                <div>Show Pinned</div>
-                                <input id="showpinned" type="checkbox" checked>
                             </div>
                             <div class="col-md-9 col-md-offset-1">
                                 <div id="lmsplot"></div>
