@@ -2,32 +2,35 @@ datasets:
     -   id: BrainSpan
         url: "https://www.brainspan.org/"
         dir: "./data/FormattedData/BrainSpan/"
-        meta: "brainspan_metadata.csv"
+        meta: "BrainSpan-metadata-subset.csv"
+        brainRegionFilter: "Regions"
         matrices: 
             -   type: RPKM
-                path: "brainspan_matrix_rpkm.csv"
+                path: "BrainSpan-exp.csv"
     -   id: GTEx
         url: "https://gtexportal.org/"
         dir: "./data/FormattedData/Gtex/"
-        meta: "gtex_metadata_brainOnly.csv"
+        meta: "GTEx-metadata-subset.csv"
+        brainRegionFilter: "Regions"
         matrices: 
             -   type: TPM
-                path: "gtex_tpm_matrix_brainOnly.csv"
+                path: "GTEx-exp.csv"
     -   id: BrainSeq
         url: "https://www.brainrnaseq.org/"
         dir: "./data/FormattedData/BrainSeq/"
-        meta: "brainseq_metadata_new_weighted_deconv.csv"
-        brainRegionFilter: "Region"
+        meta: "BrainSeq-metadata-subset.csv"
+        brainRegionFilter: "Regions"
         matrices: 
             -   type: RPKM
-                path: "brainseq_matrix_rpkm.csv"
+                path: "BrainSeq-exp.csv"
     -   id: PsychENCODE
         url: "http://resource.psychencode.org/"
         dir: "./data/FormattedData/PsychENCODE/"
-        meta: "Job-154061626746631166818172835-UpdatedPerScript.csv"
+        meta: "PsychEncode-metadata-subset.csv"
+        brainRegionFilter: "Regions"
         matrices: 
             -   type: TPM
-                path: "DER-02_PEC_gene_expression_matrix_tpm_formatted.csv"
+                path: "PsychEncode-exp.csv"
 panels:
     -   name: "Explore all metadata in BrainSpan"
         datasets: [BrainSpan]

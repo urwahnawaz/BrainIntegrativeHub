@@ -75,23 +75,32 @@ class AbstractMetaIter(AbstractSource):
         #Writes matrix in overall row order
         heading = None
         lines = [None] * len(keyToIndexFiltered)
+        numberedRowsOffset = -1
         for line in csv.reader(open(fileName, 'r'), delimiter=','):
             if not heading: 
                 heading = line[1:]
-            else:
-                versionlessEnsemblID = line[0].split('.', 1)[0]
-                index = keyToIndexFiltered.get(versionlessEnsemblID, -1)
-                if index >= 0:
-                    fromLine = line[1:]
-                    if sampleToIndex:
-                        toLine = [-1] * len(sampleToIndex)
-                        for i in range(len(fromLine)):
-                            subIndex = sampleToIndex.get(heading[i], -1)
-                            if subIndex != -1:
-                                toLine[subIndex] = fromLine[i]
-                        lines[index] = toLine
-                    else:
-                        lines[index] = fromLine
+                continue
+            if numberedRowsOffset == -1: 
+                if line[0] == "1": #This assumes actual matrix rows begin with ensembl ID, which should not be 1
+                    numberedRowsOffset = 1
+                    heading = heading[1:]
+                    print("Removing numbered rows from source file")
+                else:
+                    numberedRowsOffset = 0
+
+            versionlessEnsemblID = line[numberedRowsOffset].split('.', 1)[0]
+            index = keyToIndexFiltered.get(versionlessEnsemblID, -1)
+            if index >= 0:
+                fromLine = line[1 + numberedRowsOffset:]
+                if sampleToIndex:
+                    toLine = [-1] * len(sampleToIndex)
+                    for i in range(len(fromLine)):
+                        subIndex = sampleToIndex.get(heading[i], -1)
+                        if subIndex != -1:
+                            toLine[subIndex] = fromLine[i]
+                    lines[index] = toLine
+                else:
+                    lines[index] = fromLine
 
         mdata2 = []
         for line in lines:
@@ -102,7 +111,6 @@ class AbstractMetaIter(AbstractSource):
     def _writeHDF5Scaled(self, arr, idGroup):
         colMeans = [np.mean([arr[i][j] for i in range(len(arr))]) for j in range(len(arr[0]))]
         colSTDs = [np.std([arr[i][j] for i in range(len(arr))]) for j in range(len(arr[0]))]
-
         logs = [np.mean([math.log2(abs(arr[i][j]) + 0.01) for j in range(len(arr[0]))]) for i in range(len(arr))]
         logMean = np.mean(logs)
         logSd = np.std(logs)
@@ -112,11 +120,20 @@ class AbstractMetaIter(AbstractSource):
     def _writeHDF5Columns(self, fileName, hdf5Group, noneType="NA"):
         heading = []
         lines = []
+        numberedRowsOffset = -1
         for line in csv.reader(open(os.path.join(self.directory, fileName), 'r'), delimiter=','):
             if not heading:
                 heading = line
-            else:
-                lines.append(line)
+                continue
+            if numberedRowsOffset == -1: 
+                if line[0] == "1": #This assumes actual metadata rows begin with sample ID, which should not be 1
+                    numberedRowsOffset = 1
+                    heading = heading[1:]
+                    print("Removing numbered rows from source file")
+                else:
+                    numberedRowsOffset = 0
+
+            lines.append(line[numberedRowsOffset:])
         heading[0] = "circ_id"
 
         allTypes = [int, float, str]

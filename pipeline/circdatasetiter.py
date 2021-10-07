@@ -17,6 +17,7 @@ class CircDatasetIter(AbstractMetaIter):
         self.isBrainDataset = isBrainDataset
         self.url = url
         self.annotationAccuracy = annotationAccuracy
+        self.numberedRowsOffset = -1
 
         self.meta_index = -1
         next(self.read_obj)
@@ -27,8 +28,16 @@ class CircDatasetIter(AbstractMetaIter):
     def __next__(self):
         while True:
             line = next(self.read_obj)
+
+            if self.numberedRowsOffset == -1:
+                if line[0] == "1":
+                    self.numberedRowsOffset = 1
+                    print("Removing numbered rows from source file")
+                else:
+                    self.numberedRowsOffset = 0
+
             self.meta_index += 1
-            if line[0]:
-                versionlessEnsemblID = line[0].split('.', 1)[0]
+            if line[self.numberedRowsOffset]:
+                versionlessEnsemblID = line[self.numberedRowsOffset].split('.', 1)[0]
                 self.keys.append(versionlessEnsemblID)
                 return CircRow(gene="", geneId=versionlessEnsemblID, db_id=self.id, meta_index=self.meta_index, annotationAccuracy=self.annotationAccuracy)
