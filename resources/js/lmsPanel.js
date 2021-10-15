@@ -40,6 +40,8 @@ class LMSPanel {
     }
 
     setCircIndex(circIndex, pinned=undefined) {
+        console.log(circIndex);
+        console.log(pinned);
         var self = this;
         self.pinned = pinned;
         self.plot.removeScatterHighlight();
@@ -103,7 +105,7 @@ class LMSPanel {
                 let metaIndex1 = self.metas[curr1][p.row];
                 let metaIndex2 = self.metas[curr2][p.row];
                 if(metaIndex1 >= 0 && metaIndex2 >= 0) {
-                    self.plot.addScatterHighlight({x: data1[self.metas[curr1][metaIndex1]], y: data2[self.metas[curr2][metaIndex2]]}, p.ensembl_id, "#00e04f", "white", 5)
+                    self.plot.addScatterHighlight({x: data1[metaIndex1], y: data2[metaIndex2]}, p.gene_symbol ? p.gene_symbol : p.ensembl_id, "#00e04f", "white", 5)
                 }
             }
         }

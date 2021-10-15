@@ -104,7 +104,7 @@ class LMSPanelSet {
             let metaIndex1 = self.metas[curr1][p.row];
             let metaIndex2 = self.metas[curr2][p.row];
             if(metaIndex1 >= 0 && metaIndex2 >= 0) {
-                self.plot.addScatterHighlight({x: data1[self.metas[curr1][metaIndex1]], y: data2[self.metas[curr2][metaIndex2]]}, p.label, "#00e04f", "white", 5)
+                self.plot.addScatterHighlight({x: data1[metaIndex1], y: data2[metaIndex2]}, p.label, "#00e04f", "white", 5)
             }
         }
     }

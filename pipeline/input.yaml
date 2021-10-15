@@ -7,6 +7,8 @@ datasets:
         matrices: 
             -   type: RPKM
                 path: "BrainSpan-exp.csv"
+        customMetadataCategoryOrders:
+                AgeInterval: ["4-7pcw", "8-9pcw", "10-12pcw", "13-15pcw", "16-18pcw", "19-24pcw", "25-38pcw", "0-5mos", "6-18mos", "19mos-5yrs", "6-11yrs", "12-19yrs", "20-29yrs", "30-39yrs", "40-49yrs", "50-59yrs", "60-69yrs", "70-79yrs", "80-89yrs", "90-99yrs"]
     -   id: GTEx
         url: "https://gtexportal.org/"
         dir: "./data/FormattedData/Gtex/"
@@ -15,6 +17,8 @@ datasets:
         matrices: 
             -   type: TPM
                 path: "GTEx-exp.csv"
+        customMetadataCategoryOrders:
+                AgeInterval: ["4-7pcw", "8-9pcw", "10-12pcw", "13-15pcw", "16-18pcw", "19-24pcw", "25-38pcw", "0-5mos", "6-18mos", "19mos-5yrs", "6-11yrs", "12-19yrs", "20-29yrs", "30-39yrs", "40-49yrs", "50-59yrs", "60-69yrs", "70-79yrs", "80-89yrs", "90-99yrs"]
     -   id: BrainSeq
         url: "https://www.brainrnaseq.org/"
         dir: "./data/FormattedData/BrainSeq/"
@@ -23,6 +27,8 @@ datasets:
         matrices: 
             -   type: RPKM
                 path: "BrainSeq-exp.csv"
+        customMetadataCategoryOrders:
+                AgeInterval: ["4-7pcw", "8-9pcw", "10-12pcw", "13-15pcw", "16-18pcw", "19-24pcw", "25-38pcw", "0-5mos", "6-18mos", "19mos-5yrs", "6-11yrs", "12-19yrs", "20-29yrs", "30-39yrs", "40-49yrs", "50-59yrs", "60-69yrs", "70-79yrs", "80-89yrs", "90-99yrs"]
     -   id: PsychENCODE
         url: "http://resource.psychencode.org/"
         dir: "./data/FormattedData/PsychENCODE/"
@@ -31,6 +37,8 @@ datasets:
         matrices: 
             -   type: TPM
                 path: "PsychEncode-exp.csv"
+        customMetadataCategoryOrders:
+                AgeInterval: ["4-7pcw", "8-9pcw", "10-12pcw", "13-15pcw", "16-18pcw", "19-24pcw", "25-38pcw", "0-5mos", "6-18mos", "19mos-5yrs", "6-11yrs", "12-19yrs", "20-29yrs", "30-39yrs", "40-49yrs", "50-59yrs", "60-69yrs", "70-79yrs", "80-89yrs", "90-99yrs"]
 panels:
     -   name: "Explore all metadata in BrainSpan"
         datasets: [BrainSpan]

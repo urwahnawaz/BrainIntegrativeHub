@@ -3,12 +3,13 @@ import csv, math, h5py, os
 import numpy as np
 
 class AbstractMetaIter(AbstractSource):
-    def __init__(self, name, nameLong, directory, matrices, metadata, qtl, brainRegionFilter):
+    def __init__(self, name, nameLong, directory, matrices, metadata, qtl, brainRegionFilter, customMetadataCategoryOrders):
         super().__init__(name, directory)
         self.matrices = matrices
         self.metadata = metadata
         self.qtl = qtl
         self.brainRegionFilter = brainRegionFilter
+        self.customMetadataCategoryOrders = customMetadataCategoryOrders
         self.keys = []
         self.nameLong = nameLong
 
@@ -70,7 +71,7 @@ class AbstractMetaIter(AbstractSource):
 
         if self.brainRegionFilter:
             experimentGroup.attrs.create("brainRegionFilter", self.brainRegionFilter) 
-    
+            
     def _getAsMatrix(self, fileName, keyToIndexFiltered, sampleToIndex, noneType="NA"):
         #Writes matrix in overall row order
         heading = None
@@ -155,7 +156,10 @@ class AbstractMetaIter(AbstractSource):
                             values[m] = values[m].encode()
                     # Write dataset
                     arr = np.array(values, dtype=colTypeNp)
-                    hdf5Group.create_dataset(heading[i], data=arr, chunks=arr.shape, compression="gzip", compression_opts=9)
+                    ds = hdf5Group.create_dataset(heading[i], data=arr, chunks=arr.shape, compression="gzip", compression_opts=9)
+
+                    if self.customMetadataCategoryOrders and heading[i] in self.customMetadataCategoryOrders:
+                        ds.attrs.create("order", self.customMetadataCategoryOrders[heading[i]])
                     break
                 except:
                     continue

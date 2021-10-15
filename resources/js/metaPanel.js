@@ -269,6 +269,8 @@ class MetaPanel {
                 plot.updateDisabled("Data could not be retrieved");
             } else {
                 let xAxis = controls.getSelectedXAxis();
+                let xDataset = self.hdf5Group.get(dataset + "/samples/" + xAxis);
+                let orderXDic = xDataset.attrs["order"];
                 
                 self._getPlotDataX(dataset, xAxis, yRow, plot, (x) => {
                     if(x == null) { 
@@ -277,9 +279,13 @@ class MetaPanel {
                         let xAxisIsString = $.type(x[0]) === "string";
 
                         let z = undefined;
+                        let orderZDic = undefined;
                         let plotData = undefined;
                         let coloring = controls.getSelectedColoring();
                         if(coloring != "None" && coloring != xAxis) {
+                            let coloringDataset = self.hdf5Group.get(dataset + "/samples/" + coloring);
+                            z = coloringDataset.value;
+                            orderZDic = coloringDataset.attrs["order"];
                             z = self.hdf5Group.get(dataset + "/samples/" + coloring).value;
                             plotData = x.map((v, i) => {return {x: x[i], y: y[i], z: z[i]};});
                         } else {
@@ -317,7 +323,7 @@ class MetaPanel {
                         }
 
                         if(xAxisIsString) {
-                            plot.updateViolin(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset]);
+                            plot.updateViolin(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset], orderXDic, orderZDic);
                         } else {
                             plot.updateScatter(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset]);
                         }

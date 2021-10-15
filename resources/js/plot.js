@@ -237,7 +237,7 @@ class Plot {
     }
 
     //Expects [{x, y, z=undefined}...] where x is string and y is numeric, z is optional string for coloring
-    updateViolin(data, xName, yName, dataset) {
+    updateViolin(data, xName, yName, dataset, orderX, orderZ) {
         var self = this;
         self._update(data, xName, yName, dataset);
 
@@ -250,26 +250,60 @@ class Plot {
         .value(d => d)
 
         let multipleColors = (data[data.length-1].z);
+        let violinColorScale = !multipleColors ? () => "#2b6da4" : d3.scaleOrdinal().domain(categoriesX).range(["#377eb8","#4daf4a","#ff7f00","#ffff33","#a65628","#984ea3", "#f781bf","#999999", "#e41a1c"]);
 
-        let violinColorScale = !multipleColors ? () => "#2b6da4" : d3.scaleOrdinal()
-            .domain(categoriesX)
-            .range(["#377eb8","#4daf4a","#ff7f00","#ffff33","#a65628","#984ea3", "#f781bf","#999999", "#e41a1c"]);
+        var sumstat = undefined; 
+        if(!multipleColors) {
+            sumstat = d3.nest()
+                .key(d => d.x)
+                .rollup(d => ({color:violinColorScale(d[0].x), hist:histogram(d.map(g => g.y))}))
+                .entries(data)
+        } else {
+            sumstat = d3.nest()
+                .key(d => d.x)
+                .key(d => d.z)
+                .rollup(d => ({color:violinColorScale(d[0].x), hist:histogram(d.map(g => g.y))}))
+                .entries(data)
 
-        var sumstat = d3.nest()
-        .key(d => d.x + (d.z ? " " + d.z : ""))
-        .sortKeys(d3.ascending)
-        .rollup(d => ({color:violinColorScale(d[0].x),hist:histogram(d.map(g => g.y))}))
-        .entries(data)
+            //Sort inner nests Z values
+            let orderZDic = {};
+            if(orderZ) for(let i=0; i<orderZ.length; ++i) orderZDic[orderZ[i]] = i+1;
+            let sortZ = orderZ ? ((a, b) => ((orderZDic[a.key]||orderZ.length) - (orderZDic[b.key]||orderZ.length))) : ((a, b) => d3.ascending(a.key, b.key));
+            for(let entry of sumstat) entry.values.sort(sortZ);
+        }
         
-        for(let i=0; i<sumstat.length;++i) {
-            sumstat[i].value.key = sumstat[i].key; 
-            sumstat[i] = sumstat[i].value;
+        //Sort outer nest X values
+        let orderXDic = {};
+        if(orderX) for(let i=0; i<orderX.length; ++i) orderXDic[orderX[i]] = i+1;
+        let sortX = orderX ? ((a, b) => ((orderXDic[a.key]||orderX.length) - (orderXDic[b.key]||orderX.length))) : ((a, b) => d3.ascending(a.key, b.key));
+        sumstat.sort(sortX);
+    
+        //Flatten if necessary
+        let sumstatFlat = sumstat;
+        if(multipleColors) {
+            sumstatFlat = [];
+            for(let s1 of sumstat) {
+                for(let s2 of s1.values) {
+                    sumstatFlat.push({key:s1.key + " " + s2.key, value: s2.value});
+                }
+            }
         }
 
+        /*
+        //Concept to toggle showing empty categories
+        let keysViolin = undefined;
+        if(orderX || orderZ) {
+            let keysX = orderX || categoriesX;
+            let keysZ = orderZ || categoriesZ;
+            for(let kx of keysX) for(let kz of keysZ) keysViolin.push(kx + " " + kz);
+        } else {
+            keysViolin = sumstatFlat.map(s => s.key);
+        }*/
+        
         // Show the X scale
         self.x = d3.scaleBand()
             .range([0, self.width])
-            .domain(sumstat.map(d => d.key))
+            .domain(sumstatFlat.map(d => d.key))
             .padding(0.05)
 
         let xText = self.svg.append("g")
@@ -278,7 +312,7 @@ class Plot {
             .selectAll("text")
 
         //Roatate X labels if there are many categories
-        if(sumstat.length >= 10) {
+        if(sumstatFlat.length >= 10) {
             xText.attr("y", 0)
             .attr("x", -9)
             .attr("dy", ".35em")
@@ -288,8 +322,8 @@ class Plot {
         }
 
         var maxNum = 0
-        for (let i in sumstat){
-            let allBins = sumstat[i].hist;
+        for (let i in sumstatFlat){
+            let allBins = sumstatFlat[i].value.hist;
             let lengths = allBins.map(function(a){return a.length;})
             let longuest = d3.max(lengths)
             if (longuest > maxNum) { maxNum = longuest }
@@ -301,13 +335,13 @@ class Plot {
 
         self.svg
         .selectAll("myViolin")
-        .data(sumstat)
+        .data(sumstatFlat)
         .enter()
         .append("g")
         .attr("transform", function(d){ return("translate(" + self.x(d.key) +" ,0)") } )
         .append("path")
-        .style("fill", d => d.color)
-        .datum(d => d.hist)
+        .style("fill", d => d.value.color)
+        .datum(d => d.value.hist)
         .style("stroke", "none")
         .attr("d", d3.area()
             .x0(d =>  xNum(-d.length) )
