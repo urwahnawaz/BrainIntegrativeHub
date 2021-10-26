@@ -18,7 +18,7 @@ class Plot {
         self.shouldShowDownloadButton = false;
     }
 
-    setDimensions(width=800, height=400, right=80, left=80, top=50, bottom=100) {
+    setDimensions(width=800, height=400, right=80, left=80, top=50, bottom=60) {
         var self = this;
 
         self._removeAll();
@@ -239,17 +239,29 @@ class Plot {
     //Expects [{x, y, z=undefined}...] where x is string and y is numeric, z is optional string for coloring
     updateViolin(data, xName, yName, dataset, orderX, orderZ) {
         var self = this;
-        self._update(data, xName, yName, dataset);
+        
+        let multipleColors = (data[data.length-1].z);
 
-        let categoriesX = self._getCategories(data, d => d.x)
+        let categoriesX = self._getCategories(data, d => d.x);
+        let categoriesZ = !multipleColors ? [] : self._getCategories(data, d=>d.z);
         let multiplePerCategory = (data.length > categoriesX.length);
+
+        let maxCategoryLenX = categoriesX.reduce((a, b) => a.length > b.length ? a : b);
+        let maxCategoryLenZ = !multipleColors ? "" : " " + categoriesZ.reduce((a, b) => a.length > b.length ? a : b);
+
+        let maxCategoryLen = maxCategoryLenX + maxCategoryLenZ;
+        let shouldRotateLabels = (multipleColors ? (categoriesX.length * categoriesZ.length) : categoriesX.length) > 8;
+
+        let rotatedOffset = shouldRotateLabels ? self.computeTextLength(maxCategoryLen) : 0;
+
+        d3.select("#" + self.elementId + " > div > svg").attr("viewBox", `0 0 ${self.width + self.margin.left + self.margin.right} ${self.height + self.margin.top + self.margin.bottom + rotatedOffset}`);
+        self._update(data, xName, yName, dataset, rotatedOffset);
         
         var histogram = d3.histogram()
         .domain(self.y.domain())
         .thresholds(self.y.ticks(20))    // resolution of plots
         .value(d => d)
 
-        let multipleColors = (data[data.length-1].z);
         let violinColorScale = !multipleColors ? () => "#2b6da4" : d3.scaleOrdinal().domain(categoriesX).range(["#377eb8","#4daf4a","#ff7f00","#ffff33","#a65628","#984ea3", "#f781bf","#999999", "#e41a1c"]);
 
         var sumstat = undefined; 
@@ -312,7 +324,7 @@ class Plot {
             .selectAll("text")
 
         //Roatate X labels if there are many categories
-        if(sumstatFlat.length >= 10) {
+        if(shouldRotateLabels) {
             xText.attr("y", 0)
             .attr("x", -9)
             .attr("dy", ".35em")
@@ -391,7 +403,7 @@ class Plot {
     }
 
     //Internal function for shared axis creation
-    _update(data, xName, yName, dataset) {
+    _update(data, xName, yName, dataset, rotatedOffset=0) {
         var self = this;
 
         //Clear graph already exists
@@ -424,13 +436,13 @@ class Plot {
 
         // Show the X label
         self.svg.append("text")
-            .attr("transform", "translate(" + (self.width / 2) + " ," + (self.height + self.margin.top) + ")")
+            .attr("transform", "translate(" + (self.width / 2) + " ," + (self.height + self.margin.top + rotatedOffset) + ")")
             .style("text-anchor", "middle")
             .text(xName);
 
         self._addTitle(dataset);
 
-        self._addDownloadButton();
+        self._addDownloadButton(rotatedOffset);
     }
 
     _addTitle(dataset) {
@@ -505,13 +517,13 @@ class Plot {
                 (self.height + self.margin.bottom/2) + ")")
     }
 
-    _addDownloadButton() {
+    _addDownloadButton(rotatedOffset=0) {
         var self = this;
         self.downloadButton = self.svg.append('g')
         .attr("fill-opacity", self.shouldShowDownloadButton ? 1 : 0)
         .attr("transform",
                 "translate(" + (self.width) + " ," +
-                (self.height + self.margin.bottom/2) + ")")
+                (self.height + self.margin.top + rotatedOffset) + ")")
         
         //PNG
         self.downloadButton.append('text')
@@ -608,5 +620,13 @@ class Plot {
         downloadLink.download = "chart." + extension;
         downloadLink.click();
         downloadLink.remove();
+    }
+
+    computeTextLength(string) {
+        var self = this;
+        var test = self.svg.append("text").text(string);
+        var length = test.node().getComputedTextLength();
+        test.remove();
+        return length/2; //TODO temporary, too much whitespace due to margin.bottom
     }
 }

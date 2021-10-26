@@ -16,7 +16,7 @@ class LMSPanelSet {
         }
 
         self.plot = new Plot("lmsplot");
-        self.plot.setDimensions(800, 320, 80, 80, 50, 100);
+        self.plot.setDimensions(800, 320, 80, 80, 50, 60);
         self.resetOptions();
         $('#lmsselect1').on('change', () => self.update());
         $('#lmsselect2').on('change', () => self.update());

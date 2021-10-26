@@ -61,13 +61,13 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <h4 class="panel-title">
-                                        <a data-toggle="collapse" href="#collapse2">Detection in Brain Datasets and circRNA Databases</a>
+                                        <a data-toggle="collapse" href="#collapse2">Gene detection across datasets</a>
                                     </h4>
                                 </div>
                                 <div id="collapse2" class="panel-collapse collapse in">
                                     <div class="panel-body">
                                         <div class="panel-description">
-                                            Orange/Blue boxes show circRNA presence in the brain dataset or circRNA database. Gray – absence. Click on a database to navigate to the corresponding circRNA page in that database. Click on a dataset to navigate to the respective publication.
+                                            Darker shades of green indicate higher Z-Score, while grey indicates absence. Hover on a dataset to view its Z-Score. Click on a dataset to navigate to the respective publication.
                                         </div>
                                         <div id="myHeatmap" align="center"></div>
                                     </div>
@@ -94,7 +94,7 @@
                 <div id="myUploadModalBody" class="modal-body">
                     <div class="row">
                         <div class="col-md-8 col-md-offset-2">
-                            Adds local columns and charts, no data is shared with NeuroTranscript.<br><br>
+                            Adds local columns and charts, no data is shared with Bithub.<br><br>
                             Contact our lab for additions to the core database.<br><br>
                             <form id="my_upload_form">
                                 Dataset Name<br>
@@ -123,7 +123,7 @@
         <nav class="navbar navbar-fixed-top">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <a class="navbar-brand">NeuroTranscript</a>
+                    <a class="navbar-brand">Bithub</a>
                 </div>
                 <ul class="nav navbar-nav">
                     <li><a href="./index.html">About</a></li>
@@ -141,13 +141,13 @@
             <br>
             <div>
                   <div class="well">
-                    <b> Search </b> NeuroTranscript by Gene Symbol or Ensembl Gene ID. Select the search field from the drop-down menu on the right.   
+                    <b> Search </b> Bithub by Gene Symbol or Ensembl Gene ID. Select the search field from the drop-down menu on the right.   
                     <br>
                     <b> To display detailed information and interactive plots -  </b> click on a circRNA. 
                     <br>
                     <b> To download the search results - </b> click on the download button.
                     <br>
-                    <b> To upload a new circRNA dataset and integrate it in NeuroTranscript - </b>  click on the orange upload button.
+                    <b> To upload a new circRNA dataset and integrate it in Bithub - </b>  click on the orange upload button.
                     
                      
                     <br>
@@ -190,10 +190,6 @@
         var hdf5Root = undefined;
         var urls = {};
         var heatmap = undefined;
-        var existingPinned = localStorage.getItem("pinned");
-        var pinned = existingPinned ? JSON.parse(existingPinned) : [];
-        var pinnedColumn = undefined;
-        var showPinnedOnly = false;
 
         let dataOrder = undefined;
         let isDataset = undefined;
@@ -342,18 +338,6 @@
             indices = new Array(matrix[0].length);
             defaultCoord = hdf5Data.attrs.defaultCoord;
 
-            pinnedColumn = new Array(matrix[0].length).fill(false);
-            for(let p of pinned) {
-                let pinRow = p.row;
-                if(matrix[0][pinRow] != p.ensemble_id || matrix[1][pinRow] != p.gene_symbol) pinRow = matrix[0].indexOf(p.ensembl_id);
-                if(pinRow == -1) pinRow = matrix[1].indexOf(p.gene_symbol);
-                if(pinRow != -1) {
-                    pinnedColumn[pinRow] = true;
-                    if(pinRow != p.row) p.row = pinRow;
-                    else p.archived = true;
-                }
-            }
-
             searchCols.push(-defaultCoord-1);
 
             let urlsGroup = f.get("urls");
@@ -364,7 +348,7 @@
             
             lmsMeta = {};
             for(let i=0; i<dataOrder.length; ++i) if(isDataset[i]) lmsMeta[dataOrder[i]] = matrix[i];
-            lmsPanel = new LMSPanel("allpanels", 0, "CircRNA expression across datasets", f.get("metadata"), lmsMeta);
+            lmsPanel = new LMSPanel("allpanels", 0, "Gene expression across datasets", f.get("metadata"), lmsMeta);
 
             customPanel = new CustomPanel("allpanels", "Custom Datasets");
 
@@ -416,7 +400,6 @@
             let tableContents = "";
             tableContents += '<thead>';
             tableContents += "<tr>";
-            tableContents += `<th class="nolegend" style="width:40px;" scope="colgroup" colspan="1"></th>`;//pinned column
             for(let i of showCols) {
                 if(!isDataset[i] && !isDatabase[i]) {
                     let o = dataOrder[i];
@@ -433,7 +416,6 @@
             tableContents += "</tr>";
 
             tableContents += "<tr>";
-            tableContents += `<th><span id="PinHeading"class="unselectable filterable ${showPinnedOnly ? "filtered" : ""}"></th>`; //pinned
             for (let i of showCols) {
                 let h = dataOrder[i];
                 sortClass = ((i == sortCurrCol) ? sortClassOrder[sortCurrIndex] : "both");
@@ -471,9 +453,6 @@
             let genomicSearchSystem = searchCols.length && searchCols[searchCols.length-1] < 0 ? -searchCols[searchCols.length-1]-1 : undefined;
             for(let i=0; i<matrix[0].length; ++i) {
                 let sortIndex = indices[i];
-
-                if(showPinnedOnly && !pinnedColumn[sortIndex]) continue;
-
                 let shouldInclude = true;
                 if(searchPos) {
                     shouldInclude = false;
@@ -507,7 +486,6 @@
                 //total < 50 || total > 100
 
                 tableContents += `<tr data-index="${sortIndex}">`;
-                tableContents += `<td class="Pinned"><i class="Pinned fas fa-thumbtack" style="opacity:${pinnedColumn[sortIndex] ? 0.5 : 0.05};"></i></td>`; //pinned
                 for(let j of showCols) {
                     let e = matrix[j][sortIndex];
                     let o = dataOrder[j];
@@ -535,25 +513,21 @@
 
             $("thead > tr > th > span").click(function (arg) {
                 pageCurr = 0;
-                if(arg.target.id == "PinHeading") {
-                    showPinnedOnly = !showPinnedOnly;
+                sortNewCol = undefined;
+                if(arg.target.id == "Datasets") {
+                    sortNewCol = -1;
+                } else if(arg.target.id == "Databases") {
+                    sortNewCol = -2;
                 } else {
-                    sortNewCol = undefined;
-                    if(arg.target.id == "Datasets") {
-                        sortNewCol = -1;
-                    } else if(arg.target.id == "Databases") {
-                        sortNewCol = -2;
-                    } else {
-                        sortNewCol = dataOrder.indexOf(arg.target.id);
-                    }
-
-                    if (sortCurrCol == sortNewCol) {
-                        sortCurrIndex = (sortCurrIndex + 1) % 3;
-                    } else {
-                        sortCurrIndex = 1;
-                    }
-                    sortCurrCol = sortNewCol;
+                    sortNewCol = dataOrder.indexOf(arg.target.id);
                 }
+
+                if (sortCurrCol == sortNewCol) {
+                    sortCurrIndex = (sortCurrIndex + 1) % 3;
+                } else {
+                    sortCurrIndex = 1;
+                }
+                sortCurrCol = sortNewCol;
                 
                 makeTable();
             });
@@ -563,19 +537,6 @@
                     return; //user selected text, not a click
                 }
                 let circindex = parseInt(arg.currentTarget.getAttribute("data-index"));
-
-                if(arg.target.classList.contains("Pinned")) {
-                    if(!pinnedColumn[circindex]) {
-                        pinned.push({row:circindex, ensembl_id:matrix[0][circindex], gene_symbol:matrix[1][circindex], archived:false})
-                    } else {
-                        pinned = pinned.filter(p => p.row != circindex);
-                    }
-                    localStorage.setItem('pinned', JSON.stringify(pinned));
-                    pinnedColumn[circindex] = !pinnedColumn[circindex];
-                    makeTable();
-                    return;
-                }
-
                 let metaIndex = new Array(dataOrder.length);
 
                 //Change heatmap
@@ -618,9 +579,9 @@
                 customPanel.setCircId(matrix[0][circindex], metadataObj);
 
                 console.log("setting lms panel")
-                lmsPanel.setCircIndex(circindex, pinned);
+                lmsPanel.setCircIndex(circindex);
                 //Show modal
-                $("#myModalTitle").text("CircRNA: " + matrix[0][circindex]);
+                $("#myModalTitle").text(matrix[1][circindex] + " (" + matrix[0][circindex] + ")");
                 $("#myModal").modal('toggle');
             });
 
@@ -794,7 +755,7 @@
 
         const streamSaver = window.streamSaver
         $("#my_download_button").click(function () {
-            const fileStream = streamSaver.createWriteStream('neurotranscript.csv');
+            const fileStream = streamSaver.createWriteStream('Bithub.csv');
             const writer = fileStream.getWriter();
             const encoder = new TextEncoder();
 
@@ -808,9 +769,6 @@
             // CSV body
             for(let i = 0; i<matrix[0].length; ++i) {
                 let sortIndex = indices[i];
-
-                if(showPinnedOnly && !pinnedColumn[sortIndex]) continue;
-
                 shouldInclude = false;
                 for(let j of searchCols) {
                     if(j < 0) continue;

@@ -19,7 +19,6 @@ class LMSPanel {
         self.resetOptions();
         $('#lmsselect1').on('change', () => self.update());
         $('#lmsselect2').on('change', () => self.update());
-        $('#showpinned').on('change', () => self.update());
 
         self.preventUpdates = false;
         self.update();
@@ -39,11 +38,8 @@ class LMSPanel {
         self._setOptions("lmsselect2", names);
     }
 
-    setCircIndex(circIndex, pinned=undefined) {
-        console.log(circIndex);
-        console.log(pinned);
+    setCircIndex(circIndex) {
         var self = this;
-        self.pinned = pinned;
         self.plot.removeScatterHighlight();
         self.preventUpdates = true;
         self.circIndex = circIndex;
@@ -100,15 +96,6 @@ class LMSPanel {
             }
         }
         self.plot.updateScatter(plotData, curr1, curr2, "Z-Score Transformed Mean Log2 (Expression)");
-        if(self.pinned && document.getElementById("showpinned").checked) {
-            for(var p of self.pinned) {
-                let metaIndex1 = self.metas[curr1][p.row];
-                let metaIndex2 = self.metas[curr2][p.row];
-                if(metaIndex1 >= 0 && metaIndex2 >= 0) {
-                    self.plot.addScatterHighlight({x: data1[metaIndex1], y: data2[metaIndex2]}, p.gene_symbol ? p.gene_symbol : p.ensembl_id, "#00e04f", "white", 5)
-                }
-            }
-        }
         self.plot.addScatterHighlight({x: data1[self.metas[curr1][self.circIndex]], y: data2[self.metas[curr2][self.circIndex]]})
     }
 
@@ -136,7 +123,7 @@ class LMSPanel {
                     <div id="${this.elementId + "collapse"}" class="panel-collapse collapse in">
                         <div class="panel-body">
                             <div class="panel-description">
-                                This section displays pairwise comparisons of circRNA expression in the five datasets. Select the datasets to display on the X and Y axes. Datasets where the circRNA was not detected are blocked-out for selection. The scatterplot displays z-score transformed mean expression values (across all samples in the dataset). Dots represent all circRNAs detected in both datasets. The circRNA of interest is highlighted in orange. 
+                                
                             </div>
                             <br>
                             <br>
@@ -145,8 +132,6 @@ class LMSPanel {
                                 <select class="selectpicker" id="lmsselect2"></select><br><br><br>
                                 <div>Select X Axis</div>
                                 <select class="selectpicker" id="lmsselect1"></select><br><br><br>
-                                <div>Show Pinned</div>
-                                <input id="showpinned" type="checkbox" checked>
                             </div>
                             <div class="col-md-9 col-md-offset-1">
                                 <div id="lmsplot"></div>
