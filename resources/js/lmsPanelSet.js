@@ -127,11 +127,7 @@ class LMSPanelSet {
                 <div class="panel panel-default">
                     <div id="${this.elementId + "collapse"}" class="panel-collapse collapse in">
                         <div class="panel-body">
-                            <div class="panel-description">
-                                This section displays pairwise comparisons of circRNA expression in the five datasets. Select the datasets to display on the X and Y axes. Datasets where the circRNA was not detected are blocked-out for selection. The scatterplot displays z-score transformed mean expression values (across all samples in the dataset). Dots represent all circRNAs detected in both datasets. The circRNA of interest is highlighted in orange. 
-                            </div>
-                            <br>
-                            <br>
+                            <div class="panel-description"></div>
                             <div class="col-md-2">
                                 <div>Select Y Axis</div>
                                 <select class="selectpicker" id="lmsselect2"></select><br><br><br>
