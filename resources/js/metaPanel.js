@@ -325,7 +325,7 @@ class MetaPanel {
                         if(xAxisIsString) {
                             plot.updateViolin(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset], orderXDic, orderZDic);
                         } else {
-                            plot.updateScatter(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset]);
+                            plot.updateScatter(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset], orderZDic);
                         }
                     }
                 });

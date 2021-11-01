@@ -81,7 +81,7 @@ class Plot {
     }
 
     //Expects [{x, y, z=undefined}...] where x and y are numeric, z is optional string for coloring
-    updateScatter(data, xName, yName, dataset) {
+    updateScatter(data, xName, yName, dataset, orderZ) {
         var self = this;
         self._update(data, xName, yName, dataset);
 
@@ -98,6 +98,13 @@ class Plot {
 
         if (data[data.length-1].z) {
             categoriesZ = self._getCategories(data, d => d.z)
+            if(orderZ) {
+                let orderZDic = {};
+                for(let i=0; i<orderZ.length; ++i) orderZDic[orderZ[i]] = i+1;
+                let sortZ = (a, b) => ((orderZDic[a]||orderZ.length) - (orderZDic[b]||orderZ.length));
+                categoriesZ.sort(sortZ);
+            }
+
             let colors = ["#377eb8","#4daf4a","#ff7f00","#ffff33","#a65628","#984ea3", "#f781bf","#999999", "#e41a1c"];
             if (colors) {
                 pointColorScale = d3.scaleOrdinal()
