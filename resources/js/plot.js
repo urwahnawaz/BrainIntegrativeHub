@@ -16,6 +16,8 @@ class Plot {
         self.zeroCountNum = 0
         self.title = "";
         self.shouldShowDownloadButton = false;
+
+        self.colors = ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990', '#dcbeff', '#9A6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#a9a9a9', '#000000', '#ffffff']; 
     }
 
     setDimensions(width=800, height=400, right=80, left=80, top=50, bottom=60) {
@@ -81,7 +83,7 @@ class Plot {
     }
 
     //Expects [{x, y, z=undefined}...] where x and y are numeric, z is optional string for coloring
-    updateScatter(data, xName, yName, dataset, orderZ) {
+    updateScatter(data, xName, yName, dataset, orderZ, outlineOpacity=0.4) {
         var self = this;
         self._update(data, xName, yName, dataset);
 
@@ -101,33 +103,30 @@ class Plot {
             if(orderZ) {
                 let orderZDic = {};
                 for(let i=0; i<orderZ.length; ++i) orderZDic[orderZ[i]] = i+1;
-                let sortZ = (a, b) => ((orderZDic[a]||orderZ.length) - (orderZDic[b]||orderZ.length));
+                let sortZ = (a, b) => ((orderZDic[a]||orderZ.length+1) - (orderZDic[b]||orderZ.length+1));
                 categoriesZ.sort(sortZ);
             }
 
-            let colors = ["#377eb8","#4daf4a","#ff7f00","#ffff33","#a65628","#984ea3", "#f781bf","#999999", "#e41a1c"];
-            if (colors) {
-                pointColorScale = d3.scaleOrdinal()
-                    .domain(data.map(d => d.z))
-                    .range(colors);
+            pointColorScale = d3.scaleOrdinal()
+                .domain(orderZ ? orderZ : categoriesZ)
+                .range(self.colors);
 
-                var legend = self.svg.selectAll("legend")
-                    .data(categoriesZ)
-                    .enter()
-                    .append("g")
-                    .attr("transform", function (d, i) { return "translate(" + (self.width) + "," + ((28 * i)) + ")"; });
+            var legend = self.svg.selectAll("legend")
+                .data(categoriesZ)
+                .enter()
+                .append("g")
+                .attr("transform", function (d, i) { return "translate(" + (self.width) + "," + ((20 * i)) + ")"; });
 
-                legend.append("circle")
-                    .style("fill", function (d, i) { return pointColorScale(d); })
-                    .attr("stroke", "black")
-                    .attr("r", 8)
+            legend.append("circle")
+                .style("fill", function (d, i) { return pointColorScale(d); })
+                .attr("stroke", "black")
+                .attr("r", 6.5)
 
-                legend.append("text")
-                    .attr("text-anchor", "start")
-                    .attr("font-size", "10px")
-                    .attr("x", 20)
-                    .text(function (d) { return d });
-            }
+            legend.append("text")
+                .attr("text-anchor", "start")
+                .attr("font-size", "10px")
+                .attr("x", 20)
+                .text(function (d) { return d });
         }
 
         // Show scatter plot
@@ -138,9 +137,11 @@ class Plot {
             .attr("cx", function (d) { return (self.x(d.x)) })
             .attr("cy", function (d) { return (self.y(d.y)) })
             .attr("r", 4)
+            .style("stroke", "black")
+            .attr("stroke-opacity", outlineOpacity)
             .style("fill", function (d) { return pointColorScale ? (pointColorScale(d.z)) : "#2b6da4" })
-            .on("mouseover", (d) => self._tooltipMouseOver(d))
-            .on("mouseleave", (d) => self._tooltipMouseLeave(d))
+            //.on("mouseover", (d) => self._tooltipMouseOver(d))
+            //.on("mouseleave", (d) => self._tooltipMouseLeave(d))
 
         if (data[0].z && !pointColorScale) {
             window.alert("Couldn't display " + categoriesZ.length + " categories");
@@ -269,7 +270,7 @@ class Plot {
         .thresholds(self.y.ticks(20))    // resolution of plots
         .value(d => d)
 
-        let violinColorScale = !multipleColors ? () => "#2b6da4" : d3.scaleOrdinal().domain(categoriesX).range(["#377eb8","#4daf4a","#ff7f00","#ffff33","#a65628","#984ea3", "#f781bf","#999999", "#e41a1c"]);
+        let violinColorScale = !multipleColors ? () => "#2b6da4" : d3.scaleOrdinal().domain(categoriesX).range(self.colors);
 
         var sumstat = undefined; 
         if(!multipleColors) {
@@ -287,7 +288,7 @@ class Plot {
             //Sort inner nests Z values
             let orderZDic = {};
             if(orderZ) for(let i=0; i<orderZ.length; ++i) orderZDic[orderZ[i]] = i+1;
-            let sortZ = orderZ ? ((a, b) => ((orderZDic[a.key]||orderZ.length) - (orderZDic[b.key]||orderZ.length))) : ((a, b) => d3.ascending(a.key, b.key));
+            let sortZ = orderZ ? ((a, b) => ((orderZDic[a.key]||orderZ.length+1) - (orderZDic[b.key]||orderZ.length+1))) : ((a, b) => d3.ascending(a.key, b.key));
             for(let entry of sumstat) entry.values.sort(sortZ);
         }
         
@@ -361,13 +362,17 @@ class Plot {
         .append("path")
         .style("fill", d => d.value.color)
         .datum(d => d.value.hist)
-        .style("stroke", "none")
+        .style("stroke", "black")
+        .attr("stroke-opacity", 0.3)
         .attr("d", d3.area()
             .x0(d =>  xNum(-d.length) )
             .x1(d => xNum(d.length))
             .y(d => self.y(d.x0))
             .curve(d3.curveCatmullRom)
         )
+        .style("cursor", "pointer")
+        .append("svg:title")
+        .text(d => d.reduce((prev, curr) => prev + curr.length, 0));
 
         self._addTooltip();
     }
