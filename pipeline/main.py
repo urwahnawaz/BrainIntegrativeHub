@@ -167,7 +167,9 @@ if __name__ == '__main__':
         try:
             inputObj = yaml.safe_load(stream)
             for dataset in inputObj["datasets"]:
-                circIters.append(CircDatasetIter(dataset["id"], dataset.get("name", ""), dataset["dir"], dataset.get("matrices", list()), dataset.get("meta", None), dataset.get("qtl", None), dataset.get("isBrain", False), dataset.get("url", ""), dataset.get("annotationAccuracy", 0), dataset.get("brainRegionFilter", ""), dataset.get("customMetadataCategoryOrders", None)))
+                d_id = dataset["id"]
+                orders = list(filter(lambda x: d_id in x["datasets"], inputObj.get("customMetadataCategoryOrders", [])))
+                circIters.append(CircDatasetIter(d_id, dataset.get("name", ""), dataset["dir"], dataset.get("matrices", list()), dataset.get("meta", None), dataset.get("qtl", None), dataset.get("isBrain", False), dataset.get("url", ""), dataset.get("annotationAccuracy", 0), dataset.get("brainRegionFilter", ""), orders))
         
         except yaml.YAMLError as exc:
             print(exc)

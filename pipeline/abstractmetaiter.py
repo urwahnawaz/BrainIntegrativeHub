@@ -158,8 +158,13 @@ class AbstractMetaIter(AbstractSource):
                     arr = np.array(values, dtype=colTypeNp)
                     ds = hdf5Group.create_dataset(heading[i], data=arr, chunks=arr.shape, compression="gzip", compression_opts=9)
 
-                    if self.customMetadataCategoryOrders and heading[i] in self.customMetadataCategoryOrders:
-                        ds.attrs.create("order", self.customMetadataCategoryOrders[heading[i]])
+                    for order in self.customMetadataCategoryOrders:
+                        if order["variable"] == heading[i]:
+                            ds.attrs.create("order", order["order"])
+                            groups = order.get("groups", None)
+                            if(groups):
+                                ds.attrs.create("groupSizes", list(map(lambda x: x["size"], groups)))
+                                ds.attrs.create("groupLabels", list(map(lambda x: x["label"], groups)))
                     break
                 except:
                     continue

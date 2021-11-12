@@ -271,6 +271,8 @@ class MetaPanel {
                 let xAxis = controls.getSelectedXAxis();
                 let xDataset = self.hdf5Group.get(dataset + "/samples/" + xAxis);
                 let orderXDic = xDataset.attrs["order"];
+                let groupLabelsX = xDataset.attrs["groupLabels"];
+                let groupSizesX = xDataset.attrs["groupSizes"];
                 
                 self._getPlotDataX(dataset, xAxis, yRow, plot, (x) => {
                     if(x == null) { 
@@ -323,7 +325,7 @@ class MetaPanel {
                         }
 
                         if(xAxisIsString) {
-                            plot.updateViolin(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset], orderXDic, orderZDic);
+                            plot.updateViolin(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset], orderXDic, groupLabelsX, groupSizesX, orderZDic);
                         } else {
                             plot.updateScatter(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset], orderZDic);
                         }

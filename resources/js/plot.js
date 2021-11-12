@@ -245,7 +245,7 @@ class Plot {
     }
 
     //Expects [{x, y, z=undefined}...] where x is string and y is numeric, z is optional string for coloring
-    updateViolin(data, xName, yName, dataset, orderX, orderZ) {
+    updateViolin(data, xName, yName, dataset, orderX, groupLabelsX, groupSizesX, orderZ) {
         var self = this;
         
         let multipleColors = (data[data.length-1].z);
@@ -267,10 +267,10 @@ class Plot {
         
         var histogram = d3.histogram()
         .domain(self.y.domain())
-        .thresholds(self.y.ticks(20))    // resolution of plots
+        .thresholds(self.y.ticks(30))    // resolution of plots
         .value(d => d)
 
-        let violinColorScale = !multipleColors ? () => "#2b6da4" : d3.scaleOrdinal().domain(categoriesX).range(self.colors);
+        let violinColorScale = d3.scaleOrdinal().domain(categoriesX).range(self.colors);
 
         var sumstat = undefined; 
         if(!multipleColors) {
@@ -298,32 +298,50 @@ class Plot {
         let sortX = orderX ? ((a, b) => ((orderXDic[a.key]||orderX.length) - (orderXDic[b.key]||orderX.length))) : ((a, b) => d3.ascending(a.key, b.key));
         sumstat.sort(sortX);
     
-        //Flatten if necessary
+        //Flatten if necessary and assign "keyX", used for groups
         let sumstatFlat = sumstat;
         if(multipleColors) {
             sumstatFlat = [];
             for(let s1 of sumstat) {
                 for(let s2 of s1.values) {
-                    sumstatFlat.push({key:s1.key + " " + s2.key, value: s2.value});
+                    sumstatFlat.push({key:s1.key + " " + s2.key, keyX: s1.key, value: s2.value});
+                }
+            }
+        } else {
+            for(let s1 of sumstatFlat) s1.keyX = s1.key;
+        }
+
+        console.log(groupSizesX)
+
+        if(groupSizesX) {
+            //Make group sizes cumulative
+            for(let i=1; i<groupSizesX.length; ++i) groupSizesX[i] += groupSizesX[i-1];
+
+            //We need to fix groupSizes, since sumstat omits empty values
+            for(let i=0, j=0; j<groupSizesX.length; ++i) {
+                if(i >= sumstatFlat.length || orderXDic[sumstatFlat[i].keyX] >= orderXDic[orderX[groupSizesX[j]-1]]) {
+                    groupSizesX[j++] = i;
                 }
             }
         }
-
-        /*
+        
         //Concept to toggle showing empty categories
-        let keysViolin = undefined;
-        if(orderX || orderZ) {
+        /*var keysViolin = [];
+        if(multipleColors && (orderX || orderZ)) {
             let keysX = orderX || categoriesX;
             let keysZ = orderZ || categoriesZ;
             for(let kx of keysX) for(let kz of keysZ) keysViolin.push(kx + " " + kz);
+        } else if(orderX) {
+            keysViolin = orderX;
         } else {
             keysViolin = sumstatFlat.map(s => s.key);
         }*/
+
         
         // Show the X scale
         self.x = d3.scaleBand()
             .range([0, self.width])
-            .domain(sumstatFlat.map(d => d.key))
+            .domain(sumstatFlat.map(s => s.key))
             .padding(0.05)
 
         let xText = self.svg.append("g")
@@ -345,35 +363,95 @@ class Plot {
         for (let i in sumstatFlat){
             let allBins = sumstatFlat[i].value.hist;
             let lengths = allBins.map(function(a){return a.length;})
-            let longuest = d3.max(lengths)
-            if (longuest > maxNum) { maxNum = longuest }
+            let longest = d3.max(lengths)
+            if (longest > maxNum) { maxNum = longest }
         }
 
         var xNum = d3.scaleLinear()
         .range([0, self.x.bandwidth()])
         .domain([-maxNum,maxNum])
 
-        self.svg
-        .selectAll("myViolin")
-        .data(sumstatFlat)
-        .enter()
-        .append("g")
-        .attr("transform", function(d){ return("translate(" + self.x(d.key) +" ,0)") } )
-        .append("path")
-        .style("fill", d => d.value.color)
-        .datum(d => d.value.hist)
-        .style("stroke", "black")
-        .attr("stroke-opacity", 0.3)
-        .attr("d", d3.area()
-            .x0(d =>  xNum(-d.length) )
-            .x1(d => xNum(d.length))
-            .y(d => self.y(d.x0))
-            .curve(d3.curveCatmullRom)
-        )
-        .style("cursor", "pointer")
-        .append("svg:title")
-        .text(d => d.reduce((prev, curr) => prev + curr.length, 0));
+        for(let i=0; i<sumstatFlat.length; ++i) {
+            for(let j=0; j<sumstatFlat[i].value.hist.length; ++j) {
+                let layer = sumstatFlat[i].value.hist[j];
+                self.svg.selectAll("indPoints")
+                    .data(layer)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", d => self.x(sumstatFlat[i].key) + xNum(layer.length * 0.8 * (2.0*Math.random() - 1.0)))
+                    .attr("cy", d => self.y(d))
+                    .attr("r", 0.5)
+                    //.attr("stroke", "white")
+                    //.attr("stroke-width", 0.5)
+                    .style("fill-opacity", 0.9)
+                    .style("fill", sumstatFlat[i].value.color);
+                let prev = layer;
+            }
+        }
 
+        let groupColors = ["green", "blue"];
+        
+        if(groupLabelsX) {
+            console.log(groupSizesX)
+            let start = self.x(sumstatFlat[0].key);
+            let prevShouldDraw = false;
+            for(let i=0; i < groupSizesX.length; ++i) {
+                let end = (i < groupSizesX.length-1 && groupSizesX[i] < sumstatFlat.length) ? self.x(sumstatFlat[groupSizesX[i]].key) : self.width;
+                let plotWidth = end - start;
+                let shouldDraw = plotWidth > 0.1;
+                console.log(plotWidth);
+                if(shouldDraw) {
+                    self.svg
+                        .append("rect")
+                        .attr("x", start)
+                        .attr("y", 0)
+                        .attr("height", self.height)
+                        .attr("width", plotWidth)
+                        .attr("stroke", "none")
+                        .style("fill", groupColors[i % groupColors.length])
+                        .style("fill-opacity", 0.01)
+                        .append("svg:title")
+                        .text(groupLabelsX[i])
+
+                    if(prevShouldDraw) {
+                        //Draw dotted line
+                        self.svg
+                            .append("line")
+                            .attr("x1", start)
+                            .attr("x2", start)
+                            .attr("y1", 0-self.margin.top/2)
+                            .attr("y2", self.height+self.margin.bottom/2)
+                            .attr("stroke", "black")
+                            .attr("stroke-dasharray", "5,5")
+                    }
+                }
+
+                start = end;
+                prevShouldDraw |= shouldDraw;
+            }
+        }
+        
+        let violins = self.svg.selectAll("myViolin")
+            .data(sumstatFlat)
+            .enter()
+            .append("g")
+            .attr("transform", function(d){ return("translate(" + self.x(d.key) +" ,0)") } )
+            .append("path")
+            .style("fill", d => d.value.color)
+            .style("fill-opacity", 0.001)
+            .style("stroke", d => d.value.color)
+            .attr("stroke-width", 1)
+            .datum(d => d.value.hist)
+            .attr("d", d3.area()
+                .x0(d => xNum(-d.length))
+                .x1(d => xNum(d.length))
+                .y(d => self.y(d.x0))
+                .curve(d3.curveCatmullRom)
+            )
+            .style("cursor", "pointer")
+            .append("svg:title")
+            .text(d => d.reduce((prev, curr) => prev + curr.length, 0))
+        
         self._addTooltip();
     }
 
