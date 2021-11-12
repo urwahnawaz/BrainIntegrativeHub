@@ -319,7 +319,7 @@ class Plot {
 
             //We need to fix groupSizes, since sumstat omits empty values
             for(let i=0, j=0; j<groupSizesX.length; ++i) {
-                if(i >= sumstatFlat.length || orderXDic[sumstatFlat[i].keyX] >= orderXDic[orderX[groupSizesX[j]-1]]) {
+                if(i >= sumstatFlat.length || orderXDic[sumstatFlat[i].keyX] > orderXDic[orderX[groupSizesX[j]-1]]) {
                     groupSizesX[j++] = i;
                 }
             }
