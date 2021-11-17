@@ -17,7 +17,11 @@ class Plot {
         self.title = "";
         self.shouldShowDownloadButton = false;
 
-        self.colors = ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990', '#dcbeff', '#9A6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#a9a9a9', '#000000', '#ffffff']; 
+        //Sasha Trubetskoy
+        //self.colors = ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990', '#dcbeff', '#9A6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#a9a9a9', '#000000']; 
+    
+        //P. Green-Armytage
+        self.colors = ["#F0A3FF","#0075DC","#993F00","#4C005C","#191919","#005C31","#2BCE48","#FFCC99","#808080","#94FFB5","#8F7C00","#9DCC00","#C20088","#003380","#FFA405","#FFA8BB","#426600","#FF0010","#5EF1F2","#00998F","#E0FF66","#740AFF","#990000","#FFFF80","#FFFF00","#FF5005"]
     }
 
     setDimensions(width=800, height=400, right=80, left=80, top=50, bottom=60) {
@@ -83,7 +87,7 @@ class Plot {
     }
 
     //Expects [{x, y, z=undefined}...] where x and y are numeric, z is optional string for coloring
-    updateScatter(data, xName, yName, dataset, orderZ, outlineOpacity=0.4) {
+    updateScatter(data, xName, yName, dataset, orderZ, shouldCullPoints=false) {
         var self = this;
         self._update(data, xName, yName, dataset);
 
@@ -107,6 +111,7 @@ class Plot {
                 categoriesZ.sort(sortZ);
             }
 
+            
             pointColorScale = d3.scaleOrdinal()
                 .domain(orderZ ? orderZ : categoriesZ)
                 .range(self.colors);
@@ -130,16 +135,19 @@ class Plot {
         }
 
         // Show scatter plot
+        let defaultColor = "#2B6DA4";
+        let defaultColorDarker = d3.rgb(defaultColor).darker(1)
         self.svg.selectAll("indPoints")
-            .data(data)
+            .data(shouldCullPoints ? self._filterDenseCircles(data, 3) : data)
             .enter()
             .append("circle")
             .attr("cx", function (d) { return (self.x(d.x)) })
             .attr("cy", function (d) { return (self.y(d.y)) })
-            .attr("r", 4)
-            .style("stroke", "black")
-            .attr("stroke-opacity", outlineOpacity)
-            .style("fill", function (d) { return pointColorScale ? (pointColorScale(d.z)) : "#2b6da4" })
+            .attr("r", 3)
+            .style("stroke", function(d) { return pointColorScale ? d3.rgb(pointColorScale(d.z)).darker(1) : defaultColorDarker})
+            .attr("stroke-opacity", 1)
+            .attr("stroke-width", 0.2)
+            .style("fill", function (d) { return pointColorScale ? (pointColorScale(d.z)) : "#6899c4" })
             //.on("mouseover", (d) => self._tooltipMouseOver(d))
             //.on("mouseleave", (d) => self._tooltipMouseLeave(d))
 
@@ -245,7 +253,7 @@ class Plot {
     }
 
     //Expects [{x, y, z=undefined}...] where x is string and y is numeric, z is optional string for coloring
-    updateViolin(data, xName, yName, dataset, orderX, groupLabelsX, groupSizesX, orderZ) {
+    updateViolin(data, xName, yName, dataset, orderX, groupLabelsX, groupSizesX, orderZ, bandwidth, shouldCullPoints=false) {
         var self = this;
         
         let multipleColors = (data[data.length-1].z);
@@ -264,25 +272,24 @@ class Plot {
 
         d3.select("#" + self.elementId + " > div > svg").attr("viewBox", `0 0 ${self.width + self.margin.left + self.margin.right} ${self.height + self.margin.top + self.margin.bottom + rotatedOffset}`);
         self._update(data, xName, yName, dataset, rotatedOffset);
-        
-        var histogram = d3.histogram()
-        .domain(self.y.domain())
-        .thresholds(self.y.ticks(30))    // resolution of plots
-        .value(d => d)
 
-        let violinColorScale = d3.scaleOrdinal().domain(categoriesX).range(self.colors);
+        let violinColorScale = d3.scaleOrdinal().domain(orderX ? orderX : categoriesX).range(self.colors);
+        //use like this violinColorScale(d[0].x)
+
+        //Add indices to data
+        for(let i=0; i<data.length; ++i) data[i].i = i;
 
         var sumstat = undefined; 
         if(!multipleColors) {
             sumstat = d3.nest()
                 .key(d => d.x)
-                .rollup(d => ({color:violinColorScale(d[0].x), hist:histogram(d.map(g => g.y))}))
+                .rollup(d => d)
                 .entries(data)
         } else {
             sumstat = d3.nest()
                 .key(d => d.x)
                 .key(d => d.z)
-                .rollup(d => ({color:violinColorScale(d[0].x), hist:histogram(d.map(g => g.y))}))
+                .rollup(d => d)
                 .entries(data)
 
             //Sort inner nests Z values
@@ -297,21 +304,17 @@ class Plot {
         if(orderX) for(let i=0; i<orderX.length; ++i) orderXDic[orderX[i]] = i+1;
         let sortX = orderX ? ((a, b) => ((orderXDic[a.key]||orderX.length) - (orderXDic[b.key]||orderX.length))) : ((a, b) => d3.ascending(a.key, b.key));
         sumstat.sort(sortX);
+
     
         //Flatten if necessary and assign "keyX", used for groups
-        let sumstatFlat = sumstat;
+        let sumstatFlat = undefined;
         if(multipleColors) {
             sumstatFlat = [];
-            for(let s1 of sumstat) {
-                for(let s2 of s1.values) {
-                    sumstatFlat.push({key:s1.key + " " + s2.key, keyX: s1.key, value: s2.value});
-                }
-            }
+            for(let s1 of sumstat) for(let s2 of s1.values) sumstatFlat.push({key:s1.key + " " + s2.key, keyX: s1.key, value: s2.value});
         } else {
+            sumstatFlat = sumstat;
             for(let s1 of sumstatFlat) s1.keyX = s1.key;
         }
-
-        console.log(groupSizesX)
 
         if(groupSizesX) {
             //Make group sizes cumulative
@@ -324,21 +327,8 @@ class Plot {
                 }
             }
         }
-        
-        //Concept to toggle showing empty categories
-        /*var keysViolin = [];
-        if(multipleColors && (orderX || orderZ)) {
-            let keysX = orderX || categoriesX;
-            let keysZ = orderZ || categoriesZ;
-            for(let kx of keysX) for(let kz of keysZ) keysViolin.push(kx + " " + kz);
-        } else if(orderX) {
-            keysViolin = orderX;
-        } else {
-            keysViolin = sumstatFlat.map(s => s.key);
-        }*/
 
-        
-        // Show the X scale
+        //Show the X scale
         self.x = d3.scaleBand()
             .range([0, self.width])
             .domain(sumstatFlat.map(s => s.key))
@@ -359,47 +349,14 @@ class Plot {
             //.text(d => d.length <= 10 ? d : d.substring(0, 7) + '...');
         }
 
-        var maxNum = 0
-        for (let i in sumstatFlat){
-            let allBins = sumstatFlat[i].value.hist;
-            let lengths = allBins.map(function(a){return a.length;})
-            let longest = d3.max(lengths)
-            if (longest > maxNum) { maxNum = longest }
-        }
-
-        var xNum = d3.scaleLinear()
-        .range([0, self.x.bandwidth()])
-        .domain([-maxNum,maxNum])
-
-        for(let i=0; i<sumstatFlat.length; ++i) {
-            for(let j=0; j<sumstatFlat[i].value.hist.length; ++j) {
-                let layer = sumstatFlat[i].value.hist[j];
-                self.svg.selectAll("indPoints")
-                    .data(layer)
-                    .enter()
-                    .append("circle")
-                    .attr("cx", d => self.x(sumstatFlat[i].key) + xNum(layer.length * 0.8 * (2.0*Math.random() - 1.0)))
-                    .attr("cy", d => self.y(d))
-                    .attr("r", 0.5)
-                    //.attr("stroke", "white")
-                    //.attr("stroke-width", 0.5)
-                    .style("fill-opacity", 0.9)
-                    .style("fill", sumstatFlat[i].value.color);
-                let prev = layer;
-            }
-        }
-
         let groupColors = ["green", "blue"];
-        
         if(groupLabelsX) {
-            console.log(groupSizesX)
             let start = self.x(sumstatFlat[0].key);
             let prevShouldDraw = false;
             for(let i=0; i < groupSizesX.length; ++i) {
                 let end = (i < groupSizesX.length-1 && groupSizesX[i] < sumstatFlat.length) ? self.x(sumstatFlat[groupSizesX[i]].key) : self.width;
                 let plotWidth = end - start;
                 let shouldDraw = plotWidth > 0.1;
-                console.log(plotWidth);
                 if(shouldDraw) {
                     self.svg
                         .append("rect")
@@ -430,28 +387,92 @@ class Plot {
                 prevShouldDraw |= shouldDraw;
             }
         }
+
+        //https://www.d3-graph-gallery.com/graph/density_basic.html
+        function kernelDensityEstimator(kernel, X) {
+            return function(V) {
+                return X.map(function(x) {
+                    return [x, d3.mean(V, function(v) { return kernel(x - v); })];
+                });
+            };
+        }
+        function kernelEpanechnikov(k) {
+            return function(v) {
+                return Math.abs(v /= k) <= 1 ? 0.75 * (1 - v * v) / k : 0;
+            };
+        }
+
+        // Compute kernel density estimation
+        var kde = kernelDensityEstimator(kernelEpanechnikov(bandwidth), self.y.ticks(40))
         
-        let violins = self.svg.selectAll("myViolin")
-            .data(sumstatFlat)
-            .enter()
-            .append("g")
-            .attr("transform", function(d){ return("translate(" + self.x(d.key) +" ,0)") } )
-            .append("path")
-            .style("fill", d => d.value.color)
-            .style("fill-opacity", 0.001)
-            .style("stroke", d => d.value.color)
-            .attr("stroke-width", 1)
-            .datum(d => d.value.hist)
-            .attr("d", d3.area()
-                .x0(d => xNum(-d.length))
-                .x1(d => xNum(d.length))
-                .y(d => self.y(d.x0))
-                .curve(d3.curveCatmullRom)
-            )
-            .style("cursor", "pointer")
-            .append("svg:title")
-            .text(d => d.reduce((prev, curr) => prev + curr.length, 0))
-        
+        var violinMax = d3.max(sumstatFlat, d=>d.value.length);
+        var violinMin = d3.min(sumstatFlat, d=>d.value.length);
+        var violinScale = d3.scaleLinear()
+                .range([self.x.bandwidth()/2, self.x.bandwidth()])
+                .domain([violinMin,violinMax])
+
+        for(let violin of sumstatFlat) {
+            var density = kde(violin.value.map(d => d.y))
+            var densityMax = d3.max(density, d=>d[1]);
+            
+            var scaledBandwidth = violinScale(violin.value.length)/2
+            var violinBandwidthScale = d3.scaleLinear()
+                .range([self.x.bandwidth()/2 - scaledBandwidth, self.x.bandwidth()/2 + scaledBandwidth])
+                .domain([-densityMax,densityMax])
+            
+            //Remove leading zeros
+            let zerosCount = 0;
+            for(let i=0; i<density.length && density[i][1] == 0; ++i) ++zerosCount;
+            if(zerosCount > 0) density.splice(0, zerosCount-1)
+
+            //Remove trailing zeros
+            zerosCount = 0;
+            for(let i=density.length-1; i>=0 && density[i][1] == 0; --i) ++zerosCount;
+            if(zerosCount > 0) density.splice(-(zerosCount-1), zerosCount-1)
+
+            //Create loop
+            var currX = self.x(violin.key);
+            var currColor = violinColorScale(violin.value[0].x);
+            var currColorDarker = d3.rgb(currColor).darker(0.5);
+            
+            var densityBinScale = d3.scaleLinear()
+                .range([0, density.length-1])
+                .domain(self.y.domain())
+
+            let pointsSVG = self.svg.selectAll("indPoints")
+                .data(shouldCullPoints ? self._filterDenseCircles(violin.value, 3) : violin.value)
+                .enter()
+                .append("circle")
+                .attr("cx", function(d) {
+                    let densityIndex = densityBinScale(d.y);
+                    let random = (2 * Math.random() - 1);
+                    return currX + self.x.bandwidth()/2 + random * violinBandwidthScale(d3.interpolateNumber(density[Math.floor(densityIndex)][1], density[Math.ceil(densityIndex)][1])(densityIndex - Math.floor(densityIndex)))/2; 
+                })
+                .attr("cy", d => self.y(d.y))
+                .attr("r", 3)
+                .attr("fill", "white")
+                .style("fill-opacity", 1)
+                .attr("stroke", currColor)
+                .attr("stroke-width", 0.2)
+                .attr("stroke-opacity", 1)
+
+            let areaSVG = self.svg.append("path")
+                .datum(density)
+                .attr("fill", "white")
+                .style("fill-opacity", 0.001)
+                .style("stroke", currColorDarker)
+                .attr("stroke-width", 1.5)
+                .attr("d", d3.area()
+                    .x0(d => currX + violinBandwidthScale(d[1] * 1))
+                    .x1(d => currX + violinBandwidthScale(d[1] * -1))
+                    .y(d => self.y(d[0]))
+                    .curve(d3.curveCatmullRom)
+                )
+                .style("cursor", "pointer")
+                .append("svg:title")
+                .text(violin.value.length)
+        }
+
         self._addTooltip();
     }
 
@@ -718,5 +739,18 @@ class Plot {
         var length = test.node().getComputedTextLength();
         test.remove();
         return length/2; //TODO temporary, too much whitespace due to margin.bottom
+    }
+
+    //Remove circles that overlap any other circle by more than (circleOverlapCullThreshold*100) %
+    _filterDenseCircles(data, radius, decimalPlaces=2, circleOverlapCullThreshold=0.9) {
+        let circleSet = {};
+        let filtered = data.filter(d => {
+            let circleHash = (d.x / radius * circleOverlapCullThreshold).toFixed(decimalPlaces) + ":" + (d.y / radius * circleOverlapCullThreshold).toFixed(decimalPlaces);
+            if(circleSet[circleHash]) return false;
+            return circleSet[circleHash] = true;
+        });
+
+        console.log((data.length - filtered.length) + " data points culled");
+        return filtered;
     }
 }

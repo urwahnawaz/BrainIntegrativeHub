@@ -296,9 +296,11 @@ class MetaPanel {
 
                         let scale = controls.getSelectedScale();
                         let labels = {yAxisLabel: yAxis, xAxisLabel: xAxis};
+                        let bandwidth = 2.5;
                         if(scale != "Linear") {
                             let func = (scale == "Log e" ? Math.log : Math.log10);
                             self._scalePlotData(plotData, func, 0.1, plot, scale, labels);
+                            bandwidth = func(bandwidth);
                         }
 
                         if(self.hdf5Group.keys.includes("sample_id")) {
@@ -325,7 +327,7 @@ class MetaPanel {
                         }
 
                         if(xAxisIsString) {
-                            plot.updateViolin(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset], orderXDic, groupLabelsX, groupSizesX, orderZDic);
+                            plot.updateViolin(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset], orderXDic, groupLabelsX, groupSizesX, orderZDic, bandwidth);
                         } else {
                             plot.updateScatter(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset], orderZDic);
                         }

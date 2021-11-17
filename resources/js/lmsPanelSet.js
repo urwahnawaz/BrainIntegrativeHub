@@ -99,7 +99,7 @@ class LMSPanelSet {
                 plotData.push({x: data1[meta1]/*this ends up undefined? meta1 probs out of range?*/, y: data2[meta2]});
             }
         }
-        self.plot.updateScatter(plotData, curr1, curr2, "Z-Score Transformed Mean Log2 (Expression)");
+        self.plot.updateScatter(plotData, curr1, curr2, "Z-Score Transformed Mean Log2 (Expression)", undefined, true);
         for(var p of self.searchedEntries) {
             let metaIndex1 = self.metas[curr1][p.row];
             let metaIndex2 = self.metas[curr2][p.row];
