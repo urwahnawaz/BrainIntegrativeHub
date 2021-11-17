@@ -21,7 +21,7 @@ class Plot {
         //self.colors = ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990', '#dcbeff', '#9A6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#a9a9a9', '#000000']; 
     
         //P. Green-Armytage
-        self.colors = ["#F0A3FF","#0075DC","#993F00","#4C005C","#191919","#005C31","#2BCE48","#FFCC99","#808080","#94FFB5","#8F7C00","#9DCC00","#C20088","#003380","#FFA405","#FFA8BB","#426600","#FF0010","#5EF1F2","#00998F","#E0FF66","#740AFF","#990000","#FFFF80","#FFFF00","#FF5005"]
+        self.colors = ["#0075DC","#993F00","#4C005C","#191919","#005C31","#2BCE48","#FFCC99","#808080","#94FFB5","#8F7C00","#9DCC00","#C20088","#003380","#FFA405","#FFA8BB","#426600","#FF0010","#5EF1F2","#00998F","#E0FF66","#740AFF","#990000","#FFFF80","#FFFF00","#FF5005", "#F0A3FF"]
     }
 
     setDimensions(width=800, height=400, right=80, left=80, top=50, bottom=60) {
@@ -434,7 +434,7 @@ class Plot {
             var currX = self.x(violin.key);
             var currColor = violinColorScale(violin.value[0].x);
             var currColorDarker = d3.rgb(currColor).darker(0.5);
-            
+
             var densityBinScale = d3.scaleLinear()
                 .range([0, density.length-1])
                 .domain(self.y.domain())
