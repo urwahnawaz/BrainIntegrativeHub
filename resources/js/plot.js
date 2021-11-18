@@ -22,6 +22,8 @@ class Plot {
     
         //P. Green-Armytage
         self.colors = ["#0075DC","#993F00","#4C005C","#191919","#005C31","#2BCE48","#FFCC99","#808080","#94FFB5","#8F7C00","#9DCC00","#C20088","#003380","#FFA405","#FFA8BB","#426600","#FF0010","#5EF1F2","#00998F","#E0FF66","#740AFF","#990000","#FFFF80","#FFFF00","#FF5005", "#F0A3FF"]
+        self.colorsDarker = self.colors.map(c => d3.rgb(c).darker(1))
+    
     }
 
     setDimensions(width=800, height=400, right=80, left=80, top=50, bottom=60) {
@@ -114,7 +116,7 @@ class Plot {
             
             pointColorScale = d3.scaleOrdinal()
                 .domain(orderZ ? orderZ : categoriesZ)
-                .range(self.colors);
+                .range(self.colors.map((c, i) => i));
 
             var legend = self.svg.selectAll("legend")
                 .data(categoriesZ)
@@ -123,7 +125,7 @@ class Plot {
                 .attr("transform", function (d, i) { return "translate(" + (self.width) + "," + ((20 * i)) + ")"; });
 
             legend.append("circle")
-                .style("fill", function (d, i) { return pointColorScale(d); })
+                .style("fill", function (d, i) { return self.colors[pointColorScale(d)]; })
                 .attr("stroke", "black")
                 .attr("r", 6.5)
 
@@ -135,7 +137,7 @@ class Plot {
         }
 
         // Show scatter plot
-        let defaultColor = "#2B6DA4";
+        let defaultColor = "#4b90cc";
         let defaultColorDarker = d3.rgb(defaultColor).darker(1)
         self.svg.selectAll("indPoints")
             .data(shouldCullPoints ? self._filterDenseCircles(data, 3) : data)
@@ -144,10 +146,10 @@ class Plot {
             .attr("cx", function (d) { return (self.x(d.x)) })
             .attr("cy", function (d) { return (self.y(d.y)) })
             .attr("r", 3)
-            .style("stroke", function(d) { return pointColorScale ? d3.rgb(pointColorScale(d.z)).darker(1) : defaultColorDarker})
+            .style("stroke", function(d) { return pointColorScale ? self.colorsDarker[pointColorScale(d.z)] : defaultColorDarker})
             .attr("stroke-opacity", 1)
             .attr("stroke-width", 0.2)
-            .style("fill", function (d) { return pointColorScale ? (pointColorScale(d.z)) : "#6899c4" })
+            .style("fill", function (d) { return pointColorScale ? self.colors[pointColorScale(d.z)] : defaultColor })
             //.on("mouseover", (d) => self._tooltipMouseOver(d))
             //.on("mouseleave", (d) => self._tooltipMouseLeave(d))
 
