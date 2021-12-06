@@ -21,7 +21,7 @@ class Plot {
         //self.colors = ['#e6194B', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990', '#dcbeff', '#9A6324', '#fffac8', '#800000', '#aaffc3', '#808000', '#ffd8b1', '#000075', '#a9a9a9', '#000000']; 
     
         //P. Green-Armytage
-        self.colors = ["#0075DC","#993F00","#4C005C","#191919","#005C31","#2BCE48","#FFCC99","#808080","#94FFB5","#8F7C00","#9DCC00","#C20088","#003380","#FFA405","#FFA8BB","#426600","#FF0010","#5EF1F2","#00998F","#E0FF66","#740AFF","#990000","#FFFF80","#FFFF00","#FF5005", "#F0A3FF"]
+        self.colors = ["#0075DC","#4C005C","#005C31","#2BCE48","#808080","#94FFB5","#8F7C00","#9DCC00","#C20088","#003380","#FFA405","#426600","#FF0010","#5EF1F2","#00998F","#993F00","#740AFF","#990000","#FFFF80","#FF5005", "#F0A3FF", "#E0FF66", "#191919", "#FFCC99", "#FFA8BB", "#FFFF00"]
         self.colorsDarker = self.colors.map(c => d3.rgb(c).darker(1))
     
     }
@@ -254,6 +254,38 @@ class Plot {
         self._addTooltip();
     }
 
+    //Expects [{x, y}...] where x is string and y is numeric
+    updateColumn(data, xName, yName) {
+        var self = this;
+
+        let categoriesX = self._getCategories(data, d=>d.x);
+
+        self._update(data, xName, yName);
+
+        // Show the X scale
+        self.x = d3.scaleBand()
+            .range([self.rangePad, self.width - self.rangePad])
+            .domain(categoriesX)
+            .paddingInner(1)
+            .paddingOuter(.5)
+
+        self.svg.append("g")
+            .attr("transform", "translate(0," + self.height + ")")
+            .call(d3.axisBottom(self.x).tickFormat(d => d.length <= 10 ? d : d.substring(0, 7) + '...'))
+
+        //Show columns
+        self.svg.selectAll("boxes")
+            .data(data)
+            .enter()
+            .append('rect')
+            .attr('x', d => self.x(d.x) - self.width / categoriesX.length * 0.8 / 2)
+            .attr('y', d => self.y(d.y))
+            .attr('width', self.width / categoriesX.length * 0.8)
+            .attr('height', d => self.height - self.y(d.y))
+            .attr('stroke', '#34373b')
+            .attr('fill', "#494b4f");
+    }
+
     //Expects [{x, y, z=undefined}...] where x is string and y is numeric, z is optional string for coloring
     updateViolin(data, xName, yName, dataset, orderX, groupLabelsX, groupSizesX, orderZ, bandwidth, shouldCullPoints=false) {
         var self = this;
@@ -262,7 +294,6 @@ class Plot {
 
         let categoriesX = self._getCategories(data, d => d.x);
         let categoriesZ = !multipleColors ? [] : self._getCategories(data, d=>d.z);
-        let multiplePerCategory = (data.length > categoriesX.length);
 
         let maxCategoryLenX = categoriesX.reduce((a, b) => a.length > b.length ? a : b);
         let maxCategoryLenZ = !multipleColors ? "" : " " + categoriesZ.reduce((a, b) => a.length > b.length ? a : b);
@@ -276,7 +307,6 @@ class Plot {
         self._update(data, xName, yName, dataset, rotatedOffset);
 
         let violinColorScale = d3.scaleOrdinal().domain(orderX ? orderX : categoriesX).range(self.colors);
-        //use like this violinColorScale(d[0].x)
 
         //Add indices to data
         for(let i=0; i<data.length; ++i) data[i].i = i;
@@ -404,8 +434,30 @@ class Plot {
             };
         }
 
-        // Compute kernel density estimation
-        var kde = kernelDensityEstimator(kernelEpanechnikov(bandwidth), self.y.ticks(40))
+        function scottsRule(len, ssd, iqr) {
+            var a = Math.min(ssd, iqr / 1.349);
+            return 1.059 * a * Math.pow(len, -0.2);
+        }
+
+        function median(l, r) {
+            var n = r - l + 1;
+            n = parseInt((n + 1) / 2) - 1;
+            return parseInt(n + l);
+        }
+ 
+        function IQR(array) {
+            array.sort((a,b)=>a-b);
+            var mid_index = median(0, array.length);
+            var Q1 = array[median(0, mid_index)];
+            var Q3 = array[median(mid_index + 1, array.length)];
+            return Q3 - Q1;
+        }
+
+        function SD(array) {
+            const n = array.length
+            const mean = array.reduce((a, b) => a + b) / n
+            return Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n)
+        }
         
         var violinMax = d3.max(sumstatFlat, d=>d.value.length);
         var violinMin = d3.min(sumstatFlat, d=>d.value.length);
@@ -414,6 +466,13 @@ class Plot {
                 .domain([violinMin,violinMax])
 
         for(let violin of sumstatFlat) {
+            let array = violin.value.map(d => d.y);
+            let iqr = IQR(array);
+            let sd = SD(array);
+
+            // Compute kernel density estimation
+            var kde = kernelDensityEstimator(kernelEpanechnikov(scottsRule(array.length, sd, iqr)), self.y.ticks(40))
+
             var density = kde(violin.value.map(d => d.y))
             var densityMax = d3.max(density, d=>d[1]);
             

@@ -15,30 +15,18 @@ class MetaPanel {
         self.datasets = [];
         self.currIndex = undefined;
 
-        document.getElementById(self.parentId).insertAdjacentHTML("beforeend", self._generateHTML());
-
-        self.qtls = [];
-        self.indices = {}
+        self.hasAnyVariancePartition = false;
         for(let d of hdf5Group.keys) {
             let group = hdf5Group.get(d);
-            if(group.keys.includes("QTL")) {
-                self.qtls.push(d);
-                self.indices[d] = [...group.get("indices").value];
-            }
-
             if(group.keys.includes("matrices")) {
                 self.datasets.push(d);
             }
+            if(group.keys.includes("variancePartition")) {
+                self.hasAnyVariancePartition = true;
+            }
         }
 
-        if(self.qtls.length > 0) {
-            document.getElementById(self.elementId + "panel").childNodes[1].childNodes[3].childNodes[1].insertAdjacentHTML("beforeend", self._generateQTLHTML());
-            let hidableParent = $("#" + this.elementId + "qtl").parent().parent('.hidable');
-            if(hidableParent && self.qtls.length == 1) {
-                    hidableParent.hide();
-            }
-            $("#" + this.elementId + "qtl").selectpicker("refresh");
-        }
+        document.getElementById(self.parentId).insertAdjacentHTML("beforeend", self._generateHTML());
 
         self.plot = new Plot(self.elementId + "plot");
         self.controls = new PlotControls(self.elementId + "controls", "Metadata Variable", "Expression Measure", "Second Metadata Variable");
@@ -48,6 +36,8 @@ class MetaPanel {
         self.plot.addYAxisCallback(function() {
             self.controls.incrimentScale();
         });
+
+        if(self.hasAnyVariancePartition) self.plot2 = new Plot(self.elementId + "plot2");
 
         self.rowCache = {};
         for(let dataset of self.datasets) {
@@ -337,58 +327,33 @@ class MetaPanel {
         });
     }
 
-    _onQTLChange() {
+    _onVariancePartitionChange(controls, plot) {
         var self = this;
 
-        if(self.qtls.length == 0) return;
+        if(self.suppressChanges > 0) return;
 
-        $("#" + this.elementId + "qtltitle").text("CircQTL:" + self.qtls[0])
+        let dataset = controls.getSelectedDataset();
 
-        let rows = undefined;
-        let dataset = $("#" + self.elementId + "qtl").val();
-        let datasetObj = self.hdf5Group.get(dataset + "/QTL");
-        let heading = datasetObj.attrs.heading.split(",");
-        let index = self.currIndex[dataset];
-
-        if(index >= 0) {
-            $("#" + this.elementId + "noqtl").text("No Significant QTLs");
-            let indices = self.indices[dataset];
-            let qtlCalcIndex = indices[index]
-            if(qtlCalcIndex >= 0) {
-                let end = -1;
-                for(let i = index + 1; i < indices.length; ++i) {
-                    if(indices[i] >= 0) {
-                        end = indices[i];
-                        break;
-                    }
-                }
-                rows = datasetObj.value.slice(qtlCalcIndex, (end == -1 ? datasetObj.shape[0] : end));
-                for(let i=0; i<rows.length; ++i) rows[i] = rows[i].split(",");
-            }
-        } else {
-            $("#" + this.elementId + "noqtl").text("No Data");
+        if(!dataset || self.currIndex[dataset] < 0 || !self.hdf5Group.get(dataset).keys.includes("variancePartition")) {
+            plot.updateDisabled();
+            return;
         }
 
-        let qtlContents = "";
-        qtlContents += '<thead>';
-        qtlContents += "<tr>";
-        for(let h of heading) qtlContents += `<th>${h}</th>`
-        qtlContents += "</tr>";
-        qtlContents += '</thead>';
-        qtlContents += '<tbody>';
-        if(rows) {
-            for(let r of rows) {
-                qtlContents += "<tr>";
-                for(let v of r) qtlContents += `<td>${v}</td>`
-                qtlContents += "</tr>";
-            }
-            $("#" + this.elementId + "noqtl").hide();
-        } else {
-            $("#" + this.elementId + "noqtl").show();
-        }
-        qtlContents += '</tbody>';
+        let variancePartitionData = self.hdf5Group.get(dataset + "/variancePartition");
+        let heading = variancePartitionData.attrs["heading"];
+        let start = heading.length * self.currIndex[dataset];
+        let dataY = variancePartitionData.value.slice(start, start + heading.length);
 
-        document.getElementById(self.elementId + "table").innerHTML = qtlContents;
+        let dataYSum = 0;
+        let data = [];
+        for(let i=0; i<heading.length; dataYSum += dataY[i], ++i) data.push({x: heading[i], y: dataY[i]});
+
+        if(dataYSum == -heading.length) {
+            plot.updateDisabled();
+            return;
+        }
+        
+        plot.updateColumn(data, "Metadata variable", "% Variance Explained");
     }
 
     setCircId(circId, obj) {
@@ -407,7 +372,7 @@ class MetaPanel {
         self.suppressChanges--;
         self._onPlotChange(self.controls, self.plot, false);
 
-        self._onQTLChange();
+        if(self.hasAnyVariancePartition) self._onVariancePartitionChange(self.controls, self.plot2);
 
         if(found) {
             $('#' + this.elementId + "panel").show()
@@ -419,28 +384,6 @@ class MetaPanel {
     setControlDatasets(controls, datasets) {
         var self = this;
         controls.setDatasets(datasets.map(d => {return {name: d, disabled: (self.currIndex[d] < 0)};}));
-    }
-
-    _generateQTLHTML() { //TODO: generalize for more than one QTL
-        return /*html*/`
-            <hr class="mt-1 mb-1"/>
-            <span class="hidable">
-                <div class="col-md-2">
-                    <select id="${this.elementId + "qtl"}" class="selectpicker">
-                        ${this.qtls.map(v => "<option>" + v + "</option>")}
-                    </select>
-                </div>
-                <br><br>
-            </span>
-            <div class="row justify-content-center">
-                <div id="${this.elementId + "qtltitle"}" class="text-center"></div>
-                <br><br>
-                <div class="col-auto">
-                    <table class="table qtltable" id="${this.elementId + "table"}"></table>
-                </div>
-                <div id="${this.elementId + "noqtl"}" class="text-center"></div>
-            </div>
-            `
     }
 
     _generateHTML() {
@@ -455,12 +398,22 @@ class MetaPanel {
                     <div id="${this.elementId + "collapse"}" class="panel-collapse collapse in">
                         <div class="panel-body">
                             <div class="panel-description">${this.description}</div><br><br>
-                            <div class="col-md-2">
-                                <div id="${this.elementId + "controls"}"></div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div id="${this.elementId + "controls"}"></div>
+                                </div>
+                                <div class="col-md-9 col-md-offset-1">
+                                    <div id="${this.elementId + "plot"}"></div>
+                                </div>
                             </div>
-                            <div class="col-md-9 col-md-offset-1">
-                                <div id="${this.elementId + "plot"}"></div>
-                            </div>
+                            ${!this.hasAnyVariancePartition ? "" : 
+                            /*html*/`<hr class="mt-1 mb-1"/>
+                            <div class="row">
+                                <div class="col-md-9 col-md-offset-3">
+                                    <div id="${this.elementId + "plot2"}"></div>
+                                </div>
+                            </div>`
+                            }
                         </div>
                     </div>
                 </div>
