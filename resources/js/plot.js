@@ -281,7 +281,7 @@ class Plot {
             .attr('x', d => self.x(d.x) - self.width / categoriesX.length * 0.8 / 2)
             .attr('y', d => self.y(d.y))
             .attr('width', self.width / categoriesX.length * 0.8)
-            .attr('height', d => self.height - self.y(d.y))
+            .attr('height', d => self.y(0) - self.y(d.y))
             .attr('stroke', '#34373b')
             .attr('fill', "#494b4f");
     }
