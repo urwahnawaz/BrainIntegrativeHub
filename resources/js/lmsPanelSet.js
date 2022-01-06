@@ -1,5 +1,12 @@
+/*
+self.metas -> {dataset1: [-1, 1, 2, 3, -1, 4], dataset2: [-1, ...]} #note can be added to for custom datasets
+self.names -> [ENGS0343, ENGS38473, ENGS23484...]
+self.data -> {dataset1: [0.123, 0.343, 0.3432, 1.232], dataset2: [3.123, 0.12, 0.345]}
+self.index -> {dataset1: []} (same length as self.data)
+*/
+
 class LMSPanelSet {
-    constructor(parentId, childIndex, name, hdf5Group, metas) {
+    constructor(parentId, childIndex, name, hdf5Group, metas, names) {
         var self = this;
 
         self.parentId = parentId;
@@ -8,14 +15,18 @@ class LMSPanelSet {
         self.searchedEntries = [];
         document.getElementById(self.parentId).children[childIndex].insertAdjacentHTML("afterEnd", self._generateHTML());
         self.metas = metas;
+        self.names = names;
         self.data = {}
+        self.index = {}
         for(let experiment of hdf5Group.keys) {
             let experimentGroup = hdf5Group.get(experiment);
             let scaled = experimentGroup.get("scaled");
             self.data[experiment] = [...scaled.value];
+            let index = experimentGroup.get("index");
+            self.index[experiment] = [...index.value];
         }
 
-        self.plot = new Plot("lmsplot");
+        self.plot = new Plot("lmssetplot");
         self.plot.setDimensions(800, 320, 80, 80, 50, 60);
         self.resetOptions();
         $('#lmsselect1').on('change', () => self.update());
@@ -45,7 +56,6 @@ class LMSPanelSet {
     setMultiple(searchedEntries) {
         var self = this;
         self.searchedEntries = searchedEntries;
-        self.plot.removeScatterHighlight();
         self.preventUpdates = true;
         let names = Object.keys(self.data);
         let setChart = false;
@@ -89,24 +99,50 @@ class LMSPanelSet {
 
         let curr1 = $("#lmsselect1").val();
         let curr2 = $("#lmsselect2").val();
+
         let data1 = self.data[curr1];
         let data2 = self.data[curr2];
+
+        let index1 = self.index[curr1];
+        let index2 = self.index[curr2];
+
+        let metas1 = self.metas[curr1];
+        let metas2 = self.metas[curr2];
         let plotData = [];
-        for(let i=0; i<self.metas[curr1].length; ++i) {
-            let meta1 = self.metas[curr1][i];
-            let meta2 = self.metas[curr2][i];
-            if(meta1 != -1 && meta2 != -1) {
-                plotData.push({x: data1[meta1]/*this ends up undefined? meta1 probs out of range?*/, y: data2[meta2]});
+
+        let entry1, entry2, entry3;
+        entry1 = entry2 = entry3 = -1;
+        for(let i=0, j=0, k=0, halt=0; i < index1.length && !halt; ++i) {
+            let entry1 = index1[i];
+
+            while(entry2 < entry1 && !halt) {
+                if(j < index2.length) entry2 = index2[j++];
+                else halt=1;
+            }
+            
+            if(self.searchedEntries.length) {
+                while(entry3 < entry2) {
+                    if(k < self.searchedEntries.length) entry3 = self.searchedEntries[k++].row;
+                    else break;
+                }
+            }
+            
+            if(entry1 == entry2 && entry1 != entry3) {
+                plotData.push({x: data1[metas1[entry1]], y: data2[metas2[entry2]], name: self.names[entry1]});
             }
         }
+
         self.plot.updateScatter(plotData, curr1, curr2, "Z-Score Transformed Mean Log2 (Expression)", undefined, true);
+
+        plotData = [];
         for(var p of self.searchedEntries) {
             let metaIndex1 = self.metas[curr1][p.row];
             let metaIndex2 = self.metas[curr2][p.row];
             if(metaIndex1 >= 0 && metaIndex2 >= 0) {
-                self.plot.addScatterHighlight({x: data1[metaIndex1], y: data2[metaIndex2]}, p.label, "#00e04f", "white", 5)
+                plotData.push({x: data1[metaIndex1], y: data2[metaIndex2], name: self.names[index1[metaIndex1]]});
             }
         }
+        self.plot.addScatterHighlights(plotData, "#00e04f", "white", 5);
     }
 
     _setOptions(id, names, defaultName=undefined) {
@@ -135,7 +171,7 @@ class LMSPanelSet {
                                 <select class="selectpicker" id="lmsselect1"></select><br><br><br>
                             </div>
                             <div class="col-md-9 col-md-offset-1">
-                                <div id="lmsplot"></div>
+                                <div id="lmssetplot"></div>
                             </div>
                         </div>
                     </div>

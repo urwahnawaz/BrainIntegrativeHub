@@ -56,7 +56,7 @@ class Plot {
                 .on("mouseleave", () => self._setDownloadButtonVisibility(false))
     }
 
-    removeScatterHighlight() {
+    removeScatterHighlights() {
         var self = this;
         if(self.highlight) {
             self.highlight.remove();
@@ -64,20 +64,21 @@ class Plot {
         }
     }
 
-    addScatterHighlight(point, title="", fill="#ffbf00", stroke="white", radius=8) {
+    addScatterHighlights(data, fill="#ffbf00", stroke="white", radius=8) {
         var self = this;
+        self.highlightData = data;
         self.highlight = self.svg.selectAll("highlight")
-            .data([point])
+            .data(data)
             .enter()
             .append("circle")
             .style("cursor", "pointer")
-            .attr("cx", function (d) { return (self.x(d.x)) })
-            .attr("cy", function (d) { return (self.y(d.y)) })
+            .attr("cx", d => self.x(d.x))
+            .attr("cy", d => self.y(d.y))
             .attr("r", radius)
             .style("fill",  fill)
             .attr("stroke", stroke)
             .append("svg:title")
-            .text(title);
+            .text(d => d.name);
     }
 
     addYAxisCallback(callback) {
@@ -572,6 +573,7 @@ class Plot {
         this.currData = undefined;
         this.currXName = undefined;
         this.currYName = undefined;
+        this.highlightData = undefined;
     }
 
     //Internal function for shared axis creation
@@ -770,16 +772,16 @@ class Plot {
     _saveCSV() {
         var self = this;
         var csv = 'data:text/csv;charset=utf-8,';
-        if(self.currData.length) {
-            if(self.currData[0].name) {
-                csv += `,${self.currYName},${self.currXName}\r\n`
-                for(let d of self.currData) {
-                    csv += `${d.name},${d.y},${d.x}\r\n`;
-                }
-            } else {
-                csv += `${self.currYName},${self.currXName}\r\n`
-                for(let d of self.currData) {
-                    csv += `${d.y},${d.x}\r\n`;
+
+        let includeHighlight = self.highlightData && self.highlightData.length;
+        let includeData = self.currData && self.currData.length;
+        let includeNames = (!includeHighlight || self.highlightData[0].name) || (!includeData || self.currData[0].name);
+
+        csv += `name,${self.currYName},${self.currXName}${includeHighlight ? ",highlighted" : ""}\r\n`
+        for(let [i, source] of [self.highlightData, self.currData].entries()) {
+            if(source && source.length) {
+                for(let d of source) {
+                    csv += `${includeNames && d.name ? d.name : ""},${d.y},${d.x}${includeHighlight ? "," + (i==0) : ""}\r\n`;
                 }
             }
         }

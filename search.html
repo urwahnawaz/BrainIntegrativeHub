@@ -348,7 +348,7 @@
             
             lmsMeta = {};
             for(let i=0; i<dataOrder.length; ++i) if(isDataset[i]) lmsMeta[dataOrder[i]] = matrix[i];
-            lmsPanel = new LMSPanel("allpanels", 0, "Gene expression across datasets", f.get("metadata"), lmsMeta);
+            lmsPanel = new LMSPanel("allpanels", 0, "Gene expression across datasets", f.get("metadata"), lmsMeta, matrix[0]);
 
             customPanel = new CustomPanel("allpanels", "Custom Datasets");
 

@@ -193,7 +193,7 @@
 
             $("#myDisplay")[0].setAttribute('data-domain', matrix[0].length + " transcripts");
 
-            lmsPanel = new LMSPanelSet("searchsetplot", 0, "", f.get("metadata"), lmsMeta);
+            lmsPanel = new LMSPanelSet("searchsetplot", 0, "", f.get("metadata"), lmsMeta, matrix[0]);
 
             incAwaitAll();
         })();

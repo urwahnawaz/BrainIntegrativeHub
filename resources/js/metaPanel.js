@@ -1,7 +1,7 @@
 //Creates plot controls and plot for each hdf5 group.
 // One for metadata vs measure, one for measure vs measure if there are multiple
 class MetaPanel {
-    constructor(parentId, uniqueId, hdf5Group, name) {
+    constructor(parentId, uniqueId, hdf5Group, name, names) {
         var self = this;
 
         self.suppressChanges = 0;
@@ -104,35 +104,7 @@ class MetaPanel {
         }
         return cache.data.slice(rowStart - chunkStart, rowStart + rowLength - chunkStart);
     }
-
-    _getMatrixRowDataLake(datasetName="BrainSeq", matrixName="RPKM", row=0, callback=console.log) {
-        console.log(this.hdf5Group);
-        let matrix = this.hdf5Group.get(datasetName + "/matrices/" + matrixName);
-
-        let url = "https://laughing-noether-c70ca8.netlify.app/" + matrix.attrs["datalake"];
-
-        let shape = matrix.attrs["shape"];
-        let rowStart = row * shape[1];
-        let rowEnd = Math.min(rowStart + shape[1], shape[0] * shape[1]);
-
-        let start = rowStart * 4;
-        let end = rowEnd * 4;
-
-        fetch(url, {
-            method: "GET",
-            cache: "force-cache",
-            headers: {
-                "Range": `bytes=${start}-${end-1}`,
-            }
-        })
-        .then(res => res.arrayBuffer())
-        .then(buff => {
-            let array = new Float32Array(buff.slice(0, end));
-            console.log(buff.byteLength - (end-start));
-            callback(array) //Throwing away a lot, could cache  this
-        });
-    }
-
+    
     _getMatrixRowDataLakeCached(datasetName="BrainSeq", matrixName="RPKM", row=0, callback=console.log) {
         let matrix = this.hdf5Group.get(datasetName + "/matrices/" + matrixName);
 
@@ -143,9 +115,16 @@ class MetaPanel {
         let rowEnd = Math.min(rowStart + shape[1], shape[0] * shape[1]);
         let chunkRows = 1; //e.g. could be page size but then sorting would break
         let chunkSize = chunkRows * shape[1];
-        let chunkCurr = Math.floor(row / chunkRows);
-        let chunkStart = chunkCurr * chunkSize;
-        let chunkEnd = Math.min(chunkStart + chunkSize, shape[0] * shape[1]);
+
+        let datalakeMax = matrix.attrs["datalake-max"];
+        let divideOffset =  datalakeMax % (chunkSize * bytesPerFloat) ? 1 : 0; //Account for trucation of chunks every time we switch to a new file part
+        let currPart = Math.floor(rowStart * bytesPerFloat / datalakeMax);
+
+        let chunkCurr = Math.floor(row / chunkRows) + divideOffset * currPart;
+        let chunkStart = Math.max(chunkCurr * chunkSize, currPart * datalakeMax / bytesPerFloat);
+        let chunkEnd = Math.min(chunkStart + chunkSize, (currPart+1) * datalakeMax / bytesPerFloat); //Initermediate parts
+        chunkEnd = Math.min(chunkEnd, shape[0] * shape[1]) //Last part, which may be less than datalakeMax
+
         function abortableFetch(request, opts) {
             const controller = new AbortController();
             const signal = controller.signal;
@@ -161,10 +140,11 @@ class MetaPanel {
             console.log(`used cached chunk ${chunkCurr}`);
             callback(cache.data.slice(rowStart - chunkStart, rowEnd - chunkStart));
         } else {
-            let start = chunkStart * bytesPerFloat;
-            let end = chunkEnd * bytesPerFloat;
+            
+            let start = (chunkStart * bytesPerFloat) % datalakeMax;
+            let end = (chunkEnd * bytesPerFloat) % datalakeMax
 
-            let f = abortableFetch("https://laughing-noether-c70ca8.netlify.app/" + matrix.attrs["datalake"], {
+            let f = abortableFetch("https://hopeful-austin-9ca901.netlify.app/" + matrix.attrs["datalake"][currPart], {
                 method: "GET",
                 cache: "force-cache",
                 headers: {
@@ -297,7 +277,7 @@ class MetaPanel {
                             let sampleNames = self.hdf5Group.get(dataset).attrs["sample_id"];
                             for(let i=0; i<plotData.length; ++i) plotData[i].name = sampleNames[i];
                         } else {
-                            for(let i=0; i<plotData.length; ++i) plotData[i].name = i;
+                            for(let i=0; i<plotData.length; ++i) plotData[i].name = "sample" + i;
                         }
                         
                         //Filter by selected region

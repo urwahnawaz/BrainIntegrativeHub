@@ -1,5 +1,5 @@
 class LMSPanel {
-    constructor(parentId, childIndex, name, hdf5Group, metas) {
+    constructor(parentId, childIndex, name, hdf5Group, metas, names) {
         var self = this;
 
         self.parentId = parentId;
@@ -8,11 +8,15 @@ class LMSPanel {
         self.circIndex = -1;
         document.getElementById(self.parentId).children[childIndex].insertAdjacentHTML("afterEnd", self._generateHTML());
         self.metas = metas;
-        self.data = {}
+        self.names = names;
+        self.data = {};
+        self.index = {};
         for(let experiment of hdf5Group.keys) {
             let experimentGroup = hdf5Group.get(experiment);
             let scaled = experimentGroup.get("scaled");
             self.data[experiment] = [...scaled.value];
+            let index = experimentGroup.get("index");
+            self.index[experiment] = [...index.value];
         }
 
         self.plot = new Plot("lmsplot");
@@ -40,7 +44,6 @@ class LMSPanel {
 
     setCircIndex(circIndex) {
         var self = this;
-        self.plot.removeScatterHighlight();
         self.preventUpdates = true;
         self.circIndex = circIndex;
         let names = Object.keys(self.data);
@@ -82,22 +85,39 @@ class LMSPanel {
 
         if(self.preventUpdates) return;
         if(self.circIndex == -1) return;
+        
 
         let curr1 = $("#lmsselect1").val();
         let curr2 = $("#lmsselect2").val();
+
         let data1 = self.data[curr1];
         let data2 = self.data[curr2];
+
+        let index1 = self.index[curr1];
+        let index2 = self.index[curr2];
+
+        let metas1 = self.metas[curr1];
+        let metas2 = self.metas[curr2];
+
         let plotData = [];
-        for(let i=0; i<self.metas[curr1].length; ++i) {
-            let meta1 = self.metas[curr1][i];
-            let meta2 = self.metas[curr2][i];
-            if(meta1 != -1 && meta2 != -1) {
-                plotData.push({x: data1[meta1]/*this ends up undefined? meta1 probs out of range?*/, y: data2[meta2]});
+        let entry1, entry2;
+        entry1 = entry2 = -1;
+        for(let i=0, j=0, k=0, halt=0; i < index1.length && !halt; ++i) {
+            let entry1 = index1[i];
+
+            while(entry2 < entry1 && !halt) {
+                if(j < index2.length) entry2 = index2[j++];
+                else halt=1;
+            }
+            
+            if(entry1 == entry2 && entry1 != self.circIndex) {
+                plotData.push({x: data1[metas1[entry1]], y: data2[metas2[entry2]], name: self.names[entry1]});
             }
         }
 
         self.plot.updateScatter(plotData, curr1, curr2, "Z-Score Transformed Mean Log2 (Expression)", undefined, true);
-        self.plot.addScatterHighlight({x: data1[self.metas[curr1][self.circIndex]], y: data2[self.metas[curr2][self.circIndex]]})
+
+        self.plot.addScatterHighlights([{x: data1[self.metas[curr1][self.circIndex]], y: data2[self.metas[curr2][self.circIndex]], name: self.names[self.circIndex]}]);
     }
 
     _setOptions(id, names, defaultName=undefined) {
