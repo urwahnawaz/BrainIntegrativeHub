@@ -13,6 +13,7 @@ class LMSPanelSet {
         self.elementId = self.parentId + "lms";
         self.name = name;
         self.searchedEntries = [];
+        self.missingData = [];
         document.getElementById(self.parentId).children[childIndex].insertAdjacentHTML("afterEnd", self._generateHTML());
         self.metas = metas;
         self.names = names;
@@ -57,29 +58,31 @@ class LMSPanelSet {
         var self = this;
         self.searchedEntries = searchedEntries;
         self.preventUpdates = true;
-        let names = Object.keys(self.data);
         let setChart = false;
+        if(self.searchedEntries.length == 0) {
+            setChart = true;
+        } else {
+            let names = Object.keys(self.data);
+            let atLeastOneInDataset = new Array(names.length);
+            for(let i=0; i<names.length; ++i) {
+                atLeastOneInDataset[i] = searchedEntries.some(p => self.metas[names[i]][p.row] != -1);
+                $('#lmsselect1').children().eq(i).attr("hidden", !atLeastOneInDataset[i]);
+                $('#lmsselect2').children().eq(i).attr("hidden", !atLeastOneInDataset[i]);
+            }
 
-        let atLeastOneInDataset = new Array(names.length);
-        for(let i=0; i<names.length; ++i) {
-            atLeastOneInDataset[i] = searchedEntries.some(p => self.metas[names[i]][p.row] != -1);
-            $('#lmsselect1').children().eq(i).attr("hidden", !atLeastOneInDataset[i]);
-            $('#lmsselect2').children().eq(i).attr("hidden", !atLeastOneInDataset[i]);
-        }
-
-        for(let i=0; i<names.length; ++i) {
-            let curr1 = names[i];
-            for(let j=i+1; !setChart && j<names.length; ++j) {
-                let curr2 = names[j];
-                if(atLeastOneInDataset[i] && atLeastOneInDataset[j]) {
-                    $("#lmsselect2").val(curr1);
-                    $("#lmsselect1").val(curr2);
-                    setChart = true;
-                    break;
+            for(let i=0; !setChart && i<names.length; ++i) {
+                let curr1 = names[i];
+                for(let j=i+1; j<names.length; ++j) {
+                    let curr2 = names[j];
+                    if(atLeastOneInDataset[i] && atLeastOneInDataset[j]) {
+                        $("#lmsselect2").val(curr1);
+                        $("#lmsselect1").val(curr2);
+                        setChart = true;
+                        break;
+                    }
                 }
             }
         }
-        
         self.preventUpdates = false;
         
         if(setChart) {
@@ -135,13 +138,37 @@ class LMSPanelSet {
         self.plot.updateScatter(plotData, curr1, curr2, "Z-Score Transformed Mean Log2 (Expression)", undefined, true);
 
         plotData = [];
+        self.missingData = [];
         for(var p of self.searchedEntries) {
             let metaIndex1 = self.metas[curr1][p.row];
             let metaIndex2 = self.metas[curr2][p.row];
             if(metaIndex1 >= 0 && metaIndex2 >= 0) {
                 plotData.push({x: data1[metaIndex1], y: data2[metaIndex2], name: self.names[index1[metaIndex1]]});
+            } else {
+                self.missingData.push(p.label);
             }
         }
+
+        if(self.searchedEntries.length) {
+            document.getElementById("alertMain").style.display = "";
+            console.log(self.searchedEntries)
+            document.getElementById("alertInfo").innerText = ((self.searchedEntries.length - self.missingData.length) + "/" + (self.searchedEntries.length));
+            if(self.missingData.length) {
+                document.getElementById("alertMissing").style.display = "";
+                document.getElementById("alertMain").classList.remove("alert-info");
+                document.getElementById("alertMain").classList.add("alert-warning");
+
+                document.getElementById("alertMissingDownload").href = 'data:text/csv;octet-stream,' + encodeURIComponent(self.missingData.join('\r\n'));
+                document.getElementById("alertMissingDownload").download = "missing" + curr1 + "vs" + curr2 + ".csv";
+            } else {
+                document.getElementById("alertMissing").style.display = "none";
+                document.getElementById("alertMain").classList.remove("alert-warning");
+                document.getElementById("alertMain").classList.add("alert-info");
+            }
+        } else {
+            document.getElementById("alertMain").style.display = "none";
+        }
+
         self.plot.addScatterHighlights(plotData, "#00e04f", "white", 5);
     }
 
@@ -169,8 +196,12 @@ class LMSPanelSet {
                                 <select class="selectpicker" id="lmsselect2"></select><br><br><br>
                                 <div>Select X Axis</div>
                                 <select class="selectpicker" id="lmsselect1"></select><br><br><br>
+                                
+                                <div id="alertMain" class="alert alert-warning" role="alert" style="display: none;">
+                                    <span id="alertInfo">33/35</span> searched terms in intersection<span id="alertMissing"> (<a id="alertMissingDownload">missing</a>)</span>
+                                </div>
                             </div>
-                            <div class="col-md-9 col-md-offset-1">
+                            <div class="col-md-10">
                                 <div id="lmssetplot"></div>
                             </div>
                         </div>

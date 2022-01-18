@@ -37,7 +37,10 @@ class MetaPanel {
             self.controls.incrimentScale();
         });
 
-        if(self.hasAnyVariancePartition) self.plot2 = new Plot(self.elementId + "plot2");
+        if(self.hasAnyVariancePartition) {
+            self.plot2 = new Plot(self.elementId + "plot2");
+            self.plot2.setDimensions(950, 400, 80, 150, 40, 60);
+        }
 
         self.rowCache = {};
         for(let dataset of self.datasets) {
@@ -326,14 +329,14 @@ class MetaPanel {
 
         let dataYSum = 0;
         let data = [];
-        for(let i=0; i<heading.length; dataYSum += dataY[i], ++i) data.push({x: heading[i], y: dataY[i]});
+        for(let i=0; i<heading.length; dataYSum += dataY[i], ++i) data.push({y: heading[i], x: dataY[i]});
 
         if(dataYSum == -heading.length) {
             plot.updateDisabled();
             return;
         }
         
-        plot.updateColumn(data, "Metadata variable", "% Variance Explained");
+        plot.updateBar(data, "Fraction Variance Explained", "Metadata Variable", "Variance Partition");
     }
 
     setCircId(circId, obj) {
@@ -382,14 +385,14 @@ class MetaPanel {
                                 <div class="col-md-2">
                                     <div id="${this.elementId + "controls"}"></div>
                                 </div>
-                                <div class="col-md-9 col-md-offset-1">
+                                <div class="col-md-10">
                                     <div id="${this.elementId + "plot"}"></div>
                                 </div>
                             </div>
                             ${!this.hasAnyVariancePartition ? "" : 
                             /*html*/`<hr class="mt-1 mb-1"/>
                             <div class="row">
-                                <div class="col-md-9 col-md-offset-3">
+                                <div class="col-md-12">
                                     <div id="${this.elementId + "plot2"}"></div>
                                 </div>
                             </div>`

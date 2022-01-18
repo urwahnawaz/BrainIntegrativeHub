@@ -66,14 +66,19 @@
                     <br>
                     <b> To download the plot - </b> hover over the plot and select a format.
                     <br>
+                    <b> Search using file </b> upload a file containing a line delimited list of Gene Symbols or Ensembl Gene IDs. (<a href="./resources/data/Ensembl-list-example.csv">Example</a>)
                 </div>
 
                 
                 <div class="row">
-                    <div class="col-md-10">
+                    <div class="col-md-9">
                         <label id="myDisplay" data-domain="">
-                            <input type="search" autocomplete="off" class="mySearch" id="myInput" placeholder='e.g. "ENSG00000099785, ENSG00000136536, ENSG00000139266, ENSG00000144583"'>
+                            <input type="search" autocomplete="off" class="mySearch" id="myInput">
                         </label>
+                    </div>
+                    <div class="col-md-1">
+                        <input type="file" id="inputData" style="opacity:0;display:contents;" accept=".csv">
+                        <button id="inputDataLabel" type="submit" style="color:#009b41;border:none;width: 40px; height: 40px; margin-right:15px; vertical-align: top; width:100%"><i id="inputDataIcon" class="fas fa-file-csv" aria-hidden="true"></i></button>
                     </div>
                     <div class="col-md-1">
                         <span id="my_search_select_group"><select class="selectpicker" data-header="Select searchable parameters" id="my_search_select" multiple></select></span>
@@ -108,6 +113,7 @@
         let searchCols = undefined;
 
         let searchTerm = "";
+        let searchFile = false;
 
         let coordinateStarts = [];
         let coordinateEnds = [];
@@ -207,8 +213,46 @@
         });
 
         $("#my_search_button").click(function () {
-            searchTerm = $("#myInput").val();
+            if(!searchFile) searchTerm = $("#myInput").val();
             updatePlot();
+        });
+
+        let inputDataIcon = document.getElementById("inputDataIcon")
+        let inputDataFile = document.getElementById("inputData");
+        let inputField = document.getElementById("myInput");
+        let defaultPlaceholder = 'e.g. "ENSG00000099785, ENSG00000136536, ENSG00000139266, ENSG00000144583"';
+        let prevVal = "";
+        inputField.placeholder = defaultPlaceholder;
+        $("#inputDataLabel").click(function() {
+            if(inputDataFile.value) {
+                inputDataIcon.classList.replace("fa-minus-circle", "fa-file-csv");
+                inputField.disabled = false;
+                inputField.placeholder = defaultPlaceholder;
+                inputField.value = prevVal;
+                inputDataFile.value = null;
+                searchFile = false;
+            } else {
+                
+                inputDataFile.click();
+            }
+        });
+
+        $("#inputData").change(function() {
+            if(inputDataFile.value) {
+                inputDataIcon.classList.replace("fa-file-csv", "fa-minus-circle");
+                inputField.placeholder = 'Searching by file "' + inputDataFile.files[0].name + '"';
+                prevVal = inputField.value;
+                inputField.value = "";
+                inputField.disabled = true;
+                searchFile = true;
+
+                var fr=new FileReader();
+                fr.onload=function() {
+                    //TODO: data validation
+                    searchTerm = fr.result;  
+                }
+                fr.readAsText(this.files[0]);
+            }
         });
 
         function hideLoading() {
@@ -217,8 +261,9 @@
         }
 
         function updatePlot() {
-            let entries = searchTerm.split(',');
-            pinned = entries.map(e => ({row:-1, label: e.trim()}));
+            //TODO: centralise file processing before plot updating step
+            let entries = searchTerm.split(searchFile ? /\r?\n/ : ',');
+            pinned = entries.filter(e => e).map(e => ({row:-1, label: e.trim()}));
 
             //Find all indices from string
             let indexingColumn = parseInt(searchCols[0]);
@@ -229,7 +274,9 @@
             }
             
             lmsPanel.setMultiple(pinned);
-            $("#myDisplay")[0].setAttribute('data-domain', total + (total == 1 ? " transcript match" : " transcript matches"));
+
+            if(pinned.length) $("#myDisplay")[0].setAttribute('data-domain', total + (total == 1 ? " transcript match" : " transcript matches"));
+            else $("#myDisplay")[0].setAttribute('data-domain', matrix[0].length + " transcripts");
         }
     </script>
 </body>

@@ -317,3 +317,8 @@ html, body {margin:0;padding:0;height:100%}
 .container .jumbotron, .container-fluid .jumbotron {
   border-radius: 0px;
  }
+
+ /*Needed to enable padding inheritance*/
+ .col-md-2 .dropdown.bootstrap-select.bs3 {
+  width: 100% !important;
+}
