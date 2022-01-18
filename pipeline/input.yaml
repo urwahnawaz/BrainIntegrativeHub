@@ -4,6 +4,7 @@ datasets:
         dir: "./data/FormattedData/BrainSpan/"
         meta: "BrainSpan-metadata-subset.csv"
         brainRegionFilter: "Regions"
+        variancePartition: "BrainSpan-varPart.csv"
         matrices: 
             -   type: RPKM
                 path: "BrainSpan-exp.csv"
@@ -12,6 +13,7 @@ datasets:
         dir: "./data/FormattedData/Gtex/"
         meta: "GTEx-metadata-subset.csv"
         brainRegionFilter: "Regions"
+        variancePartition: "GTEx-varPart.csv"
         matrices: 
             -   type: TPM
                 path: "GTEx-exp.csv"
@@ -20,6 +22,7 @@ datasets:
         dir: "./data/FormattedData/BrainSeq/"
         meta: "BrainSeq-metadata-subset.csv"
         brainRegionFilter: "Regions"
+        variancePartition: "BrainSeq-varPart.csv"
         matrices: 
             -   type: RPKM
                 path: "BrainSeq-exp.csv"
@@ -31,6 +34,20 @@ datasets:
         matrices: 
             -   type: TPM
                 path: "PsychEncode-exp.csv"
+    -   id: HCA
+        dir: "./data/FormattedData/HCA"
+        meta: "HCA-metadata.csv"
+        keyIsSymbol: True
+        matrices:
+            -   type: CPM
+                path: "HCA-exp.csv"
+    -   id: Velmeshev
+        dir: "./data/FormattedData/Velmeshev"
+        meta: "Velmeshev-metadata.csv"
+        keyIsSymbol: True
+        matrices:
+            -   type: CPM
+                path: "Velmeshev-exp-fix.csv"
 customMetadataCategoryOrders:
     -   variable: "AgeInterval"
         datasets: [BrainSpan, GTEx, BrainSeq, PsychENCODE]
@@ -40,17 +57,14 @@ customMetadataCategoryOrders:
                 size: 7
             -   label: postnatal
                 size: 13
+    -   variable: "Regions"
+        datasets: [BrainSpan, GTEx, BrainSeq, PsychENCODE]
+        order: ["Coretx", "Cerebellum", "Subcortex", "SpinalCord"]
 panels:
-    -   name: "BrainSpan"
-        datasets: [BrainSpan]
+    -   name: "Bulk datasets"
+        datasets: [BrainSpan, GTEx, BrainSeq, PsychENCODE]
         description: ""
-    -   name: "GTEx"
-        datasets: [GTEx]
-        description: ""
-    -   name: "BrainSeq"
-        datasets: [BrainSeq]
-        description: ""
-    -   name: "PsychENCODE"
-        datasets: [PsychENCODE]
+    -   name: "Single nucleus datasets"
+        datasets: [HCA, Velmeshev]
         description: ""
 

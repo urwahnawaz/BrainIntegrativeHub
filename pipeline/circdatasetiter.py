@@ -5,8 +5,8 @@ from abstractmetaiter import AbstractMetaIter
 from circrow import CircRow
 
 class CircDatasetIter(AbstractMetaIter):
-    def __init__(self, name, nameLong, directory, matrices, metadata, qtl, isBrainDataset, url, annotationAccuracy, brainRegionFilter, customMetadataCategoryOrders):
-        super().__init__(name, nameLong, directory, matrices, metadata, qtl, brainRegionFilter, customMetadataCategoryOrders)
+    def __init__(self, name, nameLong, directory, matrices, metadata, qtl, isBrainDataset, url, annotationAccuracy, brainRegionFilter, customMetadataCategoryOrders, variancePartition, keyIsSymbol):
+        super().__init__(name, nameLong, directory, matrices, metadata, qtl, brainRegionFilter, customMetadataCategoryOrders, variancePartition, keyIsSymbol)
 
         if(len(matrices) != 1):
             raise Exception("Single matrix only must be supplied for " + name + " dataset (see input.yaml)")
@@ -38,6 +38,9 @@ class CircDatasetIter(AbstractMetaIter):
 
             self.meta_index += 1
             if line[self.numberedRowsOffset]:
-                versionlessEnsemblID = line[self.numberedRowsOffset].split('.', 1)[0]
-                self.keys.append(versionlessEnsemblID)
-                return CircRow(gene="", geneId=versionlessEnsemblID, db_id=self.id, meta_index=self.meta_index, annotationAccuracy=self.annotationAccuracy)
+                if self.keyIsSymbol:
+                    geneSymbol = line[self.numberedRowsOffset]
+                    return CircRow(gene=geneSymbol, geneId="", db_id=self.id, meta_index=self.meta_index, annotationAccuracy=self.annotationAccuracy)
+                else:
+                    versionlessEnsemblID = line[self.numberedRowsOffset].split('.', 1)[0]
+                    return CircRow(gene="", geneId=versionlessEnsemblID, db_id=self.id, meta_index=self.meta_index, annotationAccuracy=self.annotationAccuracy)

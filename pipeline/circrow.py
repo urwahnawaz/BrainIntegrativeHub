@@ -7,6 +7,7 @@ class CircRow:
     def __init__(self, geneId, db_id, meta_index, url="", gene="", annotationAccuracy=0):
         self._meta = [CircRow.META_INDEX_CIRC_NOT_IN_DB] * (db_id + 1)
         self._meta[db_id] = meta_index
+        self._order = None
         self.geneId = geneId
         self.gene = gene
         self._error = ""
@@ -21,6 +22,16 @@ class CircRow:
         if id >= len(self._meta):
             self._meta.extend([-1] * (id + 1 - len(self._meta)))
         self._meta[id] = value
+
+    def getOrder(self, id):
+        return -1 if (not self._order or id >= len(self._order)) else self._order[id]
+
+    def setOrder(self, id, value):
+        if not self._order:
+            self._order = [CircRow.META_INDEX_CIRC_NOT_IN_DB] * len(self._meta)
+        elif id >= len(self._order):
+            self._order.extend([-1] * (id + 1 - len(self._order)))
+        self._order[id] = value
 
     def merge(self, other):
         shouldSwap = False if len(self._meta) >= len(other._meta) else True
@@ -59,19 +70,19 @@ class CircRow:
         if not isinstance(other, CircRow):
             raise NotImplementedError
 
-        return self.geneId < other.geneId
+        return self.gene < other.gene if self.geneId == other.geneId else self.geneId < other.geneId
 
     def __gt__(self, other):
         if not isinstance(other, CircRow):
             raise NotImplementedError
 
-        return self.geneId > other.geneId
+        return self.gene > other.gene if self.geneId == other.geneId else self.geneId > other.geneId
 
     def __eq__(self, other):
         if not isinstance(other, CircRow):
             raise NotImplementedError
 
-        return self.geneId == other.geneId
+        return self.gene == other.gene if self.geneId == other.geneId else self.geneId == other.geneId
 
     def __hash__(self):
-        return hash(self.geneId)
+        return hash(self.geneId) ^ hash(self.gene)

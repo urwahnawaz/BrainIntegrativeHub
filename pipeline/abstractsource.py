@@ -20,7 +20,7 @@ class AbstractSource:
         fixed = 0
         for i in range(len(rows)):
             if rows[i].getMeta(self.id) >= 0:
-                rows[i].setMeta(self.id, fixed)
+                rows[i].setOrder(self.id, fixed)
                 fixed += 1
 
     def writeHDF5URLs(self, hdf5Group, rows):

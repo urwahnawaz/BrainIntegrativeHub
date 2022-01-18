@@ -29,8 +29,10 @@ def getCount(circ, iters):
 
 def isUnreliable(circ, iters):
     ds, db = getCount(circ, iters)
-    return ds <= 1 and db == 0
-
+    if(not circ.geneId): circ._error = "No geneId for symbol " + circ.gene
+    elif ds <= 1: circ._error = "Only in one dataset"
+    return (ds <= 1 and db == 0) or not circ.geneId
+    
 def shouldMerge(circ1, circ2):
     return circ1.geneId == circ2.geneId
 
@@ -42,6 +44,7 @@ def generateOutput(inputIterators):
     for circIter in inputIterators:
         print(datetime.datetime.now().strftime("%H:%M:%S") + " Merging " + circIter.name)
         for circ in circIter:
+            annotate(circ)
             pos = ss.bisect_left(circ)
             if pos < len(ss) and circ == ss[pos]:
                 ss[pos].merge(circ)
@@ -73,7 +76,7 @@ def writeHDF5(circIters, iter, inputObj, outFile="output/out.hdf5"):
     isDatabase = [0, 0]
     isDataset = [0, 0]
     isBrainDataset = [0, 0]
-    dataOrder = ["ensembl_id","gene_symbol"]
+    dataOrder = ["Ensembl ID","Gene Symbol"]
     data = root.create_group("data")
     data.create_dataset(dataOrder[0], data=np.array([circ.geneId.encode() for circ in iter], dtype='S%d'%longestEnsembl), compression="gzip", compression_opts=9)
     data.create_dataset(dataOrder[1], data=np.array([circ.gene.encode() for circ in iter], dtype='S%d'%longestGene), compression="gzip", compression_opts=9)
@@ -82,10 +85,10 @@ def writeHDF5(circIters, iter, inputObj, outFile="output/out.hdf5"):
     metadata = root.create_group("metadata")
 
     for i in range(len(circIters)):
-        if isinstance(circIters[i], AbstractMetaIter): circIters[i].writeHDF5Metadata(metadata, iter)
         circIters[i].reduceIndices(iter)
+        if isinstance(circIters[i], AbstractMetaIter): circIters[i].writeHDF5Metadata(metadata, iter)
         circIters[i].writeHDF5URLs(urls, iter)
-        data.create_dataset(circIters[i].name, data=np.array([int(circ.getMeta(i)) for circ in iter], dtype="i4"), compression="gzip", compression_opts=9)
+        data.create_dataset(circIters[i].name, data=np.array([int(circ.getOrder(i)) for circ in iter], dtype="i4"), compression="gzip", compression_opts=9)
         
         isDatasetCurr = isinstance(circIters[i], CircDatasetIter)
         
@@ -96,7 +99,7 @@ def writeHDF5(circIters, iter, inputObj, outFile="output/out.hdf5"):
         dataOrder.append(circIters[i].name)
 
     #Interleave binary files
-    
+
     data.attrs.create("defaultCoord", 1)
     data.attrs.create("order", dataOrder)
     data.attrs.create("isDataset", isDataset)
@@ -129,12 +132,14 @@ def writeCSV(fileName, iter, writeError=False):
             writer.writerow([str(i), circ.geneId] + ([circ._error] if writeError else []))
             i += 1
 
-def annotateEnsemblNCBI(iter):
+synonyms = {}
+ids = {}
+genes = {}
+def annotateEnsemblNCBIInit():
+    global synonyms, ids, genes
+
     ##tax_id	GeneID	Symbol	LocusTag	Synonyms	dbXrefs	chromosome	map_location	description	type_of_gene	Symbol_from_nomenclature_authority	Full_name_from_nomenclature_authority	Nomenclature_status	Other_designations	Modification_date	Feature_type
     #9606	1	A1BG	-	A1B|ABG|GAB|HYST2477	MIM:138670|HGNC:HGNC:5|Ensembl:ENSG00000121410	19	19q13.43	alpha-1-B glycoprotein	protein-coding	A1BG	alpha-1-B glycoprotein	O	alpha-1B-glycoprotein|HEL-S-163pA|epididymis secretory sperm binding protein Li 163pA	20200818	-
-    synonyms = {}
-    ids = {}
-    genes = {}
     for line in csv.reader(open("./data/Homo_sapiens.gene_info", 'r'), delimiter='\t'):
         gene = line[2]
         id = re.search(r'Ensembl:([A-Z0-9]+)', line[5])
@@ -143,24 +148,26 @@ def annotateEnsemblNCBI(iter):
         ids[gene] = id.group(1)
         genes[id.group(1)] = gene
 
-    for circ in iter:
-        if(circ.geneId): circ.gene = genes.get(circ.geneId, "")
-        
-        #newer = None
 
-        #if circ.geneId:
-        #    newer = genes.get(circ.geneId, None)
-        #    if not newer:
-        #        circ.geneId = ""
+def annotateBiomartInit():
+    global synonyms, ids, genes
+    for line in csv.reader(open("./data/mart_export.txt", 'r'), delimiter=','):
+        synonyms[line[2]] = line[1]
+        ids[line[1]] = line[0]
+        genes[line[0]] = line[1]
 
-        #if circ.gene and not newer:
-        #    newer = synonyms.get(circ.gene, None)
+def annotate(circ):
+    global synonyms, ids, genes
 
-        #if newer: circ.gene = newer
-        #if not circ.geneId and circ.gene: 
-        #    circ.geneId = ids.get(circ.gene, "")
+    if(circ.gene): circ.gene = synonyms.get(circ.gene, circ.gene)
+    if(circ.geneId): circ.gene = genes.get(circ.geneId, "")
+    elif(circ.gene): circ.geneId = ids.get(circ.gene, "")
+
 
 if __name__ == '__main__':
+    #annotateEnsemblNCBIInit()
+    annotateBiomartInit()
+
     with open("./input.yaml", 'r') as stream:
         circIters = []
         inputObj = None
@@ -169,7 +176,7 @@ if __name__ == '__main__':
             for dataset in inputObj["datasets"]:
                 d_id = dataset["id"]
                 orders = list(filter(lambda x: d_id in x["datasets"], inputObj.get("customMetadataCategoryOrders", [])))
-                circIters.append(CircDatasetIter(d_id, dataset.get("name", ""), dataset["dir"], dataset.get("matrices", list()), dataset.get("meta", None), dataset.get("qtl", None), dataset.get("isBrain", False), dataset.get("url", ""), dataset.get("annotationAccuracy", 0), dataset.get("brainRegionFilter", ""), orders))
+                circIters.append(CircDatasetIter(d_id, dataset.get("name", ""), dataset["dir"], dataset.get("matrices", list()), dataset.get("meta", None), dataset.get("qtl", None), dataset.get("isBrain", False), dataset.get("url", ""), dataset.get("annotationAccuracy", 0), dataset.get("brainRegionFilter", ""), orders, dataset.get("variancePartition", None), dataset.get("keyIsSymbol", False)))
         
         except yaml.YAMLError as exc:
             print(exc)
@@ -184,10 +191,6 @@ if __name__ == '__main__':
     # This presence is represented as an index from the original source, used for later metadata steps
     ss = generateOutput(circIters)
 
-    #2. These steps attempt to convert gene name synonyms to the official gene name and also find ensembl ID
-    annotateEnsemblNCBI(ss)
-
-
     if not os.path.exists('output'):
         os.makedirs('output')
     # 3. 
@@ -195,13 +198,14 @@ if __name__ == '__main__':
     # Some very large matrices (e.g. CPM) use chunk compression for now, so we only decompress a ~page at a time
     # Metadata is reordered based on overall neurocirc order (useful for chunk compression)
     # Metadata pertaining to rows that have been filtered out in step 3. is not included
-    writeHDF5(circIters, ss, inputObj)
+    filtered = [circ for circ in ss if not isUnreliable(circ, circIters)]
+    writeHDF5(circIters, filtered, inputObj)
     
     print(datetime.datetime.now().strftime("%H:%M:%S") + " Writing outputs")
 
-    #if len(circIters) > 1: 
-    #    writeIntersectionPlot(circIters, ss)
-
     print("%d circrnas written" % (len(ss)))
 
-    #writeCSV("./output/outError.csv", [x for x in ss if x._error], True)
+    writeCSV("./output/outError.csv", [x for x in ss if x._error], True)
+
+    if len(circIters) > 1: 
+        writeIntersectionPlot(circIters, ss)
