@@ -51,9 +51,9 @@ class Plot {
             .attr("transform",
                 "translate(" + self.margin.left + "," + self.margin.top + ")")
 
-            d3.select("#" + self.elementId)
-                .on("mouseenter", () => self._setDownloadButtonVisibility(true))
-                .on("mouseleave", () => self._setDownloadButtonVisibility(false))
+            //d3.select("#" + self.elementId)
+            //    .on("mouseenter", () => self._setDownloadButtonVisibility(true))
+            //    .on("mouseleave", () => self._setDownloadButtonVisibility(false))
     }
 
     removeScatterHighlights() {
@@ -253,6 +253,40 @@ class Plot {
             .on("mouseleave", (d) => self._tooltipMouseLeave(d))
 
         self._addTooltip();
+    }
+
+    //Expects [{x, y}...] where x is numaric and y is a string (same as updateColumn but horizontal)
+    updateBar(data, xName, yName, dataset) {
+        var self = this;
+
+        let categoriesY = self._getCategories(data, d=>d.y);
+
+        self._update(data, xName, yName, dataset);
+
+        // Show the X scale
+        self.x = d3.scaleLinear()
+            .range([self.rangePad, self.width - 2 * self.rangePad])
+            .domain(data.length == 1 ? [0, 2 * data[0].x] : d3.extent(data, d => d.x))
+        self.svg.append("g")
+            .attr("transform", "translate(0," + self.height + ")")
+            .call(d3.axisBottom(self.x))
+
+        
+        //Show columns
+        let barHeight = Math.min(self.height / categoriesY.length * 0.5, 20);
+        self.svg.selectAll("boxes")
+            .data(data)
+            .enter()
+            .append('rect')
+            .attr('x', self.rangePad)
+            .attr('y', d => self.y(d.y) - barHeight / 2)
+            .attr('height', barHeight)
+            .attr('width', d => self.x(d.x) - self.rangePad)
+            .attr('stroke', 'black')
+            .attr('stroke-width', 0.5)
+            .attr('fill', "#81858c")
+            .append("svg:title")
+            .text(d => d.x.toFixed(2));
     }
 
     //Expects [{x, y}...] where x is string and y is numeric
@@ -587,11 +621,22 @@ class Plot {
         self.currYName = yName;
 
         //Create y scale
-        self.y = d3.scaleLinear()
-            .domain(data.length == 1 ? [0, 2 * data[0].y] : d3.extent(data, d => d.y))
-            .range([self.height - self.rangePad, self.rangePad])
+        if (typeof data[0].y === 'string' || data[0].y instanceof String) {
+            self.y = d3.scaleBand()
+                .domain(self._getCategories(data, d => d.y))
+                .range([self.height - self.rangePad, self.rangePad])
+                .paddingInner(1)
+                .paddingOuter(.5)
 
-        self.svg.append("g").call(d3.axisLeft(self.y));
+            self.svg.append("g").call(d3.axisLeft(self.y))//.tickFormat(d => d.length <= 10 ? d : d.substring(0, 7) + '...'))
+        } else {
+            self.y = d3.scaleLinear()
+                .domain(data.length == 1 ? [0, 2 * data[0].y] : d3.extent(data, d => d.y))
+                .range([self.height - self.rangePad, self.rangePad])
+
+                self.svg.append("g").call(d3.axisLeft(self.y));
+            
+        }
 
         // Show the Y label
         let yScale = self.svg.append("text")
@@ -617,6 +662,7 @@ class Plot {
         self._addTitle(dataset);
 
         self._addDownloadButton(rotatedOffset);
+        self._setDownloadButtonVisibility(true);
     }
 
     _addTitle(dataset) {
@@ -777,15 +823,15 @@ class Plot {
         let includeData = self.currData && self.currData.length;
         let includeNames = (!includeHighlight || self.highlightData[0].name) || (!includeData || self.currData[0].name);
 
-        csv += `name,${self.currYName},${self.currXName}${includeHighlight ? ",highlighted" : ""}\r\n`
+        csv += encodeURIComponent(`name,${self.currYName},${self.currXName}${includeHighlight ? ",highlighted" : ""}\n`)
         for(let [i, source] of [self.highlightData, self.currData].entries()) {
             if(source && source.length) {
                 for(let d of source) {
-                    csv += `${includeNames && d.name ? d.name : ""},${d.y},${d.x}${includeHighlight ? "," + (i==0) : ""}\r\n`;
+                    csv += encodeURIComponent(`${includeNames && d.name ? d.name : ""},${d.y},${d.x}${includeHighlight ? "," + (i==0) : ""}\n`);
                 }
             }
         }
-        self._save(csv.replace(/\n/g, "%0D%0A"), "csv");
+        self._save(csv, "csv");
     }
 
     _save(blobString, extension) {
