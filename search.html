@@ -99,9 +99,9 @@
                             <form id="my_upload_form">
                                 Dataset Name<br>
                                 <input type="text" name="name" autocomplete="off" placeholder="New dataset"><br><br>
-                                Select CPM Matrix: <a href="./resources/data/org_cpm.csv">Example</a>
+                                Select CPM Matrix: <a href="./resources/data/BrainSeq-exp-example.csv">Example</a>
                                 <input type="file" class="form-control-file" name="cpm" accept=".csv" required><br>
-                                Select Metadata (optional): <a href="./resources/data/org_meta.csv">Example</a>
+                                Select Metadata (optional): <a href="./resources/data/BrainSeq-metadata-example.csv">Example</a>
                                 <input type="file" class="form-control-file" name="meta" accept=".csv"><br>
 
                                 <input type="submit" class="btn btn-default" value="Add">
@@ -147,7 +147,7 @@
                     <br>
                     <b> To download the search results - </b> click on the download button.
                     <br>
-                    <b> To upload a new dataset and integrate it in BITHub - </b>  click on the orange upload button.
+                    <b> To upload a new dataset and integrate it in BITHub - </b>  click on the green upload button.
                     
                      
                     <br>
@@ -249,7 +249,7 @@
             $("#my_search_select").append(optSearch);
             $('#my_search_select').val(searchCols);
             $('#my_search_select').selectpicker('refresh');
-            $('#my_search_select').on('change', function(){
+            $('#my_search_select').on('change', function() {
                 searchCols = $(this).val();
                 updateSearchPos();
                 makeTable();
@@ -403,7 +403,7 @@
             for(let i of showCols) {
                 if(!isDataset[i] && !isDatabase[i]) {
                     let o = dataOrder[i];
-                    let dtypeRes = hdf5Data.get(o).dtype.match(/([A-Z])([0-9]+)/i);
+                    let dtypeRes = (hdf5Data.keys.includes(o)) ? hdf5Data.get(o).dtype.match(/([A-Z])([0-9]+)/i) : null;
                     let dtypeStyle = "";
                     if(otherCount > 2 && dtypeRes && dtypeRes[1].toLowerCase() == "s") {
                         dtypeStyle = ' style="width:' + (0.725 * Math.max(o.length+5, parseInt(dtypeRes[2])) * 14) + 'px;" ';
@@ -578,7 +578,6 @@
                 for (let p of metaPanels) p.setCircId(matrix[0][circindex], metadataObj);
                 customPanel.setCircId(matrix[0][circindex], metadataObj);
 
-                console.log("setting lms panel")
                 lmsPanel.setCircIndex(circindex);
                 //Show modal
                 $("#myModalTitle").text(matrix[1][circindex] + " (" + matrix[0][circindex] + ")");
@@ -625,7 +624,6 @@
             if(!name) name = $(uploadForm.elements["name"]).attr("placeholder");
 
             //Read cpm csv
-            const coordRegex = /(chr[^:_\-]+)[:_\-]([0-9]+).([0-9]+).([+\-.])/;
             Papa.parse(uploadForm.elements["cpm"].files[0], {
                 dynamicTyping: true,
                 complete: function(results) {
@@ -633,13 +631,16 @@
                     let csvData = results.data;
                     let matchedData = [];
                     let matchedIndices = new Array(matrix[0].length).fill(-1);
+                    let matchedIndicesReverse = [];
                     for(let i=1; i<csvData.length; ++i) {
                         if(!csvData[i][0]) continue;
-                        let matchIdGroup = coordRegex.exec(csvData[i][0]);
-                        if(!matchIdGroup) continue;
+                        let geneID = csvData[i][0];
+                        if(!geneID) continue;
                         for(let j=0; j<matrix[0].length; ++j) {
-                            if(matchIdGroup[1] == matrix[1][j] && matchIdGroup[2] == matrix[2][j] && matchIdGroup[3] == matrix[3][j] && matchIdGroup[4] == matrix[6][j]) {
+                            if(geneID == matrix[0][j]) {
+                                csvData[i].shift();
                                 matchedData.push(csvData[i]);
+                                matchedIndicesReverse.push(j);
                                 matchedIndices[j] = matchedData.length-1;
                                 break;
                             }
@@ -677,9 +678,9 @@
                     for(let i=0; i<scaledData.length; ++i) scaledData[i] = (scaledData[i] - mean) / sd;
 
                     //Add to lms
-                    lmsPanel.addCustomDataset(name, scaledData, matchedIndices);
+                    lmsPanel.addCustomDataset(name, scaledData, matchedIndices, matchedIndicesReverse);
                     
-                    let insertPoint = isDatabase.indexOf(1);
+                    let insertPoint = matrix.length;
                     dataOrder.splice(insertPoint, 0, name);
                     isDataset.splice(insertPoint, 0, 1);
                     isDatabase.splice(insertPoint, 0, 0);
@@ -688,14 +689,14 @@
                     for(let i=0; i<showCols.length; ++i) {
                         if(showCols[i] >= insertPoint) {
                             if(!inserted) {
-                                showCols.splice(i, 0, insertPoint);
+                                showCols.splice(i, 1, insertPoint);
                                 inserted = true;
                             } else {
                                 ++showCols[i];
                             }
                         }
                     }
-
+                    if(!inserted) showCols.push(insertPoint);
                     for(let i=0; i<searchCols.length; ++i) if(searchCols[i] >= insertPoint) ++searchCols[i];
 
                     if(sortCurrCol >= insertPoint) ++sortCurrCol;
@@ -746,9 +747,7 @@
                         });
                     } else {
                         complete();
-                    }
-
-                    
+                    }                    
                 }
             });
         });

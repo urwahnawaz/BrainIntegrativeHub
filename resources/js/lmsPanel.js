@@ -28,10 +28,11 @@ class LMSPanel {
         self.update();
     }
 
-    addCustomDataset(name, scaled, meta) {
+    addCustomDataset(name, scaled, meta, index) {
         var self = this;
         self.data[name] = scaled;
         self.metas[name] = meta;
+        self.index[name] = index;
         self.resetOptions();
     }
 
@@ -123,7 +124,7 @@ class LMSPanel {
     _setOptions(id, names, defaultName=undefined) {
         $("#" + id).empty();
         if(!defaultName && names.length > 0) defaultName = names[0];
-        if(defaultName && !names.includes(defaultName)) names.unshift(defaultName);
+        else if(defaultName && !names.includes(defaultName)) names.unshift(defaultName);
         for (let n of names) $('#' + id).append('<option value="' + n + '">' + n + '</option>');
 
         $("#" + id).selectpicker("refresh");
@@ -154,7 +155,7 @@ class LMSPanel {
                                 <div>Select X Axis</div>
                                 <select class="selectpicker" id="lmsselect1"></select><br><br><br>
                             </div>
-                            <div class="col-md-9 col-md-offset-1">
+                            <div class="col-md-10">
                                 <div id="lmsplot"></div>
                             </div>
                         </div>
