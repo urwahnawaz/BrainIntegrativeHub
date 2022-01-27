@@ -52,17 +52,17 @@ class MetaPanel {
         }
 
         self.names = {};
-        self.brainRegions = {};
+        self.customFilters = {};
         for(let dataset of self.datasets) {
             let currName = self.hdf5Group.get(dataset).attrs["name"];
             self.names[dataset] = currName ? currName : dataset;
 
-            let currRegions = new Set(["All"]);
-            let currBrainRegionFilters = self.hdf5Group.get(dataset).attrs["brainRegionFilter"];
-            if(currBrainRegionFilters) {
-                self.hdf5Group.get(dataset + "/samples/" + currBrainRegionFilters).value.forEach(item => currRegions.add(item))
+            let currCustomFilterValues = new Set(["All"]);
+            let currFilterColumn = self.hdf5Group.get(dataset).attrs["customFilterColumn"];
+            if(currFilterColumn) {
+                self.hdf5Group.get(dataset + "/samples/" + currFilterColumn).value.forEach(item => currCustomFilterValues.add(item))
             }
-            self.brainRegions[dataset] = {key: currBrainRegionFilters, values: Array.from(currRegions)};
+            self.customFilters[dataset] = {column: currFilterColumn, name: self.hdf5Group.get(dataset).attrs["customFilterName"], values: Array.from(currCustomFilterValues)};
         }
     }
 
@@ -199,7 +199,8 @@ class MetaPanel {
 
         self.suppressChanges++;
 
-        controls.setRegions(self.brainRegions[dataset].values);
+        let currCustomFilter = self.customFilters[dataset];
+        controls.setCustomFilter(currCustomFilter.name || currCustomFilter.column, currCustomFilter.values);
 
         let matrices = self.hdf5Group.get(dataset + "/matrices");
         let samples = self.hdf5Group.get(dataset + "/samples");
@@ -283,14 +284,12 @@ class MetaPanel {
                             for(let i=0; i<plotData.length; ++i) plotData[i].name = "sample" + i;
                         }
                         
-                        //Filter by selected region
-                        let currRegionKey = self.brainRegions[dataset].key;
-                        let filterSelected = controls.getSelectedRegion();
+                        //Filter by predefined custom categorical variable (e.g. region)
+                        let currFilterColumn = self.customFilters[dataset].column;
+                        let filterSelected = controls.getSelectedCustomFilter();
                         
-                        if(currRegionKey && filterSelected != "All") {
-                            console.log(currRegionKey);
-                            console.log(filterSelected);
-                            let filterValues = self.hdf5Group.get(dataset + "/samples/" + currRegionKey).value;
+                        if(currFilterColumn && filterSelected != "All") {
+                            let filterValues = self.hdf5Group.get(dataset + "/samples/" + currFilterColumn).value;
                             plotData = plotData.filter((value, index) => filterValues[index] == filterSelected);
                         }
 
@@ -300,9 +299,9 @@ class MetaPanel {
                         }
 
                         if(xAxisIsString) {
-                            plot.updateViolin(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset], orderXDic, groupLabelsX, groupSizesX, orderZDic, bandwidth);
+                            plot.updateViolin(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset] + " (" + self.currCircId + ")", orderXDic, groupLabelsX, groupSizesX, orderZDic, bandwidth);
                         } else {
-                            plot.updateScatter(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset], orderZDic);
+                            plot.updateScatter(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset] + " (" + self.currCircId + ")", orderZDic);
                         }
                     }
                 });

@@ -4,12 +4,13 @@ import numpy as np
 from array import array
 
 class AbstractMetaIter(AbstractSource):
-    def __init__(self, name, nameLong, directory, matrices, metadata, qtl, brainRegionFilter, customMetadataCategoryOrders, variancePartition, keyIsSymbol):
+    def __init__(self, name, nameLong, directory, matrices, metadata, qtl, customFilterName, customFilterColumn, customMetadataCategoryOrders, variancePartition, keyIsSymbol):
         super().__init__(name, directory)
         self.matrices = matrices
         self.metadata = metadata
         self.qtl = qtl
-        self.brainRegionFilter = brainRegionFilter
+        self.customFilterName = customFilterName
+        self.customFilterColumn = customFilterColumn
         self.customMetadataCategoryOrders = customMetadataCategoryOrders
         self.variancePartition = variancePartition
         self.keyIsSymbol = keyIsSymbol
@@ -153,8 +154,9 @@ class AbstractMetaIter(AbstractSource):
         if self.variancePartition:
             self._writeVariancePartition(self.variancePartition, experimentGroup, keyToIndexFiltered)
         
-        if self.brainRegionFilter:
-            experimentGroup.attrs.create("brainRegionFilter", self.brainRegionFilter) 
+        if self.customFilterColumn:
+            experimentGroup.attrs.create("customFilterColumn", self.customFilterColumn) 
+            if self.customFilterName: experimentGroup.attrs.create("customFilterName", self.customFilterName) 
     
 
     def _writeAsMatrix(self, fileName, keyToIndexFiltered, sampleToIndexFiltered, datalakeMaxSize, lakeFileName, scaledOutput, noneType="NA"):

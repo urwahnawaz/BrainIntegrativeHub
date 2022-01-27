@@ -14,7 +14,7 @@ class PlotControls {
         self.xAxisId = "xAxis" + self.elementId;
 
         $('#datasetselect' + self.elementId).on('change', () => self.onDatasetChange());
-        $('#regionselect' + self.elementId).on('change', () => self.onChange());
+        $('#customfilterselect' + self.elementId).on('change', () => self.onChange());
         $('#xaxisselect' + self.elementId).on('change', () => self.onChange());
         $('#yaxisselect' + self.elementId).on('change', () => self.onChange());
         $('#scaleselect' + self.elementId).on('change', () => self.onChange());
@@ -54,8 +54,9 @@ class PlotControls {
         this.onDatasetChange();
     }
 
-    setRegions(names) {
-        this._setOptions('regionselect' + this.elementId, names);
+    setCustomFilter(title, names) {
+        document.getElementById('customfilterlabel' + this.elementId).innerText = "Select " + title;
+        this._setOptions('customfilterselect' + this.elementId, names);
         this.onChange();
     }
 
@@ -84,8 +85,8 @@ class PlotControls {
         return $('#datasetselect' + this.elementId).val();
     }
 
-    getSelectedRegion() {
-        return $('#regionselect' + this.elementId).val();
+    getSelectedCustomFilter() {
+        return $('#customfilterselect' + this.elementId).val();
     }
 
     getSelectedYAxis() {
@@ -146,8 +147,8 @@ class PlotControls {
                 <br><br>
             </span>
             <span class="hidable">
-                <div id="regionlabel${this.elementId}">Select Brain Region</div>
-                <select id="regionselect${this.elementId}" class="selectpicker"></select>
+                <div id="customfilterlabel${this.elementId}"></div>
+                <select id="customfilterselect${this.elementId}" class="selectpicker"></select>
                 <br><br>
             </span>
             <span class="hidable">

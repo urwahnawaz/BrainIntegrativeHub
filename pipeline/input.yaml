@@ -3,7 +3,9 @@ datasets:
         url: "https://www.brainspan.org/"
         dir: "./data/FormattedData/BrainSpan/"
         meta: "BrainSpan-metadata-subset.csv"
-        brainRegionFilter: "Regions"
+        customFilter: 
+                name: "Brain Region"
+                column: "Regions"
         variancePartition: "BrainSpan-varPart.csv"
         matrices: 
             -   type: RPKM
@@ -12,7 +14,9 @@ datasets:
         url: "https://gtexportal.org/"
         dir: "./data/FormattedData/Gtex/"
         meta: "GTEx-metadata-subset.csv"
-        brainRegionFilter: "Regions"
+        customFilter: 
+                name: "Brain Region"
+                column: "Regions"
         variancePartition: "GTEx-varPart.csv"
         matrices: 
             -   type: TPM
@@ -21,7 +25,9 @@ datasets:
         url: "https://www.brainrnaseq.org/"
         dir: "./data/FormattedData/BrainSeq/"
         meta: "BrainSeq-metadata-subset.csv"
-        brainRegionFilter: "Regions"
+        customFilter: 
+                name: "Brain Region"
+                column: "Regions"
         variancePartition: "BrainSeq-varPart.csv"
         matrices: 
             -   type: RPKM
@@ -30,7 +36,9 @@ datasets:
         url: "http://resource.psychencode.org/"
         dir: "./data/FormattedData/PsychENCODE/"
         meta: "PsychEncode-metadata-subset.csv"
-        brainRegionFilter: "Regions"
+        customFilter: 
+                name: "Brain Region"
+                column: "Regions"
         matrices: 
             -   type: TPM
                 path: "PsychEncode-exp.csv"
@@ -61,10 +69,10 @@ customMetadataCategoryOrders:
         datasets: [BrainSpan, GTEx, BrainSeq, PsychENCODE]
         order: ["Coretx", "Cerebellum", "Subcortex", "SpinalCord"]
 panels:
-    -   name: "Bulk datasets"
+    -   name: "Bulk Datasets"
         datasets: [BrainSpan, GTEx, BrainSeq, PsychENCODE]
         description: ""
-    -   name: "Single nucleus datasets"
+    -   name: "Single Nucleus Datasets"
         datasets: [HCA, Velmeshev]
         description: ""
 
