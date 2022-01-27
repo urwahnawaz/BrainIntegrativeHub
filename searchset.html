@@ -41,25 +41,22 @@
 
     <!-- Main Body -->
     <div>
-        <nav class="navbar navbar-fixed-top">
+        <nav id="my_navbar" class="navbar navbar-default navbar-fixed-top">
             <div class="container-fluid">
                 <div class="navbar-header">
                     <a class="navbar-brand">BITHub</a>
                 </div>
                 <ul class="nav navbar-nav">
-                    <li><a href="./index.html">About</a></li>
-                    <li class="active"><a href="./searchset.html">Gene Set search</a></li>
-                    <li><a href="./search.html">Single Gene search</a></li>
+                    <li><a class="nav-link" href="./index.html">About</a></li>
+                    <li class="active"><a class="nav-link" href="./searchset.html">Gene Set search</a></li>
+                    <li><a class="nav-link" href="./search.html">Single Gene search</a></li>
+                    <li><a class="nav-link" href="./download.html">Download</a></li>
                 </ul>
             </div>
         </nav>
 
         <div id="myDiv" style="display:none;" class="container-fluid">
             <!--class animate-bottom-->
-            <br>
-            <br>
-            <br>
-            <br>
             <div>
                   <div class="well">
                     <b> Search </b> BITHub by comma delimited list of Gene Symbols or Ensembl Gene IDs. Select the search field from the drop-down menu on the right.   
@@ -258,6 +255,7 @@
         function hideLoading() {
             document.getElementById("my_loading").style.display = "none";
             document.getElementById("myDiv").style.display = "block";
+            document.getElementById("my_navbar").classList.replace("navbar-fixed-top", "navbar-static-top");
         }
 
         function updatePlot() {

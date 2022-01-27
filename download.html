@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="google" content="notranslate">
+
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="resources/css/style.css"/>
+</head>
+
+<body> 
+ <!-- Main Body -->
+  <nav class="navbar navbar-default navbar-static-to" style="margin-bottom:0px;border:none;">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand">BITHub</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="./index.html">About</a></li>
+        <li><a href="./searchset.html">Gene Set search</a></li>
+        <li><a href="./search.html">Single Gene search</a></li>
+        <li class="active"><a href="./download.html">Download</a></li>
+    </ul>
+    </div>
+  </nav> 
+  <div class="container-fluid" style="padding:0px;">
+    <div class="jumbotron" style="background-color:#fff;padding-left:50px;padding-right:50px;">
+      <div class="well">
+        <b> Download metadata files in CSV format.</b> Note that some columns may be renamed or subsetted from the dataset's original publication.
+        <br>
+        Currently, expression matrices must be downloaded directly from source.
+      
+      </div>
+      
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Dataset</th>
+            <th scope="col">Metadata File</th>
+            <th scope="col">Samples</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">BrainSpan</th>
+            <td><a href="resources/data/BrainSpan-metadata-subset.csv">BrainSpan-metadata-subset.csv</a></td>
+            <td>524</td>
+          </tr>
+          <tr>
+            <th scope="row">GTEx</th>
+            <td><a href="resources/data/GTEx-metadata-subset.csv">GTEx-metadata-subset.csv</a></td>
+            <td>2642</td>
+          </tr>
+          <tr>
+            <th scope="row">BrainSeq</th>
+            <td><a href="resources/data/BrainSeq-metadata-subset.csv">BrainSeq-metadata-subset.csv</a></td>
+            <td>900</td>
+          </tr>
+          <tr>
+            <th scope="row">HCA</th>
+            <td><a href="resources/data/HCA-metadata.csv">HCA-metadata.csv</a></td>
+            <td>15524</td>
+          </tr>
+          <tr>
+            <th scope="row">Velmeshev</th>
+            <td><a href="resources/data/Velmeshev-metadata.csv">Velmeshev-metadata.csv</a></td>
+            <td>81216</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    $(function() {
+    $(window).on('scroll', function() {
+        $('#background').css('margin-top', $(window).scrollTop() * -.65);
+      });
+  });
+  </script>
+</body>

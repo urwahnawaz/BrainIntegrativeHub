@@ -38,7 +38,7 @@
 
 <body>
     <!-- Loading Animation -->
-    <div id="my_loading" class="d-flex flex-row justify-content-center align-items-center" style="height: 100%">
+    <div id="my_loading" class="d-flex flex-row justify-content-center align-items-center" style="height: 100%;">
         <!--<div class="loader">
             <span class="sr-only">Loading...</span>
         </div>--> 
@@ -120,7 +120,7 @@
 
     <!-- Main Body -->
     <div>
-        <nav class="navbar navbar-fixed-top">
+        <nav id="my_navbar" class="navbar navbar-default navbar-fixed-top">
             <div class="container-fluid">
                 <div class="navbar-header">
                     <a class="navbar-brand">BITHub</a>
@@ -129,16 +129,13 @@
                     <li><a href="./index.html">About</a></li>
                     <li><a href="./searchset.html">Gene Set search</a></li>
                     <li class="active"><a href="./search.html">Single Gene search</a></li>
+                    <li><a href="./download.html">Download</a></li>
                 </ul>
             </div>
         </nav>
 
         <div id="myDiv" style="display:none;" class="container-fluid">
             <!--class animate-bottom-->
-            <br>
-            <br>
-            <br>
-            <br>
             <div>
                   <div class="well">
                     <b> Search </b> BITHub by Gene Symbol or Ensembl Gene ID. Select the search field from the drop-down menu on the right.   
@@ -386,6 +383,7 @@
         function hideLoading() {
             document.getElementById("my_loading").style.display = "none";
             document.getElementById("myDiv").style.display = "block";
+            document.getElementById("my_navbar").classList.replace("navbar-fixed-top", "navbar-static-top");
         }
 
         function makeTable() {
@@ -575,8 +573,8 @@
                 //Change metadata panels
                 metadataObj = {};
                 for(let i=0; i<dataOrder.length; ++i) if(isDataset[i]) metadataObj[dataOrder[i]] = metaIndex[i];
-                for (let p of metaPanels) p.setCircId(matrix[0][circindex], metadataObj);
-                customPanel.setCircId(matrix[0][circindex], metadataObj);
+                for (let p of metaPanels) p.setCircId(matrix[1][circindex] || matrix[0][circindex], metadataObj);
+                customPanel.setCircId(matrix[1][circindex] || matrix[0][circindex], metadataObj);
 
                 lmsPanel.setCircIndex(circindex);
                 //Show modal
