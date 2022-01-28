@@ -270,11 +270,9 @@ class MetaPanel {
 
                         let scale = controls.getSelectedScale();
                         let labels = {yAxisLabel: yAxis, xAxisLabel: xAxis};
-                        let bandwidth = 2.5;
                         if(scale != "Linear") {
                             let func = (scale == "Log e" ? Math.log : Math.log10);
                             self._scalePlotData(plotData, func, 0.1, plot, scale, labels);
-                            bandwidth = func(bandwidth);
                         }
 
                         if(self.hdf5Group.keys.includes("sample_id")) {
@@ -299,7 +297,7 @@ class MetaPanel {
                         }
 
                         if(xAxisIsString) {
-                            plot.updateViolin(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset] + " (" + self.currCircId + ")", orderXDic, groupLabelsX, groupSizesX, orderZDic, bandwidth);
+                            plot.updateViolin(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset] + " (" + self.currCircId + ")", orderXDic, groupLabelsX, groupSizesX, orderZDic);
                         } else {
                             plot.updateScatter(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset] + " (" + self.currCircId + ")", orderZDic);
                         }
@@ -317,7 +315,7 @@ class MetaPanel {
         let dataset = controls.getSelectedDataset();
 
         if(!dataset || self.currIndex[dataset] < 0 || !self.hdf5Group.get(dataset).keys.includes("variancePartition")) {
-            plot.updateDisabled();
+            plot.updateDisabled("No variance partition");
             return;
         }
 
@@ -331,10 +329,9 @@ class MetaPanel {
         for(let i=0; i<heading.length; dataYSum += dataY[i], ++i) data.push({y: heading[i], x: dataY[i]});
 
         if(dataYSum == -heading.length) {
-            plot.updateDisabled();
+            plot.updateDisabled("No variance partition");
             return;
         }
-        
         plot.updateBar(data, "Fraction Variance Explained", "Metadata Variable", "Variance Partition");
     }
 

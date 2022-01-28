@@ -135,7 +135,7 @@ class LMSPanelSet {
             }
         }
 
-        self.plot.updateScatter(plotData, curr1, curr2, "Z-Score Transformed Mean Log2 (Expression)", undefined, true);
+        self.plot.updateScatter(plotData, curr1, curr2, "Z-Score Transformed Mean Log2 (Expression)");
 
         plotData = [];
         self.missingData = [];

@@ -11,6 +11,8 @@ class Plot {
         self.rangePad = 20;
         self.boxPadding = 10;
 
+        self.cullPointsMinimum = 1000;
+
         self.setDimensions();
 
         self.zeroCountNum = 0
@@ -90,7 +92,7 @@ class Plot {
     }
 
     //Expects [{x, y, z=undefined}...] where x and y are numeric, z is optional string for coloring
-    updateScatter(data, xName, yName, dataset, orderZ, shouldCullPoints=false) {
+    updateScatter(data, xName, yName, dataset, orderZ) {
         var self = this;
         self._update(data, xName, yName, dataset);
 
@@ -141,7 +143,7 @@ class Plot {
         let defaultColor = "#4b90cc";
         let defaultColorDarker = d3.rgb(defaultColor).darker(1)
         self.svg.selectAll("indPoints")
-            .data(shouldCullPoints ? self._filterDenseCircles(data, 3) : data)
+            .data(data.length >= self.cullPointsMinimum ? self._filterDenseCircles(data, 3) : data)
             .enter()
             .append("circle")
             .attr("cx", function (d) { return (self.x(d.x)) })
@@ -259,9 +261,7 @@ class Plot {
     updateBar(data, xName, yName, dataset) {
         var self = this;
 
-        let categoriesY = self._getCategories(data, d=>d.y);
-
-        self._update(data, xName, yName, dataset);
+        self._update(data, xName, yName, dataset, data.map(d => d.y).reverse());
 
         // Show the X scale
         self.x = d3.scaleLinear()
@@ -273,7 +273,7 @@ class Plot {
 
         
         //Show columns
-        let barHeight = Math.min(self.height / categoriesY.length * 0.5, 20);
+        let barHeight = Math.min(self.height / data.length * 0.5, 20);
         self.svg.selectAll("boxes")
             .data(data)
             .enter()
@@ -322,7 +322,7 @@ class Plot {
     }
 
     //Expects [{x, y, z=undefined}...] where x is string and y is numeric, z is optional string for coloring
-    updateViolin(data, xName, yName, dataset, orderX, groupLabelsX, groupSizesX, orderZ, bandwidth, shouldCullPoints=false) {
+    updateViolin(data, xName, yName, dataset, orderX, groupLabelsX, groupSizesX, orderZ) {
         var self = this;
         
         let multipleColors = (data[data.length-1].z);
@@ -339,7 +339,7 @@ class Plot {
         let rotatedOffset = shouldRotateLabels ? self.computeTextLength(maxCategoryLen) : 0;
 
         d3.select("#" + self.elementId + " > div > svg").attr("viewBox", `0 0 ${self.width + self.margin.left + self.margin.right} ${self.height + self.margin.top + self.margin.bottom + rotatedOffset}`);
-        self._update(data, xName, yName, dataset, rotatedOffset);
+        self._update(data, xName, yName, dataset, undefined, rotatedOffset);
 
         let violinColorScale = d3.scaleOrdinal().domain(orderX ? orderX : categoriesX).range(self.colors);
 
@@ -382,6 +382,8 @@ class Plot {
             sumstatFlat = sumstat;
             for(let s1 of sumstatFlat) s1.keyX = s1.key;
         }
+
+        //was here
 
         if(groupSizesX) {
             //Make group sizes cumulative
@@ -501,7 +503,7 @@ class Plot {
                 .domain([violinMin,violinMax])
 
         for(let violin of sumstatFlat) {
-            let array = violin.value.map(d => d.y);
+            let array = violin.value.map(d => d.y)//.filter(v => v != 0);
             let iqr = IQR(array);
             let sd = SD(array);
 
@@ -531,12 +533,17 @@ class Plot {
             var currColor = violinColorScale(violin.value[0].x);
             var currColorDarker = d3.rgb(currColor).darker(0.5);
 
+            //Cull sumstatFlat values i.e. points if necessary - should do this after violin distributions 
+            if(data.length >= self.cullPointsMinimum) {
+                 violin.value = self._filterDenseCircles(violin.value, 3);
+            }
+
             var densityBinScale = d3.scaleLinear()
                 .range([0, density.length-1])
                 .domain(self.y.domain())
 
             let pointsSVG = self.svg.selectAll("indPoints")
-                .data(shouldCullPoints ? self._filterDenseCircles(violin.value, 3) : violin.value)
+                .data(violin.value)
                 .enter()
                 .append("circle")
                 .attr("cx", function(d) {
@@ -572,7 +579,7 @@ class Plot {
         self._addTooltip();
     }
 
-    updateDisabled(text="No data") {
+    updateDisabled(text="No data", title="") {
         var self = this;
 
         //Clear graph already exists
@@ -592,8 +599,6 @@ class Plot {
         self.svg.append("g")
             .attr("transform", "translate(0," + self.height + ")")
             .call(d3.axisBottom(self.x))
-
-        self._addTitle();
     }
 
     _removeAll() {
@@ -611,7 +616,7 @@ class Plot {
     }
 
     //Internal function for shared axis creation
-    _update(data, xName, yName, dataset, rotatedOffset=0) {
+    _update(data, xName, yName, dataset, yCategoriesOrdered=undefined, rotatedOffset=0) {
         var self = this;
 
         //Clear graph already exists
@@ -621,9 +626,9 @@ class Plot {
         self.currYName = yName;
 
         //Create y scale
-        if (typeof data[0].y === 'string' || data[0].y instanceof String) {
+        if (yCategoriesOrdered) {
             self.y = d3.scaleBand()
-                .domain(self._getCategories(data, d => d.y))
+                .domain(yCategoriesOrdered)
                 .range([self.height - self.rangePad, self.rangePad])
                 .paddingInner(1)
                 .paddingOuter(.5)

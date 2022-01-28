@@ -45,6 +45,9 @@ datasets:
     -   id: HCA
         dir: "./data/FormattedData/HCA"
         meta: "HCA-metadata.csv"
+        customFilter: 
+                name: "Cell Type"
+                column: "Celltype"
         keyIsSymbol: True
         matrices:
             -   type: CPM
@@ -52,6 +55,9 @@ datasets:
     -   id: Velmeshev
         dir: "./data/FormattedData/Velmeshev"
         meta: "Velmeshev-metadata.csv"
+        customFilter: 
+                name: "Cell Type"
+                column: "CellType"
         keyIsSymbol: True
         matrices:
             -   type: CPM
