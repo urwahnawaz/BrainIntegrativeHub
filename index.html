@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<meta name="google" content="notranslate">
+<html>
+<meta charset="utf-8"/>
+<meta name="google" content="notranslate"/>
 
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
 
     <link rel="stylesheet" href="resources/css/style.css"/>
 </head>
@@ -42,24 +44,18 @@
   alt="Overview of python pipeline"/>
 
   <div class="container-fluid" style="padding: 0px;">
-    <div class="jumbotron" style="padding:8%;background-color:#fff;position:relative;margin-top:180px;margin-bottom:0px;bottom:0px;">
+    <div class="jumbotron" style="padding:6%;background-color:#fff;position:relative;margin-top:180px;margin-bottom:0px;bottom:0px;">
       <div class="panel panel-default" style="padding:50px;border-radius:0px;">
       <div class="row" style="margin-bottom:50px;">
-        <div class="col-md-8 text-center">
-          <img src="resources/images/BITHub_bulk_regions.svg" alt="Bulk regions" style="width:100%">
-        </div>
-        <div class="col-md-4 text-center" style="vertical-align: middle;">
+        <div id="imgregion" class="col-md-7 text-center"></div>
+        <div class="col-md-5 text-center" style="vertical-align: middle;">
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam dapibus urna ut elit fermentum interdum. Donec sem odio, mattis ut gravida et, suscipit et lectus. Donec interdum a lorem nec lobortis. Nullam id consequat eros. Ut nec aliquet ante, eu porta enim. Nulla placerat sem orci, eu lacinia nibh elementum nec. Proin scelerisque ipsum sit amet ligula lobortis lacinia. Curabitur a leo nunc. Sed et lorem tellus. Aliquam molestie ultrices nisl id mattis. </p> 
         </div>
       </div>
 
       <div class="row">
-        <div class="col-md-6 text-center">
-          <img src="resources/images/BITHub_Bulk_age_dist.svg" alt="Bulk age distribution" style="width:100%">
-        </div>
-        <div class="col-md-6 text-center">
-          <img src="resources/images/BIThub_bulk_total.svg" alt="Bulk total" style="width:100%">
-        </div>
+        <div id="imgage" class="col-md-6 text-center"></div>
+        <div id="imgtotal" class="col-md-6 text-center"></div>
       </div>
       <div class="row text-center">
           
@@ -74,5 +70,77 @@
           $('#background').css('margin-top', $(window).scrollTop() * -.65);
         });
     });
+
+     //Load and animate regions plot
+     let bottom_x = [90.87+46.89, 214.89+65.12, 407.73+6.7, 431.63+117.22];
+     let total_h = 117.22;
+    d3.xml("resources/images/BITHub_bulk_regions.svg", function(xml) {
+      var importedNode = document.importNode(xml.documentElement, true);
+      let svg = d3.select("#imgregion")
+      .each(function() {
+        this.appendChild(importedNode);
+      })
+
+      var rects = svg.selectAll("rect[width='31.33']")
+      .each(function(d, i) {
+        let r = d3.select(this);
+        let end_h = parseFloat(r.attr("height"));
+        let end_y = parseFloat(r.attr("y"));
+
+        let start_y = bottom_x[0];
+        for(let i=1; i<bottom_x.length && start_y < end_y; ++i) start_y = bottom_x[i];
+
+        r.attr("height", 0)
+        .attr("y", start_y)// - total_h/2
+        .transition()
+        .duration(200 + i*5)
+        .attr("y", end_y)
+        .attr("height", end_h);
+      });
+    });
+
+    //Load and animate age dist plot
+    d3.xml("resources/images/BITHub_Bulk_age_dist.svg", function(xml) {
+      var importedNode = document.importNode(xml.documentElement, true);
+      let svg = d3.select("#imgage")
+      .each(function() {
+        this.appendChild(importedNode);
+      })
+
+      var rects = svg.selectAll("rect[width='12.15']")
+      .each(function(d, i) {
+        let r = d3.select(this);
+        let end_h = r.attr("height");
+        let end_y = r.attr("y");
+        let start_y = parseFloat(end_y) + parseFloat(end_h);
+        
+        r.attr("height", 0)
+        .attr("y", start_y)
+        .transition()
+        .duration(400 + i*5)
+        .attr("y", end_y)
+        .attr("height", end_h);
+      });
+    });
+
+      //Load and animate total plot
+      d3.xml("resources/images/BIThub_bulk_total.svg", function(xml) {
+      var importedNode = document.importNode(xml.documentElement, true);
+      let svg = d3.select("#imgtotal")
+      .each(function() {
+        this.appendChild(importedNode);
+      })
+
+      var rects = svg.selectAll("rect[x='112.80']")
+      .each(function(d, i) {
+        let r = d3.select(this);
+        let end_w = r.attr("width");
+        r.attr("width", 0)
+        .transition()
+        .duration(800 + i*5)
+        .attr("width", end_w);
+      });
+    });
   </script>
 </body>
+</html>
