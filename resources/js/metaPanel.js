@@ -39,7 +39,7 @@ class MetaPanel {
 
         if(self.hasAnyVariancePartition) {
             self.plot2 = new Plot(self.elementId + "plot2");
-            self.plot2.setDimensions(950, 400, 80, 150, 40, 60);
+            self.plot2.setDimensions(800, 400, 80, 110, 40, 60); //increase left margin
         }
 
         self.rowCache = {};
@@ -297,9 +297,11 @@ class MetaPanel {
                         }
 
                         if(xAxisIsString) {
-                            plot.updateViolin(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset] + " (" + self.currCircId + ")", orderXDic, groupLabelsX, groupSizesX, orderZDic);
+                            plot.updateViolin(plotData, labels.xAxisLabel, labels.yAxisLabel, orderXDic, groupLabelsX, groupSizesX, orderZDic);
+                            plot.addTitles(self.names[dataset], self.currCircId);
                         } else {
-                            plot.updateScatter(plotData, labels.xAxisLabel, labels.yAxisLabel, self.names[dataset] + " (" + self.currCircId + ")", orderZDic);
+                            plot.updateScatter(plotData, labels.xAxisLabel, labels.yAxisLabel, orderZDic);
+                            plot.addTitles(self.names[dataset], self.currCircId);
                         }
                     }
                 });
@@ -332,7 +334,8 @@ class MetaPanel {
             plot.updateDisabled("No variance partition");
             return;
         }
-        plot.updateBar(data, "Fraction Variance Explained", "Metadata Variable", "Variance Partition");
+        plot.updateBar(data, "Fraction Variance Explained", "Metadata Variable");
+        plot.addTitles("Variance Partition", self.currCircId);
     }
 
     setCircId(circId, obj) {
@@ -388,7 +391,7 @@ class MetaPanel {
                             ${!this.hasAnyVariancePartition ? "" : 
                             /*html*/`<hr class="mt-1 mb-1"/>
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-10 col-md-offset-2">
                                     <div id="${this.elementId + "plot2"}"></div>
                                 </div>
                             </div>`

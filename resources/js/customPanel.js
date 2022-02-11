@@ -43,7 +43,6 @@ class CustomPanel {
         controls.setXAxis(Object.keys(samples), undefined);
         controls.setYAxis(["CPM"], undefined);
         controls.setColorings(Object.keys(samples).filter(k=>$.type(samples[k][0]) === "string"), "None");
-        controls.setRegions(["All"]);
     }
 
     //only difference in plots is one selects measure for x axis, other selects samples
@@ -102,9 +101,11 @@ class CustomPanel {
         }
 
         if(xAxisIsString) {
-            plot.updateBox(plotData, xAxisLabel, yAxisLabel);
+            plot.updateViolin(plotData, xAxisLabel, yAxisLabel);
+            plot.addTitles(dataset, self.currCircId);
         } else {
-            plot.updateScatter(plotData, xAxisLabel, yAxisLabel, "");
+            plot.updateScatter(plotData, xAxisLabel, yAxisLabel);
+            plot.addTitles(dataset, self.currCircId);
         }
     }
 

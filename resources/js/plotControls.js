@@ -146,7 +146,7 @@ class PlotControls {
                 <select id="datasetselect${this.elementId}" class="selectpicker"></select>
                 <br><br>
             </span>
-            <span class="hidable">
+            <span class="hidable" hidden>
                 <div id="customfilterlabel${this.elementId}"></div>
                 <select id="customfilterselect${this.elementId}" class="selectpicker"></select>
                 <br><br>

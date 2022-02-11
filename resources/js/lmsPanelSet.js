@@ -14,7 +14,7 @@ class LMSPanelSet {
         self.name = name;
         self.searchedEntries = [];
         self.missingData = [];
-        document.getElementById(self.parentId).children[childIndex].insertAdjacentHTML("afterEnd", self._generateHTML());
+        document.getElementById(self.parentId).children[childIndex].insertAdjacentHTML("afterbegin", self._generateHTML());
         self.metas = metas;
         self.names = names;
         self.data = {}
@@ -54,9 +54,10 @@ class LMSPanelSet {
         self._setOptions("lmsselect2", names);
     }
 
-    setMultiple(searchedEntries) {
+    setMultiple(searchedEntries, searchedTotalMatches) {
         var self = this;
         self.searchedEntries = searchedEntries;
+        self.searchedTotalMatches = searchedTotalMatches;
         self.preventUpdates = true;
         let setChart = false;
         if(self.searchedEntries.length == 0) {
@@ -114,9 +115,9 @@ class LMSPanelSet {
         let plotData = [];
 
         let entry1, entry2, entry3;
-        entry1 = entry2 = entry3 = -1;
+        entry2 = entry3 = -1;
         for(let i=0, j=0, k=0, halt=0; i < index1.length && !halt; ++i) {
-            let entry1 = index1[i];
+            entry1 = index1[i];
 
             while(entry2 < entry1 && !halt) {
                 if(j < index2.length) entry2 = index2[j++];
@@ -136,6 +137,7 @@ class LMSPanelSet {
         }
 
         self.plot.updateScatter(plotData, curr1, curr2, "Z-Score Transformed Mean Log2 (Expression)");
+        self.plot.addTitles("Z-Score Transformed Mean Log2 (Expression)");
 
         plotData = [];
         self.missingData = [];
@@ -149,22 +151,26 @@ class LMSPanelSet {
             }
         }
 
+        //Note missingData is specific to the intersection
+        //self.searchedEntries.filter(v => v.row != -1) is all missing
+
         if(self.searchedEntries.length) {
             document.getElementById("alertMain").style.display = "";
-            console.log(self.searchedEntries)
-            document.getElementById("alertInfo").innerText = ((self.searchedEntries.length - self.missingData.length) + "/" + (self.searchedEntries.length));
-            if(self.missingData.length) {
-                document.getElementById("alertMissing").style.display = "";
+            if(self.searchedEntries.length > self.searchedTotalMatches) {
+                document.getElementById("alertMissingDownload").innerText = (self.searchedEntries.length - self.searchedTotalMatches) + "/" + self.searchedEntries.length;
+                document.getElementById("alertInfo").innerText = " searched genes not found in any datasets";
                 document.getElementById("alertMain").classList.remove("alert-info");
                 document.getElementById("alertMain").classList.add("alert-warning");
-
-                document.getElementById("alertMissingDownload").href = 'data:text/csv;octet-stream,' + encodeURIComponent(self.missingData.join('\r\n'));
+                document.getElementById("alertMissingDownload").href = 'data:text/csv;octet-stream,' + encodeURIComponent(self.searchedEntries.filter(v => v.row == -1).map(v => v.label).join('\r\n'));
                 document.getElementById("alertMissingDownload").download = "missing" + curr1 + "vs" + curr2 + ".csv";
             } else {
-                document.getElementById("alertMissing").style.display = "none";
+                document.getElementById("alertMissingDownload").innerText = "";
+                document.getElementById("alertInfo").innerText = "All " + self.searchedEntries.length + " searched genes found in at least one dataset.";
                 document.getElementById("alertMain").classList.remove("alert-warning");
                 document.getElementById("alertMain").classList.add("alert-info");
             }
+
+            document.getElementById("alertInfo").innerText += " (" + (self.searchedEntries.length - self.missingData.length) + "/" + self.searchedEntries.length + " in both " + curr1 + " and " + curr2 + ")";
         } else {
             document.getElementById("alertMain").style.display = "none";
         }
@@ -198,7 +204,7 @@ class LMSPanelSet {
                                 <select class="selectpicker" id="lmsselect1"></select><br><br><br>
                                 
                                 <div id="alertMain" class="alert alert-warning" role="alert" style="display: none;">
-                                    <span id="alertInfo">33/35</span> searched terms in intersection<span id="alertMissing"> (<a id="alertMissingDownload">missing</a>)</span>
+                                    <a id="alertMissingDownload">33/35</a><span id="alertInfo"></span>
                                 </div>
                             </div>
                             <div class="col-md-10">

@@ -16,7 +16,6 @@ class Plot {
         self.setDimensions();
 
         self.zeroCountNum = 0
-        self.title = "";
         self.shouldShowDownloadButton = false;
 
         //Sasha Trubetskoy
@@ -87,14 +86,10 @@ class Plot {
         this.yAxisCallback = callback;
     }
 
-    setTitle(title) {
-        this.title = title;
-    }
-
     //Expects [{x, y, z=undefined}...] where x and y are numeric, z is optional string for coloring
-    updateScatter(data, xName, yName, dataset, orderZ) {
+    updateScatter(data, xName, yName, orderZ) {
         var self = this;
-        self._update(data, xName, yName, dataset);
+        self._update(data, xName, yName);
 
         // Show the X scale
         self.x = d3.scaleLinear()
@@ -167,9 +162,9 @@ class Plot {
     }
 
     //Expects [{x, y}...] where x is string and y is numeric
-    updateBox(data, xName, yName, dataset) {
+    updateBox(data, xName, yName) {
         var self = this;
-        self._update(data, xName, yName, dataset);
+        self._update(data, xName, yName);
 
         while (self.cachedJitter.length < data.length) self.cachedJitter.push(- self.jitterWidth / 2 + Math.random() * self.jitterWidth);
 
@@ -258,10 +253,10 @@ class Plot {
     }
 
     //Expects [{x, y}...] where x is numaric and y is a string (same as updateColumn but horizontal)
-    updateBar(data, xName, yName, dataset) {
+    updateBar(data, xName, yName) {
         var self = this;
 
-        self._update(data, xName, yName, dataset, data.map(d => d.y).reverse());
+        self._update(data, xName, yName, data.map(d => d.y).reverse());
 
         // Show the X scale
         self.x = d3.scaleLinear()
@@ -284,7 +279,7 @@ class Plot {
             .attr('width', d => self.x(d.x) - self.rangePad)
             .attr('stroke', 'black')
             .attr('stroke-width', 0.5)
-            .attr('fill', "#81858c")
+            .attr('fill', "#009b41")
             .append("svg:title")
             .text(d => d.x.toFixed(2));
     }
@@ -322,7 +317,7 @@ class Plot {
     }
 
     //Expects [{x, y, z=undefined}...] where x is string and y is numeric, z is optional string for coloring
-    updateViolin(data, xName, yName, dataset, orderX, groupLabelsX, groupSizesX, orderZ) {
+    updateViolin(data, xName, yName, orderX, groupLabelsX, groupSizesX, orderZ) {
         var self = this;
         
         let multipleColors = (data[data.length-1].z);
@@ -339,7 +334,7 @@ class Plot {
         let rotatedOffset = shouldRotateLabels ? self.computeTextLength(maxCategoryLen) : 0;
 
         d3.select("#" + self.elementId + " > div > svg").attr("viewBox", `0 0 ${self.width + self.margin.left + self.margin.right} ${self.height + self.margin.top + self.margin.bottom + rotatedOffset}`);
-        self._update(data, xName, yName, dataset, undefined, rotatedOffset);
+        self._update(data, xName, yName, undefined, rotatedOffset);
 
         let violinColorScale = d3.scaleOrdinal().domain(orderX ? orderX : categoriesX).range(self.colors);
 
@@ -503,12 +498,16 @@ class Plot {
                 .domain([violinMin,violinMax])
 
         for(let violin of sumstatFlat) {
-            let array = violin.value.map(d => d.y)//.filter(v => v != 0);
+            let array = violin.value.map(d => d.y);
             let iqr = IQR(array);
             let sd = SD(array);
 
+            //zero IQR leads to zero bandwidth, filter(v => v != 0) causes bias
+            //Similar method used in plotly.js/src/traces/violin/calc.js 
+            let minBandwidth = (Math.max(...array) - Math.min(...array)) / 100;
+
             // Compute kernel density estimation
-            var kde = kernelDensityEstimator(kernelEpanechnikov(scottsRule(array.length, sd, iqr)), self.y.ticks(40))
+            var kde = kernelDensityEstimator(kernelEpanechnikov(Math.max(minBandwidth, scottsRule(array.length, sd, iqr))), self.y.ticks(40))
 
             var density = kde(violin.value.map(d => d.y))
             var densityMax = d3.max(density, d=>d[1]);
@@ -616,7 +615,7 @@ class Plot {
     }
 
     //Internal function for shared axis creation
-    _update(data, xName, yName, dataset, yCategoriesOrdered=undefined, rotatedOffset=0) {
+    _update(data, xName, yName, yCategoriesOrdered=undefined, rotatedOffset=0) {
         var self = this;
 
         //Clear graph already exists
@@ -664,21 +663,28 @@ class Plot {
             .style("text-anchor", "middle")
             .text(xName);
 
-        self._addTitle(dataset);
-
         self._addDownloadButton(rotatedOffset);
         self._setDownloadButtonVisibility(true);
     }
 
-    _addTitle(dataset) {
+    addTitles(title, subTitle=undefined) {
         var self = this;
         // Show title
+        if(subTitle) {
+            self.svg.append("text")
+                .attr("transform",
+                    "translate(" + (self.width / 2) + " ,0)")
+                .style("text-anchor", "middle")
+                .style("font-size", "12px")
+                .text(subTitle);
+        }
         self.svg.append("text")
             .attr("transform",
                 "translate(" + (self.width / 2) + " ," +
                 -self.margin.top / 2 + ")")
             .style("text-anchor", "middle")
-            .text(self.title ? self.title : dataset);
+            .style("font-size", "16px")
+            .text(title);
     }
 
     _addTooltip() {

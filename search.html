@@ -22,7 +22,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
     <script src="resources/js/circviewer.js"></script>
-    <script src="resources/js/heatmap.js"></script>
     <script src="resources/js/lmsPanel.js"></script>
     <script src="resources/js/customPanel.js"></script>
 
@@ -56,25 +55,7 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div id="myModalBody" class="modal-body">
-                    <span id="allpanels">
-                        <div class="panel-group">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title">
-                                        <a data-toggle="collapse" href="#collapse2">Gene detection across datasets</a>
-                                    </h4>
-                                </div>
-                                <div id="collapse2" class="panel-collapse collapse in">
-                                    <div class="panel-body">
-                                        <div class="panel-description">
-                                            Darker shades of green indicate higher Z-Score, while grey indicates absence. Hover on a dataset to view its Z-Score. Click on a dataset to navigate to the respective publication.
-                                        </div>
-                                        <div id="myHeatmap" align="center"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </span>
+                    <span id="allpanels"></span>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     </div>
@@ -354,8 +335,6 @@
             incAwaitAll();
         })();
 
-        heatmap = new Heatmap("myHeatmap");
-
         function updateSearchPos() {
             if(searchCols.length > 0 && searchCols[searchCols.length-1] < 0) {
                 searchPos = $("#myInput").val().trim().match(/(chr[^:]+):([0-9]+)-([0-9]+)/i);
@@ -537,38 +516,12 @@
                 let circindex = parseInt(arg.currentTarget.getAttribute("data-index"));
                 let metaIndex = new Array(dataOrder.length);
 
-                //Change heatmap
-                heatmapObj = []
                 for(let i=0; i<dataOrder.length; ++i) {
                     if(isDataset[i] || isDatabase[i]) {
                         //Just insert customs before databases
                         metaIndex[i] = matrix[i][circindex];
-                        present = (metaIndex[i] != -1);
-                        let url = "";
-                        let zscore = "NA";
-                        let opacity = 1;
-                        if(present) {
-                            let o = dataOrder[i];
-
-                            let urlObj = urls[o];
-                            if(urlObj) {
-                                if(urlObj.prefix) {
-                                    url = urlObj.prefix + urlObj.urls[metaIndex[i]];
-                                } else {
-                                    url = urlObj.home;
-                                }
-                            }
-
-                            if(present && isDataset[i] && Object.keys(lmsPanel.data).includes(o)) {
-                                zscore = lmsPanel.data[o][metaIndex[i]].toFixed(2);
-                                opacity = (Math.min(Math.max(zscore, -3), 3) + 3) / 6.0;
-                            }
-                        }
-                        heatmapObj.push({name: dataOrder[i], url: url, present: present, opacity: opacity, zscore: zscore, datasetType: ((isDataset[i]) ? (isBrainDataset[i] ? 1 : 2) : 0)});
                     }
                 }
-
-                heatmap.update(heatmapObj);
 
                 //Change metadata panels
                 metadataObj = {};
@@ -576,7 +529,7 @@
                 for (let p of metaPanels) p.setCircId(matrix[1][circindex] || matrix[0][circindex], metadataObj);
                 customPanel.setCircId(matrix[1][circindex] || matrix[0][circindex], metadataObj);
 
-                lmsPanel.setCircIndex(circindex);
+                lmsPanel.setCircId(matrix[1][circindex] || matrix[0][circindex], circindex);
                 //Show modal
                 $("#myModalTitle").text(matrix[1][circindex] + " (" + matrix[0][circindex] + ")");
                 $("#myModal").modal('toggle');

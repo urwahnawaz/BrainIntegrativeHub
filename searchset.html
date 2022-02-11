@@ -271,9 +271,9 @@
                 if(p.row != -1) ++total;
             }
             
-            lmsPanel.setMultiple(pinned);
+            lmsPanel.setMultiple(pinned, total);
 
-            if(pinned.length) $("#myDisplay")[0].setAttribute('data-domain', total + (total == 1 ? " transcript match" : " transcript matches"));
+            if(pinned.length) $("#myDisplay")[0].setAttribute('data-domain', total + (total == 1 ? " result" : " results"));
             else $("#myDisplay")[0].setAttribute('data-domain', matrix[0].length + " transcripts");
         }
     </script>

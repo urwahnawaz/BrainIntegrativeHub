@@ -6,7 +6,7 @@ class LMSPanel {
         self.elementId = self.parentId + "lms";
         self.name = name;
         self.circIndex = -1;
-        document.getElementById(self.parentId).children[childIndex].insertAdjacentHTML("afterEnd", self._generateHTML());
+        document.getElementById(self.parentId).children[childIndex].insertAdjacentHTML("afterbegin", self._generateHTML());
         self.metas = metas;
         self.names = names;
         self.data = {};
@@ -43,9 +43,10 @@ class LMSPanel {
         self._setOptions("lmsselect2", names);
     }
 
-    setCircIndex(circIndex) {
+    setCircId(circId, circIndex) {
         var self = this;
         self.preventUpdates = true;
+        self.currCircId = circId;
         self.circIndex = circIndex;
         let names = Object.keys(self.data);
         let setChart = false;
@@ -116,8 +117,8 @@ class LMSPanel {
             }
         }
 
-        self.plot.updateScatter(plotData, curr1, curr2, "Z-Score Transformed Mean Log2 (Expression)");
-
+        self.plot.updateScatter(plotData, curr1, curr2);
+        self.plot.addTitles("Z-Score Transformed Mean Log2 (Expression)", self.currCircId);
         self.plot.addScatterHighlights([{x: data1[self.metas[curr1][self.circIndex]], y: data2[self.metas[curr2][self.circIndex]], name: self.names[self.circIndex]}]);
     }
 
