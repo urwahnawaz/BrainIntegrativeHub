@@ -476,19 +476,29 @@
             }
 
             if(sortCurrCol != -3 && (sortClassOrder[sortCurrIndex] == "asc" || sortClassOrder[sortCurrIndex] == "desc")) {
+                let getZscore = (metadataIndex, sortCurrCol) =>  {
+                    if(metadataIndex == -1) return -3;
+                    let o = dataOrder[sortCurrCol];
+                    return lmsPanel.data[o][metadataIndex];
+                }
+                
                 let f = (sortClassOrder[sortCurrIndex] == "asc" ? ((a, b) => (a > b ? 1 : (b > a ? -1 : 0))) : ((a, b) => (a > b ? -1 : (b > a ? 1 : 0))));
                 let g = (a, condition) => { //would be better to have isDataset[x] rather than checking range?
                     let sum = 0; 
-                    for(let j of showCols) if(condition[j]) sum += (matrix[j][a] >= 0);
+                    for(let j of showCols) if(condition[j]) sum += getZscore(matrix[j][a], j);
                     return sum;
                 }
+
+                
+
+                
 
                 if(sortCurrCol == -1) {
                     indices.sort((a, b) => f(g(a, isDataset), g(b, isDataset)));
                 } else if(sortCurrCol == -2) {
                     indices.sort((a, b) => f(g(a, isDatabase), g(b, isDatabase)));
                 } else if(isDataset[sortCurrCol] || isDatabase[sortCurrCol]){
-                    indices.sort((a, b) => f(matrix[sortCurrCol][a] >= 0, matrix[sortCurrCol][b] >= 0));
+                    indices.sort((a, b) => f(getZscore(matrix[sortCurrCol][a], sortCurrCol), getZscore(matrix[sortCurrCol][b], sortCurrCol)));
                 } else {
                     indices.sort((a, b) => f(matrix[sortCurrCol][a], matrix[sortCurrCol][b]));
                 }
