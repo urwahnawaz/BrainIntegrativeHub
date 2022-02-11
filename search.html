@@ -454,14 +454,20 @@
             
 
             if(!searchEntries && searchTerm && searchTerm.includes(",")) {
-                searchEntries = [];
-                let matchedRows = {};
-                for(let j of searchCols) {
-                    if(j < 0) continue;
-                    for(let newMatch of searchDeliminated(searchTerm, matrix[j])) {
-                        if(!(newMatch.row in matchedRows)) {
-                            searchEntries.push(newMatch);
-                            matchedRows[newMatch.row] = true;
+               
+                let realSearchCols = searchCols.filter(c => c >= 0);
+
+                if(realSearchCols.length == 1) {
+                    searchEntries = searchDeliminated(searchTerm, matrix[realSearchCols[0]]);
+                } else {
+                    searchEntries = [];
+                    let matchedRows = {};
+                    for(let j of realSearchCols) {
+                        for(let newMatch of searchDeliminated(searchTerm, matrix[j])) {
+                            if(!(newMatch.row in matchedRows)) {
+                                searchEntries.push(newMatch);
+                                if(newMatch.row >= 0) matchedRows[newMatch.row] = true;
+                            }
                         }
                     }
                 }
