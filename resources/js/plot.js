@@ -57,44 +57,37 @@ class Plot {
             //    .on("mouseleave", () => self._setDownloadButtonVisibility(false))
     }
 
-    removeScatterHighlights() {
-        var self = this;
-        if(self.highlight) {
-            self.highlight.remove();
-            self.highlight = undefined;
-        }
-    }
-
-    addScatterHighlights(data, fill="#ffbf00", stroke="white", radius=8) {
-        var self = this;
-        self.highlightData = data;
-        self.highlight = self.svg.selectAll("highlight")
-            .data(data)
-            .enter()
-            .append("circle")
-            .style("cursor", "pointer")
-            .attr("cx", d => self.x(d.x))
-            .attr("cy", d => self.y(d.y))
-            .attr("r", radius)
-            .style("fill",  fill)
-            .attr("stroke", stroke)
-            .append("svg:title")
-            .text(d => d.name);
-    }
-
     addYAxisCallback(callback) {
         this.yAxisCallback = callback;
     }
 
+    _getCombinedExtent(a1, a2, func) {
+        let extent = [NaN, NaN];
+        if(a1.length + a2.length == 1) {
+            extent = [0, 2 * (a1.length ? func(a1[0]) : func(a2[0]))];
+        } else {
+
+            let e1 = a1.length ? d3.extent(a1, func) : [Number.MAX_VALUE, Number.MIN_VALUE];
+            let e2 = a2.length ? d3.extent(a2, func) : [Number.MAX_VALUE, Number.MIN_VALUE];
+            extent[0] = Math.min(e1[0], e2[0]); 
+            extent[1] = Math.max(e1[1], e2[1]);
+        }
+        return extent;
+    }
+
     //Expects [{x, y, z=undefined}...] where x and y are numeric, z is optional string for coloring
-    updateScatter(data, xName, yName, orderZ) {
+    updateScatter(data, xName, yName, orderZ, highlightData=[], highlightFill="#ffbf00", highlightStroke="white", highlightRadius=8) {
         var self = this;
-        self._update(data, xName, yName);
+
+        let yDomain = self._getCombinedExtent(data, highlightData, d => d.y);
+        self._update(xName, yName, yDomain);
+        self.currData = data;
+        self.highlightData = highlightData;
 
         // Show the X scale
         self.x = d3.scaleLinear()
             .range([self.rangePad, self.width - self.rangePad])
-            .domain(data.length == 1 ? [0, 2 * data[0].x] : d3.extent(data, d => d.x))
+            .domain(self._getCombinedExtent(data, highlightData, d => d.x))
         self.svg.append("g")
             .attr("transform", "translate(0," + self.height + ")")
             .call(d3.axisBottom(self.x))
@@ -102,7 +95,7 @@ class Plot {
         var pointColorScale = undefined;
         var categoriesZ = undefined;
 
-        if (data[data.length-1].z) {
+        if (data.length && data[data.length-1].z) {
             categoriesZ = self._getCategories(data, d => d.z)
             if(orderZ) {
                 let orderZDic = {};
@@ -110,7 +103,6 @@ class Plot {
                 let sortZ = (a, b) => ((orderZDic[a]||orderZ.length+1) - (orderZDic[b]||orderZ.length+1));
                 categoriesZ.sort(sortZ);
             }
-
             
             pointColorScale = d3.scaleOrdinal()
                 .domain(orderZ ? orderZ : categoriesZ)
@@ -151,11 +143,25 @@ class Plot {
             //.on("mouseover", (d) => self._tooltipMouseOver(d))
             //.on("mouseleave", (d) => self._tooltipMouseLeave(d))
 
-        if (data[0].z && !pointColorScale) {
+        if (data.length && data[0].z && !pointColorScale) {
             window.alert("Couldn't display " + categoriesZ.length + " categories");
         }
 
         for(let d of data) if(d.x == 0 && d.y == 0) ++self.zeroCountNum;
+
+        //Show highlights
+        self.highlight = self.svg.selectAll("highlight")
+            .data(highlightData.length >= self.cullPointsMinimum ? self._filterDenseCircles(highlightData, highlightRadius) : highlightData)
+            .enter()
+            .append("circle")
+            .style("cursor", "pointer")
+            .attr("cx", d => self.x(d.x))
+            .attr("cy", d => self.y(d.y))
+            .attr("r", highlightRadius)
+            .style("fill",  highlightFill)
+            .attr("stroke", highlightStroke)
+            .append("svg:title")
+            .text(d => d.name);
 
         self._addTooltip();
         self._addZeroCount();
@@ -164,7 +170,10 @@ class Plot {
     //Expects [{x, y}...] where x is string and y is numeric
     updateBox(data, xName, yName) {
         var self = this;
-        self._update(data, xName, yName);
+
+        let yDomain = self._getCombinedExtent(data, [], d => d.y);
+        self._update(xName, yName, yDomain);
+        self.currData = data;
 
         while (self.cachedJitter.length < data.length) self.cachedJitter.push(- self.jitterWidth / 2 + Math.random() * self.jitterWidth);
 
@@ -256,7 +265,9 @@ class Plot {
     updateBar(data, xName, yName) {
         var self = this;
 
-        self._update(data, xName, yName, data.map(d => d.y).reverse());
+        let yDomain = data.map(d => d.y).reverse();
+        self._update(xName, yName, yDomain);
+        self.currData = data;
 
         // Show the X scale
         self.x = d3.scaleLinear()
@@ -289,8 +300,9 @@ class Plot {
         var self = this;
 
         let categoriesX = self._getCategories(data, d=>d.x);
-
-        self._update(data, xName, yName);
+        let yDomain = self._getCombinedExtent(data, [], d => d.y);
+        self._update(xName, yName, yDomain);
+        self.currData = data;
 
         // Show the X scale
         self.x = d3.scaleBand()
@@ -332,9 +344,11 @@ class Plot {
         let shouldRotateLabels = (multipleColors ? (categoriesX.length * categoriesZ.length) : categoriesX.length) > 8;
 
         let rotatedOffset = shouldRotateLabels ? self.computeTextLength(maxCategoryLen) : 0;
-
         d3.select("#" + self.elementId + " > div > svg").attr("viewBox", `0 0 ${self.width + self.margin.left + self.margin.right} ${self.height + self.margin.top + self.margin.bottom + rotatedOffset}`);
-        self._update(data, xName, yName, undefined, rotatedOffset);
+        
+        let yDomain = self._getCombinedExtent(data, [], d => d.y);
+        self._update(xName, yName, yDomain, rotatedOffset);
+        self.currData = data;
 
         let violinColorScale = d3.scaleOrdinal().domain(orderX ? orderX : categoriesX).range(self.colors);
 
@@ -612,22 +626,22 @@ class Plot {
         this.currXName = undefined;
         this.currYName = undefined;
         this.highlightData = undefined;
+        this.highlight = undefined;
     }
 
     //Internal function for shared axis creation
-    _update(data, xName, yName, yCategoriesOrdered=undefined, rotatedOffset=0) {
+    _update(xName, yName, yDomain, rotatedOffset=0) {
         var self = this;
 
         //Clear graph already exists
         self._removePlot();
-        self.currData = data;
         self.currXName = xName;
         self.currYName = yName;
 
         //Create y scale
-        if (yCategoriesOrdered) {
+        if (yDomain.length != 2 || isNaN(yDomain[0]) || isNaN(yDomain[1])) {
             self.y = d3.scaleBand()
-                .domain(yCategoriesOrdered)
+                .domain(yDomain) //should be y categories in order you wish to display them
                 .range([self.height - self.rangePad, self.rangePad])
                 .paddingInner(1)
                 .paddingOuter(.5)
@@ -635,7 +649,7 @@ class Plot {
             self.svg.append("g").call(d3.axisLeft(self.y))//.tickFormat(d => d.length <= 10 ? d : d.substring(0, 7) + '...'))
         } else {
             self.y = d3.scaleLinear()
-                .domain(data.length == 1 ? [0, 2 * data[0].y] : d3.extent(data, d => d.y))
+                .domain(yDomain)
                 .range([self.height - self.rangePad, self.rangePad])
 
                 self.svg.append("g").call(d3.axisLeft(self.y));

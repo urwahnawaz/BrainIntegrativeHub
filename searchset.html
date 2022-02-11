@@ -23,6 +23,7 @@
 
     <script src="resources/js/plot.js"></script>
     <script src="resources/js/plotControls.js"></script>
+    <script src="resources/js/utility.js"></script>
 
 
     <link rel="stylesheet" href="resources/css/style.css" />
@@ -48,8 +49,8 @@
                 </div>
                 <ul class="nav navbar-nav">
                     <li><a class="nav-link" href="./index.html">About</a></li>
-                    <li class="active"><a class="nav-link" href="./searchset.html">Gene Set search</a></li>
-                    <li><a class="nav-link" href="./search.html">Single Gene search</a></li>
+                    <li class="active"><a class="nav-link" href="./searchset.html">Gene Set Search</a></li>
+                    <li><a class="nav-link" href="./search.html">Gene Metadata Search</a></li>
                     <li><a class="nav-link" href="./download.html">Download</a></li>
                 </ul>
             </div>
@@ -148,7 +149,13 @@
             $('#my_search_select').val(searchCols[0]);
             $('#my_search_select').selectpicker('refresh');
             $('#my_search_select').on('change', function(){
-                searchCols = $(this).val();
+                let newSearchCols = $(this).val();
+                if(newSearchCols.length) {
+                    searchCols = newSearchCols;
+                } else {
+                    $(this).val(searchCols);
+                    $('#my_search_select').selectpicker('refresh');
+                }
             });
 
             $(document).ready(function() {
@@ -184,7 +191,7 @@
             isDataset = hdf5Data.attrs.isDataset;
             isDatabase = hdf5Data.attrs.isDatabase;
             isBrainDataset = hdf5Data.attrs.isBrainDataset;
-            searchCols = hdf5Data.attrs.defaultSearchable;
+            searchCols = [hdf5Data.attrs.defaultSearchable[0]];
             
             matrix = [];
             for(let h of dataOrder) matrix.push([...hdf5Data.get(h).value]);
@@ -194,7 +201,7 @@
 
             resetDropdowns();
 
-            $("#myDisplay")[0].setAttribute('data-domain', matrix[0].length + " transcripts");
+            $("#myDisplay")[0].setAttribute('data-domain', matrix[0].length + " results");
 
             lmsPanel = new LMSPanelSet("searchsetplot", 0, "", f.get("metadata"), lmsMeta, matrix[0]);
 
@@ -260,17 +267,20 @@
 
         function updatePlot() {
             //TODO: centralise file processing before plot updating step
-            let entries = searchTerm.split(searchFile ? /\r?\n/ : ',');
-            pinned = entries.filter(e => e).map(e => ({row:-1, label: e.trim()}));
+            let indexingColumn = parseInt(searchCols[0]);
+
+            //TODO: save searchcols in local storage too, currently inconsistent when search terms are copied over
+
+            pinned = searchDeliminated(searchTerm, matrix[indexingColumn], searchFile ? /\r?\n/ : ',', !searchFile);
 
             //Find all indices from string
-            let indexingColumn = parseInt(searchCols[0]);
             total = 0;
-            for(let p of pinned) {
-                p.row = matrix[indexingColumn].indexOf(p.label);
-                if(p.row != -1) ++total;
+            for(let p of pinned) if(p.row != -1) ++total;
+
+            if(total > 0) {
+                localStorage.setItem("setSearch", JSON.stringify(pinned));
+                localStorage.setItem("setSearchColumns", JSON.stringify(searchCols));
             }
-            
             lmsPanel.setMultiple(pinned, total);
 
             if(pinned.length) $("#myDisplay")[0].setAttribute('data-domain', total + (total == 1 ? " result" : " results"));

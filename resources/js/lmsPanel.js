@@ -117,9 +117,8 @@ class LMSPanel {
             }
         }
 
-        self.plot.updateScatter(plotData, curr1, curr2);
+        self.plot.updateScatter(plotData, curr1, curr2, undefined, [{x: data1[self.metas[curr1][self.circIndex]], y: data2[self.metas[curr2][self.circIndex]], name: self.names[self.circIndex]}]);
         self.plot.addTitles("Z-Score Transformed Mean Log2 (Expression)", self.currCircId);
-        self.plot.addScatterHighlights([{x: data1[self.metas[curr1][self.circIndex]], y: data2[self.metas[curr2][self.circIndex]], name: self.names[self.circIndex]}]);
     }
 
     _setOptions(id, names, defaultName=undefined) {

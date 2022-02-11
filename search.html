@@ -30,7 +30,7 @@
     <script src="resources/js/metaPanelDual.js"></script>
     <script src="resources/js/metaPanelCompact.js"></script>
     <script src="resources/js/plotControls.js"></script>
-
+    <script src="resources/js/utility.js"></script>
 
     <link rel="stylesheet" href="resources/css/style.css" />
 </head>
@@ -108,8 +108,8 @@
                 </div>
                 <ul class="nav navbar-nav">
                     <li><a href="./index.html">About</a></li>
-                    <li><a href="./searchset.html">Gene Set search</a></li>
-                    <li class="active"><a href="./search.html">Single Gene search</a></li>
+                    <li><a href="./searchset.html">Gene Set Search</a></li>
+                    <li class="active"><a href="./search.html">Gene Metadata Search</a></li>
                     <li><a href="./download.html">Download</a></li>
                 </ul>
             </div>
@@ -164,6 +164,18 @@
     </div>
 
     <script>
+        function findGetParameter(parameterName) {
+            var result = null, tmp = [];
+            location.search
+                .substr(1)
+                .split("&")
+                .forEach(function (item) {
+                tmp = item.split("=");
+                if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+                });
+            return result;
+        }
+
         var metaPanels = [];
         var hdf5Root = undefined;
         var urls = {};
@@ -190,7 +202,7 @@
         let pageMax = 5;
 
         let searchTerm = "";
-        let searchPos = undefined;
+        let searchEntries = undefined;
 
         let coordinateStarts = [];
         let coordinateEnds = [];
@@ -228,9 +240,14 @@
             $('#my_search_select').val(searchCols);
             $('#my_search_select').selectpicker('refresh');
             $('#my_search_select').on('change', function() {
-                searchCols = $(this).val();
-                updateSearchPos();
-                makeTable();
+                let newSearchCols = $(this).val();
+                if(newSearchCols.length) {
+                    searchCols = newSearchCols;
+                } else {
+                    $(this).val(searchCols);
+                    $('#my_search_select').selectpicker('refresh');
+                }
+                searchEntries = undefined;
             });
 
             $("#my_table_select").empty();
@@ -241,7 +258,8 @@
             $('#my_table_select').selectpicker('refresh');
             $('#my_table_select').on('change', function(){
                 showCols = $(this).val();
-                showCols.unshift(0);
+                showCols.unshift("0");
+                console.log(showCols);
                 makeTable();
             });
 
@@ -313,7 +331,6 @@
                 }
                 ++c;
             }
-            indices = new Array(matrix[0].length);
             defaultCoord = hdf5Data.attrs.defaultCoord;
 
             searchCols.push(-defaultCoord-1);
@@ -332,30 +349,34 @@
 
             resetDropdowns();
             makeTable();
+
+            if(findGetParameter("useSetSearch")) {
+                searchEntries = JSON.parse(localStorage.getItem("setSearch"));
+                $("#myInput").val(searchEntries.map(v => v.original || v.label).join(", "));
+                let setSearchColumns = JSON.parse(localStorage.getItem("setSearchColumns"));
+                $('#my_search_select').val(setSearchColumns);
+                $('#my_search_select').selectpicker('refresh');
+                makeTable();
+            }
+
             incAwaitAll();
         })();
-
-        function updateSearchPos() {
-            if(searchCols.length > 0 && searchCols[searchCols.length-1] < 0) {
-                searchPos = $("#myInput").val().trim().match(/(chr[^:]+):([0-9]+)-([0-9]+)/i);
-            } else {
-                searchPos = undefined;
-            }
-        }
 
         $("#myInput").keyup(function (event) {
             if (event.keyCode === 13) {
                 searchTerm = $("#myInput").val().trim().toLowerCase();
                 pageCurr = 0;
-                updateSearchPos();
                 makeTable();
             }
+        });
+
+        $("#myInput").change(function() {
+            searchEntries = undefined;
         });
 
         $("#my_search_button").click(function () {
             searchTerm = $("#myInput").val().trim().toLowerCase();
             pageCurr = 0;
-            updateSearchPos();
             makeTable();
         });
 
@@ -405,8 +426,55 @@
             tableContents += "</tr>";
             tableContents += "</thead>";
             tableContents += '<tbody>';
+
+            function drawRow(currTotal, currRowIndex) {
+                //Skip if not on page
+                if(currTotal < (pageCurr * pageSize) || currTotal > ((pageCurr + 1) * pageSize)) return;
+                //currTotal < 50 || currTotal > 100
+
+                tableContents += `<tr data-index="${currRowIndex}">`;
+                for(let j of showCols) {
+                    let e = matrix[j][currRowIndex];
+                    let o = dataOrder[j];
+                    let opacity = (e != -1 && Object.keys(lmsPanel.data).includes(o)) ? (Math.min(Math.max(lmsPanel.data[o][e], -3), 3) + 3) / 6.0 : 1;
+                    if (isDataset[j]) {
+                        if(isBrainDataset[j]) {
+                            tableContents += `<td style="opacity=${opacity}" class="${(e != -1 ? 'bool yes dataset1' : 'bool no')}"></td>`;
+                        } else {
+                            tableContents += `<td style="opacity:${opacity}" class="${(e != -1 ? 'bool yes dataset2' : 'bool no')}"></td>`;
+                        }
+                    } else if (isDatabase[j]) {
+                        tableContents += `<td class="${(e != -1 ? 'bool yes database' : 'bool no')}"></td>`;
+                    } else {
+                        tableContents += '<td>' + e + "</td>";
+                    }
+                }
+                tableContents += "</tr>";
+            }
             
-            for (var i=0; i < matrix[0].length; ++i) indices[i] = i;
+
+            if(!searchEntries && searchTerm && searchTerm.includes(",")) {
+                searchEntries = [];
+                let matchedRows = {};
+                for(let j of searchCols) {
+                    if(j < 0) continue;
+                    for(let newMatch of searchDeliminated(searchTerm, matrix[j])) {
+                        if(!(newMatch.row in matchedRows)) {
+                            searchEntries.push(newMatch);
+                            matchedRows[newMatch.row] = true;
+                        }
+                    }
+                }
+            }
+
+            if(searchEntries) {
+                indices = searchEntries.map(v => v.row).filter(v => v != -1);
+                indices.sort();
+            } else {
+                indices = new Array(matrix[0].length);
+                for (var i=0; i<matrix[0].length; ++i) indices[i] = i;
+            }
+
             if(sortCurrCol != -3 && (sortClassOrder[sortCurrIndex] == "asc" || sortClassOrder[sortCurrIndex] == "desc")) {
                 let f = (sortClassOrder[sortCurrIndex] == "asc" ? ((a, b) => (a > b ? 1 : (b > a ? -1 : 0))) : ((a, b) => (a > b ? -1 : (b > a ? 1 : 0))));
                 let g = (a, condition) => { //would be better to have isDataset[x] rather than checking range?
@@ -426,61 +494,29 @@
                 }
             }
             
-            let total=0;
-            let genomicSearchSystem = searchCols.length && searchCols[searchCols.length-1] < 0 ? -searchCols[searchCols.length-1]-1 : undefined;
-            for(let i=0; i<matrix[0].length; ++i) {
-                let sortIndex = indices[i];
-                let shouldInclude = true;
-                if(searchPos) {
-                    shouldInclude = false;
-                    //Skip if not in interval
-                    if(matrix[1][sortIndex] == searchPos[1]) {
-                        if(genomicSearchSystem !== undefined) {
-                            if(matrix[coordinateStarts[genomicSearchSystem]][sortIndex] >= parseInt(searchPos[2]) && matrix[coordinateEnds[genomicSearchSystem]][sortIndex] <= parseInt(searchPos[3])) {
+            let total = 0;
+            if(searchEntries) {
+                for(let e of indices) drawRow(total++, e);
+            } else {
+                for(let i=0; i<matrix[0].length; ++i) {
+                    let sortIndex = indices[i];
+                    let shouldInclude = true;
+                    if(searchTerm) {
+                        //Skip if doesn't match search
+                        shouldInclude = false;
+                        for(let j of searchCols) {
+                            if(j < 0) continue;
+                            let searchable = matrix[j][sortIndex];
+                            if((typeof searchable === "string" && searchable.toLowerCase().includes(searchTerm)) || (searchable == searchTerm)) {
                                 shouldInclude = true;
+                                break;
                             }
                         }
                     }
-                } else if(searchTerm) {
-                    //Skip if doesn't match search
-                    shouldInclude = false;
-                    for(let j of searchCols) {
-                        if(j < 0) continue;
-                        let searchable = matrix[j][sortIndex];
-                        if((typeof searchable === "string" && searchable.trim().toLocaleLowerCase().includes(searchTerm)) || (searchable == searchTerm)) {
-                            shouldInclude = true;
-                            break;
-                        }
-                    }
+                    if(shouldInclude) drawRow(total++, sortIndex);
                 }
-                
-                if(!shouldInclude) continue;
-                
-                ++total;
-
-                //Skip if not on page
-                if(total <= (pageCurr * pageSize) || total > ((pageCurr + 1) * pageSize)) continue;
-                //total < 50 || total > 100
-
-                tableContents += `<tr data-index="${sortIndex}">`;
-                for(let j of showCols) {
-                    let e = matrix[j][sortIndex];
-                    let o = dataOrder[j];
-                    let opacity = (e != -1 && Object.keys(lmsPanel.data).includes(o)) ? (Math.min(Math.max(lmsPanel.data[o][e], -3), 3) + 3) / 6.0 : 1;
-                    if (isDataset[j]) {
-                        if(isBrainDataset[j]) {
-                            tableContents += `<td style="opacity=${opacity}" class="${(e != -1 ? 'bool yes dataset1' : 'bool no')}"></td>`;
-                        } else {
-                            tableContents += `<td style="opacity:${opacity}" class="${(e != -1 ? 'bool yes dataset2' : 'bool no')}"></td>`;
-                        }
-                    } else if (isDatabase[j]) {
-                        tableContents += `<td class="${(e != -1 ? 'bool yes database' : 'bool no')}"></td>`;
-                    } else {
-                        tableContents += '<td>' + e + "</td>";
-                    }
-                }
-                tableContents += "</tr>";
             }
+            
             tableContents += '</tbody>';
             document.getElementById("my_table").innerHTML = tableContents;
 
@@ -723,7 +759,7 @@
                 for(let j of searchCols) {
                     if(j < 0) continue;
                     let searchable = matrix[j][sortIndex];
-                    if((typeof searchable === "string" && searchable.trim().toLocaleLowerCase().includes(searchTerm)) || (searchable == searchTerm)) {
+                    if((typeof searchable === "string" && searchable.trim().toLowerCase().includes(searchTerm)) || (searchable == searchTerm)) {
                         shouldInclude = true;
                         break;
                     }

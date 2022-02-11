@@ -136,20 +136,20 @@ class LMSPanelSet {
             }
         }
 
-        self.plot.updateScatter(plotData, curr1, curr2, "Z-Score Transformed Mean Log2 (Expression)");
-        self.plot.addTitles("Z-Score Transformed Mean Log2 (Expression)");
-
-        plotData = [];
+        let highlightData = [];
         self.missingData = [];
         for(var p of self.searchedEntries) {
             let metaIndex1 = self.metas[curr1][p.row];
             let metaIndex2 = self.metas[curr2][p.row];
             if(metaIndex1 >= 0 && metaIndex2 >= 0) {
-                plotData.push({x: data1[metaIndex1], y: data2[metaIndex2], name: self.names[index1[metaIndex1]]});
+                highlightData.push({x: data1[metaIndex1], y: data2[metaIndex2], name: self.names[index1[metaIndex1]]});
             } else {
                 self.missingData.push(p.label);
             }
         }
+
+        self.plot.updateScatter(plotData, curr1, curr2, undefined, highlightData, "#00e04f", "white", 5);
+        self.plot.addTitles("Z-Score Transformed Mean Log2 (Expression)");
 
         //Note missingData is specific to the intersection
         //self.searchedEntries.filter(v => v.row != -1) is all missing
@@ -158,7 +158,7 @@ class LMSPanelSet {
             document.getElementById("alertMain").style.display = "";
             if(self.searchedEntries.length > self.searchedTotalMatches) {
                 document.getElementById("alertMissingDownload").innerText = (self.searchedEntries.length - self.searchedTotalMatches) + "/" + self.searchedEntries.length;
-                document.getElementById("alertInfo").innerText = " searched genes not found in any datasets";
+                document.getElementById("alertInfo").innerText = " searched genes duplicates or not found in any datasets";
                 document.getElementById("alertMain").classList.remove("alert-info");
                 document.getElementById("alertMain").classList.add("alert-warning");
                 document.getElementById("alertMissingDownload").href = 'data:text/csv;octet-stream,' + encodeURIComponent(self.searchedEntries.filter(v => v.row == -1).map(v => v.label).join('\r\n'));
@@ -169,13 +169,18 @@ class LMSPanelSet {
                 document.getElementById("alertMain").classList.remove("alert-warning");
                 document.getElementById("alertMain").classList.add("alert-info");
             }
-
             document.getElementById("alertInfo").innerText += " (" + (self.searchedEntries.length - self.missingData.length) + "/" + self.searchedEntries.length + " in both " + curr1 + " and " + curr2 + ")";
+            
+            if(self.searchedTotalMatches > 0) {
+                document.getElementById("alertRedirect").style.display = "";
+            } else {
+                document.getElementById("alertRedirect").style.display = "none";
+            }
+
+        
         } else {
             document.getElementById("alertMain").style.display = "none";
         }
-
-        self.plot.addScatterHighlights(plotData, "#00e04f", "white", 5);
     }
 
     _setOptions(id, names, defaultName=undefined) {
@@ -205,6 +210,10 @@ class LMSPanelSet {
                                 
                                 <div id="alertMain" class="alert alert-warning" role="alert" style="display: none;">
                                     <a id="alertMissingDownload">33/35</a><span id="alertInfo"></span>
+                                </div>
+
+                                <div id="alertRedirect" class="alert alert-info" role="alert" style="display: none;">
+                                    <a id="alertRedirectLink" href="/search.html?useSetSearch=true">View metadata</a> of all searched genes.
                                 </div>
                             </div>
                             <div class="col-md-10">
