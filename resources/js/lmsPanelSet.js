@@ -158,18 +158,19 @@ class LMSPanelSet {
             document.getElementById("alertMain").style.display = "";
             if(self.searchedEntries.length > self.searchedTotalMatches) {
                 document.getElementById("alertMissingDownload").innerText = (self.searchedEntries.length - self.searchedTotalMatches) + "/" + self.searchedEntries.length;
-                document.getElementById("alertInfo").innerText = " searched genes duplicates or not found in any datasets";
+                console.log(self.searchedTotalMatches);
+                document.getElementById("alertInfo").innerText = self.searchedTotalMatches ? " searched genes are duplicates or not found in any datasets" : " searched genes not found in any datasets";
                 document.getElementById("alertMain").classList.remove("alert-info");
                 document.getElementById("alertMain").classList.add("alert-warning");
                 document.getElementById("alertMissingDownload").href = 'data:text/csv;octet-stream,' + encodeURIComponent(self.searchedEntries.filter(v => v.row == -1).map(v => v.label).join('\r\n'));
-                document.getElementById("alertMissingDownload").download = "missing" + curr1 + "vs" + curr2 + ".csv";
+                document.getElementById("alertMissingDownload").download = "missing.csv";
             } else {
                 document.getElementById("alertMissingDownload").innerText = "";
                 document.getElementById("alertInfo").innerText = "All " + self.searchedEntries.length + " searched genes found in at least one dataset.";
                 document.getElementById("alertMain").classList.remove("alert-warning");
                 document.getElementById("alertMain").classList.add("alert-info");
             }
-            document.getElementById("alertInfo").innerText += " (" + (self.searchedEntries.length - self.missingData.length) + "/" + self.searchedEntries.length + " in both " + curr1 + " and " + curr2 + ")";
+            if(self.searchedTotalMatches) document.getElementById("alertInfo").innerText += " (" + (self.searchedEntries.length - self.missingData.length) + "/" + self.searchedEntries.length + " in both " + curr1 + " and " + curr2 + ")";
             
             if(self.searchedTotalMatches > 0) {
                 document.getElementById("alertRedirect").style.display = "";

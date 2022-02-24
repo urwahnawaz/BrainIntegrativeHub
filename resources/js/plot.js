@@ -88,9 +88,11 @@ class Plot {
         self.x = d3.scaleLinear()
             .range([self.rangePad, self.width - self.rangePad])
             .domain(self._getCombinedExtent(data, highlightData, d => d.x))
+
+        let tickSuffix = ['','k','M','G','T','P'];
         self.svg.append("g")
             .attr("transform", "translate(0," + self.height + ")")
-            .call(d3.axisBottom(self.x))
+            .call(d3.axisBottom(self.x).tickFormat(d => {for(let i=0;; d/=1000, ++i) if(d <= 1000) return d+tickSuffix[i];}))
 
         var pointColorScale = undefined;
         var categoriesZ = undefined;
@@ -290,7 +292,7 @@ class Plot {
             .attr('width', d => self.x(d.x) - self.rangePad)
             .attr('stroke', 'black')
             .attr('stroke-width', 0.5)
-            .attr('fill', "#009b41")
+            .attr('fill', "#53946e")
             .append("svg:title")
             .text(d => d.x.toFixed(2));
     }
@@ -490,14 +492,6 @@ class Plot {
             n = parseInt((n + 1) / 2) - 1;
             return parseInt(n + l);
         }
- 
-        function IQR(array) {
-            array.sort((a,b)=>a-b);
-            var mid_index = median(0, array.length);
-            var Q1 = array[median(0, mid_index)];
-            var Q3 = array[median(mid_index + 1, array.length)];
-            return Q3 - Q1;
-        }
 
         function SD(array) {
             const n = array.length
@@ -513,15 +507,22 @@ class Plot {
 
         for(let violin of sumstatFlat) {
             let array = violin.value.map(d => d.y);
-            let iqr = IQR(array);
+            array.sort((a,b)=>a-b);
+            let mid_index = median(0, array.length);
+            let med = array[mid_index];
+            let Q1 = array[median(0, mid_index)];
+            let Q3 = array[median(mid_index + 1, array.length)];
+
+            let iqr = Q3 - Q1;
             let sd = SD(array);
 
             //zero IQR leads to zero bandwidth, filter(v => v != 0) causes bias
             //Similar method used in plotly.js/src/traces/violin/calc.js 
             let minBandwidth = (Math.max(...array) - Math.min(...array)) / 100;
+            let bandwidth = Math.max(minBandwidth, scottsRule(array.length, sd, iqr));
 
             // Compute kernel density estimation
-            var kde = kernelDensityEstimator(kernelEpanechnikov(Math.max(minBandwidth, scottsRule(array.length, sd, iqr))), self.y.ticks(40))
+            var kde = kernelDensityEstimator(kernelEpanechnikov(bandwidth), self.y.ticks(40))
 
             var density = kde(violin.value.map(d => d.y))
             var densityMax = d3.max(density, d=>d[1]);
@@ -531,14 +532,14 @@ class Plot {
                 .range([self.x.bandwidth()/2 - scaledBandwidth, self.x.bandwidth()/2 + scaledBandwidth])
                 .domain([-densityMax,densityMax])
             
-            //Remove leading zeros
+            //Remove leading zeros up to Q1
             let zerosCount = 0;
-            for(let i=0; i<density.length && density[i][1] == 0; ++i) ++zerosCount;
+            for(let i=0; i<density.length && density[i][0]<Q1 && density[i][1] == 0; ++i) ++zerosCount;
             if(zerosCount > 0) density.splice(0, zerosCount-1)
 
-            //Remove trailing zeros
+            //Remove trailing zeros up to Q3
             zerosCount = 0;
-            for(let i=density.length-1; i>=0 && density[i][1] == 0; --i) ++zerosCount;
+            for(let i=density.length-1; i>=0 && density[i][0]>Q3 && density[i][1] == 0; --i) ++zerosCount;
             if(zerosCount > 0) density.splice(-(zerosCount-1), zerosCount-1)
 
             //Create loop
@@ -587,6 +588,48 @@ class Plot {
                 .style("cursor", "pointer")
                 .append("svg:title")
                 .text(violin.value.length)
+
+            let q1Line = self.svg.append('line')
+                .attr("x1", function(d) {
+                    let densityIndex = densityBinScale(Q1);
+                    return currX + self.x.bandwidth()/2 - 1 * violinBandwidthScale(d3.interpolateNumber(density[Math.floor(densityIndex)][1], density[Math.ceil(densityIndex)][1])(densityIndex - Math.floor(densityIndex)))/2; 
+                })
+                .attr("x2", function(d) {
+                    let densityIndex = densityBinScale(Q1);
+                    return currX + self.x.bandwidth()/2 + 1 * violinBandwidthScale(d3.interpolateNumber(density[Math.floor(densityIndex)][1], density[Math.ceil(densityIndex)][1])(densityIndex - Math.floor(densityIndex)))/2; 
+                })
+                .attr('y1', self.y(Q1))
+                .attr('y2', self.y(Q1))
+                .style("stroke-dasharray","4,4")
+                .style("stroke", "black");
+                
+            let medLine = self.svg.append('line')
+                .attr("x1", function(d) {
+                    let densityIndex = densityBinScale(Q1);
+                    return currX + self.x.bandwidth()/2 - 1 * violinBandwidthScale(d3.interpolateNumber(density[Math.floor(densityIndex)][1], density[Math.ceil(densityIndex)][1])(densityIndex - Math.floor(densityIndex)))/2; 
+                })
+                .attr("x2", function(d) {
+                    let densityIndex = densityBinScale(Q1);
+                    return currX + self.x.bandwidth()/2 + 1 * violinBandwidthScale(d3.interpolateNumber(density[Math.floor(densityIndex)][1], density[Math.ceil(densityIndex)][1])(densityIndex - Math.floor(densityIndex)))/2; 
+                })
+                .attr('y1', self.y(med))
+                .attr('y2', self.y(med))
+                .style("stroke-dasharray","8,8")
+                .style("stroke", "black");
+
+            let q3Line = self.svg.append('line')
+                .attr("x1", function(d) {
+                    let densityIndex = densityBinScale(Q1);
+                    return currX + self.x.bandwidth()/2 - 1 * violinBandwidthScale(d3.interpolateNumber(density[Math.floor(densityIndex)][1], density[Math.ceil(densityIndex)][1])(densityIndex - Math.floor(densityIndex)))/2; 
+                })
+                .attr("x2", function(d) {
+                    let densityIndex = densityBinScale(Q1);
+                    return currX + self.x.bandwidth()/2 + 1 * violinBandwidthScale(d3.interpolateNumber(density[Math.floor(densityIndex)][1], density[Math.ceil(densityIndex)][1])(densityIndex - Math.floor(densityIndex)))/2; 
+                })
+                .attr('y1', self.y(Q3))
+                .attr('y2', self.y(Q3))
+                .style("stroke-dasharray","4,4")
+                .style("stroke", "black");
         }
 
         self._addTooltip();
