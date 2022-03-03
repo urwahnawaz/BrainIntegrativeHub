@@ -295,9 +295,8 @@ class MetaPanel {
                             plot.updateDisabled();
                             return;
                         }
-
                         if(xAxisIsString) {
-                            plot.updateViolin(plotData, labels.xAxisLabel, labels.yAxisLabel, orderXDic, groupLabelsX, groupSizesX, orderZDic);
+                            plot.updateViolin(plotData, labels.xAxisLabel, labels.yAxisLabel, orderXDic, groupLabelsX, groupSizesX, orderZDic, orderZDic ? undefined : xDataset.attrs["colors"]);
                             plot.addTitles(self.names[dataset], self.currCircId);
                         } else {
                             plot.updateScatter(plotData, labels.xAxisLabel, labels.yAxisLabel, orderZDic);

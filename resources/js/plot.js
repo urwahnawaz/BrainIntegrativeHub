@@ -331,8 +331,10 @@ class Plot {
     }
 
     //Expects [{x, y, z=undefined}...] where x is string and y is numeric, z is optional string for coloring
-    updateViolin(data, xName, yName, orderX, groupLabelsX, groupSizesX, orderZ) {
+    updateViolin(data, xName, yName, orderX, groupLabelsX, groupSizesX, orderZ, overrideColors=undefined) {
         var self = this;
+        
+        let colors = overrideColors || self.colors;
         
         let multipleColors = (data[data.length-1].z);
 
@@ -352,7 +354,7 @@ class Plot {
         self._update(xName, yName, yDomain, rotatedOffset);
         self.currData = data;
 
-        let violinColorScale = d3.scaleOrdinal().domain(orderX ? orderX : categoriesX).range(self.colors);
+        let violinColorScale = d3.scaleOrdinal().domain(orderX ? orderX : categoriesX).range(colors);
 
         //Add indices to data
         for(let i=0; i<data.length; ++i) data[i].i = i;

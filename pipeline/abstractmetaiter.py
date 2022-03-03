@@ -80,6 +80,10 @@ class AbstractMetaIter(AbstractSource):
                     colType = allTypes[k]
                     values = [colType(lines[j][i]) if (lines[j][i] and lines[j][i] != noneType) else allDefaults[k] for j in range(len(lines))]
 
+                    # Throw out categorical variables with more than 200 categories
+                    if colType == str and len(set(filter(lambda item: item, values))) > 200:
+                        raise ValueError('Too many categories to plot, skipping')
+
                     # No exception so correct type, fix values for hdf5
                     colTypeNp = allTypesNp[k] + (str(len(max(values, key=len))) if allTypes[k] == str else "")
                     if colType == str:
@@ -97,6 +101,10 @@ class AbstractMetaIter(AbstractSource):
                             if(groups):
                                 ds.attrs.create("groupSizes", list(map(lambda x: x["size"], groups)))
                                 ds.attrs.create("groupLabels", list(map(lambda x: x["label"], groups)))
+                            
+                            colors = order.get("color", None)
+                            if(colors):
+                                ds.attrs.create("colors", colors)
                     break
                 except:
                     continue
