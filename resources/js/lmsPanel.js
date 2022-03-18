@@ -19,7 +19,7 @@ class LMSPanel {
             self.index[experiment] = [...index.value];
         }
 
-        self.plot = new Plot("lmsplot");
+        self.plot = new PlotContainer("lmsplot");
         self.resetOptions();
         $('#lmsselect1').on('change', () => self.update());
         $('#lmsselect2').on('change', () => self.update());
@@ -78,7 +78,7 @@ class LMSPanel {
             $('#lmsselect1').selectpicker('refresh');
             $('#lmsselect2').selectpicker('refresh');
         } else {
-            $('#' + self.elementId + "panel").hide()
+            //$('#' + self.elementId + "panel").hide()
         }
     }
 
@@ -116,9 +116,9 @@ class LMSPanel {
                 plotData.push({x: data1[metas1[entry1]], y: data2[metas2[entry2]], name: self.names[entry1]});
             }
         }
-
-        self.plot.updateScatter(plotData, curr1, curr2, undefined, [{x: data1[self.metas[curr1][self.circIndex]], y: data2[self.metas[curr2][self.circIndex]], name: self.names[self.circIndex]}]);
-        self.plot.addTitles("Z-Score Transformed Mean Log2 (Expression)", self.currCircId);
+        
+        self.plot.updateScatter("Z-Score Transformed Mean Log2 (Expression)", self.currCircId, plotData, curr1, curr2, undefined, [{x: data1[self.metas[curr1][self.circIndex]], y: data2[self.metas[curr2][self.circIndex]], name: self.names[self.circIndex]}]);
+        //self.plot.addTitles("Z-Score Transformed Mean Log2 (Expression)", self.currCircId);
     }
 
     _setOptions(id, names, defaultName=undefined) {

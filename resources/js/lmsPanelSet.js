@@ -27,7 +27,7 @@ class LMSPanelSet {
             self.index[experiment] = [...index.value];
         }
 
-        self.plot = new Plot("lmssetplot");
+        self.plot = new PlotContainer("lmssetplot");
         self.plot.setDimensions(800, 320, 80, 80, 50, 60);
         self.resetOptions();
         $('#lmsselect1').on('change', () => self.update());
@@ -148,8 +148,7 @@ class LMSPanelSet {
             }
         }
 
-        self.plot.updateScatter(plotData, curr1, curr2, undefined, highlightData, "#00e04f", "white", 5);
-        self.plot.addTitles("Z-Score Transformed Mean Log2 (Expression)");
+        self.plot.updateScatter("Z-Score Transformed Mean Log2 (Expression)", "", plotData, curr1, curr2, undefined, highlightData, "#00e04f", "white", 5)
 
         //Note missingData is specific to the intersection
         //self.searchedEntries.filter(v => v.row != -1) is all missing

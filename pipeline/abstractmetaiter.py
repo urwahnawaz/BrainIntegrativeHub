@@ -159,6 +159,10 @@ class AbstractMetaIter(AbstractSource):
         #Write indices
         experimentGroup.create_dataset("index", data=tableIndices, compression="gzip", compression_opts=9)
 
+        #Write headings
+        for i in range(len(samplesOrdered)): samplesOrdered[i] = samplesOrdered[i].encode()
+        experimentGroup.create_dataset("sample_names", data=samplesOrdered, compression="gzip", compression_opts=9)
+
         if self.variancePartition:
             self._writeVariancePartition(self.variancePartition, experimentGroup, keyToIndexFiltered)
         

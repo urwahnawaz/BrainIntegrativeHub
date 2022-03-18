@@ -17,6 +17,8 @@
     <script src="https://d3js.org/colorbrewer.v1.min.js"></script>
     <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
 
+    <script src="https://cdn.plot.ly/plotly-2.9.0.min.js"></script>
+
     <link href="resources/data/out.hdf5" />
     <script src="https://cdn.jsdelivr.net/npm/jsfive@0.3.7/dist/hdf5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
@@ -26,6 +28,7 @@
     <script src="resources/js/customPanel.js"></script>
 
     <script src="resources/js/plot.js"></script>
+    <script src="resources/js/plot2.js"></script>
     <script src="resources/js/metaPanel.js"></script>
     <script src="resources/js/metaPanelDual.js"></script>
     <script src="resources/js/metaPanelCompact.js"></script>
@@ -436,7 +439,7 @@
                 for(let j of showCols) {
                     let e = matrix[j][currRowIndex];
                     let o = dataOrder[j];
-                    let opacity = (e != -1 && Object.keys(lmsPanel.data).includes(o)) ? (Math.min(Math.max(lmsPanel.data[o][e], -3), 3) + 3) / 6.0 : 1;
+                    let opacity = (e != -1 && Object.keys(lmsPanel.data).includes(o)) ? (Math.min(Math.max(lmsPanel.data[o][e], -2), 9) + 5.5) / 11 : 1;
                     if (isDataset[j]) {
                         if(isBrainDataset[j]) {
                             tableContents += `<td style="opacity=${opacity}" class="${(e != -1 ? 'bool yes dataset1' : 'bool no')}"></td>`;

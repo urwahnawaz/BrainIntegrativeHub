@@ -28,7 +28,7 @@ class MetaPanel {
 
         document.getElementById(self.parentId).insertAdjacentHTML("beforeend", self._generateHTML());
 
-        self.plot = new Plot(self.elementId + "plot");
+        self.plot = new PlotContainer(self.elementId + "plot");
         self.controls = new PlotControls(self.elementId + "controls", "Metadata Variable", "Expression Measure", "Second Metadata Variable");
         self.controls.onDatasetChange = ()=>self._onPlotDatasetChange(self.controls, self.plot);
         self.controls.onChange = ()=>self._onPlotChange(self.controls, self.plot);
@@ -38,7 +38,7 @@ class MetaPanel {
         });
 
         if(self.hasAnyVariancePartition) {
-            self.plot2 = new Plot(self.elementId + "plot2");
+            self.plot2 = new PlotContainer(self.elementId + "plot2");
             self.plot2.setDimensions(800, 400, 80, 110, 40, 60); //increase left margin
         }
 
@@ -275,11 +275,9 @@ class MetaPanel {
                             self._scalePlotData(plotData, func, 0.1, plot, scale, labels);
                         }
 
-                        if(self.hdf5Group.keys.includes("sample_id")) {
-                            let sampleNames = self.hdf5Group.get(dataset).attrs["sample_id"];
+                        if(self.hdf5Group.get(dataset).keys.includes("sample_names")) {
+                            let sampleNames = self.hdf5Group.get(dataset + "/sample_names").value;
                             for(let i=0; i<plotData.length; ++i) plotData[i].name = sampleNames[i];
-                        } else {
-                            for(let i=0; i<plotData.length; ++i) plotData[i].name = "sample" + i;
                         }
                         
                         //Filter by predefined custom categorical variable (e.g. region)
@@ -296,11 +294,11 @@ class MetaPanel {
                             return;
                         }
                         if(xAxisIsString) {
-                            plot.updateViolin(plotData, labels.xAxisLabel, labels.yAxisLabel, orderXDic, groupLabelsX, groupSizesX, orderZDic, orderZDic ? undefined : xDataset.attrs["colors"]);
-                            plot.addTitles(self.names[dataset], self.currCircId);
+                            plot.updateViolin(self.names[dataset], self.currCircId, plotData, labels.xAxisLabel, labels.yAxisLabel, orderXDic, groupLabelsX, groupSizesX, orderZDic, orderZDic ? undefined : xDataset.attrs["colors"]);
+                            //plot.addTitles(self.names[dataset], self.currCircId);
                         } else {
-                            plot.updateScatter(plotData, labels.xAxisLabel, labels.yAxisLabel, orderZDic);
-                            plot.addTitles(self.names[dataset], self.currCircId);
+                            plot.updateScatter(self.names[dataset], self.currCircId, plotData, labels.xAxisLabel, labels.yAxisLabel, orderZDic);
+                            //plot.addTitles(self.names[dataset], self.currCircId);
                         }
                     }
                 });
@@ -333,8 +331,8 @@ class MetaPanel {
             plot.updateDisabled("No variance partition");
             return;
         }
-        plot.updateBar(data, "Fraction Variance Explained", "Metadata Variable");
-        plot.addTitles("Variance Partition", self.currCircId);
+        plot.updateBar("Variance Partition", self.currCircId, data, "Fraction Variance Explained", "Metadata Variable");
+        //plot.addTitles("Variance Partition", self.currCircId);
     }
 
     setCircId(circId, obj) {
