@@ -93,8 +93,12 @@ html, body {margin:0;padding:0;height:100%}
   }
 
   .plot-container {
-    height: 70vh;
+    height: 50vh;
     width: 100%;
+  }
+
+  #lmssetplot > .plot-container {
+    height: 70vh;
   }
 
   #my_table_select_group {
