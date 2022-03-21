@@ -107,26 +107,17 @@ class MetaPanel {
         }
         return cache.data.slice(rowStart - chunkStart, rowStart + rowLength - chunkStart);
     }
-    
+
     _getMatrixRowDataLakeCached(datasetName="BrainSeq", matrixName="RPKM", row=0, callback=console.log) {
         let matrix = this.hdf5Group.get(datasetName + "/matrices/" + matrixName);
-
         let bytesPerFloat = 4;
-
         let shape = matrix.attrs["shape"];
-        let rowStart = row * shape[1];
-        let rowEnd = Math.min(rowStart + shape[1], shape[0] * shape[1]);
-        let chunkRows = 1; //e.g. could be page size but then sorting would break
-        let chunkSize = chunkRows * shape[1];
+        let datalakeMax = matrix.attrs["datalake-max"]; //will always be divisible by rows
 
-        let datalakeMax = matrix.attrs["datalake-max"];
-        let divideOffset =  datalakeMax % (chunkSize * bytesPerFloat) ? 1 : 0; //Account for trucation of chunks every time we switch to a new file part
+        let rowStart = (row+0) * shape[1];
+        let rowEnd = (row+1) * shape[1];
+
         let currPart = Math.floor(rowStart * bytesPerFloat / datalakeMax);
-
-        let chunkCurr = Math.floor(row / chunkRows) + divideOffset * currPart;
-        let chunkStart = Math.max(chunkCurr * chunkSize, currPart * datalakeMax / bytesPerFloat);
-        let chunkEnd = Math.min(chunkStart + chunkSize, (currPart+1) * datalakeMax / bytesPerFloat); //Initermediate parts
-        chunkEnd = Math.min(chunkEnd, shape[0] * shape[1]) //Last part, which may be less than datalakeMax
 
         function abortableFetch(request, opts) {
             const controller = new AbortController();
@@ -139,19 +130,17 @@ class MetaPanel {
         }
 
         let cache = this.rowCache[datasetName][matrixName];
-        if(cache.id == chunkCurr) {
-            console.log(`used cached chunk ${chunkCurr}`);
-            callback(cache.data.slice(rowStart - chunkStart, rowEnd - chunkStart));
+        if(cache.id == row) {
+            console.log(`used cached chunk ${row}`);
+            callback(cache.data);
         } else {
-            
-            let start = (chunkStart * bytesPerFloat) % datalakeMax;
-            let end = (chunkEnd * bytesPerFloat) % datalakeMax
-
+            let partStart = (rowStart * bytesPerFloat) % datalakeMax;
+            let partEnd = (rowEnd * bytesPerFloat) % datalakeMax
             let f = abortableFetch("https://hopeful-austin-9ca901.netlify.app/" + matrix.attrs["datalake"][currPart], {
                 method: "GET",
                 cache: "force-cache",
                 headers: {
-                    "Range": `bytes=${start}-${end-1}`,
+                    "Range": `bytes=${partStart}-${partEnd-1}`,
                 }
             });
 
@@ -163,14 +152,14 @@ class MetaPanel {
                 return res.arrayBuffer()
             })
             .then(buff => {
-                console.log(end);
+                console.log(partEnd);
                 console.log(buff.byteLength);
-                console.log(`bytes=${start}-${end-1}`)
-                let array = new Float32Array(buff.slice(0, end));
+                console.log(`bytes=${partStart}-${partEnd-1}`)
+                let array = new Float32Array(buff.slice(0, partEnd));
                 console.log("no cached chunk");
                 cache.data = array;
-                cache.id = chunkCurr;
-                callback(cache.data.slice(rowStart - chunkStart, rowEnd - chunkStart));
+                cache.id = row;
+                callback(array);
             }, (e) => {
                 console.log(e);
                 callback(null);
