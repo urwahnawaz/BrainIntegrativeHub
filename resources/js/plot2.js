@@ -7,6 +7,8 @@ Cannot jitter points inside violin
 
 */
 
+let highlightDataGlobal = [];
+
 let svgIcon = {
     'width': 512,
     'height': 512,
@@ -63,6 +65,33 @@ class PlotBase {
         this.elementId = elementId;
         this.colors = ["#0075DC","#4C005C","#005C31","#2BCE48","#808080","#94FFB5","#8F7C00","#9DCC00","#C20088","#003380","#FFA405","#426600","#FF0010","#5EF1F2","#00998F","#993F00","#740AFF","#990000","#FFFF80","#FF5005", "#F0A3FF", "#E0FF66", "#191919", "#FFCC99", "#FFA8BB", "#FFFF00"]
     }
+
+    _saveCSV(data, highlightData, currYName, currXName) {
+        var csv = 'data:text/csv;charset=utf-8,';
+    
+        let includeHighlight = highlightData && highlightData.length;
+        let includeData = data && data.length;
+        let includeNames = (!includeHighlight || highlightData[0].name) || (!includeData || data[0].name);
+        let includeDataZ = includeData && data[0].z;
+    
+        csv += encodeURIComponent(`name,${currYName},${currXName}${includeHighlight ? ",highlighted" : ""}${includeDataZ ? "," : ""}\n`) //TODO pass currZName
+        for(let [i, source] of [highlightData, data].entries()) {
+            if(source && source.length) {
+                for(let d of source) {
+                    csv += encodeURIComponent(`${includeNames && d.name ? d.name : ""},${d.y},${d.x}${includeHighlight ? "," + (i==0) : ""}${includeDataZ ? "," + d.z : ""}\n`);
+                }
+            }
+        }
+        this._save(csv, "csv");
+    }
+    
+    _save(blobString, extension) {
+        var downloadLink = document.createElement("a");
+        downloadLink.href = blobString;
+        downloadLink.download = "chart." + extension;
+        downloadLink.click();
+        downloadLink.remove();
+    }
 }
 
 class PlotEmpty extends PlotBase {
@@ -109,6 +138,9 @@ class PlotEmpty extends PlotBase {
 class PlotBar extends PlotBase {
     constructor(elementId, heading, subHeading, data, xName, yName) {
         super(elementId);
+
+        let self = this;
+
         let plotlyData = [{
             type: 'bar',
             x: data.map(d => d.y),
@@ -171,7 +203,7 @@ class PlotBar extends PlotBase {
                     name: 'Download plot as a csv',
                     icon: csvIcon,
                     click: function(gd) {
-                        _saveCSV(data, undefined, yName, xName);
+                        self._saveCSV(data, undefined, yName, xName);
                     }
                 }],
             ]
@@ -183,6 +215,8 @@ class PlotBar extends PlotBase {
 class PlotScatter extends PlotBase {
     constructor(elementId, heading, subHeading, data, xName, yName, orderZ, highlightData, highlightFill, highlightStroke, highlightRadius) {
         super(elementId);
+
+        let self = this;
 
         let plotlyData = [];
         
@@ -292,6 +326,9 @@ class PlotScatter extends PlotBase {
             showlegend: highlightData.length || data[0].z
         };
 
+        //TODO: for some reason, highlightData becomes empty when copied or passed to config even though data is fine
+        highlightDataGlobal = highlightData;
+
         var config = {
             responsive: true,
             displaylogo: false,
@@ -315,7 +352,7 @@ class PlotScatter extends PlotBase {
                     name: 'Download plot as a csv',
                     icon: csvIcon,
                     click: function(gd) {
-                        _saveCSV(data, highlightData, yName, xName);
+                        self._saveCSV(data, highlightDataGlobal, yName, xName);
                     }
                 }],
             ]
@@ -324,36 +361,11 @@ class PlotScatter extends PlotBase {
     }
 }
 
-function _saveCSV(data, highlightData, currYName, currXName) {
-    var csv = 'data:text/csv;charset=utf-8,';
-
-    let includeHighlight = highlightData && highlightData.length;
-    let includeData = data && data.length;
-    let includeNames = (!includeHighlight || highlightData[0].name) || (!includeData || data[0].name);
-    let includeDataZ = includeData && data[0].z;
-
-    csv += encodeURIComponent(`name,${currYName},${currXName}${includeHighlight ? ",highlighted" : ""}${includeDataZ ? "," : ""}\n`) //TODO pass currZName
-    for(let [i, source] of [highlightData, data].entries()) {
-        if(source && source.length) {
-            for(let d of source) {
-                csv += encodeURIComponent(`${includeNames && d.name ? d.name : ""},${d.y},${d.x}${includeHighlight ? "," + (i==0) : ""}${includeDataZ ? "," + d.z : ""}\n`);
-            }
-        }
-    }
-    _save(csv, "csv");
-}
-
-function _save(blobString, extension) {
-    var downloadLink = document.createElement("a");
-    downloadLink.href = blobString;
-    downloadLink.download = "chart." + extension;
-    downloadLink.click();
-    downloadLink.remove();
-}
-
 class PlotViolin extends PlotBase {
     constructor(elementId, heading, subHeading, data, xName, yName, orderX, groupLabelsX, groupSizesX, orderZ, overrideColors) {
         super(elementId);
+
+        let self = this;
 
         if(!orderX) orderX = [...new Set(data.map(d => d.x))];
         if(!orderZ) orderZ = data[0].z ? [...new Set(data.map(d => d.z))] : [];
@@ -551,7 +563,7 @@ class PlotViolin extends PlotBase {
                     name: 'Download plot as a csv',
                     icon: csvIcon,
                     click: function(gd) {
-                        _saveCSV(data, undefined, yName, xName);
+                        self._saveCSV(data, undefined, yName, xName);
                     }
                 }],
             ]

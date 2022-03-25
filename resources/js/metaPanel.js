@@ -30,7 +30,10 @@ class MetaPanel {
 
         self.plot = new PlotContainer(self.elementId + "plot");
         self.controls = new PlotControls(self.elementId + "controls", "Metadata Variable", "Expression Measure", "Second Metadata Variable");
-        self.controls.onDatasetChange = ()=>self._onPlotDatasetChange(self.controls, self.plot);
+        self.controls.onDatasetChange = () => {
+            self._onPlotDatasetChange(self.controls, self.plot); 
+            if(self.hasAnyVariancePartition) self._onVariancePartitionChange(self.controls, self.plot2);
+        }
         self.controls.onChange = ()=>self._onPlotChange(self.controls, self.plot);
 
         self.plot.addYAxisCallback(function() {
@@ -320,7 +323,7 @@ class MetaPanel {
             plot.updateDisabled("No variance partition");
             return;
         }
-        plot.updateBar("Variance Partition", self.currCircId, data, "Fraction Variance Explained", "Metadata Variable");
+        plot.updateBar(dataset + " Variance Partition", self.currCircId, data, "Fraction Variance Explained", "Metadata Variable");
         //plot.addTitles("Variance Partition", self.currCircId);
     }
 

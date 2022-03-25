@@ -213,7 +213,7 @@ class LMSPanelSet {
                                 </div>
 
                                 <div id="alertRedirect" class="alert alert-info" role="alert" style="display: none;">
-                                    <a id="alertRedirectLink" href="/search.html?useSetSearch=true">View metadata</a> of all searched genes.
+                                    <a id="alertRedirectLink" href="./search.html?useSetSearch=true">View metadata</a> of all searched genes.
                                 </div>
                             </div>
                             <div class="col-md-10">
