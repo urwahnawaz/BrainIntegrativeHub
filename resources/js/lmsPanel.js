@@ -1,12 +1,12 @@
 class LMSPanel {
-    constructor(parentId, childIndex, name, hdf5Group, metas, names) {
+    constructor(parentId, name, hdf5Group, metas, names) {
         var self = this;
 
         self.parentId = parentId;
         self.elementId = self.parentId + "lms";
         self.name = name;
         self.circIndex = -1;
-        document.getElementById(self.parentId).children[childIndex].insertAdjacentHTML("afterbegin", self._generateHTML());
+        document.getElementById(self.parentId).insertAdjacentHTML("afterbegin", self._generateHTML());
         self.metas = metas;
         self.names = names;
         self.data = {};

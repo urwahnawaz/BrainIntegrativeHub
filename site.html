@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+
+    <script src="https://kit.fontawesome.com/358fab0097.js" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/web-streams-polyfill@2.0.2/dist/ponyfill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/streamsaver@2.0.3/StreamSaver.min.js"></script>
+
+    <script src="https://d3js.org/colorbrewer.v1.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+
+    <script src="https://cdn.plot.ly/plotly-2.9.0.min.js"></script>
+
+    <link href="resources/data/out.hdf5" />
+    <script src="https://cdn.jsdelivr.net/npm/jsfive@0.3.7/dist/hdf5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+    <script src="resources/js/colors.js"></script>
+    <script src="resources/js/lmsPanel.js"></script>
+    <script src="resources/js/lmsPanelSet.js"></script>
+    <script src="resources/js/customPanel.js"></script>
+
+    <script src="resources/js/plot.js"></script>
+    <script src="resources/js/plot2.js"></script>
+    <script src="resources/js/metaPanel.js"></script>
+    <script src="resources/js/metaPanelDual.js"></script>
+    <script src="resources/js/metaPanelCompact.js"></script>
+    <script src="resources/js/plotControls.js"></script>
+    <script src="resources/js/utility.js"></script>
+
+    <link rel="stylesheet" href="resources/css/style.css" />
+
+    <style>
+        #lmssetplot>.plot-container {
+            height: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav id="my_navbar" class="navbar navbar-default navbar-static-top" style="border:none;margin-bottom: 0px;">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand">BITHub</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a id="about" href="javascript:;">About</a></li>
+                <li><a id="search" href="javascript:;">Search Genes</a></li>
+                <li><a id="download" href="javascript:;">Download</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!--------------------------------------- ABOUT PAGE-------------------------------------->
+    <div id="pageAbout" style="background-color: #eee; position: relative; z-index: 100">
+        <!-- Main Body -->
+        <div class="container-fluid" style="padding: 0px;">
+            <div class="jumbotron"
+                style="background-color:#fff;position:inherit;margin-bottom:0px;box-shadow: 0px 1px 10px 10px rgba(0,0,0,0.1);">
+                <div class="container">
+                    <h1 class="display-3">Welcome to BITHub</h1>
+                    <p> Developed by <a href="https://www.babs.unsw.edu.au/voineagu-lab" role="button">Voineagu Lab</a>,
+                        data last updated <i>October 2021</i>.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <img id="background" style="position:fixed;top:0px;z-index:-1;padding-left:0px;padding-right:0px;"
+            class="center-block" width="100%" src="resources/images/AdobeStock_94779358_scaled.jpeg"
+            alt="Overview of python pipeline" />
+
+        <div class="container-fluid" style="padding: 0px;">
+            <div class="jumbotron"
+                style="padding:6%;background-color:#fff;position:relative;margin-top:180px;margin-bottom:0px;bottom:0px;box-shadow: 0px 1px 10px 10px rgba(0,0,0,0.1);">
+                <div class="panel panel-default" style="padding:50px;border-radius:0px;">
+                    <div class="row" style="margin-bottom:50px;">
+                        <div id="imgregion" class="col-md-7 text-center"></div>
+                        <div class="col-md-5 text-center" style="vertical-align: middle;">
+                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam dapibus urna ut elit
+                                fermentum interdum. Donec sem odio, mattis ut gravida et, suscipit et lectus. Donec
+                                interdum a lorem nec lobortis. Nullam id consequat eros. Ut nec aliquet ante, eu porta
+                                enim. Nulla placerat sem orci, eu lacinia nibh elementum nec. Proin scelerisque ipsum
+                                sit amet ligula lobortis lacinia. Curabitur a leo nunc. Sed et lorem tellus. Aliquam
+                                molestie ultrices nisl id mattis. </p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div id="imgage" class="col-md-6 text-center"></div>
+                        <div id="imgtotal" class="col-md-6 text-center"></div>
+                    </div>
+                    <div class="row text-center">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--------------------------------------- DOWNLOAD PAGE-------------------------------------->
+    <div id="pageDownload" class="container-fluid" style="padding:0px;display:none">
+        <div class="jumbotron" style="background-color:#fff;padding-left:50px;padding-right:50px;">
+            <div class="well">
+                <b> Download metadata files in CSV format.</b> Note that some columns may be renamed or subsetted from
+                the dataset's original publication.
+                <br>
+                Currently, expression matrices must be downloaded directly from source.
+
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Dataset</th>
+                        <th scope="col">Metadata File</th>
+                        <th scope="col">Samples</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">BrainSpan</th>
+                        <td><a href="resources/data/BrainSpan-metadata-subset.csv">BrainSpan-metadata-subset.csv</a>
+                        </td>
+                        <td>524</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">GTEx</th>
+                        <td><a href="resources/data/GTEx-metadata-subset.csv">GTEx-metadata-subset.csv</a></td>
+                        <td>2642</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">BrainSeq</th>
+                        <td><a href="resources/data/BrainSeq-metadata-subset.csv">BrainSeq-metadata-subset.csv</a></td>
+                        <td>900</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">HCA</th>
+                        <td><a href="resources/data/HCA-metadata.csv">HCA-metadata.csv</a></td>
+                        <td>15524</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Velmeshev</th>
+                        <td><a href="resources/data/Velmeshev-metadata.csv">Velmeshev-metadata.csv</a></td>
+                        <td>81216</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!--------------------------------------- SEARCH PAGE-------------------------------------->
+    <div id="pageSearch" style="display:none">
+        <!-- Loading Animation -->
+        <div id="my_loading" class="d-flex flex-row justify-content-center align-items-center" style="height: 100%;">
+            <!--<div class="loader">
+            <span class="sr-only">Loading...</span>
+        </div>-->
+            <div class="progress">
+                <div id="my_progress" class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
+                    aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+        </div>
+
+
+        <!-- Selected Modal -->
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog" style="width: 70%">
+                <div class="modal-content rounded-0" style="padding: 10px">
+                    <div class="modal-header">
+                        <h4 id="myModalTitle" class="modal-title">Modal Header</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div id="myModalBody" class="modal-body">
+                        <span id="allpanels"></span>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- upload Modal -->
+        <div class="modal fade" id="myUploadModal" role="dialog">
+            <div class="modal-dialog" style="width: 40%">
+                <div class="modal-content rounded-0" style="padding: 10px">
+                    <div class="modal-header">
+                        <h4 id="myUploadModalTitle" class="modal-title">Add Dataset</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div id="myUploadModalBody" class="modal-body">
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-2">
+                                Adds local columns and charts, no data is shared with BITHub.<br><br>
+                                Contact our lab for additions to the core database.<br><br>
+                                <form id="my_upload_form">
+                                    Dataset Name<br>
+                                    <input type="text" name="name" autocomplete="off" placeholder="New dataset"><br><br>
+                                    Select CPM Matrix: <a href="./resources/data/BrainSeq-exp-example.csv">Example</a>
+                                    <input type="file" class="form-control-file" name="cpm" accept=".csv" required><br>
+                                    Select Metadata (optional): <a
+                                        href="./resources/data/BrainSeq-metadata-example.csv">Example</a>
+                                    <input type="file" class="form-control-file" name="meta" accept=".csv"><br>
+
+                                    <input type="submit" class="btn btn-default" value="Add">
+                                </form>
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Body -->
+        <div style="padding-top:30px;">
+            <div id="myDiv" style="display:none;" class="container-fluid">
+                <!--class animate-bottom-->
+                <div>
+                    <div class="well">
+                        <b> Upload </b> BITHub by comma delimited list of Gene Symbols or Ensembl Gene IDs. Select the
+                        search field from the drop-down menu on the right.
+                        <br>
+                        <b> To download the plot - </b> hover over the plot and select a format.
+                        <br>
+                        <b> Search using file </b> upload a file containing a line delimited list of Gene Symbols or
+                        Ensembl Gene IDs. (<a href="./resources/data/Ensembl-list-example.csv">Example</a>)
+                        <br>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1">
+                            <button id="my_upload_button" type="submit"
+                                style="border:none;width: 40px; height: 40px; margin-right:15px; vertical-align: top; width:100%"><i
+                                    class="fas fa-file-upload"></i></button>
+                        </div>
+                        <div class="col-md-1">
+                            <button id="my_showplot_button" class="isExpanded" type="submit"
+                                style="border:none;width: 40px; height: 40px; margin-right:15px; vertical-align: top; width:100%"><i
+                                    class="fas fa-chart-line"></i></button>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label id="myDisplay" data-domain="">
+                                <input type="search" autocomplete="off" class="mySearch" id="myInput">
+                            </label>
+                        </div>
+                        <div class="col-md-1">
+                            <input type="file" id="inputData" style="opacity:0;display:contents;"
+                                accept=".csv, .tsv, .txt">
+                            <button id="inputDataLabel" type="submit"
+                                style="color:#009b41;border:none;width: 40px; height: 40px; margin-right:15px; vertical-align: top; width:100%"><i
+                                    id="inputDataIcon" class="fas fa-file-csv" aria-hidden="true"></i></button>
+                        </div>
+                        <div class="col-md-2">
+                            <span id="my_search_select_group"><select class="selectpicker"
+                                    data-header="Select searchable parameters" id="my_search_select"
+                                    multiple></select></span>
+                        </div>
+                        <div class="col-md-1">
+                            <button id="my_search_button" type="submit"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="searchsetplot" data-toggle="collapse" class="collapse in" aria-expanded="true"></div>
+
+                <!-- Main Table -->
+                <span id="my_table_select_group" style="margin-left: 15px; margin-top: 15px;">
+                    <button id="my_download_button" type="submit"
+                        style="border:none;width: 40px; height: 40px; margin-right:15px; vertical-align: top;"><i
+                            class="fas fa-download"></i></button>
+                    <select class="selectpicker" data-header="Select visible columns" id="my_table_select"
+                        multiple></select>&nbsp;&nbsp;
+                    <i class="fas fa-eye" style="opacity:25%;"></i>
+
+                </span>
+                <div class="panel panel-default" style="padding: 15px; border-radius: 0px;">
+                    <table class="table table-hover" style="width:100%" id="my_table"></table>
+                </div>
+
+                <!-- Pagination -->
+                <div id="my_pagination_container" class="container unselectable">
+                    <ul id="my_pagination" class="pagination"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function findGetParameter(parameterName) {
+            var result = null, tmp = [];
+            location.search
+                .substr(1)
+                .split("&")
+                .forEach(function (item) {
+                    tmp = item.split("=");
+                    if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+                });
+            return result;
+        }
+
+        let isLoading = true;
+
+        var metaPanels = [];
+        var hdf5Root = undefined;
+        var urls = {};
+        var heatmap = undefined;
+
+        let dataOrder = undefined;
+        let isDataset = undefined;
+        let isDatabase = undefined;
+        let isBrainDataset = undefined;
+
+        let datasetsCustomNum = 0;
+        let matrix = undefined;
+        let indices = undefined;
+
+        let showCols = undefined;
+        let searchCols = undefined;
+
+        let sortCurrCol = -3;
+        let sortCurrIndex = 0;
+        let sortClassOrder = ["both", "desc", "asc"];
+
+        let pageSize = 50;
+        let pageCurr = 0;
+        let pageMax = 5;
+
+        let searchTerm = "";
+        let searchEntries = undefined;
+        let searchEntriesFound = 0;
+        let searchFile = false;
+
+        let coordinateStarts = [];
+        let coordinateEnds = [];
+        let coordinateNames = [];
+        let defaultCoord;
+
+        let lmsPanel = undefined;
+        let lmsSetPanel = undefined;
+
+        let prevPageId = "about";
+
+        //TODO convert to promises. Very hacky 
+        var awaitAll = 0;
+        function incAwaitAll() {
+            if (++awaitAll == 1) {
+                hideLoading();
+            }
+        }
+
+        function resetDropdowns() {
+            let optOther = "";
+            optOther += '<optgroup label="Column contents">';
+            for (let i = 0; i < dataOrder.length; ++i) if (!isDataset[i] && !isDatabase[i]) optOther += '<option value="' + (i) + '">' + dataOrder[i] + '</option>';
+            optOther += '</optgroup>';
+
+            let optSearch = optOther;
+
+            let optAll = optOther;
+            optAll += '<optgroup label="Datasets">';
+            for (let i = 0; i < dataOrder.length; ++i) if (isDataset[i]) optAll += '<option value="' + (i) + '">' + dataOrder[i] + '</option>';
+            optAll += '</optgroup>'
+            optAll += '<optgroup label="Databases">';
+            for (let i = 0; i < dataOrder.length; ++i) if (isDatabase[i]) optAll += '<option value="' + (i) + '">' + dataOrder[i] + '</option>';
+            optAll += '</optgroup>'
+
+            $("#my_search_select").empty();
+            $("#my_search_select").append(optSearch);
+            $('#my_search_select').val(searchCols);
+            $('#my_search_select').selectpicker('refresh');
+            $('#my_search_select').on('change', function () {
+                let newSearchCols = $(this).val();
+                if (newSearchCols.length) {
+                    searchCols = newSearchCols;
+                } else {
+                    $(this).val(searchCols);
+                    $('#my_search_select').selectpicker('refresh');
+                }
+                searchEntries = undefined;
+            });
+
+            $("#my_table_select").empty();
+            $("#my_table_select").append(optAll);
+            $('#my_table_select').children().first().children().first().attr("disabled", "disabled");
+            $('#my_table_select').children().first().children().first().hide();
+            $('#my_table_select').val(showCols);
+            $('#my_table_select').selectpicker('refresh');
+            $('#my_table_select').on('change', function () {
+                showCols = $(this).val();
+                showCols.unshift("0");
+                console.log(showCols);
+                makeTable();
+            });
+
+            $(document).ready(function () {
+                $(".selectpicker").selectpicker("refresh");
+            });
+        }
+
+        let windowPath = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+        myProgress = document.getElementById("my_progress");
+        (async function downloadFile() {
+            const response = await fetch(windowPath + "/resources/data/out.hdf5");
+            const length = response.headers.get('Content-Length');
+            const buffer = new Uint8Array(length);
+            let at = 0;
+            const reader = response.body.getReader();
+            for (; ;) {
+                const { done, value } = await reader.read();
+                if (done) {
+                    break;
+                }
+                buffer.set(value, at);
+                at += value.length;
+                let pcg = Math.floor(100 * (at / length));
+                //if(pcg > 50) throw "stop";
+                myProgress.setAttribute('aria-valuenow', pcg);
+                myProgress.setAttribute('style', 'width:' + Number(pcg) + '%');
+            }
+
+            //Now we have data in buffer
+            var f = new hdf5.File(buffer.buffer, "");
+            var hdf5Panels = f.get('panels');
+
+            let i = 0;
+            for (let group of hdf5Panels.attrs.order) {
+                let groupObj = hdf5Panels.get(group);
+                if (MetaPanelDual.isDataDual(groupObj)) {
+                    metaPanels.push(new MetaPanelDual("allpanels", "allpanels" + (i), groupObj, group));
+                } else if (MetaPanelCompact.isDataCompact(groupObj)) {
+                    metaPanels.push(new MetaPanelCompact("allpanels", "allpanels" + (i), groupObj, group));
+                } else {
+                    metaPanels.push(new MetaPanel("allpanels", "allpanels" + (i), groupObj, group));
+                }
+                ++i;
+            }
+
+            hdf5Data = f.get("data");
+            dataOrder = hdf5Data.attrs.order;
+            isDataset = hdf5Data.attrs.isDataset;
+            isDatabase = hdf5Data.attrs.isDatabase;
+            isBrainDataset = hdf5Data.attrs.isBrainDataset;
+            showCols = hdf5Data.attrs.defaultVisible;
+            searchCols = hdf5Data.attrs.defaultSearchable;
+
+            matrix = [];
+
+            let c = 0;
+            const regex = /(start|end)_(.+)/;
+            for (let h of dataOrder) {
+                matrix.push([...hdf5Data.get(h).value]);
+                let coord = h.match(regex);
+                if (coord) {
+                    if (coord[1] == "start") {
+                        coordinateStarts.push(c);
+                        coordinateNames.push(coord[2]);
+                    } else {
+                        coordinateEnds.push(c);
+                    }
+                }
+                ++c;
+            }
+            defaultCoord = hdf5Data.attrs.defaultCoord;
+
+            searchCols.push(-defaultCoord - 1);
+
+            let urlsGroup = f.get("urls");
+            for (let k of urlsGroup.keys) {
+                let dataset = urlsGroup.get(k);
+                urls[k] = { urls: dataset.value, home: dataset.attrs.home, prefix: dataset.attrs.prefix }
+            }
+
+            lmsMeta = {};
+            for (let i = 0; i < dataOrder.length; ++i) if (isDataset[i]) lmsMeta[dataOrder[i]] = matrix[i];
+            lmsPanel = new LMSPanel("allpanels", "Gene expression across datasets", f.get("metadata"), lmsMeta, matrix[0]);
+            lmsSetPanel = new LMSPanelSet("searchsetplot", "", f.get("metadata"), lmsMeta, matrix[0]);
+            customPanel = new CustomPanel("allpanels", "Custom Datasets");
+
+            resetDropdowns();
+            makeTable();
+
+            incAwaitAll();
+        })();
+
+        let docStyle = getComputedStyle(document.documentElement);
+        let buttonColor = docStyle.getPropertyValue('--button-color');
+
+        $("#my_showplot_button").click(function (event) {
+            let expanded = $("#searchsetplot").collapse("toggle").attr('aria-expanded') === "true";
+            $(this).toggleClass("isExpanded", expanded);
+        })
+
+        $("#myInput").keyup(function (event) {
+            if (event.keyCode === 13) {
+                searchTerm = $("#myInput").val();
+                pageCurr = 0;
+                updateSearch();
+                makeTable();
+            }
+        });
+
+        $("#myInput").change(function () {
+            searchEntries = undefined;
+        });
+
+        $("#my_search_button").click(function () {
+            if (!searchFile) searchTerm = $("#myInput").val();
+            pageCurr = 0;
+            updateSearch();
+            makeTable();
+        });
+
+        let inputDataIcon = document.getElementById("inputDataIcon")
+        let inputDataFile = document.getElementById("inputData");
+        let inputField = document.getElementById("myInput");
+        let defaultPlaceholder = 'e.g. "ENSG00000099785, ENSG00000136536, ENSG00000139266, ENSG00000144583"';
+        let prevVal = "";
+        inputField.placeholder = defaultPlaceholder;
+        $("#inputDataLabel").click(function () {
+            if (inputDataFile.value) {
+                $("#inputDataLabel").css({ 'background-color': '', 'color': '#009b41' });
+                //inputDataIcon.classList.replace("fa-minus-circle", "fa-file-csv");
+                inputField.disabled = false;
+                inputField.placeholder = defaultPlaceholder;
+                inputField.value = prevVal;
+                inputDataFile.value = null;
+                searchFile = false;
+                searchEntries = undefined;
+            } else {
+                inputDataFile.click();
+            }
+        });
+
+        $("#inputData").change(function () {
+            if (inputDataFile.value) {
+                $("#inputDataLabel").css({ 'background-color': '#009b41', 'color': 'white' });
+                //inputDataIcon.classList.replace("fa-file-csv", "fa-minus-circle");
+                inputField.placeholder = 'Searching by file "' + inputDataFile.files[0].name + '"';
+                prevVal = inputField.value;
+                inputField.value = "";
+                inputField.disabled = true;
+                searchFile = true;
+
+                var fr = new FileReader();
+                fr.onload = function () {
+                    //TODO: data validation
+                    searchTerm = fr.result;
+                }
+                fr.readAsText(this.files[0]);
+            }
+        });
+
+        function hideLoading() {
+            document.getElementById("my_loading").style.display = "none";
+            document.getElementById("myDiv").style.display = "block";
+            document.getElementById("my_navbar").classList.replace("navbar-fixed-top", "navbar-static-top");
+            isLoading = false;
+        }
+
+        switchPage({ target: { id: findGetParameter("page") } });
+        function switchPage(event) {
+            if (!event.target.id || event.target.id == prevPageId) return;
+
+
+            $("#" + prevPageId).parent().removeClass("active");
+            $("#" + event.target.id).parent().addClass("active");
+
+            let isAboutPage = event.target.id === "about";
+            document.getElementById("pageAbout").style.display = isAboutPage ? "block" : "none";
+
+            let isSearchPage = event.target.id === "search";
+            document.getElementById("pageSearch").style.display = isSearchPage ? "block" : "none";
+            if (!isSearchPage || !isLoading) document.getElementById("my_navbar").classList.add("navbar-static-top");
+            else document.getElementById("my_navbar").classList.add("navbar-fixed-top");
+
+            let isDownloadPage = event.target.id === "download";
+            document.getElementById("pageDownload").style.display = isDownloadPage ? "block" : "none";
+
+            const params = new URLSearchParams(window.location.search);
+            params.set("page", event.target.id);
+            window.history.replaceState({}, "", decodeURIComponent(`${window.location.pathname}?${params}`));
+
+            prevPageId = event.target.id;
+        }
+
+        $("#about").click(switchPage);
+        $("#search").click(switchPage);
+        $("#download").click(switchPage);
+
+        function updateSearch() {
+            if (!searchEntries && searchTerm) {
+                let realSearchCols = searchCols.filter(c => c >= 0);
+                let delim = searchFile ? /\r?\n/ : /,/;
+                searchEntries = searchDeliminatedMultiple(searchTerm, realSearchCols.map(r => matrix[r]), delim);
+
+                //Find all indices from string
+                searchEntriesFound = 0;
+                for (let e of searchEntries) if (e.row != -1) ++searchEntriesFound;
+
+                //Update main plot
+                lmsSetPanel.setMultiple(searchEntries, searchEntriesFound);
+
+                //Update search counter
+                if (searchEntries.length) $("#myDisplay")[0].setAttribute('data-domain', searchEntriesFound + (searchEntriesFound == 1 ? " result" : " results"));
+                else $("#myDisplay")[0].setAttribute('data-domain', matrix[0].length + " transcripts");
+            } else if (!searchTerm) {
+                lmsSetPanel.setMultiple([], 0);
+            };
+        }
+
+        function makeTable() {
+            let datasetCount = 0;
+            let databaseCount = 0;
+            for (let j of showCols) {
+                datasetCount += isDataset[j];
+                databaseCount += isDatabase[j];
+            }
+            let otherCount = showCols.length - datasetCount - databaseCount;
+
+            let tableContents = "";
+            tableContents += '<thead>';
+            tableContents += "<tr>";
+            for (let i of showCols) {
+                if (!isDataset[i] && !isDatabase[i]) {
+                    let o = dataOrder[i];
+                    let dtypeRes = (hdf5Data.keys.includes(o)) ? hdf5Data.get(o).dtype.match(/([A-Z])([0-9]+)/i) : null;
+                    let dtypeStyle = "";
+                    if (otherCount > 2 && dtypeRes && dtypeRes[1].toLowerCase() == "s") {
+                        dtypeStyle = ' style="width:' + (0.725 * Math.max(o.length + 5, parseInt(dtypeRes[2])) * 14) + 'px;" ';
+                    }
+                    tableContents += `<th ${dtypeStyle} class="nolegend" scope="colgroup" colspan="1"></th>`
+                }
+            }
+            if (datasetCount) tableContents += `<th class="legend" scope="colgroup" colspan="${datasetCount}" style="width:${(50 * datasetCount) + "px"}"><span id="Datasets" class="unselectable sortable">Datasets</span></th>`
+            if (databaseCount) tableContents += `<th class="legend" scope="colgroup" colspan="${databaseCount}" style="width:${(50 * databaseCount) + "px"}"><span id="Databases" class="unselectable sortable">Databases</span></th>`
+            tableContents += "</tr>";
+
+            tableContents += "<tr>";
+            for (let i of showCols) {
+                let h = dataOrder[i];
+                sortClass = ((i == sortCurrCol) ? sortClassOrder[sortCurrIndex] : "both");
+                if (isDataset[i] || isDatabase[i]) {
+                    tableContents += '<th class="bool"><span id="' + h + '"class="unselectable sortable ' + sortClass + '">' + h + "</span></th>";
+                } else {
+                    tableContents += '<th><span id="' + h + '"class="unselectable sortable ' + sortClass + '">' + h + "</th>";
+                }
+            }
+            tableContents += "</tr>";
+            tableContents += "</thead>";
+            tableContents += '<tbody>';
+
+            function drawRow(currTotal, currRowIndex) {
+                //Skip if not on page
+                if (currTotal < (pageCurr * pageSize) || currTotal > ((pageCurr + 1) * pageSize)) return;
+                //currTotal < 50 || currTotal > 100
+
+                tableContents += `<tr data-index="${currRowIndex}">`;
+                for (let j of showCols) {
+                    let e = matrix[j][currRowIndex];
+                    let o = dataOrder[j];
+                    let opacity = (e != -1 && Object.keys(lmsPanel.data).includes(o)) ? (Math.min(Math.max(lmsPanel.data[o][e], -2), 9) + 5.5) / 11 : 1;
+                    if (isDataset[j]) {
+                        if (isBrainDataset[j]) {
+                            tableContents += `<td style="opacity=${opacity}" class="${(e != -1 ? 'bool yes dataset1' : 'bool no')}"></td>`;
+                        } else {
+                            tableContents += `<td style="opacity:${opacity}" class="${(e != -1 ? 'bool yes dataset2' : 'bool no')}"></td>`;
+                        }
+                    } else if (isDatabase[j]) {
+                        tableContents += `<td class="${(e != -1 ? 'bool yes database' : 'bool no')}"></td>`;
+                    } else {
+                        tableContents += '<td>' + e + "</td>";
+                    }
+                }
+                tableContents += "</tr>";
+            }
+
+            if (searchEntries) {
+                indices = searchEntries.map(v => v.row).filter(v => v != -1);
+                indices.sort();
+            } else {
+                indices = new Array(matrix[0].length);
+                for (var i = 0; i < matrix[0].length; ++i) indices[i] = i;
+            }
+
+            if (sortCurrCol != -3 && (sortClassOrder[sortCurrIndex] == "asc" || sortClassOrder[sortCurrIndex] == "desc")) {
+                let getZscore = (metadataIndex, sortCurrCol) => {
+                    if (metadataIndex == -1) return -3;
+                    let o = dataOrder[sortCurrCol];
+                    return lmsPanel.data[o][metadataIndex];
+                }
+
+                let f = (sortClassOrder[sortCurrIndex] == "asc" ? ((a, b) => (a > b ? 1 : (b > a ? -1 : 0))) : ((a, b) => (a > b ? -1 : (b > a ? 1 : 0))));
+                let g = (a, condition) => { //would be better to have isDataset[x] rather than checking range?
+                    let sum = 0;
+                    for (let j of showCols) if (condition[j]) sum += getZscore(matrix[j][a], j);
+                    return sum;
+                }
+
+                if (sortCurrCol == -1) {
+                    indices.sort((a, b) => f(g(a, isDataset), g(b, isDataset)));
+                } else if (sortCurrCol == -2) {
+                    indices.sort((a, b) => f(g(a, isDatabase), g(b, isDatabase)));
+                } else if (isDataset[sortCurrCol] || isDatabase[sortCurrCol]) {
+                    indices.sort((a, b) => f(getZscore(matrix[sortCurrCol][a], sortCurrCol), getZscore(matrix[sortCurrCol][b], sortCurrCol)));
+                } else {
+                    indices.sort((a, b) => f(matrix[sortCurrCol][a], matrix[sortCurrCol][b]));
+                }
+            }
+
+            let total = 0;
+            if (searchEntries) {
+                for (let e of indices) drawRow(total++, e);
+            } else {
+                for (let i = 0; i < matrix[0].length; ++i) drawRow(total++, indices[i]);
+            }
+
+            tableContents += '</tbody>';
+            document.getElementById("my_table").innerHTML = tableContents;
+
+            $("#myInput")[0].setCustomValidity(total ? "" : "No results");
+
+            $("#myDisplay")[0].setAttribute('data-domain', total + " result" + (total != 1 ? "s" : ""));
+
+            $("thead > tr > th > span").click(function (arg) {
+                pageCurr = 0;
+                sortNewCol = undefined;
+                if (arg.target.id == "Datasets") {
+                    sortNewCol = -1;
+                } else if (arg.target.id == "Databases") {
+                    sortNewCol = -2;
+                } else {
+                    sortNewCol = dataOrder.indexOf(arg.target.id);
+                }
+
+                if (sortCurrCol == sortNewCol) {
+                    sortCurrIndex = (sortCurrIndex + 1) % 3;
+                } else {
+                    sortCurrIndex = 1;
+                }
+                sortCurrCol = sortNewCol;
+
+                makeTable();
+            });
+
+            $("tbody > tr").click(function (arg) {
+                if (getSelection().toString()) {
+                    return; //user selected text, not a click
+                }
+                let circindex = parseInt(arg.currentTarget.getAttribute("data-index"));
+                let metaIndex = new Array(dataOrder.length);
+
+                for (let i = 0; i < dataOrder.length; ++i) {
+                    if (isDataset[i] || isDatabase[i]) {
+                        //Just insert customs before databases
+                        metaIndex[i] = matrix[i][circindex];
+                    }
+                }
+
+                //Change metadata panels
+                metadataObj = {};
+                for (let i = 0; i < dataOrder.length; ++i) if (isDataset[i]) metadataObj[dataOrder[i]] = metaIndex[i];
+                for (let p of metaPanels) p.setCircId(matrix[1][circindex] || matrix[0][circindex], metadataObj);
+                customPanel.setCircId(matrix[1][circindex] || matrix[0][circindex], metadataObj);
+
+                lmsPanel.setCircId(matrix[1][circindex] || matrix[0][circindex], circindex);
+                //Show modal
+                $("#myModalTitle").text(matrix[1][circindex] + " (" + matrix[0][circindex] + ")");
+                $("#myModal").modal('toggle');
+            });
+
+            let paginateContents = "";
+            let pageCurrMax = Math.ceil(total / pageSize);
+            let pageStart = Math.max(0, Math.floor(pageCurr + 1 - pageMax / 2));
+            let pageEnd = Math.min(pageCurrMax, pageStart + pageMax)
+            if (pageStart > 0) paginateContents += '<li class="page-item"><a class="page-link" value="0">1</a></li>' + '<li class="page-item disabled"><a class="page-link">...</a></li>'
+            for (let i = pageStart; i < pageEnd; ++i) paginateContents += '<li class="page-item ' + (i == pageCurr ? "page-current disabled" : "") + '"><a class="page-link" value="' + (i) + '">' + (i + 1) + '</a></li>'
+            if (pageEnd < pageCurrMax) paginateContents += '<li class="page-item disabled"><a class="page-link">...</a></li>' + '<li class="page-item"><a class="page-link" value="' + (pageCurrMax - 1) + '">' + (pageCurrMax) + '</a></li>'
+            paginateContents += '<li class="page-item ' + (pageCurr + 1 == pageCurrMax ? "disabled" : "")
+            document.getElementById("my_pagination").innerHTML = paginateContents;
+
+            $("#my_pagination > li").click(function (arg) {
+                if (!$(arg.currentTarget).hasClass('disabled')) {
+                    pageCurr = parseInt(arg.currentTarget.firstChild.getAttribute("value"));
+                    makeTable();
+                }
+            });
+
+            $("#Datasets").removeClass("asc");
+            $("#Datasets").removeClass("desc");
+            $("#Datasets").removeClass("both");
+            $("#Datasets").addClass(((-1 == sortCurrCol) ? sortClassOrder[sortCurrIndex] : "both"));
+            $("#Databases").removeClass("asc");
+            $("#Databases").removeClass("desc");
+            $("#Databases").removeClass("both");
+            $("#Databases").addClass(((-2 == sortCurrCol) ? sortClassOrder[sortCurrIndex] : "both"));
+        }
+
+        $("#my_upload_button").click(function () {
+            $("#myUploadModal").modal('toggle');
+        });
+
+        $("#my_upload_form").submit(function (e) {
+            e.preventDefault();
+            let uploadForm = this;
+
+            //Get name for new dataset
+            let name = $(uploadForm.elements["name"]).val();
+            if (!name) name = $(uploadForm.elements["name"]).attr("placeholder");
+
+            //Read cpm csv
+            Papa.parse(uploadForm.elements["cpm"].files[0], {
+                dynamicTyping: true,
+                complete: function (results) {
+                    //Calculate scaled version
+                    let csvData = results.data;
+                    let matchedData = [];
+                    let matchedIndices = new Array(matrix[0].length).fill(-1);
+                    let matchedIndicesReverse = [];
+                    for (let i = 1; i < csvData.length; ++i) {
+                        if (!csvData[i][0]) continue;
+                        let geneID = csvData[i][0];
+                        if (!geneID) continue;
+                        for (let j = 0; j < matrix[0].length; ++j) {
+                            if (geneID == matrix[0][j]) {
+                                csvData[i].shift();
+                                matchedData.push(csvData[i]);
+                                matchedIndicesReverse.push(j);
+                                matchedIndices[j] = matchedData.length - 1;
+                                break;
+                            }
+                        }
+                    }
+
+                    //Convert non-numeric to zero
+                    for (let i = 0; i < matchedData.length; ++i) {
+                        for (let j = 0; j < matchedData.length; ++j) {
+                            if ($.type(matchedData[i][j]) === "string") {
+                                matchedData[i][j] = 0.0;
+                            }
+                        }
+                    }
+
+                    //Get mean of logs for each row
+                    let scaledData = new Array(matchedData.length);
+                    for (let i = 0; i < matchedData.length; ++i) {
+                        scaledData[i] = 0;
+                        for (let j = 0; j < matchedData[i].length; ++j) scaledData[i] += Math.log2(matchedData[i][j] + 0.01);
+                        scaledData[i] /= matchedData[i].length;
+                    }
+
+                    //Get overall mean
+                    let mean = 0;
+                    for (let i = 0; i < scaledData.length; ++i) mean += scaledData[i];
+                    mean /= scaledData.length;
+
+                    //Get overall sd
+                    let sd = 0;
+                    for (let i = 0; i < scaledData.length; ++i) sd += Math.pow(scaledData[i] - mean, 2);
+                    sd = Math.sqrt(sd / scaledData.length);
+
+                    //Calculate Z-Score
+                    for (let i = 0; i < scaledData.length; ++i) scaledData[i] = (scaledData[i] - mean) / sd;
+
+                    //Add to lms
+                    lmsPanel.addCustomDataset(name, scaledData, matchedIndices, matchedIndicesReverse);
+
+                    let insertPoint = matrix.length;
+                    dataOrder.splice(insertPoint, 0, name);
+                    isDataset.splice(insertPoint, 0, 1);
+                    isDatabase.splice(insertPoint, 0, 0);
+                    matrix.splice(insertPoint, 0, matchedIndices);
+                    let inserted = false;
+                    for (let i = 0; i < showCols.length; ++i) {
+                        if (showCols[i] >= insertPoint) {
+                            if (!inserted) {
+                                showCols.splice(i, 1, insertPoint);
+                                inserted = true;
+                            } else {
+                                ++showCols[i];
+                            }
+                        }
+                    }
+                    if (!inserted) showCols.push(insertPoint);
+                    for (let i = 0; i < searchCols.length; ++i) if (searchCols[i] >= insertPoint) ++searchCols[i];
+
+                    if (sortCurrCol >= insertPoint) ++sortCurrCol;
+                    ++datasetsCustomNum;
+                    resetDropdowns();
+                    makeTable();
+
+                    function complete() {
+                        //Close and reset form
+                        $("#myUploadModal").modal('toggle');
+                        $(uploadForm.elements["name"]).val("");
+                        $(uploadForm.elements["name"]).attr("placeholder", "New dataset" + (datasetsCustomNum ? " " + (datasetsCustomNum + 1) : ""));
+                    }
+
+                    if (uploadForm.elements["meta"].files[0]) {
+                        Papa.parse(uploadForm.elements["meta"].files[0], {
+                            dynamicTyping: true,
+                            complete: function (results2) {
+                                let metaData = results2.data;
+
+                                let sampleNamesData = csvData[0];
+                                sampleNamesData.shift();
+
+                                //Swap the rows to match
+                                let metaMatched = new Array(sampleNamesData.length);
+                                for (let i = 0; i < metaMatched.length; ++i) {
+                                    let metaFound = sampleNamesData.indexOf(metaData[i + 1][0]);
+                                    if (metaFound != -1) metaMatched[metaFound] = metaData[i + 1].slice(1);
+                                }
+
+                                let metaObj = {};
+                                for (let j = 0; j < metaMatched[0].length; ++j) {
+                                    let metaRow = new Array(metaMatched.length);
+                                    for (let i = 0; i < metaMatched.length; ++i) {
+                                        metaRow[i] = metaMatched[i][j];
+                                    }
+                                    metaObj[metaData[0][j + 1]] = metaRow;
+                                }
+
+                                //Cut off unmatched
+                                for (let i = 0; i < matchedData.length; ++i) {
+                                    matchedData[i] = matchedData[i].slice(0, sampleNamesData.length);
+                                }
+
+                                customPanel.addCustomDataset(name, matchedData, metaObj);
+                                complete();
+                            }
+                        });
+                    } else {
+                        complete();
+                    }
+                }
+            });
+        });
+
+        const streamSaver = window.streamSaver
+        $("#my_download_button").click(function () {
+            const fileStream = streamSaver.createWriteStream('BITHub.csv');
+            const writer = fileStream.getWriter();
+            const encoder = new TextEncoder();
+
+            //CSV header
+            let row = new Array(showCols.length);
+            for (let j = 0; j < showCols.length; ++j) {
+                row[j] = dataOrder[showCols[j]];
+            }
+            writer.write(encoder.encode(row.join(',') + "\n"));
+
+            // CSV body
+            for (let i = 0; i < matrix[0].length; ++i) {
+                let sortIndex = indices[i];
+                shouldInclude = false;
+                for (let j of searchCols) {
+                    if (j < 0) continue;
+                    let searchable = matrix[j][sortIndex];
+                    if ((typeof searchable === "string" && searchable.trim().toLowerCase().includes(searchTerm)) || (searchable == searchTerm)) {
+                        shouldInclude = true;
+                        break;
+                    }
+                }
+                if (shouldInclude) {
+                    for (let j = 0; j < showCols.length; ++j) {
+                        let showCol = showCols[j];
+                        row[j] = matrix[showCol][sortIndex];
+                        if (isDataset[showCol] || isDatabase[showCol]) {
+                            row[j] = (row[j] != -1);
+                        }
+                    }
+                    writer.write(encoder.encode(row.join(',') + "\n"));
+                }
+            }
+            writer.close();
+        });
+
+        //--------------------------------------- ABOUT PAGE--------------------------------------
+        $(function () {
+            $(window).on('scroll', function () {
+                $('#background').css('margin-top', $(window).scrollTop() * -.65);
+            });
+        });
+
+        //Load and animate regions plot
+        let bottom_x = [90.87 + 46.89, 214.89 + 65.12, 407.73 + 6.7, 431.63 + 117.22];
+        let total_h = 117.22;
+        d3.xml("resources/images/BITHub_bulk_regions.svg", function (xml) {
+            var importedNode = document.importNode(xml.documentElement, true);
+            let svg = d3.select("#imgregion")
+                .each(function () {
+                    this.appendChild(importedNode);
+                })
+
+            var rects = svg.selectAll("rect[width='31.33']")
+                .each(function (d, i) {
+                    let r = d3.select(this);
+                    let end_h = parseFloat(r.attr("height"));
+                    let end_y = parseFloat(r.attr("y"));
+
+                    let start_y = bottom_x[0];
+                    for (let i = 1; i < bottom_x.length && start_y < end_y; ++i) start_y = bottom_x[i];
+
+                    r.attr("height", 0)
+                        .attr("y", start_y)// - total_h/2
+                        .transition()
+                        .duration(200 + i * 5)
+                        .attr("y", end_y)
+                        .attr("height", end_h);
+                });
+        });
+
+        //Load and animate age dist plot
+        d3.xml("resources/images/BITHub_Bulk_age_dist.svg", function (xml) {
+            var importedNode = document.importNode(xml.documentElement, true);
+            let svg = d3.select("#imgage")
+                .each(function () {
+                    this.appendChild(importedNode);
+                })
+
+            var rects = svg.selectAll("rect[width='12.15']")
+                .each(function (d, i) {
+                    let r = d3.select(this);
+                    let end_h = r.attr("height");
+                    let end_y = r.attr("y");
+                    let start_y = parseFloat(end_y) + parseFloat(end_h);
+
+                    r.attr("height", 0)
+                        .attr("y", start_y)
+                        .transition()
+                        .duration(400 + i * 5)
+                        .attr("y", end_y)
+                        .attr("height", end_h);
+                });
+        });
+
+        //Load and animate total plot
+        d3.xml("resources/images/BIThub_bulk_total.svg", function (xml) {
+            var importedNode = document.importNode(xml.documentElement, true);
+            let svg = d3.select("#imgtotal")
+                .each(function () {
+                    this.appendChild(importedNode);
+                })
+
+            var rects = svg.selectAll("rect[x='112.80']")
+                .each(function (d, i) {
+                    let r = d3.select(this);
+                    let end_w = r.attr("width");
+                    r.attr("width", 0)
+                        .transition()
+                        .duration(800 + i * 5)
+                        .attr("width", end_w);
+                });
+        });
+    </script>
+</body>

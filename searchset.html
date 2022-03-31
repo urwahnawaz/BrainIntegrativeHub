@@ -62,7 +62,7 @@
         <div id="myDiv" style="display:none;" class="container-fluid">
             <!--class animate-bottom-->
             <div>
-                  <div class="well">
+                <div class="well">
                     <b> Search </b> BITHub by comma delimited list of Gene Symbols or Ensembl Gene IDs. Select the search field from the drop-down menu on the right.   
                     <br>
                     <b> To download the plot - </b> hover over the plot and select a format.
@@ -206,7 +206,7 @@
 
             $("#myDisplay")[0].setAttribute('data-domain', matrix[0].length + " results");
 
-            lmsPanel = new LMSPanelSet("searchsetplot", 0, "", f.get("metadata"), lmsMeta, matrix[0]);
+            lmsPanel = new LMSPanelSet("searchsetplot", "", f.get("metadata"), lmsMeta, matrix[0]);
 
             incAwaitAll();
         })();
@@ -272,7 +272,7 @@
             //TODO: centralise file processing before plot updating step
             let indexingColumn = parseInt(searchCols[0]);
 
-            pinned = searchDeliminated(searchTerm, matrix[indexingColumn], searchFile ? /\r?\n/ : ',', !searchFile);
+            pinned = searchDeliminated(searchTerm, matrix[indexingColumn], searchFile ? /\r?\n/ : /\r,/, !searchFile);
 
             //Find all indices from string
             total = 0;

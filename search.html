@@ -124,7 +124,7 @@
                   <div class="well">
                     <b> Search </b> BITHub by Gene Symbol or Ensembl Gene ID. Select the search field from the drop-down menu on the right.   
                     <br>
-                    <b> To display detailed information and interactive plots -  </b> click on a transcript. 
+                    <b> To display detailed information and interactive plots -  </b> click on a gene. 
                     <br>
                     <b> To download the search results - </b> click on the download button.
                     <br>
@@ -346,7 +346,7 @@
             
             lmsMeta = {};
             for(let i=0; i<dataOrder.length; ++i) if(isDataset[i]) lmsMeta[dataOrder[i]] = matrix[i];
-            lmsPanel = new LMSPanel("allpanels", 0, "Gene expression across datasets", f.get("metadata"), lmsMeta, matrix[0]);
+            lmsPanel = new LMSPanel("allpanels", "Gene expression across datasets", f.get("metadata"), lmsMeta, matrix[0]);
 
             customPanel = new CustomPanel("allpanels", "Custom Datasets");
 
@@ -454,12 +454,9 @@
                 }
                 tableContents += "</tr>";
             }
-            
 
             if(!searchEntries && searchTerm && searchTerm.includes(",")) {
-               
                 let realSearchCols = searchCols.filter(c => c >= 0);
-
                 if(realSearchCols.length == 1) {
                     searchEntries = searchDeliminated(searchTerm, matrix[realSearchCols[0]]);
                 } else {
@@ -497,10 +494,6 @@
                     for(let j of showCols) if(condition[j]) sum += getZscore(matrix[j][a], j);
                     return sum;
                 }
-
-                
-
-                
 
                 if(sortCurrCol == -1) {
                     indices.sort((a, b) => f(g(a, isDataset), g(b, isDataset)));

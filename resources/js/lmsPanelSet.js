@@ -6,15 +6,15 @@ self.index -> {dataset1: []} (same length as self.data)
 */
 
 class LMSPanelSet {
-    constructor(parentId, childIndex, name, hdf5Group, metas, names) {
+    constructor(parentId, name, hdf5Group, metas, names) {
         var self = this;
 
         self.parentId = parentId;
-        self.elementId = self.parentId + "lms";
+        self.elementId = self.parentId + "lmsset";
         self.name = name;
         self.searchedEntries = [];
         self.missingData = [];
-        document.getElementById(self.parentId).children[childIndex].insertAdjacentHTML("afterbegin", self._generateHTML());
+        document.getElementById(self.parentId).insertAdjacentHTML("afterbegin", self._generateHTML());
         self.metas = metas;
         self.names = names;
         self.data = {}
@@ -30,11 +30,11 @@ class LMSPanelSet {
         self.plot = new PlotContainer("lmssetplot");
         self.plot.setDimensions(800, 320, 80, 80, 50, 60);
         self.resetOptions();
-        $('#lmsselect1').on('change', () => self.update());
-        $('#lmsselect2').on('change', () => self.update());
+        $('#lmssetselect1').on('change', () => self.update());
+        $('#lmssetselect2').on('change', () => self.update());
 
-        $("#lmsselect2").val(Object.keys(self.data)[0]);
-        $("#lmsselect1").val(Object.keys(self.data)[1]);
+        $("#lmssetselect2").val(Object.keys(self.data)[0]);
+        $("#lmssetselect1").val(Object.keys(self.data)[1]);
 
         self.preventUpdates = false;
         self.update();
@@ -50,8 +50,8 @@ class LMSPanelSet {
     resetOptions() {
         var self = this;
         let names = Object.keys(self.data);
-        self._setOptions("lmsselect1", names);
-        self._setOptions("lmsselect2", names);
+        self._setOptions("lmssetselect1", names);
+        self._setOptions("lmssetselect2", names);
     }
 
     setMultiple(searchedEntries, searchedTotalMatches) {
@@ -67,8 +67,8 @@ class LMSPanelSet {
             let atLeastOneInDataset = new Array(names.length);
             for(let i=0; i<names.length; ++i) {
                 atLeastOneInDataset[i] = searchedEntries.some(p => self.metas[names[i]][p.row] != -1);
-                $('#lmsselect1').children().eq(i).attr("hidden", !atLeastOneInDataset[i]);
-                $('#lmsselect2').children().eq(i).attr("hidden", !atLeastOneInDataset[i]);
+                $('#lmssetselect1').children().eq(i).attr("hidden", !atLeastOneInDataset[i]);
+                $('#lmssetselect2').children().eq(i).attr("hidden", !atLeastOneInDataset[i]);
             }
 
             for(let i=0; !setChart && i<names.length; ++i) {
@@ -76,8 +76,8 @@ class LMSPanelSet {
                 for(let j=i+1; j<names.length; ++j) {
                     let curr2 = names[j];
                     if(atLeastOneInDataset[i] && atLeastOneInDataset[j]) {
-                        $("#lmsselect2").val(curr1);
-                        $("#lmsselect1").val(curr2);
+                        $("#lmssetselect2").val(curr1);
+                        $("#lmssetselect1").val(curr2);
                         setChart = true;
                         break;
                     }
@@ -89,8 +89,8 @@ class LMSPanelSet {
         if(setChart) {
             self.update();
             $('#' + self.elementId + "panel").show()
-            $('#lmsselect1').selectpicker('refresh');
-            $('#lmsselect2').selectpicker('refresh');
+            $('#lmssetselect1').selectpicker('refresh');
+            $('#lmssetselect2').selectpicker('refresh');
         } else {
             $('#' + self.elementId + "panel").hide()
         }
@@ -101,8 +101,8 @@ class LMSPanelSet {
 
         if(self.preventUpdates) return;
 
-        let curr1 = $("#lmsselect1").val();
-        let curr2 = $("#lmsselect2").val();
+        let curr1 = $("#lmssetselect1").val();
+        let curr2 = $("#lmssetselect2").val();
 
         let data1 = self.data[curr1];
         let data2 = self.data[curr2];
@@ -204,9 +204,9 @@ class LMSPanelSet {
                             <div class="panel-description"></div>
                             <div class="col-md-2">
                                 <div>Select Y Axis</div>
-                                <select class="selectpicker" id="lmsselect2"></select><br><br><br>
+                                <select class="selectpicker" id="lmssetselect2"></select><br><br><br>
                                 <div>Select X Axis</div>
-                                <select class="selectpicker" id="lmsselect1"></select><br><br><br>
+                                <select class="selectpicker" id="lmssetselect1"></select><br><br><br>
                                 
                                 <div id="alertMain" class="alert alert-warning" role="alert" style="display: none;">
                                     <a id="alertMissingDownload">33/35</a><span id="alertInfo"></span>

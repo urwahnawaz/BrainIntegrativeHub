@@ -4,9 +4,37 @@ html, body {margin:0;padding:0;height:100%}
     color: white;
 }
 
+/* Prevents search page jitter during plot open/close animations (TODO creates double scroll during modal)*/
+/*html {
+  overflow: -moz-scrollbars-vertical; 
+  overflow-y: scroll;
+}*/
+
 .navbar-inverse {
     background-color: #1C3448;
     color: white;
+}
+
+:root {
+  --heatmap-color: rgb(0, 155, 65);
+  --button-color: #009b41;
+  --navbar-color: rgb(51, 122, 183);
+  --heading-color: rgb(43, 109, 164);
+  --scatter-color: rgb(75, 144, 204);
+}
+
+#my_upload_button {
+  color: var(--button-color);
+}
+
+#my_showplot_button {
+  color: var(--button-color);
+  background-color: "inherit";
+}
+
+#my_showplot_button.isExpanded {
+  color: white; 
+  background-color: var(--button-color);
 }
 
 #myInput {
