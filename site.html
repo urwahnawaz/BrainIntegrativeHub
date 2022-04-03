@@ -24,7 +24,6 @@
     <script src="https://cdn.jsdelivr.net/npm/jsfive@0.3.7/dist/hdf5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
-    <script src="resources/js/colors.js"></script>
     <script src="resources/js/lmsPanel.js"></script>
     <script src="resources/js/lmsPanelSet.js"></script>
     <script src="resources/js/customPanel.js"></script>
@@ -37,13 +36,7 @@
     <script src="resources/js/plotControls.js"></script>
     <script src="resources/js/utility.js"></script>
 
-    <link rel="stylesheet" href="resources/css/style.css" />
-
-    <style>
-        #lmssetplot>.plot-container {
-            height: 500px;
-        }
-    </style>
+    <link rel="stylesheet" href="resources/css/style2.css" />
 </head>
 
 <body>
@@ -75,9 +68,20 @@
             </div>
         </div>
 
-        <img id="background" style="position:fixed;top:0px;z-index:-1;padding-left:0px;padding-right:0px;"
+        <img id="background" style="filter:blur(2px);-webkit-filter: blur(2px);position:fixed;top:0px;z-index:-1;padding-left:0px;padding-right:0px;"
             class="center-block" width="100%" src="resources/images/AdobeStock_94779358_scaled.jpeg"
             alt="Overview of python pipeline" />
+
+            <div class="row justify-content-md-center" style="padding:5px; position:absolute; margin-top:80px;width:80%;margin-left:10%;margin-right:10%;">
+                <div class="col-md-10" style="padding-left:0px;padding-right:0px;">
+                    <label id="myQuickDisplay" style="margin-bottom:0px;" data-domain="loading">
+                        <input type="search" autocomplete="off" class="mySearch" id="myQuickInput">
+                    </label>
+                </div>
+                <div class="col-md-2" style="padding-left:0px;padding-right:0px;">
+                    <button id="my_quick_search_button" class="MyBtn" type="submit"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
 
         <div class="container-fluid" style="padding: 0px;">
             <div class="jumbotron"
@@ -86,12 +90,9 @@
                     <div class="row" style="margin-bottom:50px;">
                         <div id="imgregion" class="col-md-7 text-center"></div>
                         <div class="col-md-5 text-center" style="vertical-align: middle;">
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam dapibus urna ut elit
-                                fermentum interdum. Donec sem odio, mattis ut gravida et, suscipit et lectus. Donec
-                                interdum a lorem nec lobortis. Nullam id consequat eros. Ut nec aliquet ante, eu porta
-                                enim. Nulla placerat sem orci, eu lacinia nibh elementum nec. Proin scelerisque ipsum
-                                sit amet ligula lobortis lacinia. Curabitur a leo nunc. Sed et lorem tellus. Aliquam
-                                molestie ultrices nisl id mattis. </p>
+                            <p>BITHub is a web-based resource that allows interactive exploration of bulk and single nucleus transcripts from the human brain, 
+                                including large-scale expression datasets and variance partition plots. NeuroCirc also allows users to upload their own data and 
+                                explore it in the integrative platform. </p>
                         </div>
                     </div>
 
@@ -162,9 +163,6 @@
     <div id="pageSearch" style="display:none">
         <!-- Loading Animation -->
         <div id="my_loading" class="d-flex flex-row justify-content-center align-items-center" style="height: 100%;">
-            <!--<div class="loader">
-            <span class="sr-only">Loading...</span>
-        </div>-->
             <div class="progress">
                 <div id="my_progress" class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0"
                     aria-valuemin="0" aria-valuemax="100"></div>
@@ -173,9 +171,9 @@
 
 
         <!-- Selected Modal -->
-        <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal fade hideScrollBar" id="myModal" role="dialog">
             <div class="modal-dialog" style="width: 70%">
-                <div class="modal-content rounded-0" style="padding: 10px">
+                <div class="modal-content" style="padding: 10px">
                     <div class="modal-header">
                         <h4 id="myModalTitle" class="modal-title">Modal Header</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -193,7 +191,7 @@
         <!-- upload Modal -->
         <div class="modal fade" id="myUploadModal" role="dialog">
             <div class="modal-dialog" style="width: 40%">
-                <div class="modal-content rounded-0" style="padding: 10px">
+                <div class="modal-content" style="padding: 10px">
                     <div class="modal-header">
                         <h4 id="myUploadModalTitle" class="modal-title">Add Dataset</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -243,14 +241,14 @@
                     </div>
                     <div class="row">
                         <div class="col-md-1">
-                            <button id="my_upload_button" type="submit"
-                                style="border:none;width: 40px; height: 40px; margin-right:15px; vertical-align: top; width:100%"><i
-                                    class="fas fa-file-upload"></i></button>
+                            <button id="my_upload_button" class="MyBtn MyBtnColored" type="submit">
+                                <i class="fas fa-file-upload"></i>
+                            </button>
                         </div>
                         <div class="col-md-1">
-                            <button id="my_showplot_button" class="isExpanded" type="submit"
-                                style="border:none;width: 40px; height: 40px; margin-right:15px; vertical-align: top; width:100%"><i
-                                    class="fas fa-chart-line"></i></button>
+                            <button id="my_showplot_button" class="MyBtn MyBtnColored MyBtnColoredToggled" type="submit">
+                                <i class="fas fa-chart-line"></i>
+                            </button>
                         </div>
 
                         <div class="col-md-6">
@@ -259,11 +257,10 @@
                             </label>
                         </div>
                         <div class="col-md-1">
-                            <input type="file" id="inputData" style="opacity:0;display:contents;"
-                                accept=".csv, .tsv, .txt">
-                            <button id="inputDataLabel" type="submit"
-                                style="color:#009b41;border:none;width: 40px; height: 40px; margin-right:15px; vertical-align: top; width:100%"><i
-                                    id="inputDataIcon" class="fas fa-file-csv" aria-hidden="true"></i></button>
+                            <input type="file" id="inputData" style="opacity:0;display:contents;" accept=".csv, .tsv, .txt">
+                            <button id="inputDataLabel" class="MyBtn MyBtnColored" type="submit">
+                                <i id="inputDataIcon" class="fas fa-file-csv" aria-hidden="true"></i>
+                            </button>
                         </div>
                         <div class="col-md-2">
                             <span id="my_search_select_group"><select class="selectpicker"
@@ -271,7 +268,7 @@
                                     multiple></select></span>
                         </div>
                         <div class="col-md-1">
-                            <button id="my_search_button" type="submit"><i class="fas fa-search"></i></button>
+                            <button id="my_search_button" class="MyBtn" type="submit"><i class="fas fa-search"></i></button>
                         </div>
                     </div>
                 </div>
@@ -296,24 +293,56 @@
                 <div id="my_pagination_container" class="container unselectable">
                     <ul id="my_pagination" class="pagination"></ul>
                 </div>
+
+                <!-- Force Scroll -->
+                <div id="ScrollForcer"></div>
             </div>
         </div>
     </div>
 
     <script>
-        function findGetParameter(parameterName) {
-            var result = null, tmp = [];
-            location.search
-                .substr(1)
-                .split("&")
-                .forEach(function (item) {
-                    tmp = item.split("=");
-                    if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
-                });
-            return result;
+        let isLoading = true;
+        let quickSearchTerm = undefined;
+
+        //TODO search m in quick, search e in regular, search m in quick, still on e??
+
+        let defaultPlaceholder = 'e.g. "MARCH6" or "ENSG00000099785, ENSG00000136536"';
+        $("#myQuickInput").attr('placeholder', defaultPlaceholder);
+
+        $("#my_quick_search_button").click(function() {
+            prepareQuickSearch();
+        });
+
+        $("#myQuickInput").keyup(function (event) {
+            if (event.keyCode === 13) {
+                prepareQuickSearch();
+            }
+        });
+
+        function prepareQuickSearch() {
+            quickSearchTerm = $("#myQuickInput").val();
+            if(quickSearchTerm) {
+                switchPage({ target: { id: "search" } });
+
+                //Clear visible quick search field
+                $("#myQuickInput").val("");
+                if(!isLoading) executeQuickSearch();
+            }
         }
 
-        let isLoading = true;
+        function executeQuickSearch() {
+            //Clear cached search
+            searchEntries = undefined;
+
+            //Set search columns to all/default
+            searchCols = hdf5Data.attrs.defaultSearchable;
+            $('#my_search_select').val(searchCols);
+            $('#my_search_select').selectpicker('refresh');
+
+            //Perform search
+            $("#myInput").val(quickSearchTerm);
+            $("#my_search_button").click();
+        }
 
         var metaPanels = [];
         var hdf5Root = undefined;
@@ -355,12 +384,16 @@
 
         let prevPageId = "about";
 
-        //TODO convert to promises. Very hacky 
-        var awaitAll = 0;
-        function incAwaitAll() {
-            if (++awaitAll == 1) {
-                hideLoading();
-            }
+        function findGetParameter(parameterName) {
+            var result = null, tmp = [];
+            location.search
+                .substr(1)
+                .split("&")
+                .forEach(function (item) {
+                    tmp = item.split("=");
+                    if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+                });
+            return result;
         }
 
         function resetDropdowns() {
@@ -403,7 +436,6 @@
             $('#my_table_select').on('change', function () {
                 showCols = $(this).val();
                 showCols.unshift("0");
-                console.log(showCols);
                 makeTable();
             });
 
@@ -486,23 +518,23 @@
             }
 
             lmsMeta = {};
+            //TODO: symbol and ID should appear in CSV, consider writing CSV using callback
+            let namesSymbolsPreferred = matrix[1].map((n, i) => n ? n : matrix[0][i]);
             for (let i = 0; i < dataOrder.length; ++i) if (isDataset[i]) lmsMeta[dataOrder[i]] = matrix[i];
-            lmsPanel = new LMSPanel("allpanels", "Gene expression across datasets", f.get("metadata"), lmsMeta, matrix[0]);
-            lmsSetPanel = new LMSPanelSet("searchsetplot", "", f.get("metadata"), lmsMeta, matrix[0]);
+            lmsPanel = new LMSPanel("allpanels", "Gene expression across datasets", f.get("metadata"), lmsMeta,namesSymbolsPreferred);
+            lmsSetPanel = new LMSPanelSet("searchsetplot", "", f.get("metadata"), lmsMeta, namesSymbolsPreferred);
             customPanel = new CustomPanel("allpanels", "Custom Datasets");
 
             resetDropdowns();
-            makeTable();
-
-            incAwaitAll();
+            hideLoading();
+             $("#myQuickDisplay")[0].setAttribute('data-domain', matrix[0].length + " results");
+            if(quickSearchTerm) executeQuickSearch();
+            else makeTable();
         })();
-
-        let docStyle = getComputedStyle(document.documentElement);
-        let buttonColor = docStyle.getPropertyValue('--button-color');
 
         $("#my_showplot_button").click(function (event) {
             let expanded = $("#searchsetplot").collapse("toggle").attr('aria-expanded') === "true";
-            $(this).toggleClass("isExpanded", expanded);
+            $(this).toggleClass("MyBtnColoredToggled", expanded);
         })
 
         $("#myInput").keyup(function (event) {
@@ -528,12 +560,11 @@
         let inputDataIcon = document.getElementById("inputDataIcon")
         let inputDataFile = document.getElementById("inputData");
         let inputField = document.getElementById("myInput");
-        let defaultPlaceholder = 'e.g. "ENSG00000099785, ENSG00000136536, ENSG00000139266, ENSG00000144583"';
         let prevVal = "";
         inputField.placeholder = defaultPlaceholder;
         $("#inputDataLabel").click(function () {
             if (inputDataFile.value) {
-                $("#inputDataLabel").css({ 'background-color': '', 'color': '#009b41' });
+                $("#inputDataLabel").toggleClass("MyBtnColoredToggled", false);
                 //inputDataIcon.classList.replace("fa-minus-circle", "fa-file-csv");
                 inputField.disabled = false;
                 inputField.placeholder = defaultPlaceholder;
@@ -548,7 +579,7 @@
 
         $("#inputData").change(function () {
             if (inputDataFile.value) {
-                $("#inputDataLabel").css({ 'background-color': '#009b41', 'color': 'white' });
+                $("#inputDataLabel").toggleClass("MyBtnColoredToggled", true);
                 //inputDataIcon.classList.replace("fa-file-csv", "fa-minus-circle");
                 inputField.placeholder = 'Searching by file "' + inputDataFile.files[0].name + '"';
                 prevVal = inputField.value;
@@ -575,7 +606,6 @@
         switchPage({ target: { id: findGetParameter("page") } });
         function switchPage(event) {
             if (!event.target.id || event.target.id == prevPageId) return;
-
 
             $("#" + prevPageId).parent().removeClass("active");
             $("#" + event.target.id).parent().addClass("active");
@@ -991,11 +1021,9 @@
         });
 
         //--------------------------------------- ABOUT PAGE--------------------------------------
-        $(function () {
-            $(window).on('scroll', function () {
-                $('#background').css('margin-top', $(window).scrollTop() * -.65);
-            });
-        });
+        window.addEventListener('scroll', function() {
+            $('#background').css('margin-top', $(window).scrollTop() * -.55);
+        }, { passive: true});
 
         //Load and animate regions plot
         let bottom_x = [90.87 + 46.89, 214.89 + 65.12, 407.73 + 6.7, 431.63 + 117.22];

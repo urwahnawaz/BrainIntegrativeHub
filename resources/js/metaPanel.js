@@ -323,7 +323,7 @@ class MetaPanel {
             plot.updateDisabled("No variance partition");
             return;
         }
-        plot.updateBar(dataset + " Variance Partition", self.currCircId, data, "Fraction Variance Explained", "Metadata Variable");
+        plot.updateBar(dataset, self.currCircId, data, "Fraction Variance Explained", "Metadata Variable");
         //plot.addTitles("Variance Partition", self.currCircId);
     }
 

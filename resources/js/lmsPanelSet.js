@@ -148,7 +148,7 @@ class LMSPanelSet {
             }
         }
 
-        self.plot.updateScatter("Z-Score Transformed Mean Log2 (Expression)", "", plotData, curr1, curr2, undefined, highlightData, "#00e04f", "white", 5)
+        self.plot.updateScatter("Z-Score Transformed Mean Log2 (Expression)", "", plotData, curr1, curr2, undefined, highlightData, undefined, undefined, 5)
 
         //Note missingData is specific to the intersection
         //self.searchedEntries.filter(v => v.row != -1) is all missing
@@ -173,13 +173,10 @@ class LMSPanelSet {
             
             if(self.searchedTotalMatches > 0) {
                 document.getElementById("alertRedirect").style.display = "";
-            } else {
-                document.getElementById("alertRedirect").style.display = "none";
             }
-
-        
         } else {
             document.getElementById("alertMain").style.display = "none";
+            document.getElementById("alertRedirect").style.display = "none";
         }
     }
 
@@ -213,7 +210,7 @@ class LMSPanelSet {
                                 </div>
 
                                 <div id="alertRedirect" class="alert alert-info" role="alert" style="display: none;">
-                                    <a id="alertRedirectLink" href="./search.html?useSetSearch=true">View metadata</a> of all searched genes.
+                                    Scroll down to view metadata
                                 </div>
                             </div>
                             <div class="col-md-10">
