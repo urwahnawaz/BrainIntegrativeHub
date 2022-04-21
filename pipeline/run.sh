@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #Install (do this yourself in a virtual env if you want)
 pip3 install -r requirements.txt
 npm install netlify-cli -g
