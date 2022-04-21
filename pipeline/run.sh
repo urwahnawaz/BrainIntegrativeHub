@@ -1,12 +1,12 @@
 #Install (do this yourself in a virtual env if you want)
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 npm install netlify-cli -g
 
 #Login now so it will upload automatically
 netlify login
 
 #Run pipeline (CAN TAKE OVER 30 MINS)
-python main.py
+python3 main.py
 
 #Netlify project (hard-coded inside resources/js/metaPanel.js)
 publishProject="hopeful-austin-9ca901"
