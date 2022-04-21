@@ -2,4 +2,4 @@ output/
 __pycache__/
 .vscode/
 
-data
+data/FormattedData
