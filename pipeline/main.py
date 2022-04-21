@@ -64,9 +64,9 @@ def writeIntersectionPlot(inputIterators, iter):
     pyplot.savefig('./output/out.png')
 
 #View using https://ncnr.nist.gov/ncnrdata/view/nexus-hdf-viewer.html
-def writeHDF5(circIters, iter, inputObj, outFile="output/out.hdf5"):
+def writeHDF5(circIters, iter, inputObj):
     #h5py.get_config().track_order = True
-    root = h5py.File(outFile,'w')
+    root = h5py.File(inputObj["output"] + "out.hdf5",'w')
 
     longestGene = len(max(iter, key=lambda x:len(x.gene)).gene)
     longestEnsembl = len(max(iter, key=lambda x:len(x.geneId)).geneId)
@@ -177,7 +177,7 @@ if __name__ == '__main__':
                 d_id = dataset["id"]
                 custom = dataset.get("customFilter", None)
                 orders = list(filter(lambda x: d_id in x["datasets"], inputObj.get("customMetadataCategoryOrders", [])))
-                circIters.append(CircDatasetIter(d_id, dataset.get("name", ""), dataset["dir"], dataset.get("matrices", list()), dataset.get("meta", None), dataset.get("qtl", None), dataset.get("isBrain", False), dataset.get("url", ""), dataset.get("annotationAccuracy", 0), custom.get("name", "") if custom else "", custom.get("column", "") if custom else "", orders, dataset.get("variancePartition", None), dataset.get("keyIsSymbol", False)))
+                circIters.append(CircDatasetIter(d_id, dataset.get("name", ""), dataset["dir"], dataset.get("matrices", list()), dataset.get("meta", None), dataset.get("qtl", None), dataset.get("isBrain", False), dataset.get("url", ""), dataset.get("annotationAccuracy", 0), custom.get("name", "") if custom else "", custom.get("column", "") if custom else "", orders, dataset.get("variancePartition", None), dataset.get("keyIsSymbol", False), inputObj.get("output")))
         
         except yaml.YAMLError as exc:
             print(exc)
@@ -206,7 +206,7 @@ if __name__ == '__main__':
 
     print("%d circrnas written" % (len(ss)))
 
-    writeCSV("./output/outError.csv", [x for x in ss if x._error], True)
+    writeCSV(inputObj["output"] + "outError.csv", [x for x in ss if x._error], True)
 
     if len(circIters) > 1: 
         writeIntersectionPlot(circIters, ss)

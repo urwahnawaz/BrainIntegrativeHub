@@ -4,7 +4,7 @@ import numpy as np
 from array import array
 
 class AbstractMetaIter(AbstractSource):
-    def __init__(self, name, nameLong, directory, matrices, metadata, qtl, customFilterName, customFilterColumn, customMetadataCategoryOrders, variancePartition, keyIsSymbol):
+    def __init__(self, name, nameLong, directory, matrices, metadata, qtl, customFilterName, customFilterColumn, customMetadataCategoryOrders, variancePartition, keyIsSymbol, output):
         super().__init__(name, directory)
         self.matrices = matrices
         self.metadata = metadata
@@ -15,6 +15,7 @@ class AbstractMetaIter(AbstractSource):
         self.variancePartition = variancePartition
         self.keyIsSymbol = keyIsSymbol
         self.nameLong = nameLong
+        self.output = output
 
     def getKeysOrdered(self, fileName):
         heading = None
@@ -182,7 +183,7 @@ class AbstractMetaIter(AbstractSource):
         for i in range(math.ceil(float(maxSize) / datalakeMaxSize)):
             datalakeName = lakeFileName + str(i+1) + ".matrix"
             datalakeNames.append(datalakeName)
-            datalakeFiles.append(open("C:\\Users\\KW\Desktop\\ProjectsCurrent\\NeuroIntegration\\output\\" + datalakeName, 'wb'))
+            datalakeFiles.append(open(self.output + datalakeName, 'wb'))
             datalakeFiles[-1].seek((maxSize % datalakeMaxSize) if maxSize < (i+1)*datalakeMaxSize else datalakeMaxSize)
             array('f', [0] * len(sampleToIndexFiltered)).tofile(datalakeFiles[-1])
 

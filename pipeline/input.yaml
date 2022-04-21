@@ -1,3 +1,4 @@
+output: "C:/Users/KW/Desktop/ProjectsCurrent/NeuroIntegration/output/" #e.g. ./output/ BUT SSD SERIOUSLY recommended due to heavy random writes for .matrix files
 datasets:
     -   id: BrainSpan
         url: "https://www.brainspan.org/"
