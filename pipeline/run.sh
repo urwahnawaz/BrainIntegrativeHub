@@ -10,6 +10,12 @@ netlify login
 #Run pipeline (CAN TAKE OVER 30 MINS)
 python3 main.py
 
+if [ $? != 0 ]
+then
+    echo "pipeline failed, aborting publish"
+    exit 1
+fi
+
 #Netlify project (hard-coded inside resources/js/metaPanel.js)
 publishProject="hopeful-austin-9ca901"
 
