@@ -27,8 +27,14 @@ if [[ -n "$IS_WSL" || -n "$WSL_DISTRO_NAME" ]]; then
     publishDir=$(wslpath -a "$publishDir")
 fi
 
+#Remove trailing slash
+publishDir=$(realpath -s $publishDir)
+
 #Important settings so we can use partial GET requests on .matrix files
 cp -R -u -p ./data/netlify.toml "$publishDir"
+
+#Copy out.hdf5 (has trailing slash for now)
+cp -R -u -p "$publishDir/out.hdf5" ../resources/data/
 
 cd "$publishDir"
 

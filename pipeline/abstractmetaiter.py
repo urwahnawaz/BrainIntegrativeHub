@@ -53,6 +53,7 @@ class AbstractMetaIter(AbstractSource):
         lines = []
         keys = []
         numberedRowsOffset = -1
+        print("Reading file " + os.path.join(self.directory, fileName))
         for line in csv.reader(open(os.path.join(self.directory, fileName), 'r'), delimiter=','):
             if not heading:
                 heading = line[1:]
@@ -69,7 +70,11 @@ class AbstractMetaIter(AbstractSource):
             lines.append(line[numberedRowsOffset+1:])
             keys.append(line[numberedRowsOffset])
 
+        if(len(lines) == 0): raise Exception("File was empty")
+
         lines = self.reorderListByKey(keys, lines, sampleToIndexFiltered)
+
+        if(len(lines) == 0): raise Exception("File metadata/matrix keys didn't match when reordering")
 
         allTypes = [int, float, str]
         allDefaults = [0, 0.0, ""]
