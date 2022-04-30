@@ -31,8 +31,6 @@ deploy: input.yaml
 	$(eval count := $(word 3, ${helper}))
 	$(eval export NETLIFY_AUTH_TOKEN := $(or $(word 4, ${helper}),$${NETLIFY_AUTH_TOKEN}))
 
-	@echo $(NETLIFY_AUTH_TOKEN)
-
 	@if [ -z ${output} ]; then echo "error: output (i.e. output folder, ssd recommended) not defined in input.yaml"; exit 1; fi
 
 	@if [ -z ${project} ]; then echo "error: output (i.e. output folder, ssd recommended) not defined in input.yaml"; exit 1; fi
