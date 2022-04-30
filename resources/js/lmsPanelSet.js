@@ -40,10 +40,11 @@ class LMSPanelSet {
         self.update();
     }
 
-    addCustomDataset(name, scaled, meta) {
+    addCustomDataset(name, scaled, meta, index) {
         var self = this;
         self.data[name] = scaled;
         self.metas[name] = meta;
+        self.index[name] = index;
         self.resetOptions();
     }
 

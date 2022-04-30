@@ -13,8 +13,8 @@ class CustomPanel {
 
         document.getElementById(self.parentId).insertAdjacentHTML("beforeend", self._generateHTMLSingle());
 
-        self.plot1 = new Plot(self.elementId + "plot1");
-        self.controls1 = new PlotControls(self.elementId + "controls1", "Measure", "Metadata Variable", "Second Metadata Variable");
+        self.plot1 = new PlotContainer(self.elementId + "plot1");
+        self.controls1 = new PlotControls(self.elementId + "controls1", "Metadata Variable", "Second Metadata Variable");
         self._attachEvents(self.controls1, self.plot1);
     }
 
@@ -101,11 +101,9 @@ class CustomPanel {
         }
 
         if(xAxisIsString) {
-            plot.updateViolin(plotData, xAxisLabel, yAxisLabel);
-            plot.addTitles(dataset, self.currCircId);
+            plot.updateViolin(dataset, self.currCircId, plotData, xAxisLabel, yAxisLabel);
         } else {
-            plot.updateScatter(plotData, xAxisLabel, yAxisLabel);
-            plot.addTitles(dataset, self.currCircId);
+            plot.updateScatter(dataset, self.currCircId, plotData, xAxisLabel, yAxisLabel);
         }
     }
 

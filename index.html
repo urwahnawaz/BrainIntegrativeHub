@@ -30,7 +30,6 @@
     <script src="resources/js/customPanel.js"></script>
 
     <script src="resources/js/plot.js"></script>
-    <script src="resources/js/plot2.js"></script>
     <script src="resources/js/metaPanel.js"></script>
     <script src="resources/js/metaPanelDual.js"></script>
     <script src="resources/js/metaPanelCompact.js"></script>
@@ -515,7 +514,7 @@
             //TODO: symbol and ID should appear in CSV, consider writing CSV using callback
             let namesSymbolsPreferred = matrix[1].map((n, i) => n ? n : matrix[0][i]);
             for (let i = 0; i < dataOrder.length; ++i) if (isDataset[i]) lmsMeta[dataOrder[i]] = matrix[i];
-            lmsPanel = new LMSPanel("allpanels", "Gene expression across datasets", f.get("metadata"), lmsMeta,namesSymbolsPreferred);
+            lmsPanel = new LMSPanel("allpanels", "Gene expression across datasets", f.get("metadata"), lmsMeta, namesSymbolsPreferred);
             lmsSetPanel = new LMSPanelSet("searchsetplot", "", f.get("metadata"), lmsMeta, namesSymbolsPreferred);
             customPanel = new CustomPanel("allpanels", "Custom Datasets");
 
@@ -901,7 +900,11 @@
                     for (let i = 0; i < scaledData.length; ++i) scaledData[i] = (scaledData[i] - mean) / sd;
 
                     //Add to lms
+                    console.log("adding")
+                    console.log(matchedIndices.filter(v => v != -1));
+                    console.log(matchedIndicesReverse);
                     lmsPanel.addCustomDataset(name, scaledData, matchedIndices, matchedIndicesReverse);
+                    lmsSetPanel.addCustomDataset(name, scaledData, matchedIndices, matchedIndicesReverse);
 
                     let insertPoint = matrix.length;
                     dataOrder.splice(insertPoint, 0, name);
