@@ -1,10 +1,10 @@
 import h5py, sys, yaml, json, datetime, os, shutil
 
 #Grabs important pipeline metadata during makefile process
-#Copies metadata csvs and metadata.json to ../resources automatically
+#Copies metadata csvs and metadata.json to ../resources automatically but you will need to add and push
 
 #Usage: make_helper /path/to/input.yaml
-#Output Example: ./output/,hopeful-austin-9ca901,59090
+#Output Example: ./output/ hopeful-austin-9ca901 59090
 
 outDir = ""
 project = ""
@@ -27,7 +27,7 @@ with open(sys.argv[1], 'r') as stream:
     for d in data_loaded["datasets"]: 
         metaSrc = os.path.join(d["dir"], d["meta"])
         shutil.copy2(metaSrc, metaDst)
-        metaFiles.append({"name": d["id"], "path": "resources/metadata/" + d["meta"], "samples": sum(1 for line in open(metaSrc))})
+        metaFiles.append({"name": d["id"], "path": "resources/data/metadata/" + d["meta"], "samples": sum(1 for line in open(metaSrc))})
     jsonData["meta_files"] = metaFiles
 
 if(outDir):

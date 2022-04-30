@@ -2,33 +2,33 @@
   "meta_files": [
     {
       "name": "BrainSpan",
-      "path": "resources/metadata/BrainSpan-metadata.csv",
-      "samples": 525
+      "path": "resources/data/metadata/BrainSpan-metadata.csv",
+      "samples": 524
     },
     {
       "name": "GTEx",
-      "path": "resources/metadata/GTEx-metadata-subset.csv",
-      "samples": 2643
+      "path": "resources/data/metadata/GTEx-metadata-subset.csv",
+      "samples": 2642
     },
     {
       "name": "BrainSeq",
-      "path": "resources/metadata/BrainSeq-metadata-subset.csv",
-      "samples": 901
+      "path": "resources/data/metadata/BrainSeq-metadata-subset.csv",
+      "samples": 900
     },
     {
       "name": "PsychENCODE",
-      "path": "resources/metadata/PsychEncode-metadata-subset.csv",
-      "samples": 1429
+      "path": "resources/data/metadata/PsychEncode-metadata-subset.csv",
+      "samples": 1428
     },
     {
       "name": "HCA",
-      "path": "resources/metadata/HCA-metadata_fixed.csv",
-      "samples": 47195
+      "path": "resources/data/metadata/HCA-metadata_fixed.csv",
+      "samples": 47194
     },
     {
       "name": "Velmeshev",
-      "path": "resources/metadata/Velmeshev-metadata.csv",
-      "samples": 81217
+      "path": "resources/data/metadata/Velmeshev-metadata.csv",
+      "samples": 81216
     }
   ],
   "data_url": "https://hopeful-austin-9ca901.netlify.app",
