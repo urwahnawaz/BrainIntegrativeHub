@@ -1,0 +1,37 @@
+{
+  "meta_files": [
+    {
+      "name": "BrainSpan",
+      "path": "resources/metadata/BrainSpan-metadata.csv",
+      "samples": 525
+    },
+    {
+      "name": "GTEx",
+      "path": "resources/metadata/GTEx-metadata-subset.csv",
+      "samples": 2643
+    },
+    {
+      "name": "BrainSeq",
+      "path": "resources/metadata/BrainSeq-metadata-subset.csv",
+      "samples": 901
+    },
+    {
+      "name": "PsychENCODE",
+      "path": "resources/metadata/PsychEncode-metadata-subset.csv",
+      "samples": 1429
+    },
+    {
+      "name": "HCA",
+      "path": "resources/metadata/HCA-metadata_fixed.csv",
+      "samples": 47195
+    },
+    {
+      "name": "Velmeshev",
+      "path": "resources/metadata/Velmeshev-metadata.csv",
+      "samples": 81217
+    }
+  ],
+  "data_url": "https://hopeful-austin-9ca901.netlify.app",
+  "count": 59090,
+  "last_updated": "April 2022"
+}

@@ -1,0 +1,525 @@
+"","SampleID","column_num","DonorID","DonorName","Age","Sex","StructureID","StructureAcronym","Structure","Stage","Period","Regions","AgeNumeric","Diagnosis","AgeInterval","mRIN"
+"1","13058_8-pcw_Ocx_s02a",1,13058,"H376.IIA.51","8-pcw","M",10268,"Ocx","occipital neocortex","s02a","Prenatal","Cortex",-0.615384615384615,"Control","8-9pcw",0.019619971188133
+"2","13058_8-pcw_M1C-S1C_s02a",2,13058,"H376.IIA.51","8-pcw","M",10291,"M1C-S1C","primary motor-sensory cortex (samples)","s02a","Prenatal","Cortex",-0.615384615384615,"Control","8-9pcw",NA
+"3","13058_8-pcw_AMY_s02a",3,13058,"H376.IIA.51","8-pcw","M",10361,"AMY","amygdaloid complex","s02a","Prenatal","Subcortex",-0.615384615384615,"Control","8-9pcw",0.0456958275196471
+"4","13058_8-pcw_MGE_s02a",4,13058,"H376.IIA.51","8-pcw","M",10550,"MGE","medial ganglionic eminence","s02a","Prenatal","Subcortex",-0.615384615384615,"Control","8-9pcw",0.0110416818440524
+"5","13058_8-pcw_STC_s02a",5,13058,"H376.IIA.51","8-pcw","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s02a","Prenatal","Cortex",-0.615384615384615,"Control","8-9pcw",0.0262238582202111
+"6","13058_8-pcw_URL_s02a",6,13058,"H376.IIA.51","8-pcw","M",10665,"URL","upper (rostral) rhombic lip","s02a","Prenatal","Cerebellum",-0.615384615384615,"Control","8-9pcw",0.0384688218146981
+"7","13058_8-pcw_CGE_s02a",7,13058,"H376.IIA.51","8-pcw","M",10552,"CGE","caudal ganglionic eminence","s02a","Prenatal","Subcortex",-0.615384615384615,"Control","8-9pcw",0.0293682642826614
+"8","13058_8-pcw_DTH_s02a",8,13058,"H376.IIA.51","8-pcw","M",10391,"DTH","dorsal thalamus","s02a","Prenatal","Subcortex",-0.615384615384615,"Control","8-9pcw",0.0340106066392481
+"9","13058_8-pcw_MFC_s02a",9,13058,"H376.IIA.51","8-pcw","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s02a","Prenatal","Cortex",-0.615384615384615,"Control","8-9pcw",0.0411743685193164
+"10","13058_8-pcw_DFC_s02a",10,13058,"H376.IIA.51","8-pcw","M",10173,"DFC","dorsolateral prefrontal cortex","s02a","Prenatal","Cortex",-0.615384615384615,"Control","8-9pcw",0.011021345314319
+"11","13058_8-pcw_OFC_s02a",11,13058,"H376.IIA.51","8-pcw","M",10194,"OFC","orbital frontal cortex","s02a","Prenatal","Cortex",-0.615384615384615,"Control","8-9pcw",0.020228758325137
+"12","13058_8-pcw_LGE_s02a",12,13058,"H376.IIA.51","8-pcw","M",10551,"LGE","lateral ganglionic eminence","s02a","Prenatal","Subcortex",-0.615384615384615,"Control","8-9pcw",0.0258504847637684
+"13","13058_8-pcw_ITC_s02a",13,13058,"H376.IIA.51","8-pcw","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s02a","Prenatal","Cortex",-0.615384615384615,"Control","8-9pcw",0.0203562053043837
+"14","13058_8-pcw_HIP_s02a",14,13058,"H376.IIA.51","8-pcw","M",10294,"HIP","hippocampus (hippocampal formation)","s02a","Prenatal","Subcortex",-0.615384615384615,"Control","8-9pcw",0.0269307496507404
+"15","13058_8-pcw_VFC_s02a",15,13058,"H376.IIA.51","8-pcw","M",10185,"VFC","ventrolateral prefrontal cortex","s02a","Prenatal","Cortex",-0.615384615384615,"Control","8-9pcw",0.0373322426345608
+"16","13058_8-pcw_PCx_s02a",16,13058,"H376.IIA.51","8-pcw","M",10208,"PCx","parietal neocortex","s02a","Prenatal","Cortex",-0.615384615384615,"Control","8-9pcw",0.0350557453346429
+"17","12833_9-pcw_DFC_s02a",17,12833,"H376.IIA.50","9-pcw","M",10173,"DFC","dorsolateral prefrontal cortex","s02a","Prenatal","Cortex",-0.596153846153846,"Control","8-9pcw",0.0637327250878428
+"18","12833_9-pcw_MFC_s02a",18,12833,"H376.IIA.50","9-pcw","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s02a","Prenatal","Cortex",-0.596153846153846,"Control","8-9pcw",0.0569342110244988
+"19","12833_9-pcw_AMY_s02a",19,12833,"H376.IIA.50","9-pcw","M",10361,"AMY","amygdaloid complex","s02a","Prenatal","Subcortex",-0.596153846153846,"Control","8-9pcw",0.063342253725108
+"20","12833_9-pcw_DTH_s02a",20,12833,"H376.IIA.50","9-pcw","M",10391,"DTH","dorsal thalamus","s02a","Prenatal","Subcortex",-0.596153846153846,"Control","8-9pcw",0.0544460473714615
+"21","12833_9-pcw_URL_s02a",21,12833,"H376.IIA.50","9-pcw","M",10665,"URL","upper (rostral) rhombic lip","s02a","Prenatal","Cerebellum",-0.596153846153846,"Control","8-9pcw",0.0423499902134023
+"22","12833_9-pcw_LGE_s02a",22,12833,"H376.IIA.50","9-pcw","M",10551,"LGE","lateral ganglionic eminence","s02a","Prenatal","Subcortex",-0.596153846153846,"Control","8-9pcw",0.0495150724331927
+"23","12833_9-pcw_M1C-S1C_s02a",23,12833,"H376.IIA.50","9-pcw","M",10291,"M1C-S1C","primary motor-sensory cortex (samples)","s02a","Prenatal","Cortex",-0.596153846153846,"Control","8-9pcw",NA
+"24","12833_9-pcw_MGE_s02a",24,12833,"H376.IIA.50","9-pcw","M",10550,"MGE","medial ganglionic eminence","s02a","Prenatal","Subcortex",-0.596153846153846,"Control","8-9pcw",0.0358146639412417
+"25","12833_9-pcw_TCx_s02a",25,12833,"H376.IIA.50","9-pcw","M",10235,"TCx","temporal neocortex","s02a","Prenatal","Cortex",-0.596153846153846,"Control","8-9pcw",0.0387267486103392
+"26","12833_9-pcw_HIP_s02a",26,12833,"H376.IIA.50","9-pcw","M",10294,"HIP","hippocampus (hippocampal formation)","s02a","Prenatal","Subcortex",-0.596153846153846,"Control","8-9pcw",0.0615187640898442
+"27","12833_9-pcw_Ocx_s02a",27,12833,"H376.IIA.50","9-pcw","M",10268,"Ocx","occipital neocortex","s02a","Prenatal","Cortex",-0.596153846153846,"Control","8-9pcw",0.0481610411666203
+"28","12833_9-pcw_CGE_s02a",28,12833,"H376.IIA.50","9-pcw","M",10552,"CGE","caudal ganglionic eminence","s02a","Prenatal","Subcortex",-0.596153846153846,"Control","8-9pcw",0.0693363071791154
+"29","12833_9-pcw_OFC_s02a",29,12833,"H376.IIA.50","9-pcw","M",10194,"OFC","orbital frontal cortex","s02a","Prenatal","Cortex",-0.596153846153846,"Control","8-9pcw",0.0673975333333331
+"30","12833_9-pcw_PCx_s02a",30,12833,"H376.IIA.50","9-pcw","M",10208,"PCx","parietal neocortex","s02a","Prenatal","Cortex",-0.596153846153846,"Control","8-9pcw",0.0452284626181213
+"31","12835_12-pcw_HIP_s02b",31,12835,"H376.IIB.50","12-pcw","F",10294,"HIP","hippocampus (hippocampal formation)","s02b","Prenatal","Subcortex",-0.538461538461538,"Control","10-12pcw",0.00402569775967414
+"32","12835_12-pcw_DTH_s02b",32,12835,"H376.IIB.50","12-pcw","F",10391,"DTH","dorsal thalamus","s02b","Prenatal","Subcortex",-0.538461538461538,"Control","10-12pcw",NA
+"33","12835_12-pcw_AMY_s02b",33,12835,"H376.IIB.50","12-pcw","F",10361,"AMY","amygdaloid complex","s02b","Prenatal","Subcortex",-0.538461538461538,"Control","10-12pcw",0.0103630914752283
+"34","12835_12-pcw_A1C_s02b",34,12835,"H376.IIB.50","12-pcw","F",10236,"A1C","primary auditory cortex (core)","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0337151429372197
+"35","12835_12-pcw_V1C_s02b",35,12835,"H376.IIB.50","12-pcw","F",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0378323033229196
+"36","12835_12-pcw_MFC_s02b",36,12835,"H376.IIB.50","12-pcw","F",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0455373360364206
+"37","12835_12-pcw_STR_s02b",37,12835,"H376.IIB.50","12-pcw","F",10333,"STR","striatum","s02b","Prenatal","Subcortex",-0.538461538461538,"Control","10-12pcw",-0.0462676992265826
+"38","12835_12-pcw_M1C_s02b",38,12835,"H376.IIB.50","12-pcw","F",10163,"M1C","primary motor cortex (area M1, area 4)","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0515858035865575
+"39","12835_12-pcw_DFC_s02b",39,12835,"H376.IIB.50","12-pcw","F",10173,"DFC","dorsolateral prefrontal cortex","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0427508329590119
+"40","12835_12-pcw_ITC_s02b",40,12835,"H376.IIB.50","12-pcw","F",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0319267055417701
+"41","12835_12-pcw_VFC_s02b",41,12835,"H376.IIB.50","12-pcw","F",10185,"VFC","ventrolateral prefrontal cortex","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0461943491190977
+"42","12835_12-pcw_STC_s02b",42,12835,"H376.IIB.50","12-pcw","F",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0458599060640406
+"43","12835_12-pcw_IPC_s02b",43,12835,"H376.IIB.50","12-pcw","F",10225,"IPC","posteroventral (inferior) parietal cortex","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0407730750495612
+"44","12835_12-pcw_OFC_s02b",44,12835,"H376.IIB.50","12-pcw","F",10194,"OFC","orbital frontal cortex","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0454798926553673
+"45","12835_12-pcw_S1C_s02b",45,12835,"H376.IIB.50","12-pcw","F",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0399364689596117
+"46","12960_12-pcw_STC_s02b",46,12960,"H376.IIB.51","12-pcw","F",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0705803934568617
+"47","12960_12-pcw_V1C_s02b",47,12960,"H376.IIB.51","12-pcw","F",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0400149260950206
+"48","12960_12-pcw_A1C_s02b",48,12960,"H376.IIB.51","12-pcw","F",10236,"A1C","primary auditory cortex (core)","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0358683405065144
+"49","12960_12-pcw_CB_s02b",49,12960,"H376.IIB.51","12-pcw","F",10656,"CB","cerebellum","s02b","Prenatal","Cerebellum",-0.538461538461538,"Control","10-12pcw",0.0045933852380299
+"50","12960_12-pcw_ITC_s02b",50,12960,"H376.IIB.51","12-pcw","F",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.046846641433112
+"51","12960_12-pcw_IPC_s02b",51,12960,"H376.IIB.51","12-pcw","F",10225,"IPC","posteroventral (inferior) parietal cortex","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0430763452921367
+"52","12960_12-pcw_S1C_s02b",52,12960,"H376.IIB.51","12-pcw","F",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0487450577289378
+"53","12960_12-pcw_DTH_s02b",53,12960,"H376.IIB.51","12-pcw","F",10391,"DTH","dorsal thalamus","s02b","Prenatal","Subcortex",-0.538461538461538,"Control","10-12pcw",0.0397625137693631
+"54","12960_12-pcw_HIP_s02b",54,12960,"H376.IIB.51","12-pcw","F",10294,"HIP","hippocampus (hippocampal formation)","s02b","Prenatal","Subcortex",-0.538461538461538,"Control","10-12pcw",0.0362579133598792
+"55","12960_12-pcw_DFC_s02b",55,12960,"H376.IIB.51","12-pcw","F",10173,"DFC","dorsolateral prefrontal cortex","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.041264405448718
+"56","12960_12-pcw_OFC_s02b",56,12960,"H376.IIB.51","12-pcw","F",10194,"OFC","orbital frontal cortex","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0537500322394934
+"57","12960_12-pcw_M1C_s02b",57,12960,"H376.IIB.51","12-pcw","F",10163,"M1C","primary motor cortex (area M1, area 4)","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0676089469785008
+"58","12960_12-pcw_VFC_s02b",58,12960,"H376.IIB.51","12-pcw","F",10185,"VFC","ventrolateral prefrontal cortex","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0584529782096585
+"59","12960_12-pcw_AMY_s02b",59,12960,"H376.IIB.51","12-pcw","F",10361,"AMY","amygdaloid complex","s02b","Prenatal","Subcortex",-0.538461538461538,"Control","10-12pcw",0.0149116333288099
+"60","12960_12-pcw_STR_s02b",60,12960,"H376.IIB.51","12-pcw","F",10333,"STR","striatum","s02b","Prenatal","Subcortex",-0.538461538461538,"Control","10-12pcw",0.0394890694503622
+"61","13060_12-pcw_AMY_s02b",61,13060,"H376.IIB.52","12-pcw","F",10361,"AMY","amygdaloid complex","s02b","Prenatal","Subcortex",-0.538461538461538,"Control","10-12pcw",NA
+"62","13060_12-pcw_M1C_s02b",62,13060,"H376.IIB.52","12-pcw","F",10163,"M1C","primary motor cortex (area M1, area 4)","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0099925269008448
+"63","13060_12-pcw_ITC_s02b",63,13060,"H376.IIB.52","12-pcw","F",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.00876356403109873
+"64","13060_12-pcw_VFC_s02b",64,13060,"H376.IIB.52","12-pcw","F",10185,"VFC","ventrolateral prefrontal cortex","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0201555336895221
+"65","13060_12-pcw_STR_s02b",65,13060,"H376.IIB.52","12-pcw","F",10333,"STR","striatum","s02b","Prenatal","Subcortex",-0.538461538461538,"Control","10-12pcw",NA
+"66","13060_12-pcw_CBC_s02b",66,13060,"H376.IIB.52","12-pcw","F",10657,"CBC","cerebellar cortex","s02b","Prenatal","Cerebellum",-0.538461538461538,"Control","10-12pcw",NA
+"67","13060_12-pcw_DTH_s02b",67,13060,"H376.IIB.52","12-pcw","F",10391,"DTH","dorsal thalamus","s02b","Prenatal","Subcortex",-0.538461538461538,"Control","10-12pcw",NA
+"68","13060_12-pcw_DFC_s02b",68,13060,"H376.IIB.52","12-pcw","F",10173,"DFC","dorsolateral prefrontal cortex","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.00592125308823531
+"69","13060_12-pcw_OFC_s02b",69,13060,"H376.IIB.52","12-pcw","F",10194,"OFC","orbital frontal cortex","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0111489519357195
+"70","13060_12-pcw_S1C_s02b",70,13060,"H376.IIB.52","12-pcw","F",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0260699248054047
+"71","13060_12-pcw_V1C_s02b",71,13060,"H376.IIB.52","12-pcw","F",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",NA
+"72","13060_12-pcw_MFC_s02b",72,13060,"H376.IIB.52","12-pcw","F",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.0166524240092901
+"73","13060_12-pcw_HIP_s02b",73,13060,"H376.IIB.52","12-pcw","F",10294,"HIP","hippocampus (hippocampal formation)","s02b","Prenatal","Subcortex",-0.538461538461538,"Control","10-12pcw",-0.00183462066115703
+"74","13060_12-pcw_IPC_s02b",74,13060,"H376.IIB.52","12-pcw","F",10225,"IPC","posteroventral (inferior) parietal cortex","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.00570096522002117
+"75","13060_12-pcw_A1C_s02b",75,13060,"H376.IIB.52","12-pcw","F",10236,"A1C","primary auditory cortex (core)","s02b","Prenatal","Cortex",-0.538461538461538,"Control","10-12pcw",0.00954781768036
+"76","12820_13-pcw_STR_s03a",76,12820,"H376.IIIA.50","13-pcw","M",10333,"STR","striatum","s03a","Prenatal","Subcortex",-0.519230769230769,"Control","13-15pcw",0.029176918922652
+"77","12820_13-pcw_M1C_s03a",77,12820,"H376.IIIA.50","13-pcw","M",10163,"M1C","primary motor cortex (area M1, area 4)","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0311966437047757
+"78","12820_13-pcw_AMY_s03a",78,12820,"H376.IIIA.50","13-pcw","M",10361,"AMY","amygdaloid complex","s03a","Prenatal","Subcortex",-0.519230769230769,"Control","13-15pcw",0.0403920837718084
+"79","12820_13-pcw_S1C_s03a",79,12820,"H376.IIIA.50","13-pcw","M",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.041080163372093
+"80","12820_13-pcw_V1C_s03a",80,12820,"H376.IIIA.50","13-pcw","M",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0438155562714777
+"81","12820_13-pcw_A1C_s03a",81,12820,"H376.IIIA.50","13-pcw","M",10236,"A1C","primary auditory cortex (core)","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0446143459119496
+"82","12820_13-pcw_HIP_s03a",82,12820,"H376.IIIA.50","13-pcw","M",10294,"HIP","hippocampus (hippocampal formation)","s03a","Prenatal","Subcortex",-0.519230769230769,"Control","13-15pcw",0.0413343827876779
+"83","12820_13-pcw_VFC_s03a",83,12820,"H376.IIIA.50","13-pcw","M",10185,"VFC","ventrolateral prefrontal cortex","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0428959745958431
+"84","12820_13-pcw_MFC_s03a",84,12820,"H376.IIIA.50","13-pcw","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0462577636707387
+"85","12820_13-pcw_STC_s03a",85,12820,"H376.IIIA.50","13-pcw","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0485872650211566
+"86","12820_13-pcw_OFC_s03a",86,12820,"H376.IIIA.50","13-pcw","M",10194,"OFC","orbital frontal cortex","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0325725116410329
+"87","12820_13-pcw_IPC_s03a",87,12820,"H376.IIIA.50","13-pcw","M",10225,"IPC","posteroventral (inferior) parietal cortex","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0372698654624277
+"88","12820_13-pcw_DFC_s03a",88,12820,"H376.IIIA.50","13-pcw","M",10173,"DFC","dorsolateral prefrontal cortex","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0353673890804596
+"89","12820_13-pcw_ITC_s03a",89,12820,"H376.IIIA.50","13-pcw","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0445484635031402
+"90","12834_13-pcw_STR_s03a",90,12834,"H376.IIIA.51","13-pcw","F",10333,"STR","striatum","s03a","Prenatal","Subcortex",-0.519230769230769,"Control","13-15pcw",0.0774135739661396
+"91","12834_13-pcw_S1C_s03a",91,12834,"H376.IIIA.51","13-pcw","F",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0633361527373326
+"92","12834_13-pcw_V1C_s03a",92,12834,"H376.IIIA.51","13-pcw","F",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.063296277517398
+"93","12834_13-pcw_AMY_s03a",93,12834,"H376.IIIA.51","13-pcw","F",10361,"AMY","amygdaloid complex","s03a","Prenatal","Subcortex",-0.519230769230769,"Control","13-15pcw",0.067472508158825
+"94","12834_13-pcw_IPC_s03a",94,12834,"H376.IIIA.51","13-pcw","F",10225,"IPC","posteroventral (inferior) parietal cortex","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0786123493870408
+"95","12834_13-pcw_CB_s03a",95,12834,"H376.IIIA.51","13-pcw","F",10656,"CB","cerebellum","s03a","Prenatal","Cerebellum",-0.519230769230769,"Control","13-15pcw",0.0688884846834583
+"96","12834_13-pcw_DFC_s03a",96,12834,"H376.IIIA.51","13-pcw","F",10173,"DFC","dorsolateral prefrontal cortex","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.059742072213501
+"97","12834_13-pcw_OFC_s03a",97,12834,"H376.IIIA.51","13-pcw","F",10194,"OFC","orbital frontal cortex","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0582544383307131
+"98","12834_13-pcw_STC_s03a",98,12834,"H376.IIIA.51","13-pcw","F",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0502357627562148
+"99","12834_13-pcw_A1C_s03a",99,12834,"H376.IIIA.51","13-pcw","F",10236,"A1C","primary auditory cortex (core)","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0654457315767228
+"100","12834_13-pcw_HIP_s03a",100,12834,"H376.IIIA.51","13-pcw","F",10294,"HIP","hippocampus (hippocampal formation)","s03a","Prenatal","Subcortex",-0.519230769230769,"Control","13-15pcw",0.0602327527129683
+"101","12834_13-pcw_M1C_s03a",101,12834,"H376.IIIA.51","13-pcw","F",10163,"M1C","primary motor cortex (area M1, area 4)","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0664333130295064
+"102","12834_13-pcw_ITC_s03a",102,12834,"H376.IIIA.51","13-pcw","F",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0734802978201241
+"103","12834_13-pcw_MD_s03a",103,12834,"H376.IIIA.51","13-pcw","F",10398,"MD","mediodorsal nucleus of thalamus","s03a","Prenatal","Subcortex",-0.519230769230769,"Control","13-15pcw",0.0752569245986242
+"104","12834_13-pcw_MFC_s03a",104,12834,"H376.IIIA.51","13-pcw","F",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0580308540990546
+"105","12834_13-pcw_VFC_s03a",105,12834,"H376.IIIA.51","13-pcw","F",10185,"VFC","ventrolateral prefrontal cortex","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0802512353284672
+"106","12888_13-pcw_S1C_s03a",106,12888,"H376.IIIA.52","13-pcw","M",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0276714665256158
+"107","12888_13-pcw_DFC_s03a",107,12888,"H376.IIIA.52","13-pcw","M",10173,"DFC","dorsolateral prefrontal cortex","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",-0.00758492381241459
+"108","12888_13-pcw_CB_s03a",108,12888,"H376.IIIA.52","13-pcw","M",10656,"CB","cerebellum","s03a","Prenatal","Cerebellum",-0.519230769230769,"Control","13-15pcw",0.0285838334024609
+"109","12888_13-pcw_AMY_s03a",109,12888,"H376.IIIA.52","13-pcw","M",10361,"AMY","amygdaloid complex","s03a","Prenatal","Subcortex",-0.519230769230769,"Control","13-15pcw",0.021998712458287
+"110","12888_13-pcw_ITC_s03a",110,12888,"H376.IIIA.52","13-pcw","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0283888517459362
+"111","12888_13-pcw_HIP_s03a",111,12888,"H376.IIIA.52","13-pcw","M",10294,"HIP","hippocampus (hippocampal formation)","s03a","Prenatal","Subcortex",-0.519230769230769,"Control","13-15pcw",0.00196677910199557
+"112","12888_13-pcw_IPC_s03a",112,12888,"H376.IIIA.52","13-pcw","M",10225,"IPC","posteroventral (inferior) parietal cortex","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0570025591623036
+"113","12888_13-pcw_A1C_s03a",113,12888,"H376.IIIA.52","13-pcw","M",10236,"A1C","primary auditory cortex (core)","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.044827142173002
+"114","12888_13-pcw_VFC_s03a",114,12888,"H376.IIIA.52","13-pcw","M",10185,"VFC","ventrolateral prefrontal cortex","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0245559539787595
+"115","12888_13-pcw_STR_s03a",115,12888,"H376.IIIA.52","13-pcw","M",10333,"STR","striatum","s03a","Prenatal","Subcortex",-0.519230769230769,"Control","13-15pcw",0.00099881732091035
+"116","12888_13-pcw_OFC_s03a",116,12888,"H376.IIIA.52","13-pcw","M",10194,"OFC","orbital frontal cortex","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0234622167436317
+"117","12888_13-pcw_MFC_s03a",117,12888,"H376.IIIA.52","13-pcw","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0102576973451327
+"118","12888_13-pcw_V1C_s03a",118,12888,"H376.IIIA.52","13-pcw","M",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0123330460087083
+"119","12888_13-pcw_M1C_s03a",119,12888,"H376.IIIA.52","13-pcw","M",10163,"M1C","primary motor cortex (area M1, area 4)","s03a","Prenatal","Cortex",-0.519230769230769,"Control","13-15pcw",0.0456806872094767
+"120","12287_16-pcw_VFC_s03b",120,12287,"H376.IIIB.50","16-pcw","M",10185,"VFC","ventrolateral prefrontal cortex","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0432151860110805
+"121","12287_16-pcw_OFC_s03b",121,12287,"H376.IIIB.50","16-pcw","M",10194,"OFC","orbital frontal cortex","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",NA
+"122","12287_16-pcw_STC_s03b",122,12287,"H376.IIIB.50","16-pcw","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0382612430631121
+"123","12287_16-pcw_DFC_s03b",123,12287,"H376.IIIB.50","16-pcw","M",10173,"DFC","dorsolateral prefrontal cortex","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0324061841488629
+"124","12287_16-pcw_IPC_s03b",124,12287,"H376.IIIB.50","16-pcw","M",10225,"IPC","posteroventral (inferior) parietal cortex","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.036271398637375
+"125","12287_16-pcw_A1C_s03b",125,12287,"H376.IIIB.50","16-pcw","M",10236,"A1C","primary auditory cortex (core)","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0520072053167419
+"126","12287_16-pcw_MFC_s03b",126,12287,"H376.IIIB.50","16-pcw","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0403525416435315
+"127","12287_16-pcw_STR_s03b",127,12287,"H376.IIIB.50","16-pcw","M",10333,"STR","striatum","s03b","Prenatal","Subcortex",-0.461538461538462,"Control","16-18pcw",0.0362135094988988
+"128","12287_16-pcw_MD_s03b",128,12287,"H376.IIIB.50","16-pcw","M",10398,"MD","mediodorsal nucleus of thalamus","s03b","Prenatal","Subcortex",-0.461538461538462,"Control","16-18pcw",0.0133538725724927
+"129","12287_16-pcw_V1C_s03b",129,12287,"H376.IIIB.50","16-pcw","M",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0535080905522847
+"130","12837_16-pcw_VFC_s03b",130,12837,"H376.IIIB.51","16-pcw","M",10185,"VFC","ventrolateral prefrontal cortex","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0314061362037428
+"131","12837_16-pcw_STC_s03b",131,12837,"H376.IIIB.51","16-pcw","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0346941393796078
+"132","12837_16-pcw_IPC_s03b",132,12837,"H376.IIIB.51","16-pcw","M",10225,"IPC","posteroventral (inferior) parietal cortex","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0171137331076315
+"133","12837_16-pcw_A1C_s03b",133,12837,"H376.IIIB.51","16-pcw","M",10236,"A1C","primary auditory cortex (core)","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0210589046888083
+"134","12837_16-pcw_MD_s03b",134,12837,"H376.IIIB.51","16-pcw","M",10398,"MD","mediodorsal nucleus of thalamus","s03b","Prenatal","Subcortex",-0.461538461538462,"Control","16-18pcw",0.0409093922450126
+"135","12837_16-pcw_AMY_s03b",135,12837,"H376.IIIB.51","16-pcw","M",10361,"AMY","amygdaloid complex","s03b","Prenatal","Subcortex",-0.461538461538462,"Control","16-18pcw",-0.0828734841313271
+"136","12837_16-pcw_V1C_s03b",136,12837,"H376.IIIB.51","16-pcw","M",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0303343049979234
+"137","12837_16-pcw_ITC_s03b",137,12837,"H376.IIIB.51","16-pcw","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0455233310505413
+"138","12837_16-pcw_CBC_s03b",138,12837,"H376.IIIB.51","16-pcw","M",10657,"CBC","cerebellar cortex","s03b","Prenatal","Cerebellum",-0.461538461538462,"Control","16-18pcw",0.0475618131765334
+"139","12837_16-pcw_HIP_s03b",139,12837,"H376.IIIB.51","16-pcw","M",10294,"HIP","hippocampus (hippocampal formation)","s03b","Prenatal","Subcortex",-0.461538461538462,"Control","16-18pcw",0.0213796630507566
+"140","12837_16-pcw_STR_s03b",140,12837,"H376.IIIB.51","16-pcw","M",10333,"STR","striatum","s03b","Prenatal","Subcortex",-0.461538461538462,"Control","16-18pcw",0.0298436142469472
+"141","12837_16-pcw_OFC_s03b",141,12837,"H376.IIIB.51","16-pcw","M",10194,"OFC","orbital frontal cortex","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0360208183197682
+"142","12837_16-pcw_DFC_s03b",142,12837,"H376.IIIB.51","16-pcw","M",10173,"DFC","dorsolateral prefrontal cortex","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0601372449603779
+"143","12837_16-pcw_M1C_s03b",143,12837,"H376.IIIB.51","16-pcw","M",10163,"M1C","primary motor cortex (area M1, area 4)","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.00573211368450784
+"144","12837_16-pcw_MFC_s03b",144,12837,"H376.IIIB.51","16-pcw","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0397909934658697
+"145","12837_16-pcw_S1C_s03b",145,12837,"H376.IIIB.51","16-pcw","M",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0113564303673698
+"146","12879_16-pcw_HIP_s03b",146,12879,"H376.IIIB.52","16-pcw","M",10294,"HIP","hippocampus (hippocampal formation)","s03b","Prenatal","Subcortex",-0.461538461538462,"Control","16-18pcw",0.0362837866740546
+"147","12879_16-pcw_ITC_s03b",147,12879,"H376.IIIB.52","16-pcw","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0382182769316754
+"148","12879_16-pcw_DFC_s03b",148,12879,"H376.IIIB.52","16-pcw","M",10173,"DFC","dorsolateral prefrontal cortex","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0329906040897473
+"149","12879_16-pcw_IPC_s03b",149,12879,"H376.IIIB.52","16-pcw","M",10225,"IPC","posteroventral (inferior) parietal cortex","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0656368531546621
+"150","12879_16-pcw_STC_s03b",150,12879,"H376.IIIB.52","16-pcw","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.020546237802378
+"151","12879_16-pcw_V1C_s03b",151,12879,"H376.IIIB.52","16-pcw","M",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0349635717673315
+"152","12879_16-pcw_MD_s03b",152,12879,"H376.IIIB.52","16-pcw","M",10398,"MD","mediodorsal nucleus of thalamus","s03b","Prenatal","Subcortex",-0.461538461538462,"Control","16-18pcw",0.0167563261329945
+"153","12879_16-pcw_STR_s03b",153,12879,"H376.IIIB.52","16-pcw","M",10333,"STR","striatum","s03b","Prenatal","Subcortex",-0.461538461538462,"Control","16-18pcw",0.017044202065498
+"154","12879_16-pcw_M1C-S1C_s03b",154,12879,"H376.IIIB.52","16-pcw","M",10291,"M1C-S1C","primary motor-sensory cortex (samples)","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",NA
+"155","12879_16-pcw_A1C_s03b",155,12879,"H376.IIIB.52","16-pcw","M",10236,"A1C","primary auditory cortex (core)","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0225873261052043
+"156","12879_16-pcw_VFC_s03b",156,12879,"H376.IIIB.52","16-pcw","M",10185,"VFC","ventrolateral prefrontal cortex","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.0392895425841297
+"157","12879_16-pcw_AMY_s03b",157,12879,"H376.IIIB.52","16-pcw","M",10361,"AMY","amygdaloid complex","s03b","Prenatal","Subcortex",-0.461538461538462,"Control","16-18pcw",0.00576053880117743
+"158","12879_16-pcw_MFC_s03b",158,12879,"H376.IIIB.52","16-pcw","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s03b","Prenatal","Cortex",-0.461538461538462,"Control","16-18pcw",0.00762139764043435
+"159","12880_17-pcw_STR_s03b",159,12880,"H376.IIIB.53","17-pcw","F",10333,"STR","striatum","s03b","Prenatal","Subcortex",-0.442307692307692,"Control","16-18pcw",-0.0399324261149921
+"160","12880_17-pcw_STC_s03b",160,12880,"H376.IIIB.53","17-pcw","F",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s03b","Prenatal","Cortex",-0.442307692307692,"Control","16-18pcw",0.0110010742253521
+"161","12880_17-pcw_MD_s03b",161,12880,"H376.IIIB.53","17-pcw","F",10398,"MD","mediodorsal nucleus of thalamus","s03b","Prenatal","Subcortex",-0.442307692307692,"Control","16-18pcw",-0.0472870557212582
+"162","12880_17-pcw_A1C_s03b",162,12880,"H376.IIIB.53","17-pcw","F",10236,"A1C","primary auditory cortex (core)","s03b","Prenatal","Cortex",-0.442307692307692,"Control","16-18pcw",-0.00781791036218711
+"163","12880_17-pcw_HIP_s03b",163,12880,"H376.IIIB.53","17-pcw","F",10294,"HIP","hippocampus (hippocampal formation)","s03b","Prenatal","Subcortex",-0.442307692307692,"Control","16-18pcw",0.00975458429221302
+"164","12880_17-pcw_DFC_s03b",164,12880,"H376.IIIB.53","17-pcw","F",10173,"DFC","dorsolateral prefrontal cortex","s03b","Prenatal","Cortex",-0.442307692307692,"Control","16-18pcw",0.0264342221757322
+"165","12880_17-pcw_VFC_s03b",165,12880,"H376.IIIB.53","17-pcw","F",10185,"VFC","ventrolateral prefrontal cortex","s03b","Prenatal","Cortex",-0.442307692307692,"Control","16-18pcw",0.0387314522379911
+"166","12880_17-pcw_IPC_s03b",166,12880,"H376.IIIB.53","17-pcw","F",10225,"IPC","posteroventral (inferior) parietal cortex","s03b","Prenatal","Cortex",-0.442307692307692,"Control","16-18pcw",-0.000362348965712665
+"167","12880_17-pcw_M1C-S1C_s03b",167,12880,"H376.IIIB.53","17-pcw","F",10291,"M1C-S1C","primary motor-sensory cortex (samples)","s03b","Prenatal","Cortex",-0.442307692307692,"Control","16-18pcw",NA
+"168","12880_17-pcw_V1C_s03b",168,12880,"H376.IIIB.53","17-pcw","F",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s03b","Prenatal","Cortex",-0.442307692307692,"Control","16-18pcw",0.0504852682183431
+"169","12880_17-pcw_CBC_s03b",169,12880,"H376.IIIB.53","17-pcw","F",10657,"CBC","cerebellar cortex","s03b","Prenatal","Cerebellum",-0.442307692307692,"Control","16-18pcw",-0.00855968756627785
+"170","12880_17-pcw_OFC_s03b",170,12880,"H376.IIIB.53","17-pcw","F",10194,"OFC","orbital frontal cortex","s03b","Prenatal","Cortex",-0.442307692307692,"Control","16-18pcw",-0.0156056160812294
+"171","12880_17-pcw_AMY_s03b",171,12880,"H376.IIIB.53","17-pcw","F",10361,"AMY","amygdaloid complex","s03b","Prenatal","Subcortex",-0.442307692307692,"Control","16-18pcw",-0.00249390646698435
+"172","12880_17-pcw_MFC_s03b",172,12880,"H376.IIIB.53","17-pcw","F",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s03b","Prenatal","Cortex",-0.442307692307692,"Control","16-18pcw",0.00401800663900416
+"173","12885_19-pcw_STC_s04",173,12885,"H376.IV.53","19-pcw","F",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s04","Prenatal","Cortex",-0.403846153846154,"Control","19-24pcw",-0.0489183187382976
+"174","12885_19-pcw_IPC_s04",174,12885,"H376.IV.53","19-pcw","F",10225,"IPC","posteroventral (inferior) parietal cortex","s04","Prenatal","Cortex",-0.403846153846154,"Control","19-24pcw",-0.146165275528701
+"175","12885_19-pcw_M1C-S1C_s04",175,12885,"H376.IV.53","19-pcw","F",10291,"M1C-S1C","primary motor-sensory cortex (samples)","s04","Prenatal","Cortex",-0.403846153846154,"Control","19-24pcw",NA
+"176","12885_19-pcw_MFC_s04",176,12885,"H376.IV.53","19-pcw","F",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s04","Prenatal","Cortex",-0.403846153846154,"Control","19-24pcw",-0.058474282763338
+"177","12885_19-pcw_V1C_s04",177,12885,"H376.IV.53","19-pcw","F",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s04","Prenatal","Cortex",-0.403846153846154,"Control","19-24pcw",-0.133015559760037
+"178","12885_19-pcw_HIP_s04",178,12885,"H376.IV.53","19-pcw","F",10294,"HIP","hippocampus (hippocampal formation)","s04","Prenatal","Subcortex",-0.403846153846154,"Control","19-24pcw",-0.0308546201013064
+"179","12885_19-pcw_A1C_s04",179,12885,"H376.IV.53","19-pcw","F",10236,"A1C","primary auditory cortex (core)","s04","Prenatal","Cortex",-0.403846153846154,"Control","19-24pcw",-0.0559939480144405
+"180","12885_19-pcw_MD_s04",180,12885,"H376.IV.53","19-pcw","F",10398,"MD","mediodorsal nucleus of thalamus","s04","Prenatal","Subcortex",-0.403846153846154,"Control","19-24pcw",-0.0658687316833078
+"181","12885_19-pcw_VFC_s04",181,12885,"H376.IV.53","19-pcw","F",10185,"VFC","ventrolateral prefrontal cortex","s04","Prenatal","Cortex",-0.403846153846154,"Control","19-24pcw",0.00948986163787048
+"182","12885_19-pcw_STR_s04",182,12885,"H376.IV.53","19-pcw","F",10333,"STR","striatum","s04","Prenatal","Subcortex",-0.403846153846154,"Control","19-24pcw",-0.0261387713550833
+"183","12885_19-pcw_DFC_s04",183,12885,"H376.IV.53","19-pcw","F",10173,"DFC","dorsolateral prefrontal cortex","s04","Prenatal","Cortex",-0.403846153846154,"Control","19-24pcw",-0.0237566790368272
+"184","12365_21-pcw_CBC_s04",184,12365,"H376.IV.51","21-pcw","F",10657,"CBC","cerebellar cortex","s04","Prenatal","Cerebellum",-0.365384615384615,"Control","19-24pcw",-0.00407170116184813
+"185","12365_21-pcw_ITC_s04",185,12365,"H376.IV.51","21-pcw","F",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s04","Prenatal","Cortex",-0.365384615384615,"Control","19-24pcw",-0.0104378575791227
+"186","12886_21-pcw_MFC_s04",186,12886,"H376.IV.54","21-pcw","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s04","Prenatal","Cortex",-0.365384615384615,"Control","19-24pcw",0.047183441819175
+"187","12886_21-pcw_M1C_s04",187,12886,"H376.IV.54","21-pcw","M",10163,"M1C","primary motor cortex (area M1, area 4)","s04","Prenatal","Cortex",-0.365384615384615,"Control","19-24pcw",0.0205416510962821
+"188","12886_21-pcw_STR_s04",188,12886,"H376.IV.54","21-pcw","M",10333,"STR","striatum","s04","Prenatal","Subcortex",-0.365384615384615,"Control","19-24pcw",0.0347034948704104
+"189","12886_21-pcw_HIP_s04",189,12886,"H376.IV.54","21-pcw","M",10294,"HIP","hippocampus (hippocampal formation)","s04","Prenatal","Subcortex",-0.365384615384615,"Control","19-24pcw",0.0321754042330807
+"190","12886_21-pcw_STC_s04",190,12886,"H376.IV.54","21-pcw","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s04","Prenatal","Cortex",-0.365384615384615,"Control","19-24pcw",0.0122531059177258
+"191","12886_21-pcw_ITC_s04",191,12886,"H376.IV.54","21-pcw","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s04","Prenatal","Cortex",-0.365384615384615,"Control","19-24pcw",0.036527500965251
+"192","12886_21-pcw_AMY_s04",192,12886,"H376.IV.54","21-pcw","M",10361,"AMY","amygdaloid complex","s04","Prenatal","Subcortex",-0.365384615384615,"Control","19-24pcw",0.0317908401790416
+"193","12886_21-pcw_VFC_s04",193,12886,"H376.IV.54","21-pcw","M",10185,"VFC","ventrolateral prefrontal cortex","s04","Prenatal","Cortex",-0.365384615384615,"Control","19-24pcw",0.0311461860220704
+"194","12886_21-pcw_OFC_s04",194,12886,"H376.IV.54","21-pcw","M",10194,"OFC","orbital frontal cortex","s04","Prenatal","Cortex",-0.365384615384615,"Control","19-24pcw",0.0180730956533588
+"195","12886_21-pcw_V1C_s04",195,12886,"H376.IV.54","21-pcw","M",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s04","Prenatal","Cortex",-0.365384615384615,"Control","19-24pcw",0.018870604741439
+"196","12886_21-pcw_S1C_s04",196,12886,"H376.IV.54","21-pcw","M",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s04","Prenatal","Cortex",-0.365384615384615,"Control","19-24pcw",0.0175931852363838
+"197","12886_21-pcw_CBC_s04",197,12886,"H376.IV.54","21-pcw","M",10657,"CBC","cerebellar cortex","s04","Prenatal","Cerebellum",-0.365384615384615,"Control","19-24pcw",0.0296997810627249
+"198","12886_21-pcw_IPC_s04",198,12886,"H376.IV.54","21-pcw","M",10225,"IPC","posteroventral (inferior) parietal cortex","s04","Prenatal","Cortex",-0.365384615384615,"Control","19-24pcw",0.0354644929752067
+"199","12886_21-pcw_DFC_s04",199,12886,"H376.IV.54","21-pcw","M",10173,"DFC","dorsolateral prefrontal cortex","s04","Prenatal","Cortex",-0.365384615384615,"Control","19-24pcw",-0.0116373807277628
+"200","12288_24-pcw_HIP_s04",200,12288,"H376.IV.50","24-pcw","M",10294,"HIP","hippocampus (hippocampal formation)","s04","Prenatal","Subcortex",-0.307692307692308,"Control","19-24pcw",-0.0257003137643791
+"201","12288_24-pcw_AMY_s04",201,12288,"H376.IV.50","24-pcw","M",10361,"AMY","amygdaloid complex","s04","Prenatal","Subcortex",-0.307692307692308,"Control","19-24pcw",0.00277743527153044
+"202","12288_24-pcw_DFC_s04",202,12288,"H376.IV.50","24-pcw","M",10173,"DFC","dorsolateral prefrontal cortex","s04","Prenatal","Cortex",-0.307692307692308,"Control","19-24pcw",0.000442352356306182
+"203","12288_24-pcw_S1C_s04",203,12288,"H376.IV.50","24-pcw","M",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s04","Prenatal","Cortex",-0.307692307692308,"Control","19-24pcw",0.00957812432212585
+"204","12288_24-pcw_MD_s04",204,12288,"H376.IV.50","24-pcw","M",10398,"MD","mediodorsal nucleus of thalamus","s04","Prenatal","Subcortex",-0.307692307692308,"Control","19-24pcw",-0.0528531627397258
+"205","12288_24-pcw_STR_s04",205,12288,"H376.IV.50","24-pcw","M",10333,"STR","striatum","s04","Prenatal","Subcortex",-0.307692307692308,"Control","19-24pcw",0.0148472402925532
+"206","12288_24-pcw_A1C_s04",206,12288,"H376.IV.50","24-pcw","M",10236,"A1C","primary auditory cortex (core)","s04","Prenatal","Cortex",-0.307692307692308,"Control","19-24pcw",-0.00654628583184748
+"207","12288_24-pcw_IPC_s04",207,12288,"H376.IV.50","24-pcw","M",10225,"IPC","posteroventral (inferior) parietal cortex","s04","Prenatal","Cortex",-0.307692307692308,"Control","19-24pcw",-0.000708555263885051
+"208","12288_24-pcw_OFC_s04",208,12288,"H376.IV.50","24-pcw","M",10194,"OFC","orbital frontal cortex","s04","Prenatal","Cortex",-0.307692307692308,"Control","19-24pcw",-0.0650462963985097
+"209","12288_24-pcw_STC_s04",209,12288,"H376.IV.50","24-pcw","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s04","Prenatal","Cortex",-0.307692307692308,"Control","19-24pcw",-0.0903792270285163
+"210","12288_24-pcw_ITC_s04",210,12288,"H376.IV.50","24-pcw","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s04","Prenatal","Cortex",-0.307692307692308,"Control","19-24pcw",-0.00671678901339165
+"211","12288_24-pcw_VFC_s04",211,12288,"H376.IV.50","24-pcw","M",10185,"VFC","ventrolateral prefrontal cortex","s04","Prenatal","Cortex",-0.307692307692308,"Control","19-24pcw",-0.0260262488057867
+"212","12288_24-pcw_M1C_s04",212,12288,"H376.IV.50","24-pcw","M",10163,"M1C","primary motor cortex (area M1, area 4)","s04","Prenatal","Cortex",-0.307692307692308,"Control","19-24pcw",-0.0144437915599299
+"213","12288_24-pcw_MFC_s04",213,12288,"H376.IV.50","24-pcw","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s04","Prenatal","Cortex",-0.307692307692308,"Control","19-24pcw",-0.00862355636168207
+"214","12288_24-pcw_CBC_s04",214,12288,"H376.IV.50","24-pcw","M",10657,"CBC","cerebellar cortex","s04","Prenatal","Cerebellum",-0.307692307692308,"Control","19-24pcw",-0.0136542503353904
+"215","12288_24-pcw_V1C_s04",215,12288,"H376.IV.50","24-pcw","M",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s04","Prenatal","Cortex",-0.307692307692308,"Control","19-24pcw",-0.00889453867962739
+"216","12948_25-pcw_A1C_s05",216,12948,"H376.V.51","25-pcw","F",10236,"A1C","primary auditory cortex (core)","s05","Prenatal","Cortex",-0.288461538461538,"Control","25-38pcw",0.0171159863636364
+"217","12949_26-pcw_STC_s05",217,12949,"H376.V.52","26-pcw","F",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s05","Prenatal","Cortex",-0.269230769230769,"Control","25-38pcw",-0.0381898681273254
+"218","12949_26-pcw_V1C_s05",218,12949,"H376.V.52","26-pcw","F",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s05","Prenatal","Cortex",-0.269230769230769,"Control","25-38pcw",0.00785203223196223
+"219","12949_26-pcw_DFC_s05",219,12949,"H376.V.52","26-pcw","F",10173,"DFC","dorsolateral prefrontal cortex","s05","Prenatal","Cortex",-0.269230769230769,"Control","25-38pcw",-0.0168376045312712
+"220","12295_35-pcw_CBC_s05",220,12295,"H376.V.50","35-pcw","F",10657,"CBC","cerebellar cortex","s05","Prenatal","Cerebellum",-0.0961538461538462,"Control","25-38pcw",NA
+"221","12295_35-pcw_VFC_s05",221,12295,"H376.V.50","35-pcw","F",10185,"VFC","ventrolateral prefrontal cortex","s05","Prenatal","Cortex",-0.0961538461538462,"Control","25-38pcw",NA
+"222","263195015_37-pcw_A1C_s05",222,263195015,"H376.V.53","37-pcw","M",10236,"A1C","primary auditory cortex (core)","s05","Prenatal","Cortex",-0.0576923076923077,"Control","25-38pcw",NA
+"223","263195015_37-pcw_OFC_s05",223,263195015,"H376.V.53","37-pcw","M",10194,"OFC","orbital frontal cortex","s05","Prenatal","Cortex",-0.0576923076923077,"Control","25-38pcw",NA
+"224","263195015_37-pcw_AMY_s05",224,263195015,"H376.V.53","37-pcw","M",10361,"AMY","amygdaloid complex","s05","Prenatal","Subcortex",-0.0576923076923077,"Control","25-38pcw",NA
+"225","263195015_37-pcw_V1C_s05",225,263195015,"H376.V.53","37-pcw","M",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s05","Prenatal","Cortex",-0.0576923076923077,"Control","25-38pcw",NA
+"226","263195015_37-pcw_MFC_s05",226,263195015,"H376.V.53","37-pcw","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s05","Prenatal","Cortex",-0.0576923076923077,"Control","25-38pcw",NA
+"227","263195015_37-pcw_MD_s05",227,263195015,"H376.V.53","37-pcw","M",10398,"MD","mediodorsal nucleus of thalamus","s05","Prenatal","Subcortex",-0.0576923076923077,"Control","25-38pcw",NA
+"228","263195015_37-pcw_CBC_s05",228,263195015,"H376.V.53","37-pcw","M",10657,"CBC","cerebellar cortex","s05","Prenatal","Cerebellum",-0.0576923076923077,"Control","25-38pcw",NA
+"229","263195015_37-pcw_STR_s05",229,263195015,"H376.V.53","37-pcw","M",10333,"STR","striatum","s05","Prenatal","Subcortex",-0.0576923076923077,"Control","25-38pcw",NA
+"230","263195015_37-pcw_IPC_s05",230,263195015,"H376.V.53","37-pcw","M",10225,"IPC","posteroventral (inferior) parietal cortex","s05","Prenatal","Cortex",-0.0576923076923077,"Control","25-38pcw",NA
+"231","263195015_37-pcw_ITC_s05",231,263195015,"H376.V.53","37-pcw","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s05","Prenatal","Cortex",-0.0576923076923077,"Control","25-38pcw",NA
+"232","263195015_37-pcw_S1C_s05",232,263195015,"H376.V.53","37-pcw","M",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s05","Prenatal","Cortex",-0.0576923076923077,"Control","25-38pcw",NA
+"233","263195015_37-pcw_DFC_s05",233,263195015,"H376.V.53","37-pcw","M",10173,"DFC","dorsolateral prefrontal cortex","s05","Prenatal","Cortex",-0.0576923076923077,"Control","25-38pcw",NA
+"234","263195015_37-pcw_STC_s05",234,263195015,"H376.V.53","37-pcw","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s05","Prenatal","Cortex",-0.0576923076923077,"Control","25-38pcw",NA
+"235","263195015_37-pcw_M1C_s05",235,263195015,"H376.V.53","37-pcw","M",10163,"M1C","primary motor cortex (area M1, area 4)","s05","Prenatal","Cortex",-0.0576923076923077,"Control","25-38pcw",NA
+"236","263195015_37-pcw_VFC_s05",236,263195015,"H376.V.53","37-pcw","M",10185,"VFC","ventrolateral prefrontal cortex","s05","Prenatal","Cortex",-0.0576923076923077,"Control","25-38pcw",NA
+"237","263195015_37-pcw_HIP_s05",237,263195015,"H376.V.53","37-pcw","M",10294,"HIP","hippocampus (hippocampal formation)","s05","Prenatal","Subcortex",-0.0576923076923077,"Control","25-38pcw",NA
+"238","12296_4-mos_STC_s06",238,12296,"H376.VI.50","4-mos","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",-0.0126360602150538
+"239","12296_4-mos_STR_s06",239,12296,"H376.VI.50","4-mos","M",10333,"STR","striatum","s06","Postnatal","Subcortex",0.333333333333333,"Control","0-5mos",-0.00288412442791761
+"240","12296_4-mos_V1C_s06",240,12296,"H376.VI.50","4-mos","M",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",0.0315523226841332
+"241","12296_4-mos_CBC_s06",241,12296,"H376.VI.50","4-mos","M",10657,"CBC","cerebellar cortex","s06","Postnatal","Cerebellum",0.333333333333333,"Control","0-5mos",-0.00619667378048783
+"242","12296_4-mos_HIP_s06",242,12296,"H376.VI.50","4-mos","M",10294,"HIP","hippocampus (hippocampal formation)","s06","Postnatal","Subcortex",0.333333333333333,"Control","0-5mos",-0.0150198330855521
+"243","12296_4-mos_MD_s06",243,12296,"H376.VI.50","4-mos","M",10398,"MD","mediodorsal nucleus of thalamus","s06","Postnatal","Subcortex",0.333333333333333,"Control","0-5mos",0.00596142522321428
+"244","12296_4-mos_ITC_s06",244,12296,"H376.VI.50","4-mos","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",-0.026892003306696
+"245","12296_4-mos_AMY_s06",245,12296,"H376.VI.50","4-mos","M",10361,"AMY","amygdaloid complex","s06","Postnatal","Subcortex",0.333333333333333,"Control","0-5mos",-0.0139856228128757
+"246","12296_4-mos_MFC_s06",246,12296,"H376.VI.50","4-mos","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",-0.0397326116639027
+"247","12889_4-mos_M1C_s06",247,12889,"H376.VI.51","4-mos","M",10163,"M1C","primary motor cortex (area M1, area 4)","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",NA
+"248","12889_4-mos_DFC_s06",248,12889,"H376.VI.51","4-mos","M",10173,"DFC","dorsolateral prefrontal cortex","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",NA
+"249","12889_4-mos_OFC_s06",249,12889,"H376.VI.51","4-mos","M",10194,"OFC","orbital frontal cortex","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",NA
+"250","12889_4-mos_A1C_s06",250,12889,"H376.VI.51","4-mos","M",10236,"A1C","primary auditory cortex (core)","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",NA
+"251","12889_4-mos_STC_s06",251,12889,"H376.VI.51","4-mos","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",NA
+"252","12889_4-mos_VFC_s06",252,12889,"H376.VI.51","4-mos","M",10185,"VFC","ventrolateral prefrontal cortex","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",NA
+"253","12889_4-mos_ITC_s06",253,12889,"H376.VI.51","4-mos","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",NA
+"254","12889_4-mos_AMY_s06",254,12889,"H376.VI.51","4-mos","M",10361,"AMY","amygdaloid complex","s06","Postnatal","Subcortex",0.333333333333333,"Control","0-5mos",NA
+"255","12890_4-mos_M1C_s06",255,12890,"H376.VI.52","4-mos","M",10163,"M1C","primary motor cortex (area M1, area 4)","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",-0.0394735231081081
+"256","12890_4-mos_MD_s06",256,12890,"H376.VI.52","4-mos","M",10398,"MD","mediodorsal nucleus of thalamus","s06","Postnatal","Subcortex",0.333333333333333,"Control","0-5mos",-0.0108846399208928
+"257","12890_4-mos_OFC_s06",257,12890,"H376.VI.52","4-mos","M",10194,"OFC","orbital frontal cortex","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",-0.0401190231729053
+"258","12890_4-mos_STR_s06",258,12890,"H376.VI.52","4-mos","M",10333,"STR","striatum","s06","Postnatal","Subcortex",0.333333333333333,"Control","0-5mos",-0.0302309983536835
+"259","12890_4-mos_STC_s06",259,12890,"H376.VI.52","4-mos","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",-0.0524360776119402
+"260","12890_4-mos_A1C_s06",260,12890,"H376.VI.52","4-mos","M",10236,"A1C","primary auditory cortex (core)","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",-0.0868201768276235
+"261","12890_4-mos_HIP_s06",261,12890,"H376.VI.52","4-mos","M",10294,"HIP","hippocampus (hippocampal formation)","s06","Postnatal","Subcortex",0.333333333333333,"Control","0-5mos",-0.0571775071368597
+"262","12890_4-mos_AMY_s06",262,12890,"H376.VI.52","4-mos","M",10361,"AMY","amygdaloid complex","s06","Postnatal","Subcortex",0.333333333333333,"Control","0-5mos",-0.0283928795164358
+"263","12890_4-mos_MFC_s06",263,12890,"H376.VI.52","4-mos","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",-0.0175776309634552
+"264","12890_4-mos_V1C_s06",264,12890,"H376.VI.52","4-mos","M",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",-0.0311884860833666
+"265","12890_4-mos_ITC_s06",265,12890,"H376.VI.52","4-mos","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",-0.0455269820964876
+"266","12890_4-mos_S1C_s06",266,12890,"H376.VI.52","4-mos","M",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",-0.027307830902215
+"267","12890_4-mos_IPC_s06",267,12890,"H376.VI.52","4-mos","M",10225,"IPC","posteroventral (inferior) parietal cortex","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",-0.0204127850053647
+"268","12890_4-mos_CBC_s06",268,12890,"H376.VI.52","4-mos","M",10657,"CBC","cerebellar cortex","s06","Postnatal","Cerebellum",0.333333333333333,"Control","0-5mos",-0.00356845172459716
+"269","12890_4-mos_DFC_s06",269,12890,"H376.VI.52","4-mos","M",10173,"DFC","dorsolateral prefrontal cortex","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",-0.0198759295454545
+"270","12890_4-mos_VFC_s06",270,12890,"H376.VI.52","4-mos","M",10185,"VFC","ventrolateral prefrontal cortex","s06","Postnatal","Cortex",0.333333333333333,"Control","0-5mos",-0.0369588343804305
+"271","12977_10-mos_S1C_s07",271,12977,"H376.VII.51","10-mos","M",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s07","Postnatal","Cortex",0.833333333333333,"Control","6-18mos",-0.017176306134876
+"272","12977_10-mos_IPC_s07",272,12977,"H376.VII.51","10-mos","M",10225,"IPC","posteroventral (inferior) parietal cortex","s07","Postnatal","Cortex",0.833333333333333,"Control","6-18mos",NA
+"273","12977_10-mos_STC_s07",273,12977,"H376.VII.51","10-mos","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s07","Postnatal","Cortex",0.833333333333333,"Control","6-18mos",NA
+"274","12977_10-mos_DFC_s07",274,12977,"H376.VII.51","10-mos","M",10173,"DFC","dorsolateral prefrontal cortex","s07","Postnatal","Cortex",0.833333333333333,"Control","6-18mos",-0.0207804058102588
+"275","12977_10-mos_OFC_s07",275,12977,"H376.VII.51","10-mos","M",10194,"OFC","orbital frontal cortex","s07","Postnatal","Cortex",0.833333333333333,"Control","6-18mos",-0.0336363987783594
+"276","12977_10-mos_MFC_s07",276,12977,"H376.VII.51","10-mos","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s07","Postnatal","Cortex",0.833333333333333,"Control","6-18mos",-0.0370747792885592
+"277","12977_10-mos_CBC_s07",277,12977,"H376.VII.51","10-mos","M",10657,"CBC","cerebellar cortex","s07","Postnatal","Cerebellum",0.833333333333333,"Control","6-18mos",0.00945110153312119
+"278","12977_10-mos_ITC_s07",278,12977,"H376.VII.51","10-mos","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s07","Postnatal","Cortex",0.833333333333333,"Control","6-18mos",-0.023251894214876
+"279","12977_10-mos_MD_s07",279,12977,"H376.VII.51","10-mos","M",10398,"MD","mediodorsal nucleus of thalamus","s07","Postnatal","Subcortex",0.833333333333333,"Control","6-18mos",-0.0165036753246754
+"280","12977_10-mos_V1C_s07",280,12977,"H376.VII.51","10-mos","M",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s07","Postnatal","Cortex",0.833333333333333,"Control","6-18mos",0.0053212571171711
+"281","12830_1-yrs_AMY_s07",281,12830,"H376.VIII.51","1-yrs","F",10361,"AMY","amygdaloid complex","s07","Postnatal","Subcortex",1,"Control","6-18mos",0.0323374660117879
+"282","12830_1-yrs_M1C_s07",282,12830,"H376.VIII.51","1-yrs","F",10163,"M1C","primary motor cortex (area M1, area 4)","s07","Postnatal","Cortex",1,"Control","6-18mos",0.0657581024262475
+"283","12830_1-yrs_DFC_s07",283,12830,"H376.VIII.51","1-yrs","F",10173,"DFC","dorsolateral prefrontal cortex","s07","Postnatal","Cortex",1,"Control","6-18mos",0.0539880141433188
+"284","12830_1-yrs_STC_s07",284,12830,"H376.VIII.51","1-yrs","F",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s07","Postnatal","Cortex",1,"Control","6-18mos",0.040915400053305
+"285","12830_1-yrs_V1C_s07",285,12830,"H376.VIII.51","1-yrs","F",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s07","Postnatal","Cortex",1,"Control","6-18mos",0.0343224089993283
+"286","12830_1-yrs_MFC_s07",286,12830,"H376.VIII.51","1-yrs","F",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s07","Postnatal","Cortex",1,"Control","6-18mos",0.0529474619558027
+"287","12830_1-yrs_OFC_s07",287,12830,"H376.VIII.51","1-yrs","F",10194,"OFC","orbital frontal cortex","s07","Postnatal","Cortex",1,"Control","6-18mos",0.0390886937862033
+"288","12830_1-yrs_ITC_s07",288,12830,"H376.VIII.51","1-yrs","F",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s07","Postnatal","Cortex",1,"Control","6-18mos",0.0297878577671832
+"289","12830_1-yrs_S1C_s07",289,12830,"H376.VIII.51","1-yrs","F",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s07","Postnatal","Cortex",1,"Control","6-18mos",0.0569494719010488
+"290","12830_1-yrs_VFC_s07",290,12830,"H376.VIII.51","1-yrs","F",10185,"VFC","ventrolateral prefrontal cortex","s07","Postnatal","Cortex",1,"Control","6-18mos",0.0444723478144992
+"291","12830_1-yrs_CBC_s07",291,12830,"H376.VIII.51","1-yrs","F",10657,"CBC","cerebellar cortex","s07","Postnatal","Cerebellum",1,"Control","6-18mos",0.0380681027434104
+"292","12830_1-yrs_A1C_s07",292,12830,"H376.VIII.51","1-yrs","F",10236,"A1C","primary auditory cortex (core)","s07","Postnatal","Cortex",1,"Control","6-18mos",0.033356586612576
+"293","12830_1-yrs_MD_s07",293,12830,"H376.VIII.51","1-yrs","F",10398,"MD","mediodorsal nucleus of thalamus","s07","Postnatal","Subcortex",1,"Control","6-18mos",0.0183197803680982
+"294","12830_1-yrs_HIP_s07",294,12830,"H376.VIII.51","1-yrs","F",10294,"HIP","hippocampus (hippocampal formation)","s07","Postnatal","Subcortex",1,"Control","6-18mos",0.026467777195968
+"295","12830_1-yrs_IPC_s07",295,12830,"H376.VIII.51","1-yrs","F",10225,"IPC","posteroventral (inferior) parietal cortex","s07","Postnatal","Cortex",1,"Control","6-18mos",0.034920724575705
+"296","12830_1-yrs_STR_s07",296,12830,"H376.VIII.51","1-yrs","F",10333,"STR","striatum","s07","Postnatal","Subcortex",1,"Control","6-18mos",0.0267780339766241
+"297","12979_2-yrs_VFC_s08",297,12979,"H376.VIII.53","2-yrs","F",10185,"VFC","ventrolateral prefrontal cortex","s08","Postnatal","Cortex",2,"Control","19mos-5yrs",-0.121983828301127
+"298","12979_2-yrs_IPC_s08",298,12979,"H376.VIII.53","2-yrs","F",10225,"IPC","posteroventral (inferior) parietal cortex","s08","Postnatal","Cortex",2,"Control","19mos-5yrs",-0.0738047026180352
+"299","12979_2-yrs_S1C_s08",299,12979,"H376.VIII.53","2-yrs","F",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s08","Postnatal","Cortex",2,"Control","19mos-5yrs",-0.0570053658126837
+"300","12979_2-yrs_ITC_s08",300,12979,"H376.VIII.53","2-yrs","F",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s08","Postnatal","Cortex",2,"Control","19mos-5yrs",-0.0644117111111112
+"301","12979_2-yrs_MD_s08",301,12979,"H376.VIII.53","2-yrs","F",10398,"MD","mediodorsal nucleus of thalamus","s08","Postnatal","Subcortex",2,"Control","19mos-5yrs",-0.117083257734531
+"302","12979_2-yrs_DFC_s08",302,12979,"H376.VIII.53","2-yrs","F",10173,"DFC","dorsolateral prefrontal cortex","s08","Postnatal","Cortex",2,"Control","19mos-5yrs",-0.122165951104101
+"303","12979_2-yrs_MFC_s08",303,12979,"H376.VIII.53","2-yrs","F",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s08","Postnatal","Cortex",2,"Control","19mos-5yrs",-0.0650129929656724
+"304","12979_2-yrs_CBC_s08",304,12979,"H376.VIII.53","2-yrs","F",10657,"CBC","cerebellar cortex","s08","Postnatal","Cerebellum",2,"Control","19mos-5yrs",-0.155245992747366
+"305","12979_2-yrs_HIP_s08",305,12979,"H376.VIII.53","2-yrs","F",10294,"HIP","hippocampus (hippocampal formation)","s08","Postnatal","Subcortex",2,"Control","19mos-5yrs",-0.119776948548813
+"306","12979_2-yrs_OFC_s08",306,12979,"H376.VIII.53","2-yrs","F",10194,"OFC","orbital frontal cortex","s08","Postnatal","Cortex",2,"Control","19mos-5yrs",-0.132756725461613
+"307","12979_2-yrs_V1C_s08",307,12979,"H376.VIII.53","2-yrs","F",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s08","Postnatal","Cortex",2,"Control","19mos-5yrs",-0.15166694990099
+"308","12979_2-yrs_STC_s08",308,12979,"H376.VIII.53","2-yrs","F",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s08","Postnatal","Cortex",2,"Control","19mos-5yrs",-0.0712183494586501
+"309","12836_3-yrs_STR_s08",309,12836,"H376.VIII.52","3-yrs","F",10333,"STR","striatum","s08","Postnatal","Subcortex",3,"Control","19mos-5yrs",-0.0407455255382018
+"310","12836_3-yrs_STC_s08",310,12836,"H376.VIII.52","3-yrs","F",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.0627517357269935
+"311","12836_3-yrs_IPC_s08",311,12836,"H376.VIII.52","3-yrs","F",10225,"IPC","posteroventral (inferior) parietal cortex","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.0835878391469665
+"312","12836_3-yrs_ITC_s08",312,12836,"H376.VIII.52","3-yrs","F",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.0532782559440559
+"313","12836_3-yrs_CBC_s08",313,12836,"H376.VIII.52","3-yrs","F",10657,"CBC","cerebellar cortex","s08","Postnatal","Cerebellum",3,"Control","19mos-5yrs",0.00489863383328524
+"314","12836_3-yrs_AMY_s08",314,12836,"H376.VIII.52","3-yrs","F",10361,"AMY","amygdaloid complex","s08","Postnatal","Subcortex",3,"Control","19mos-5yrs",-0.0711788749072929
+"315","12836_3-yrs_VFC_s08",315,12836,"H376.VIII.52","3-yrs","F",10185,"VFC","ventrolateral prefrontal cortex","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.0745134052737654
+"316","12836_3-yrs_M1C_s08",316,12836,"H376.VIII.52","3-yrs","F",10163,"M1C","primary motor cortex (area M1, area 4)","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.0482863014202171
+"317","12836_3-yrs_A1C_s08",317,12836,"H376.VIII.52","3-yrs","F",10236,"A1C","primary auditory cortex (core)","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.129330880757866
+"318","12836_3-yrs_MD_s08",318,12836,"H376.VIII.52","3-yrs","F",10398,"MD","mediodorsal nucleus of thalamus","s08","Postnatal","Subcortex",3,"Control","19mos-5yrs",-0.0840809286997126
+"319","12836_3-yrs_V1C_s08",319,12836,"H376.VIII.52","3-yrs","F",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.0400670046867677
+"320","12980_3-yrs_OFC_s08",320,12980,"H376.VIII.54","3-yrs","M",10194,"OFC","orbital frontal cortex","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.0520774144429371
+"321","12980_3-yrs_MFC_s08",321,12980,"H376.VIII.54","3-yrs","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.0285124556099266
+"322","12980_3-yrs_M1C_s08",322,12980,"H376.VIII.54","3-yrs","M",10163,"M1C","primary motor cortex (area M1, area 4)","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.0492186072980016
+"323","12980_3-yrs_S1C_s08",323,12980,"H376.VIII.54","3-yrs","M",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.0480257715999351
+"324","12980_3-yrs_STC_s08",324,12980,"H376.VIII.54","3-yrs","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.0535804645887727
+"325","12980_3-yrs_IPC_s08",325,12980,"H376.VIII.54","3-yrs","M",10225,"IPC","posteroventral (inferior) parietal cortex","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.0471098927601086
+"326","12980_3-yrs_A1C_s08",326,12980,"H376.VIII.54","3-yrs","M",10236,"A1C","primary auditory cortex (core)","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.0577923977126289
+"327","12980_3-yrs_CBC_s08",327,12980,"H376.VIII.54","3-yrs","M",10657,"CBC","cerebellar cortex","s08","Postnatal","Cerebellum",3,"Control","19mos-5yrs",-0.0128838130024952
+"328","12980_3-yrs_V1C_s08",328,12980,"H376.VIII.54","3-yrs","M",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.0539418744334396
+"329","12980_3-yrs_AMY_s08",329,12980,"H376.VIII.54","3-yrs","M",10361,"AMY","amygdaloid complex","s08","Postnatal","Subcortex",3,"Control","19mos-5yrs",-0.0583140271406057
+"330","12980_3-yrs_VFC_s08",330,12980,"H376.VIII.54","3-yrs","M",10185,"VFC","ventrolateral prefrontal cortex","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.0761631583957555
+"331","12980_3-yrs_DFC_s08",331,12980,"H376.VIII.54","3-yrs","M",10173,"DFC","dorsolateral prefrontal cortex","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.0337563841492585
+"332","12980_3-yrs_HIP_s08",332,12980,"H376.VIII.54","3-yrs","M",10294,"HIP","hippocampus (hippocampal formation)","s08","Postnatal","Subcortex",3,"Control","19mos-5yrs",-0.0381374191972077
+"333","12980_3-yrs_ITC_s08",333,12980,"H376.VIII.54","3-yrs","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s08","Postnatal","Cortex",3,"Control","19mos-5yrs",-0.0465885313287155
+"334","12298_4-yrs_AMY_s08",334,12298,"H376.VIII.50","4-yrs","M",10361,"AMY","amygdaloid complex","s08","Postnatal","Subcortex",4,"Control","19mos-5yrs",-0.139920589797449
+"335","12298_4-yrs_STR_s08",335,12298,"H376.VIII.50","4-yrs","M",10333,"STR","striatum","s08","Postnatal","Subcortex",4,"Control","19mos-5yrs",-0.0897254310996823
+"336","12298_4-yrs_VFC_s08",336,12298,"H376.VIII.50","4-yrs","M",10185,"VFC","ventrolateral prefrontal cortex","s08","Postnatal","Cortex",4,"Control","19mos-5yrs",-0.136675003008233
+"337","12298_4-yrs_DFC_s08",337,12298,"H376.VIII.50","4-yrs","M",10173,"DFC","dorsolateral prefrontal cortex","s08","Postnatal","Cortex",4,"Control","19mos-5yrs",-0.136579007819288
+"338","12298_4-yrs_STC_s08",338,12298,"H376.VIII.50","4-yrs","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s08","Postnatal","Cortex",4,"Control","19mos-5yrs",-0.153132140369636
+"339","12298_4-yrs_CBC_s08",339,12298,"H376.VIII.50","4-yrs","M",10657,"CBC","cerebellar cortex","s08","Postnatal","Cerebellum",4,"Control","19mos-5yrs",-0.0449172144055945
+"340","12298_4-yrs_MD_s08",340,12298,"H376.VIII.50","4-yrs","M",10398,"MD","mediodorsal nucleus of thalamus","s08","Postnatal","Subcortex",4,"Control","19mos-5yrs",-0.0760888986214822
+"341","12841_8-yrs_ITC_s09",341,12841,"H376.IX.51","8-yrs","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s09","Postnatal","Cortex",8,"Control","6-11yrs",-0.0495207167271628
+"342","12841_8-yrs_S1C_s09",342,12841,"H376.IX.51","8-yrs","M",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s09","Postnatal","Cortex",8,"Control","6-11yrs",-0.0466265459356167
+"343","12841_8-yrs_IPC_s09",343,12841,"H376.IX.51","8-yrs","M",10225,"IPC","posteroventral (inferior) parietal cortex","s09","Postnatal","Cortex",8,"Control","6-11yrs",-0.0336098040491683
+"344","12841_8-yrs_V1C_s09",344,12841,"H376.IX.51","8-yrs","M",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s09","Postnatal","Cortex",8,"Control","6-11yrs",-0.0584559575191165
+"345","12841_8-yrs_STC_s09",345,12841,"H376.IX.51","8-yrs","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s09","Postnatal","Cortex",8,"Control","6-11yrs",-0.0428188841890314
+"346","12841_8-yrs_MD_s09",346,12841,"H376.IX.51","8-yrs","M",10398,"MD","mediodorsal nucleus of thalamus","s09","Postnatal","Subcortex",8,"Control","6-11yrs",-0.0111249292466342
+"347","12841_8-yrs_VFC_s09",347,12841,"H376.IX.51","8-yrs","M",10185,"VFC","ventrolateral prefrontal cortex","s09","Postnatal","Cortex",8,"Control","6-11yrs",-0.0182382899611592
+"348","12841_8-yrs_HIP_s09",348,12841,"H376.IX.51","8-yrs","M",10294,"HIP","hippocampus (hippocampal formation)","s09","Postnatal","Subcortex",8,"Control","6-11yrs",-0.0396808312106368
+"349","12841_8-yrs_AMY_s09",349,12841,"H376.IX.51","8-yrs","M",10361,"AMY","amygdaloid complex","s09","Postnatal","Subcortex",8,"Control","6-11yrs",-0.0699216594321393
+"350","12841_8-yrs_M1C_s09",350,12841,"H376.IX.51","8-yrs","M",10163,"M1C","primary motor cortex (area M1, area 4)","s09","Postnatal","Cortex",8,"Control","6-11yrs",-0.0405493535919751
+"351","12841_8-yrs_CBC_s09",351,12841,"H376.IX.51","8-yrs","M",10657,"CBC","cerebellar cortex","s09","Postnatal","Cerebellum",8,"Control","6-11yrs",0.00366656072676452
+"352","12841_8-yrs_DFC_s09",352,12841,"H376.IX.51","8-yrs","M",10173,"DFC","dorsolateral prefrontal cortex","s09","Postnatal","Cortex",8,"Control","6-11yrs",-0.00937764928909952
+"353","12841_8-yrs_STR_s09",353,12841,"H376.IX.51","8-yrs","M",10333,"STR","striatum","s09","Postnatal","Subcortex",8,"Control","6-11yrs",-0.0320943286563978
+"354","12841_8-yrs_A1C_s09",354,12841,"H376.IX.51","8-yrs","M",10236,"A1C","primary auditory cortex (core)","s09","Postnatal","Cortex",8,"Control","6-11yrs",-0.0461008244558991
+"355","12841_8-yrs_MFC_s09",355,12841,"H376.IX.51","8-yrs","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s09","Postnatal","Cortex",8,"Control","6-11yrs",-0.0331235714071182
+"356","12841_8-yrs_OFC_s09",356,12841,"H376.IX.51","8-yrs","M",10194,"OFC","orbital frontal cortex","s09","Postnatal","Cortex",8,"Control","6-11yrs",-0.0174255447291054
+"357","12981_8-yrs_MFC_s09",357,12981,"H376.IX.52","8-yrs","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s09","Postnatal","Cortex",8,"Control","6-11yrs",0.023134162601626
+"358","12981_8-yrs_CBC_s09",358,12981,"H376.IX.52","8-yrs","M",10657,"CBC","cerebellar cortex","s09","Postnatal","Cerebellum",8,"Control","6-11yrs",0.0709671288369472
+"359","12981_8-yrs_A1C_s09",359,12981,"H376.IX.52","8-yrs","M",10236,"A1C","primary auditory cortex (core)","s09","Postnatal","Cortex",8,"Control","6-11yrs",0.0484036005988879
+"360","12981_8-yrs_VFC_s09",360,12981,"H376.IX.52","8-yrs","M",10185,"VFC","ventrolateral prefrontal cortex","s09","Postnatal","Cortex",8,"Control","6-11yrs",0.0234689752475247
+"361","12981_8-yrs_HIP_s09",361,12981,"H376.IX.52","8-yrs","M",10294,"HIP","hippocampus (hippocampal formation)","s09","Postnatal","Subcortex",8,"Control","6-11yrs",-0.00145628585138471
+"362","12981_8-yrs_AMY_s09",362,12981,"H376.IX.52","8-yrs","M",10361,"AMY","amygdaloid complex","s09","Postnatal","Subcortex",8,"Control","6-11yrs",0.0165913277213353
+"363","12981_8-yrs_V1C_s09",363,12981,"H376.IX.52","8-yrs","M",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s09","Postnatal","Cortex",8,"Control","6-11yrs",0.0524921292369829
+"364","12981_8-yrs_IPC_s09",364,12981,"H376.IX.52","8-yrs","M",10225,"IPC","posteroventral (inferior) parietal cortex","s09","Postnatal","Cortex",8,"Control","6-11yrs",0.0256233169398908
+"365","12981_8-yrs_DFC_s09",365,12981,"H376.IX.52","8-yrs","M",10173,"DFC","dorsolateral prefrontal cortex","s09","Postnatal","Cortex",8,"Control","6-11yrs",0.0229493316800992
+"366","12981_8-yrs_STC_s09",366,12981,"H376.IX.52","8-yrs","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s09","Postnatal","Cortex",8,"Control","6-11yrs",0.0469768879613355
+"367","12981_8-yrs_ITC_s09",367,12981,"H376.IX.52","8-yrs","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s09","Postnatal","Cortex",8,"Control","6-11yrs",-0.0474595166878575
+"368","12289_11-yrs_VFC_s09",368,12289,"H376.IX.50","11-yrs","F",10185,"VFC","ventrolateral prefrontal cortex","s09","Postnatal","Cortex",11,"Control","6-11yrs",-0.0314875781644682
+"369","12289_11-yrs_IPC_s09",369,12289,"H376.IX.50","11-yrs","F",10225,"IPC","posteroventral (inferior) parietal cortex","s09","Postnatal","Cortex",11,"Control","6-11yrs",-0.0386376936521253
+"370","12289_11-yrs_ITC_s09",370,12289,"H376.IX.50","11-yrs","F",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s09","Postnatal","Cortex",11,"Control","6-11yrs",-0.0679926096399881
+"371","12289_11-yrs_STC_s09",371,12289,"H376.IX.50","11-yrs","F",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s09","Postnatal","Cortex",11,"Control","6-11yrs",-0.0524456665211699
+"372","12289_11-yrs_S1C_s09",372,12289,"H376.IX.50","11-yrs","F",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s09","Postnatal","Cortex",11,"Control","6-11yrs",-0.0431419141000283
+"373","12289_11-yrs_DFC_s09",373,12289,"H376.IX.50","11-yrs","F",10173,"DFC","dorsolateral prefrontal cortex","s09","Postnatal","Cortex",11,"Control","6-11yrs",-0.0286135522303783
+"374","12289_11-yrs_AMY_s09",374,12289,"H376.IX.50","11-yrs","F",10361,"AMY","amygdaloid complex","s09","Postnatal","Subcortex",11,"Control","6-11yrs",-0.085401688232013
+"375","12289_11-yrs_V1C_s09",375,12289,"H376.IX.50","11-yrs","F",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s09","Postnatal","Cortex",11,"Control","6-11yrs",-0.041992086915125
+"376","12289_11-yrs_CBC_s09",376,12289,"H376.IX.50","11-yrs","F",10657,"CBC","cerebellar cortex","s09","Postnatal","Cerebellum",11,"Control","6-11yrs",0.00462513483618035
+"377","12289_11-yrs_A1C_s09",377,12289,"H376.IX.50","11-yrs","F",10236,"A1C","primary auditory cortex (core)","s09","Postnatal","Cortex",11,"Control","6-11yrs",-0.039213819342306
+"378","12289_11-yrs_HIP_s09",378,12289,"H376.IX.50","11-yrs","F",10294,"HIP","hippocampus (hippocampal formation)","s09","Postnatal","Subcortex",11,"Control","6-11yrs",-0.0985307949554897
+"379","12289_11-yrs_M1C_s09",379,12289,"H376.IX.50","11-yrs","F",10163,"M1C","primary motor cortex (area M1, area 4)","s09","Postnatal","Cortex",11,"Control","6-11yrs",-0.0234673196617336
+"380","12289_11-yrs_OFC_s09",380,12289,"H376.IX.50","11-yrs","F",10194,"OFC","orbital frontal cortex","s09","Postnatal","Cortex",11,"Control","6-11yrs",-0.036616216872428
+"381","12289_11-yrs_MFC_s09",381,12289,"H376.IX.50","11-yrs","F",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s09","Postnatal","Cortex",11,"Control","6-11yrs",-0.0471608013917883
+"382","12831_13-yrs_MFC_s10",382,12831,"H376.X.51","13-yrs","F",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s10","Postnatal","Cortex",13,"Control","12-19yrs",-0.035740235756656
+"383","12831_13-yrs_IPC_s10",383,12831,"H376.X.51","13-yrs","F",10225,"IPC","posteroventral (inferior) parietal cortex","s10","Postnatal","Cortex",13,"Control","12-19yrs",0.00405992610019378
+"384","12831_13-yrs_VFC_s10",384,12831,"H376.X.51","13-yrs","F",10185,"VFC","ventrolateral prefrontal cortex","s10","Postnatal","Cortex",13,"Control","12-19yrs",-0.0106981578373962
+"385","12831_13-yrs_A1C_s10",385,12831,"H376.X.51","13-yrs","F",10236,"A1C","primary auditory cortex (core)","s10","Postnatal","Cortex",13,"Control","12-19yrs",-0.0361823193254454
+"386","12831_13-yrs_ITC_s10",386,12831,"H376.X.51","13-yrs","F",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s10","Postnatal","Cortex",13,"Control","12-19yrs",0.010378265056858
+"387","12831_13-yrs_STC_s10",387,12831,"H376.X.51","13-yrs","F",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s10","Postnatal","Cortex",13,"Control","12-19yrs",-0.00800267081527058
+"388","12831_13-yrs_CBC_s10",388,12831,"H376.X.51","13-yrs","F",10657,"CBC","cerebellar cortex","s10","Postnatal","Cerebellum",13,"Control","12-19yrs",0.0141614105769231
+"389","12831_13-yrs_V1C_s10",389,12831,"H376.X.51","13-yrs","F",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s10","Postnatal","Cortex",13,"Control","12-19yrs",-0.0372000350112485
+"390","12831_13-yrs_S1C_s10",390,12831,"H376.X.51","13-yrs","F",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s10","Postnatal","Cortex",13,"Control","12-19yrs",-0.00152505010893246
+"391","12831_13-yrs_DFC_s10",391,12831,"H376.X.51","13-yrs","F",10173,"DFC","dorsolateral prefrontal cortex","s10","Postnatal","Cortex",13,"Control","12-19yrs",-0.00169925575412942
+"392","12831_13-yrs_OFC_s10",392,12831,"H376.X.51","13-yrs","F",10194,"OFC","orbital frontal cortex","s10","Postnatal","Cortex",13,"Control","12-19yrs",-0.00301547810569664
+"393","12831_13-yrs_MD_s10",393,12831,"H376.X.51","13-yrs","F",10398,"MD","mediodorsal nucleus of thalamus","s10","Postnatal","Subcortex",13,"Control","12-19yrs",-0.0318340192966075
+"394","12831_13-yrs_AMY_s10",394,12831,"H376.X.51","13-yrs","F",10361,"AMY","amygdaloid complex","s10","Postnatal","Subcortex",13,"Control","12-19yrs",-0.0356893670940787
+"395","12831_13-yrs_M1C_s10",395,12831,"H376.X.51","13-yrs","F",10163,"M1C","primary motor cortex (area M1, area 4)","s10","Postnatal","Cortex",13,"Control","12-19yrs",0.00633439604095562
+"396","12831_13-yrs_HIP_s10",396,12831,"H376.X.51","13-yrs","F",10294,"HIP","hippocampus (hippocampal formation)","s10","Postnatal","Subcortex",13,"Control","12-19yrs",-0.0375407406096059
+"397","12831_13-yrs_STR_s10",397,12831,"H376.X.51","13-yrs","F",10333,"STR","striatum","s10","Postnatal","Subcortex",13,"Control","12-19yrs",-0.0293663405797101
+"398","12299_15-yrs_IPC_s10",398,12299,"H376.X.50","15-yrs","M",10225,"IPC","posteroventral (inferior) parietal cortex","s10","Postnatal","Cortex",15,"Control","12-19yrs",0.00961784201342283
+"399","12299_15-yrs_CBC_s10",399,12299,"H376.X.50","15-yrs","M",10657,"CBC","cerebellar cortex","s10","Postnatal","Cerebellum",15,"Control","12-19yrs",0.0465965693021986
+"400","12299_15-yrs_STC_s10",400,12299,"H376.X.50","15-yrs","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s10","Postnatal","Cortex",15,"Control","12-19yrs",0.0085706242236025
+"401","12299_15-yrs_ITC_s10",401,12299,"H376.X.50","15-yrs","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s10","Postnatal","Cortex",15,"Control","12-19yrs",0.0149732975583579
+"402","12299_15-yrs_AMY_s10",402,12299,"H376.X.50","15-yrs","M",10361,"AMY","amygdaloid complex","s10","Postnatal","Subcortex",15,"Control","12-19yrs",0.0129289782088759
+"403","12984_18-yrs_HIP_s10",403,12984,"H376.X.53","18-yrs","M",10294,"HIP","hippocampus (hippocampal formation)","s10","Postnatal","Subcortex",18,"Control","12-19yrs",-0.0701227652300418
+"404","12984_18-yrs_M1C_s10",404,12984,"H376.X.53","18-yrs","M",10163,"M1C","primary motor cortex (area M1, area 4)","s10","Postnatal","Cortex",18,"Control","12-19yrs",-0.06355096902819
+"405","12984_18-yrs_V1C_s10",405,12984,"H376.X.53","18-yrs","M",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s10","Postnatal","Cortex",18,"Control","12-19yrs",-0.0647792515202701
+"406","12984_18-yrs_A1C_s10",406,12984,"H376.X.53","18-yrs","M",10236,"A1C","primary auditory cortex (core)","s10","Postnatal","Cortex",18,"Control","12-19yrs",-0.0691709829670328
+"407","12984_18-yrs_ITC_s10",407,12984,"H376.X.53","18-yrs","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s10","Postnatal","Cortex",18,"Control","12-19yrs",-0.0784663997758566
+"408","12984_18-yrs_VFC_s10",408,12984,"H376.X.53","18-yrs","M",10185,"VFC","ventrolateral prefrontal cortex","s10","Postnatal","Cortex",18,"Control","12-19yrs",-0.0601538537728937
+"409","12984_18-yrs_MFC_s10",409,12984,"H376.X.53","18-yrs","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s10","Postnatal","Cortex",18,"Control","12-19yrs",-0.0695820752797558
+"410","12984_18-yrs_STC_s10",410,12984,"H376.X.53","18-yrs","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s10","Postnatal","Cortex",18,"Control","12-19yrs",-0.051876167930029
+"411","12984_18-yrs_DFC_s10",411,12984,"H376.X.53","18-yrs","M",10173,"DFC","dorsolateral prefrontal cortex","s10","Postnatal","Cortex",18,"Control","12-19yrs",-0.0619006672851841
+"412","12984_18-yrs_S1C_s10",412,12984,"H376.X.53","18-yrs","M",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s10","Postnatal","Cortex",18,"Control","12-19yrs",-0.0753517033794432
+"413","12984_18-yrs_IPC_s10",413,12984,"H376.X.53","18-yrs","M",10225,"IPC","posteroventral (inferior) parietal cortex","s10","Postnatal","Cortex",18,"Control","12-19yrs",-0.0575750161662816
+"414","12984_18-yrs_OFC_s10",414,12984,"H376.X.53","18-yrs","M",10194,"OFC","orbital frontal cortex","s10","Postnatal","Cortex",18,"Control","12-19yrs",-0.0758926105039464
+"415","12984_18-yrs_CBC_s10",415,12984,"H376.X.53","18-yrs","M",10657,"CBC","cerebellar cortex","s10","Postnatal","Cerebellum",18,"Control","12-19yrs",-0.0845078936738935
+"416","12832_19-yrs_STC_s10",416,12832,"H376.X.52","19-yrs","F",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s10","Postnatal","Cortex",19,"Control","12-19yrs",0.0246530685265438
+"417","12832_19-yrs_CBC_s10",417,12832,"H376.X.52","19-yrs","F",10657,"CBC","cerebellar cortex","s10","Postnatal","Cerebellum",19,"Control","12-19yrs",0.00473605322514095
+"418","12832_19-yrs_DFC_s10",418,12832,"H376.X.52","19-yrs","F",10173,"DFC","dorsolateral prefrontal cortex","s10","Postnatal","Cortex",19,"Control","12-19yrs",0.0310442621636315
+"419","12832_19-yrs_AMY_s10",419,12832,"H376.X.52","19-yrs","F",10361,"AMY","amygdaloid complex","s10","Postnatal","Subcortex",19,"Control","12-19yrs",0.00667692061928216
+"420","12832_19-yrs_OFC_s10",420,12832,"H376.X.52","19-yrs","F",10194,"OFC","orbital frontal cortex","s10","Postnatal","Cortex",19,"Control","12-19yrs",0.0190681261297721
+"421","12832_19-yrs_ITC_s10",421,12832,"H376.X.52","19-yrs","F",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s10","Postnatal","Cortex",19,"Control","12-19yrs",0.00188839892812971
+"422","12832_19-yrs_STR_s10",422,12832,"H376.X.52","19-yrs","F",10333,"STR","striatum","s10","Postnatal","Subcortex",19,"Control","12-19yrs",0.0205339114386154
+"423","12832_19-yrs_S1C_s10",423,12832,"H376.X.52","19-yrs","F",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s10","Postnatal","Cortex",19,"Control","12-19yrs",0.0109999115068124
+"424","12832_19-yrs_M1C_s10",424,12832,"H376.X.52","19-yrs","F",10163,"M1C","primary motor cortex (area M1, area 4)","s10","Postnatal","Cortex",19,"Control","12-19yrs",0.0144071618131868
+"425","12832_19-yrs_HIP_s10",425,12832,"H376.X.52","19-yrs","F",10294,"HIP","hippocampus (hippocampal formation)","s10","Postnatal","Subcortex",19,"Control","12-19yrs",0.00814948461856805
+"426","12832_19-yrs_A1C_s10",426,12832,"H376.X.52","19-yrs","F",10236,"A1C","primary auditory cortex (core)","s10","Postnatal","Cortex",19,"Control","12-19yrs",-0.0228387632707774
+"427","12832_19-yrs_V1C_s10",427,12832,"H376.X.52","19-yrs","F",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s10","Postnatal","Cortex",19,"Control","12-19yrs",0.0118725101564645
+"428","12832_19-yrs_IPC_s10",428,12832,"H376.X.52","19-yrs","F",10225,"IPC","posteroventral (inferior) parietal cortex","s10","Postnatal","Cortex",19,"Control","12-19yrs",0.00810951575700687
+"429","12832_19-yrs_VFC_s10",429,12832,"H376.X.52","19-yrs","F",10185,"VFC","ventrolateral prefrontal cortex","s10","Postnatal","Cortex",19,"Control","12-19yrs",0.0105672647829084
+"430","12832_19-yrs_MFC_s10",430,12832,"H376.X.52","19-yrs","F",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s10","Postnatal","Cortex",19,"Control","12-19yrs",0.0117972396406062
+"431","12832_19-yrs_MD_s10",431,12832,"H376.X.52","19-yrs","F",10398,"MD","mediodorsal nucleus of thalamus","s10","Postnatal","Subcortex",19,"Control","12-19yrs",0.0114428019010883
+"432","13057_21-yrs_MFC_s11",432,13057,"H376.XI.60","21-yrs","F",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s11","Postnatal","Cortex",21,"Control","20-29yrs",0.0465206037582803
+"433","13057_21-yrs_M1C_s11",433,13057,"H376.XI.60","21-yrs","F",10163,"M1C","primary motor cortex (area M1, area 4)","s11","Postnatal","Cortex",21,"Control","20-29yrs",0.0403527076653644
+"434","13057_21-yrs_A1C_s11",434,13057,"H376.XI.60","21-yrs","F",10236,"A1C","primary auditory cortex (core)","s11","Postnatal","Cortex",21,"Control","20-29yrs",0.0203612529761905
+"435","13057_21-yrs_DFC_s11",435,13057,"H376.XI.60","21-yrs","F",10173,"DFC","dorsolateral prefrontal cortex","s11","Postnatal","Cortex",21,"Control","20-29yrs",0.0340674083536089
+"436","13057_21-yrs_AMY_s11",436,13057,"H376.XI.60","21-yrs","F",10361,"AMY","amygdaloid complex","s11","Postnatal","Subcortex",21,"Control","20-29yrs",0.0104561593871792
+"437","13057_21-yrs_MD_s11",437,13057,"H376.XI.60","21-yrs","F",10398,"MD","mediodorsal nucleus of thalamus","s11","Postnatal","Subcortex",21,"Control","20-29yrs",0.0202997577030813
+"438","13057_21-yrs_V1C_s11",438,13057,"H376.XI.60","21-yrs","F",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s11","Postnatal","Cortex",21,"Control","20-29yrs",0.0259670114394662
+"439","13057_21-yrs_STC_s11",439,13057,"H376.XI.60","21-yrs","F",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s11","Postnatal","Cortex",21,"Control","20-29yrs",0.0421508791666666
+"440","13057_21-yrs_VFC_s11",440,13057,"H376.XI.60","21-yrs","F",10185,"VFC","ventrolateral prefrontal cortex","s11","Postnatal","Cortex",21,"Control","20-29yrs",0.0415763311114133
+"441","13057_21-yrs_CBC_s11",441,13057,"H376.XI.60","21-yrs","F",10657,"CBC","cerebellar cortex","s11","Postnatal","Cerebellum",21,"Control","20-29yrs",0.0243979201431914
+"442","13057_21-yrs_S1C_s11",442,13057,"H376.XI.60","21-yrs","F",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s11","Postnatal","Cortex",21,"Control","20-29yrs",0.0327689131618348
+"443","13057_21-yrs_ITC_s11",443,13057,"H376.XI.60","21-yrs","F",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s11","Postnatal","Cortex",21,"Control","20-29yrs",0.016462294803236
+"444","13057_21-yrs_IPC_s11",444,13057,"H376.XI.60","21-yrs","F",10225,"IPC","posteroventral (inferior) parietal cortex","s11","Postnatal","Cortex",21,"Control","20-29yrs",0.0238256755118535
+"445","13057_21-yrs_HIP_s11",445,13057,"H376.XI.60","21-yrs","F",10294,"HIP","hippocampus (hippocampal formation)","s11","Postnatal","Subcortex",21,"Control","20-29yrs",0.0145430458355868
+"446","13057_21-yrs_STR_s11",446,13057,"H376.XI.60","21-yrs","F",10333,"STR","striatum","s11","Postnatal","Subcortex",21,"Control","20-29yrs",-0.0260354600823045
+"447","13057_21-yrs_OFC_s11",447,13057,"H376.XI.60","21-yrs","F",10194,"OFC","orbital frontal cortex","s11","Postnatal","Cortex",21,"Control","20-29yrs",-0.00255869434676766
+"448","12300_23-yrs_ITC_s11",448,12300,"H376.XI.50","23-yrs","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s11","Postnatal","Cortex",23,"Control","20-29yrs",-0.00347599227479652
+"449","12300_23-yrs_AMY_s11",449,12300,"H376.XI.50","23-yrs","M",10361,"AMY","amygdaloid complex","s11","Postnatal","Subcortex",23,"Control","20-29yrs",-0.0267342403913347
+"450","12300_23-yrs_OFC_s11",450,12300,"H376.XI.50","23-yrs","M",10194,"OFC","orbital frontal cortex","s11","Postnatal","Cortex",23,"Control","20-29yrs",0.00707327288590605
+"451","12300_23-yrs_MD_s11",451,12300,"H376.XI.50","23-yrs","M",10398,"MD","mediodorsal nucleus of thalamus","s11","Postnatal","Subcortex",23,"Control","20-29yrs",-0.0283036806486825
+"452","12300_23-yrs_STC_s11",452,12300,"H376.XI.50","23-yrs","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s11","Postnatal","Cortex",23,"Control","20-29yrs",-0.0124052000536696
+"453","12300_23-yrs_VFC_s11",453,12300,"H376.XI.50","23-yrs","M",10185,"VFC","ventrolateral prefrontal cortex","s11","Postnatal","Cortex",23,"Control","20-29yrs",-0.0127376291968842
+"454","12300_23-yrs_MFC_s11",454,12300,"H376.XI.50","23-yrs","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s11","Postnatal","Cortex",23,"Control","20-29yrs",0.0113221482920294
+"455","12300_23-yrs_M1C_s11",455,12300,"H376.XI.50","23-yrs","M",10163,"M1C","primary motor cortex (area M1, area 4)","s11","Postnatal","Cortex",23,"Control","20-29yrs",0.00463821596180082
+"456","12300_23-yrs_HIP_s11",456,12300,"H376.XI.50","23-yrs","M",10294,"HIP","hippocampus (hippocampal formation)","s11","Postnatal","Subcortex",23,"Control","20-29yrs",-0.0209157377413529
+"457","12300_23-yrs_CBC_s11",457,12300,"H376.XI.50","23-yrs","M",10657,"CBC","cerebellar cortex","s11","Postnatal","Cerebellum",23,"Control","20-29yrs",0.0363234501219843
+"458","12300_23-yrs_S1C_s11",458,12300,"H376.XI.50","23-yrs","M",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s11","Postnatal","Cortex",23,"Control","20-29yrs",-0.0195230760695187
+"459","12300_23-yrs_A1C_s11",459,12300,"H376.XI.50","23-yrs","M",10236,"A1C","primary auditory cortex (core)","s11","Postnatal","Cortex",23,"Control","20-29yrs",-0.0234777757367517
+"460","12300_23-yrs_IPC_s11",460,12300,"H376.XI.50","23-yrs","M",10225,"IPC","posteroventral (inferior) parietal cortex","s11","Postnatal","Cortex",23,"Control","20-29yrs",-0.00919597487370381
+"461","12300_23-yrs_STR_s11",461,12300,"H376.XI.50","23-yrs","M",10333,"STR","striatum","s11","Postnatal","Subcortex",23,"Control","20-29yrs",-0.0112430211135213
+"462","12290_30-yrs_ITC_s12",462,12290,"H376.XI.52","30-yrs","F",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s12","Postnatal","Cortex",30,"Control","30-39yrs",0.0171718537039691
+"463","12290_30-yrs_STR_s12",463,12290,"H376.XI.52","30-yrs","F",10333,"STR","striatum","s12","Postnatal","Subcortex",30,"Control","30-39yrs",-0.022627081109134
+"464","12290_30-yrs_MFC_s12",464,12290,"H376.XI.52","30-yrs","F",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s12","Postnatal","Cortex",30,"Control","30-39yrs",0.0299779137439407
+"465","12290_30-yrs_OFC_s12",465,12290,"H376.XI.52","30-yrs","F",10194,"OFC","orbital frontal cortex","s12","Postnatal","Cortex",30,"Control","30-39yrs",0.0368966082935992
+"466","12290_30-yrs_IPC_s12",466,12290,"H376.XI.52","30-yrs","F",10225,"IPC","posteroventral (inferior) parietal cortex","s12","Postnatal","Cortex",30,"Control","30-39yrs",0.0111386811074452
+"467","12290_30-yrs_STC_s12",467,12290,"H376.XI.52","30-yrs","F",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s12","Postnatal","Cortex",30,"Control","30-39yrs",0.0130234816533108
+"468","12290_30-yrs_S1C_s12",468,12290,"H376.XI.52","30-yrs","F",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s12","Postnatal","Cortex",30,"Control","30-39yrs",0.0171662761268307
+"469","12290_30-yrs_MD_s12",469,12290,"H376.XI.52","30-yrs","F",10398,"MD","mediodorsal nucleus of thalamus","s12","Postnatal","Subcortex",30,"Control","30-39yrs",-0.00215777479933363
+"470","12290_30-yrs_HIP_s12",470,12290,"H376.XI.52","30-yrs","F",10294,"HIP","hippocampus (hippocampal formation)","s12","Postnatal","Subcortex",30,"Control","30-39yrs",-5.25300272323297e-05
+"471","12290_30-yrs_A1C_s12",471,12290,"H376.XI.52","30-yrs","F",10236,"A1C","primary auditory cortex (core)","s12","Postnatal","Cortex",30,"Control","30-39yrs",0.00496181050571943
+"472","12290_30-yrs_V1C_s12",472,12290,"H376.XI.52","30-yrs","F",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s12","Postnatal","Cortex",30,"Control","30-39yrs",0.0146190101530102
+"473","12290_30-yrs_DFC_s12",473,12290,"H376.XI.52","30-yrs","F",10173,"DFC","dorsolateral prefrontal cortex","s12","Postnatal","Cortex",30,"Control","30-39yrs",-0.0195418806420634
+"474","12290_30-yrs_AMY_s12",474,12290,"H376.XI.52","30-yrs","F",10361,"AMY","amygdaloid complex","s12","Postnatal","Subcortex",30,"Control","30-39yrs",-0.0176537757204511
+"475","12290_30-yrs_M1C_s12",475,12290,"H376.XI.52","30-yrs","F",10163,"M1C","primary motor cortex (area M1, area 4)","s12","Postnatal","Cortex",30,"Control","30-39yrs",0.0273195227469046
+"476","12290_30-yrs_VFC_s12",476,12290,"H376.XI.52","30-yrs","F",10185,"VFC","ventrolateral prefrontal cortex","s12","Postnatal","Cortex",30,"Control","30-39yrs",-0.00797646440481371
+"477","12290_30-yrs_CBC_s12",477,12290,"H376.XI.52","30-yrs","F",10657,"CBC","cerebellar cortex","s12","Postnatal","Cerebellum",30,"Control","30-39yrs",0.0393741215282674
+"478","12302_36-yrs_M1C_s12",478,12302,"H376.XI.53","36-yrs","M",10163,"M1C","primary motor cortex (area M1, area 4)","s12","Postnatal","Cortex",36,"Control","30-39yrs",-0.0174968578954666
+"479","12302_36-yrs_STC_s12",479,12302,"H376.XI.53","36-yrs","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s12","Postnatal","Cortex",36,"Control","30-39yrs",-0.00918127132095775
+"480","12302_36-yrs_MFC_s12",480,12302,"H376.XI.53","36-yrs","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s12","Postnatal","Cortex",36,"Control","30-39yrs",-0.013387958988764
+"481","12302_36-yrs_ITC_s12",481,12302,"H376.XI.53","36-yrs","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s12","Postnatal","Cortex",36,"Control","30-39yrs",-0.00424349462072722
+"482","12302_36-yrs_IPC_s12",482,12302,"H376.XI.53","36-yrs","M",10225,"IPC","posteroventral (inferior) parietal cortex","s12","Postnatal","Cortex",36,"Control","30-39yrs",0.0119744728139013
+"483","12302_36-yrs_AMY_s12",483,12302,"H376.XI.53","36-yrs","M",10361,"AMY","amygdaloid complex","s12","Postnatal","Subcortex",36,"Control","30-39yrs",0.00933910108548168
+"484","12302_36-yrs_OFC_s12",484,12302,"H376.XI.53","36-yrs","M",10194,"OFC","orbital frontal cortex","s12","Postnatal","Cortex",36,"Control","30-39yrs",-0.0103791149816301
+"485","12302_36-yrs_VFC_s12",485,12302,"H376.XI.53","36-yrs","M",10185,"VFC","ventrolateral prefrontal cortex","s12","Postnatal","Cortex",36,"Control","30-39yrs",0.0139955065430752
+"486","12302_36-yrs_DFC_s12",486,12302,"H376.XI.53","36-yrs","M",10173,"DFC","dorsolateral prefrontal cortex","s12","Postnatal","Cortex",36,"Control","30-39yrs",0.0254886054835223
+"487","12302_36-yrs_A1C_s12",487,12302,"H376.XI.53","36-yrs","M",10236,"A1C","primary auditory cortex (core)","s12","Postnatal","Cortex",36,"Control","30-39yrs",0.00643679716916313
+"488","12302_36-yrs_V1C_s12",488,12302,"H376.XI.53","36-yrs","M",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s12","Postnatal","Cortex",36,"Control","30-39yrs",0.00337854183645748
+"489","12302_36-yrs_CBC_s12",489,12302,"H376.XI.53","36-yrs","M",10657,"CBC","cerebellar cortex","s12","Postnatal","Cerebellum",36,"Control","30-39yrs",0.0255330526315789
+"490","12302_36-yrs_S1C_s12",490,12302,"H376.XI.53","36-yrs","M",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s12","Postnatal","Cortex",36,"Control","30-39yrs",0.00107457648354674
+"491","12302_36-yrs_HIP_s12",491,12302,"H376.XI.53","36-yrs","M",10294,"HIP","hippocampus (hippocampal formation)","s12","Postnatal","Subcortex",36,"Control","30-39yrs",-0.0242145173771381
+"492","12302_36-yrs_STR_s12",492,12302,"H376.XI.53","36-yrs","M",10333,"STR","striatum","s12","Postnatal","Subcortex",36,"Control","30-39yrs",-0.0218183631915182
+"493","12302_36-yrs_MD_s12",493,12302,"H376.XI.53","36-yrs","M",10398,"MD","mediodorsal nucleus of thalamus","s12","Postnatal","Subcortex",36,"Control","30-39yrs",-0.0447117787431219
+"494","12303_37-yrs_S1C_s12",494,12303,"H376.XI.54","37-yrs","M",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s12","Postnatal","Cortex",37,"Control","30-39yrs",-0.0178344451410659
+"495","12303_37-yrs_V1C_s12",495,12303,"H376.XI.54","37-yrs","M",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s12","Postnatal","Cortex",37,"Control","30-39yrs",-0.0719678428264375
+"496","12303_37-yrs_CBC_s12",496,12303,"H376.XI.54","37-yrs","M",10657,"CBC","cerebellar cortex","s12","Postnatal","Cerebellum",37,"Control","30-39yrs",-0.004113714424276
+"497","12303_37-yrs_HIP_s12",497,12303,"H376.XI.54","37-yrs","M",10294,"HIP","hippocampus (hippocampal formation)","s12","Postnatal","Subcortex",37,"Control","30-39yrs",-0.0255025103420842
+"498","12303_37-yrs_IPC_s12",498,12303,"H376.XI.54","37-yrs","M",10225,"IPC","posteroventral (inferior) parietal cortex","s12","Postnatal","Cortex",37,"Control","30-39yrs",0.0221378261043108
+"499","12303_37-yrs_MD_s12",499,12303,"H376.XI.54","37-yrs","M",10398,"MD","mediodorsal nucleus of thalamus","s12","Postnatal","Subcortex",37,"Control","30-39yrs",-0.00635850034979712
+"500","12303_37-yrs_DFC_s12",500,12303,"H376.XI.54","37-yrs","M",10173,"DFC","dorsolateral prefrontal cortex","s12","Postnatal","Cortex",37,"Control","30-39yrs",0.00841345638649903
+"501","12303_37-yrs_VFC_s12",501,12303,"H376.XI.54","37-yrs","M",10185,"VFC","ventrolateral prefrontal cortex","s12","Postnatal","Cortex",37,"Control","30-39yrs",0.00161772100438422
+"502","12303_37-yrs_ITC_s12",502,12303,"H376.XI.54","37-yrs","M",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s12","Postnatal","Cortex",37,"Control","30-39yrs",-0.0477766342710998
+"503","12303_37-yrs_A1C_s12",503,12303,"H376.XI.54","37-yrs","M",10236,"A1C","primary auditory cortex (core)","s12","Postnatal","Cortex",37,"Control","30-39yrs",0.0223028670444064
+"504","12303_37-yrs_M1C_s12",504,12303,"H376.XI.54","37-yrs","M",10163,"M1C","primary motor cortex (area M1, area 4)","s12","Postnatal","Cortex",37,"Control","30-39yrs",0.0101329037312442
+"505","12303_37-yrs_OFC_s12",505,12303,"H376.XI.54","37-yrs","M",10194,"OFC","orbital frontal cortex","s12","Postnatal","Cortex",37,"Control","30-39yrs",0.0234959049006622
+"506","12303_37-yrs_STR_s12",506,12303,"H376.XI.54","37-yrs","M",10333,"STR","striatum","s12","Postnatal","Subcortex",37,"Control","30-39yrs",-0.0451937202151132
+"507","12303_37-yrs_STC_s12",507,12303,"H376.XI.54","37-yrs","M",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s12","Postnatal","Cortex",37,"Control","30-39yrs",0.0694715772555377
+"508","12303_37-yrs_AMY_s12",508,12303,"H376.XI.54","37-yrs","M",10361,"AMY","amygdaloid complex","s12","Postnatal","Subcortex",37,"Control","30-39yrs",-0.0624307905585103
+"509","12303_37-yrs_MFC_s12",509,12303,"H376.XI.54","37-yrs","M",10278,"MFC","anterior (rostral) cingulate (medial prefrontal) cortex","s12","Postnatal","Cortex",37,"Control","30-39yrs",-0.0689846888386324
+"510","12304_40-yrs_DFC_s13",510,12304,"H376.XI.56","40-yrs","F",10173,"DFC","dorsolateral prefrontal cortex","s13","Postnatal","Cortex",40,"Control","40-49yrs",-0.0710712745599091
+"511","12304_40-yrs_ITC_s13",511,12304,"H376.XI.56","40-yrs","F",10252,"ITC","inferolateral temporal cortex (area TEv, area 20)","s13","Postnatal","Cortex",40,"Control","40-49yrs",-0.0529251551650843
+"512","12304_40-yrs_VFC_s13",512,12304,"H376.XI.56","40-yrs","F",10185,"VFC","ventrolateral prefrontal cortex","s13","Postnatal","Cortex",40,"Control","40-49yrs",-0.00990445452088117
+"513","12304_40-yrs_MD_s13",513,12304,"H376.XI.56","40-yrs","F",10398,"MD","mediodorsal nucleus of thalamus","s13","Postnatal","Subcortex",40,"Control","40-49yrs",-0.0733074938807125
+"514","12304_40-yrs_AMY_s13",514,12304,"H376.XI.56","40-yrs","F",10361,"AMY","amygdaloid complex","s13","Postnatal","Subcortex",40,"Control","40-49yrs",-0.163701680966767
+"515","12304_40-yrs_A1C_s13",515,12304,"H376.XI.56","40-yrs","F",10236,"A1C","primary auditory cortex (core)","s13","Postnatal","Cortex",40,"Control","40-49yrs",-0.0861060457624564
+"516","12304_40-yrs_CBC_s13",516,12304,"H376.XI.56","40-yrs","F",10657,"CBC","cerebellar cortex","s13","Postnatal","Cerebellum",40,"Control","40-49yrs",-0.0673591181622619
+"517","12304_40-yrs_V1C_s13",517,12304,"H376.XI.56","40-yrs","F",10269,"V1C","primary visual cortex (striate cortex, area V1/17)","s13","Postnatal","Cortex",40,"Control","40-49yrs",-0.0889787668965518
+"518","12304_40-yrs_OFC_s13",518,12304,"H376.XI.56","40-yrs","F",10194,"OFC","orbital frontal cortex","s13","Postnatal","Cortex",40,"Control","40-49yrs",0.00294117066483892
+"519","12304_40-yrs_STC_s13",519,12304,"H376.XI.56","40-yrs","F",10243,"STC","posterior (caudal) superior temporal cortex (area 22c)","s13","Postnatal","Cortex",40,"Control","40-49yrs",-0.000240919047619049
+"520","12304_40-yrs_IPC_s13",520,12304,"H376.XI.56","40-yrs","F",10225,"IPC","posteroventral (inferior) parietal cortex","s13","Postnatal","Cortex",40,"Control","40-49yrs",-0.0105748086538462
+"521","12304_40-yrs_M1C_s13",521,12304,"H376.XI.56","40-yrs","F",10163,"M1C","primary motor cortex (area M1, area 4)","s13","Postnatal","Cortex",40,"Control","40-49yrs",-0.105707923632935
+"522","12304_40-yrs_HIP_s13",522,12304,"H376.XI.56","40-yrs","F",10294,"HIP","hippocampus (hippocampal formation)","s13","Postnatal","Subcortex",40,"Control","40-49yrs",-0.191065548676748
+"523","12304_40-yrs_STR_s13",523,12304,"H376.XI.56","40-yrs","F",10333,"STR","striatum","s13","Postnatal","Subcortex",40,"Control","40-49yrs",-0.0397986736560654
+"524","12304_40-yrs_S1C_s13",524,12304,"H376.XI.56","40-yrs","F",10209,"S1C","primary somatosensory cortex (area S1, areas 3,1,2)","s13","Postnatal","Cortex",40,"Control","40-49yrs",-0.0708293946948834

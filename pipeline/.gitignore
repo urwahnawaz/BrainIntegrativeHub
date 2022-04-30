@@ -1,5 +1,5 @@
 output/
 __pycache__/
 .vscode/
-
-data/FormattedData
+data/FormattedData*
+input.yaml

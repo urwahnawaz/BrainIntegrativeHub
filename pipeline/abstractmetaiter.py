@@ -40,12 +40,12 @@ class AbstractMetaIter(AbstractSource):
         _auxset = set(keys1)
         return [x for x in keys2 if x in _auxset]
 
-    def reorderListByKey(self, keys, list, keyToIndexFiltered):
-        newList = [None] * (len(keyToIndexFiltered))
-        for i in range(len(list)):
+    def reorderListByKey(self, keys, currList, keyToIndexFiltered):
+        newList = [None] * (1 + max(keyToIndexFiltered.values()))
+        for i in range(len(currList)):
             index = keyToIndexFiltered.get(keys[i], -1)
-            if index >= 0: newList[index] = list[i]
-        return newList
+            if index >= 0: newList[index] = currList[i]
+        return list(filter(None, newList))
         
     def _writeHDF5Columns(self, fileName, hdf5Group, sampleToIndexFiltered, noneType="NA"):
         heading = None
@@ -75,6 +75,8 @@ class AbstractMetaIter(AbstractSource):
         lines = self.reorderListByKey(keys, lines, sampleToIndexFiltered)
 
         if(len(lines) == 0): raise Exception("File metadata/matrix keys didn't match when reordering")
+
+        for i in range(len(heading)): heading[i] = heading[i].strip()
 
         allTypes = [int, float, str]
         allDefaults = [0, 0.0, ""]
@@ -195,6 +197,8 @@ class AbstractMetaIter(AbstractSource):
         heading = None
         numberedRowsOffset = -1
         logs = []
+        #Could read file line by line and call tell() on each line, then seek to out of order keys
+        #We already read this file anyway
         for line in csv.reader(open(fileName, 'r'), delimiter=','):
             if not heading: 
                 heading = line[1:]

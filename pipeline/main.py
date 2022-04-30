@@ -208,5 +208,4 @@ if __name__ == '__main__':
 
     writeCSV(inputObj["output"] + "outError.csv", [x for x in ss if x._error], True)
 
-    if len(circIters) > 1: 
-        writeIntersectionPlot(circIters, ss)
+    #if len(circIters) > 1: writeIntersectionPlot(circIters, ss)

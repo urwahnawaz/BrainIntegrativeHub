@@ -61,7 +61,7 @@ class MetaPanel {
             self.names[dataset] = currName ? currName : dataset;
 
             let currCustomFilterValues = new Set(["All"]);
-            let currFilterColumn = self.hdf5Group.get(dataset).attrs["customFilterColumn"];
+            let currFilterColumn = self.hdf5Group.get(dataset).attrs["customFilterColumn"].trim();
             if(currFilterColumn) {
                 self.hdf5Group.get(dataset + "/samples/" + currFilterColumn).value.forEach(item => currCustomFilterValues.add(item))
             }

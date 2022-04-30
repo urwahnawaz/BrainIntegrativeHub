@@ -1,0 +1,132 @@
+netlifyDeploy: "" #e.g."my-netlify-site-dfg46" Change this, must be unique, only used for internal URLs currently
+netlifyToken: "" #see https://app.netlify.com/user/applications/personal, alternatively use export NETLIFY_AUTH_TOKEN
+output: "./output" #suggest changing this to ssd with at least 10GB free space
+datasets:
+    -   id: BrainSpan
+        url: "https://www.brainspan.org/"
+        dir: "./data/FormattedData/BrainSpan/"
+        meta: "BrainSpan-metadata.csv"
+        customFilter: 
+                name: "Brain Region"
+                column: "Regions"
+        variancePartition: "BrainSpan-varPart.csv"
+        matrices: 
+            -   type: RPKM
+                path: "BrainSpan-exp.csv"
+    -   id: GTEx
+        url: "https://gtexportal.org/"
+        dir: "./data/FormattedData/Gtex/"
+        meta: "GTEx-metadata-subset.csv"
+        customFilter: 
+                name: "Brain Region"
+                column: "Regions"
+        variancePartition: "GTEx-varPart.csv"
+        matrices: 
+            -   type: TPM
+                path: "GTEx-exp.csv"
+    -   id: BrainSeq
+        url: "https://www.brainrnaseq.org/"
+        dir: "./data/FormattedData/BrainSeq/"
+        meta: "BrainSeq-metadata-subset.csv"
+        customFilter: 
+                name: "Brain Region"
+                column: "Regions"
+        variancePartition: "BrainSeq-varPart.csv"
+        matrices: 
+            -   type: RPKM
+                path: "BrainSeq-exp.csv"
+    -   id: PsychENCODE
+        url: "http://resource.psychencode.org/"
+        dir: "./data/FormattedData/PsychENCODE/"
+        meta: "PsychEncode-metadata-subset.csv"
+        customFilter: 
+                name: "Brain Region"
+                column: "Regions"
+        matrices: 
+            -   type: TPM
+                path: "PsychEncode-exp.csv"
+    -   id: HCA
+        dir: "./data/FormattedData/HCA"
+        meta: "HCA-metadata_fixed.csv"
+        customFilter: 
+                name: "Major Cell Type"
+                column: "MajorCelltype"
+        keyIsSymbol: True
+        matrices:
+            -   type: CPM
+                path: "HCA-exp.csv"
+    -   id: Velmeshev
+        dir: "./data/FormattedData/Velmeshev"
+        meta: "Velmeshev-metadata.csv"
+        customFilter: 
+                name: "Cell Type"
+                column: "CellType"
+        keyIsSymbol: True
+        matrices:
+            -   type: CPM
+                path: "Velmeshev-exp.csv"
+customMetadataCategoryOrders:
+    -   variable: "AgeInterval"
+        datasets: [BrainSpan, GTEx, BrainSeq, PsychENCODE]
+        order: ["4-7pcw", "8-9pcw", "10-12pcw", "13-15pcw", "16-18pcw", "19-24pcw", "25-38pcw", "0-5mos", "6-18mos", "19mos-5yrs", "6-11yrs", "12-19yrs", "20-29yrs", "30-39yrs", "40-49yrs", "50-59yrs", "60-69yrs", "70-79yrs", "80-89yrs", "90-99yrs"]
+        groups:
+            -   label: prenatal
+                size: 7
+            -   label: postnatal
+                size: 13
+    -   variable: "Regions"
+        datasets: [BrainSpan, GTEx, BrainSeq, PsychENCODE]
+        order: ["Cortex", "Cerebellum", "Subcortex", "SpinalCord"]
+    -   variable: "cluster"
+        datasets: [HCA]
+        order: ['Inh L1 LAMP5 NDNF', 'Inh L1 PAX6 GRIP2', 'Exc L6 FEZF2 SLITRK6', 'Exc L6 FEZF2 TBCC', 'Exc L3-5 FEZF2 ONECUT1', 'Exc L3-5 FEZF2 DCN', 'Exc L5 FEZF2 SCN7A', 'Exc L5 FEZF2 MORN2', 'Exc L5 FEZF2 DYRK2', 'Exc L5-6 FEZF2 MYBPHL', 'Exc L5-6 FEZF2 CYP26B1', 'Exc L5-6 FEZF2 RSAD2', 'Inh L1-3 PAX6 NABP1', 'Exc L5-6 FEZF2 CABP7', 'Astro L1-6 FGFR3 ETNPPL', 'Astro L1 FGFR3 MT1G', 'Astro L1 FGFR3 FOS', 'OPC L1-6 MYT1', 'Oligo L4-6 MOBP COL18A1', 'Oligo L4-6 OPALIN', 'Endo L2-5 CLDN5', 'VLMC L1-3 CYP1B1', 'Peri L1-6 MUSTN1', 'Inh L1-6 VIP RCN1', 'Micro L1-6 C1QC', 'Inh L1 VIP PRSS8', 'Inh L1 VIP TNFAIP8L3', 'Inh L1 ADARB2 ADAM33', 'Inh L1 SST CXCL14', 'Inh L1 ADARB2 DISP2', 'Inh L1 VIP SOX11', 'Inh L1-6 VIP PENK', 'Inh L1 LAMP5 GGT8P', 'Inh L1-5 VIP KCNJ2', 'Inh L1 VIP PCDH20', 'Inh L1-2 VIP PPAPDC1A', 'Inh L2-6 VIP VIP', 'Inh L3-6 VIP KCTD13', 'Inh L1-6 VIP RGS16', 'Inh L1-3 VIP SSTR1', 'Inh L1-2 VIP RPL41P3', 'Inh L1-3 VIP ACHE', 'Inh L2-4 VIP LGI2', 'Inh L1-4 LAMP5 DUSP4', 'Inh L1-4 VIP CHRNA2', 'Inh L1-3 VIP CCDC184', 'Inh L2-5 VIP TOX2', 'Inh L2-4 VIP DSEL', 'Inh L1-3 VIP ZNF322P1', 'Inh L3 VIP CBLN1', 'Inh L1-3 VIP GGH', 'Inh L6 SST NPY', 'Inh L5-6 SST ISOC1', 'Inh L5-6 SST KLHL14', 'Inh L6 LAMP5 C1QL2', 'Inh L3-5 SST MAFB', 'Inh L4-6 SST MTHFD2P6', 'Inh L4-5 PVALB TRIM67', 'Inh L5-6 SST TH', 'Inh L6 LHX6 GLP1R', 'Inh L5-6 PVALB FAM150B', 'Inh L2-4 SST AHR', 'Inh L5-6 PVALB STON2', 'Inh L5 PVALB CNTNAP3P2', 'Inh L2-4 PVALB C8orf4', 'Inh L1-6 LAMP5 CA13', 'Inh L1-2 PVALB TAC1', 'Inh L1-3 PVALB WFDC2', 'Inh L3-4 PVALB HOMER3', 'Inh L1-6 PVALB SCUBE3', 'Inh L3-6 PVALB MFI2', 'Exc L2-4 RORB GRIK1', 'Exc L3-4 RORB RPS3P6', 'Exc L4 RORB BHLHE22', 'Exc L4 RORB CCDC168', 'Exc L4 RORB CACNG5', 'Inh L5-6 LAMP5 SFTA3', 'Exc L4-5 RORB ASCL1', 'Exc L4-5 RORB AIM2', 'Exc L2-3 LINC00507 RPL9P17', 'Exc L3 LINC00507 PSRC1', 'Exc L3-5 LINC00507 SLN', 'Exc L3 RORB CARTPT', 'Exc L3-4 RORB FOLH1B', 'Exc L3-4 RORB SEMA6D', 'Exc L3-4 RORB PRSS12', 'Exc L3-5 RORB HSPB3', 'Inh L1-2 PAX6 SCGN', 'Exc L3-5 THEMIS ELOF1', 'Exc L3 LINC00507 CTXN3', 'Exc L3 THEMIS PLA2G7', 'Exc L5-6 THEMIS OR1J1', 'Exc L6 THEMIS EGR3', 'Exc L6 THEMIS LINC00343', 'Exc L5-6 THEMIS TMEM233', 'Exc L3-5 RORB CMAHP', 'Exc L3-5 RORB CD24', 'Exc L4-5 RORB LINC01474', 'Inh L6 LAMP5 ANKRD20A11P', 'Exc L4-6 RORB HPCA', 'Exc L5-6 RORB LINC00320', 'Exc L5 RORB LINC01202', 'Exc L4-5 RORB HNRNPA1P46', 'Exc L4-5 RORB RPL31P31', 'Exc L3-5 THEMIS UBE2F', 'Exc L5 RORB SNHG7', 'Exc L4-5 RORB LCN15', 'Exc L5-6 THEMIS IL7R', 'Exc L6 THEMIS C6orf48', 'Inh L1 PAX6 CA4', 'Exc L5-6 THEMIS GPR21', 'Exc L5-6 THEMIS THTPA', 'Exc L6 FEZF2 VWA2', 'Exc L5-6 FEZF2 ANKRD20A1', 'Exc L6 FEZF2 FAM95C', 'Exc L6 FEZF2 CPZ', 'Exc L6 FEZF2 ETV4', 'Exc L6 FEZF2 TBC1D26', 'Exc L6 FEZF2 KRT17', 'Exc L6 FEZF2 P4HA3']
+        color: ['#8B5862', '#F1869C', '#7F48B8', '#7D45B8', '#0A4657', '#0D5A8B', '#0A75B1', '#14718F', '#3DAE5E', '#3DAD5E', '#3CAD5F', '#48CB80', '#9C28CC', '#2F91DA', '#312E27', '#352D27', '#353125', '#2E3E39', '#73B29E', '#71AF9A', '#604B47', '#A67C72', '#A77B6E', '#AE28E6', '#8BA38D', '#F1849C', '#E23EF0', '#B36C76', '#CC6FF1', '#CD6DF2', '#CB6FF3', '#CD6FF3', '#8E5864', '#D26ECB', '#E071FF', '#9256A6', '#B65FBF', '#D26ECA', '#D270CA', '#AC6FC5', '#CC6EF1', '#C667D9', '#AB6DC7', '#8E5A63', '#B563CC', '#E891D0', '#E170FE', '#D26AE6', '#CF6EC9', '#E693CE', '#D36FCA', '#ECD704', '#E89C04', '#E79C05', '#8A5860', '#D97807', '#996A0E', '#BF880B', '#CC7E09', '#8C2734', '#7C3B2B', '#BF670B', '#A63827', '#A33527', '#EA2C44', '#945E51', '#ED2C45', '#ED2C47', '#D92D43', '#D62866', '#D72963', '#21D587', '#21D186', '#24D388', '#23D286', '#20D187', '#936052', '#20D387', '#0E8B8B', '#00FF34', '#02ED33', '#04EB32', '#29B948', '#33AD5C', '#0E9797', '#22D0B8', '#02E2F7', '#B9814D', '#C8B323', '#21D238', '#0E4458', '#BBC225', '#BDC123', '#BFC124', '#9A9922', '#31B6B1', '#03E1F8', '#23D385', '#8B5A64', '#52B8AA', '#55C5B3', '#55C3B4', '#0BBEBE', '#60958B', '#56C5B3', '#56C3B7', '#689E7C', '#5504EC', '#510BBB', '#A6666F', '#520DBB', '#520AB8', '#479AB0', '#3195D7', '#5494B3', '#296B98', '#469DAD', '#184AC1', '#174ABE', '#7D49B7']
+    -   variable: "class"
+        datasets: [HCA]
+        order: ['Glutamatergic', 'Non-neuronal', 'GABAergic']
+        color: ['#AFCC3D', '#17994B', '#0066FF']
+    -   variable: "subclass"
+        datasets: [HCA]
+        order: ['LAMP5', 'L6b', 'L5 ET', 'L5/6 NP', 'Astrocyte', 'OPC', 'Oligodendrocyte', 'Endothelial', 'VLMC', 'Pericyte', 'Microglia', 'PAX6', 'VIP', 'SST', 'PVALB', 'L4 IT', 'IT', 'L5/6 IT Car3', 'L6 CT']
+        color: ['#FF7373', '#4DFFC9', '#1FCCCC', '#006B99', '#73ABFF', '#3D4BCC', '#311799', '#7F00FF', '#B65CCC', '#992E8E', '#FF26A8', '#CC683D', '#996517', '#FFE500', '#B6CC5C', '#63992E', '#52FF26', '#00CC14', '#459967']
+    -   variable: "donor_sex"
+        datasets: [HCA]
+        order: ['F', 'M']
+        color: ['#FF7373', '#3DCCCC']
+    -   variable: "region"
+        datasets: [HCA]
+        order: ['A1C', 'CgG', 'M1ul', 'M1lm', 'MTG', 'S1ul', 'S1lm', 'V1C']
+        color: ['#FF7373', '#CCA83D', '#589917', '#00FF40', '#5CCCCC', '#2E4999', '#9326FF', '#CC0099']
+    -   variable: "cortical_layer"
+        datasets: [HCA]
+        order: ['L1', 'L6', 'L6a', 'L6b', 'WM', 'L2', 'L3', 'L4', 'L4ab', 'L4c', 'L5', 'L5a', 'L5b']
+        color: ['#FF7373', '#684DFF', '#891FCC', '#99008D', '#FF73B3', '#CC7F3D', '#998F17', '#9DFF00', '#6DCC5C', '#2E994F', '#26FFCD', '#009DCC', '#455F99']
+    -   variable: "cel_type_accession"
+        datasets: [HCA]
+        order: ['CS1910121001', 'CS1910121010', 'CS1910121100', 'CS1910121101', 'CS1910121102', 'CS1910121103', 'CS1910121104', 'CS1910121105', 'CS1910121106', 'CS1910121107', 'CS1910121108', 'CS1910121109', 'CS1910121011', 'CS1910121110', 'CS1910121111', 'CS1910121112', 'CS1910121113', 'CS1910121114', 'CS1910121115', 'CS1910121116', 'CS1910121117', 'CS1910121118', 'CS1910121119', 'CS1910121012', 'CS1910121120', 'CS1910121013', 'CS1910121014', 'CS1910121015', 'CS1910121016', 'CS1910121017', 'CS1910121018', 'CS1910121019', 'CS1910121002', 'CS1910121020', 'CS1910121021', 'CS1910121022', 'CS1910121023', 'CS1910121024', 'CS1910121025', 'CS1910121026', 'CS1910121027', 'CS1910121028', 'CS1910121029', 'CS1910121003', 'CS1910121030', 'CS1910121031', 'CS1910121032', 'CS1910121033', 'CS1910121034', 'CS1910121035', 'CS1910121036', 'CS1910121037', 'CS1910121038', 'CS1910121039', 'CS1910121004', 'CS1910121040', 'CS1910121041', 'CS1910121042', 'CS1910121043', 'CS1910121044', 'CS1910121045', 'CS1910121046', 'CS1910121047', 'CS1910121048', 'CS1910121049', 'CS1910121005', 'CS1910121050', 'CS1910121051', 'CS1910121052', 'CS1910121053', 'CS1910121054', 'CS1910121055', 'CS1910121056', 'CS1910121057', 'CS1910121058', 'CS1910121059', 'CS1910121006', 'CS1910121060', 'CS1910121061', 'CS1910121062', 'CS1910121063', 'CS1910121064', 'CS1910121065', 'CS1910121066', 'CS1910121067', 'CS1910121068', 'CS1910121069', 'CS1910121007', 'CS1910121070', 'CS1910121071', 'CS1910121072', 'CS1910121073', 'CS1910121074', 'CS1910121075', 'CS1910121076', 'CS1910121077', 'CS1910121078', 'CS1910121079', 'CS1910121008', 'CS1910121080', 'CS1910121081', 'CS1910121082', 'CS1910121083', 'CS1910121084', 'CS1910121085', 'CS1910121086', 'CS1910121087', 'CS1910121088', 'CS1910121089', 'CS1910121009', 'CS1910121090', 'CS1910121091', 'CS1910121092', 'CS1910121093', 'CS1910121094', 'CS1910121095', 'CS1910121096', 'CS1910121097', 'CS1910121098', 'CS1910121099']
+        color: ['#8B5862', '#F1869C', '#7F48B8', '#7D45B8', '#0A4657', '#0D5A8B', '#0A75B1', '#14718F', '#3DAE5E', '#3DAD5E', '#3CAD5F', '#48CB80', '#9C28CC', '#2F91DA', '#312E27', '#352D27', '#353125', '#2E3E39', '#73B29E', '#71AF9A', '#604B47', '#A67C72', '#A77B6E', '#AE28E6', '#8BA38D', '#F1849C', '#E23EF0', '#B36C76', '#CC6FF1', '#CD6DF2', '#CB6FF3', '#CD6FF3', '#8E5864', '#D26ECB', '#E071FF', '#9256A6', '#B65FBF', '#D26ECA', '#D270CA', '#AC6FC5', '#CC6EF1', '#C667D9', '#AB6DC7', '#8E5A63', '#B563CC', '#E891D0', '#E170FE', '#D26AE6', '#CF6EC9', '#E693CE', '#D36FCA', '#ECD704', '#E89C04', '#E79C05', '#8A5860', '#D97807', '#996A0E', '#BF880B', '#CC7E09', '#8C2734', '#7C3B2B', '#BF670B', '#A63827', '#A33527', '#EA2C44', '#945E51', '#ED2C45', '#ED2C47', '#D92D43', '#D62866', '#D72963', '#21D587', '#21D186', '#24D388', '#23D286', '#20D187', '#936052', '#20D387', '#0E8B8B', '#00FF34', '#02ED33', '#04EB32', '#29B948', '#33AD5C', '#0E9797', '#22D0B8', '#02E2F7', '#B9814D', '#C8B323', '#21D238', '#0E4458', '#BBC225', '#BDC123', '#BFC124', '#9A9922', '#31B6B1', '#03E1F8', '#23D385', '#8B5A64', '#52B8AA', '#55C5B3', '#55C3B4', '#0BBEBE', '#60958B', '#56C5B3', '#56C3B7', '#689E7C', '#5504EC', '#510BBB', '#A6666F', '#520DBB', '#520AB8', '#479AB0', '#3195D7', '#5494B3', '#296B98', '#469DAD', '#184AC1', '#174ABE', '#7D49B7']
+    -   variable: "cell_type_alias"
+        datasets: [HCA]
+        order: ['Inh L1 LAMP5 NDNF', 'Inh L1 PAX6 GRIP2', 'Exc L6 FEZF2 SLITRK6', 'Exc L6 FEZF2 TBCC', 'Exc L3-5 FEZF2 ONECUT1', 'Exc L3-5 FEZF2 DCN', 'Exc L5 FEZF2 SCN7A', 'Exc L5 FEZF2 MORN2', 'Exc L5 FEZF2 DYRK2', 'Exc L5-6 FEZF2 MYBPHL', 'Exc L5-6 FEZF2 CYP26B1', 'Exc L5-6 FEZF2 RSAD2', 'Inh L1-3 PAX6 NABP1', 'Exc L5-6 FEZF2 CABP7', 'Astro L1-6 FGFR3 ETNPPL', 'Astro L1 FGFR3 MT1G', 'Astro L1 FGFR3 FOS', 'OPC L1-6 MYT1', 'Oligo L4-6 MOBP COL18A1', 'Oligo L4-6 OPALIN', 'Endo L2-5 CLDN5', 'VLMC L1-3 CYP1B1', 'Peri L1-6 MUSTN1', 'Inh L1-6 VIP RCN1', 'Micro L1-6 C1QC', 'Inh L1 VIP PRSS8', 'Inh L1 VIP TNFAIP8L3', 'Inh L1 ADARB2 ADAM33', 'Inh L1 SST CXCL14', 'Inh L1 ADARB2 DISP2', 'Inh L1 VIP SOX11', 'Inh L1-6 VIP PENK', 'Inh L1 LAMP5 GGT8P', 'Inh L1-5 VIP KCNJ2', 'Inh L1 VIP PCDH20', 'Inh L1-2 VIP PPAPDC1A', 'Inh L2-6 VIP VIP', 'Inh L3-6 VIP KCTD13', 'Inh L1-6 VIP RGS16', 'Inh L1-3 VIP SSTR1', 'Inh L1-2 VIP RPL41P3', 'Inh L1-3 VIP ACHE', 'Inh L2-4 VIP LGI2', 'Inh L1-4 LAMP5 DUSP4', 'Inh L1-4 VIP CHRNA2', 'Inh L1-3 VIP CCDC184', 'Inh L2-5 VIP TOX2', 'Inh L2-4 VIP DSEL', 'Inh L1-3 VIP ZNF322P1', 'Inh L3 VIP CBLN1', 'Inh L1-3 VIP GGH', 'Inh L6 SST NPY', 'Inh L5-6 SST ISOC1', 'Inh L5-6 SST KLHL14', 'Inh L6 LAMP5 C1QL2', 'Inh L3-5 SST MAFB', 'Inh L4-6 SST MTHFD2P6', 'Inh L4-5 PVALB TRIM67', 'Inh L5-6 SST TH', 'Inh L6 LHX6 GLP1R', 'Inh L5-6 PVALB FAM150B', 'Inh L2-4 SST AHR', 'Inh L5-6 PVALB STON2', 'Inh L5 PVALB CNTNAP3P2', 'Inh L2-4 PVALB C8orf4', 'Inh L1-6 LAMP5 CA13', 'Inh L1-2 PVALB TAC1', 'Inh L1-3 PVALB WFDC2', 'Inh L3-4 PVALB HOMER3', 'Inh L1-6 PVALB SCUBE3', 'Inh L3-6 PVALB MFI2', 'Exc L2-4 RORB GRIK1', 'Exc L3-4 RORB RPS3P6', 'Exc L4 RORB BHLHE22', 'Exc L4 RORB CCDC168', 'Exc L4 RORB CACNG5', 'Inh L5-6 LAMP5 SFTA3', 'Exc L4-5 RORB ASCL1', 'Exc L4-5 RORB AIM2', 'Exc L2-3 LINC00507 RPL9P17', 'Exc L3 LINC00507 PSRC1', 'Exc L3-5 LINC00507 SLN', 'Exc L3 RORB CARTPT', 'Exc L3-4 RORB FOLH1B', 'Exc L3-4 RORB SEMA6D', 'Exc L3-4 RORB PRSS12', 'Exc L3-5 RORB HSPB3', 'Inh L1-2 PAX6 SCGN', 'Exc L3-5 THEMIS ELOF1', 'Exc L3 LINC00507 CTXN3', 'Exc L3 THEMIS PLA2G7', 'Exc L5-6 THEMIS OR1J1', 'Exc L6 THEMIS EGR3', 'Exc L6 THEMIS LINC00343', 'Exc L5-6 THEMIS TMEM233', 'Exc L3-5 RORB CMAHP', 'Exc L3-5 RORB CD24', 'Exc L4-5 RORB LINC01474', 'Inh L6 LAMP5 ANKRD20A11P', 'Exc L4-6 RORB HPCA', 'Exc L5-6 RORB LINC00320', 'Exc L5 RORB LINC01202', 'Exc L4-5 RORB HNRNPA1P46', 'Exc L4-5 RORB RPL31P31', 'Exc L3-5 THEMIS UBE2F', 'Exc L5 RORB SNHG7', 'Exc L4-5 RORB LCN15', 'Exc L5-6 THEMIS IL7R', 'Exc L6 THEMIS C6orf48', 'Inh L1 PAX6 CA4', 'Exc L5-6 THEMIS GPR21', 'Exc L5-6 THEMIS THTPA', 'Exc L6 FEZF2 VWA2', 'Exc L5-6 FEZF2 ANKRD20A1', 'Exc L6 FEZF2 FAM95C', 'Exc L6 FEZF2 CPZ', 'Exc L6 FEZF2 ETV4', 'Exc L6 FEZF2 TBC1D26', 'Exc L6 FEZF2 KRT17', 'Exc L6 FEZF2 P4HA3']
+        color: ['#8B5862', '#F1869C', '#7F48B8', '#7D45B8', '#0A4657', '#0D5A8B', '#0A75B1', '#14718F', '#3DAE5E', '#3DAD5E', '#3CAD5F', '#48CB80', '#9C28CC', '#2F91DA', '#312E27', '#352D27', '#353125', '#2E3E39', '#73B29E', '#71AF9A', '#604B47', '#A67C72', '#A77B6E', '#AE28E6', '#8BA38D', '#F1849C', '#E23EF0', '#B36C76', '#CC6FF1', '#CD6DF2', '#CB6FF3', '#CD6FF3', '#8E5864', '#D26ECB', '#E071FF', '#9256A6', '#B65FBF', '#D26ECA', '#D270CA', '#AC6FC5', '#CC6EF1', '#C667D9', '#AB6DC7', '#8E5A63', '#B563CC', '#E891D0', '#E170FE', '#D26AE6', '#CF6EC9', '#E693CE', '#D36FCA', '#ECD704', '#E89C04', '#E79C05', '#8A5860', '#D97807', '#996A0E', '#BF880B', '#CC7E09', '#8C2734', '#7C3B2B', '#BF670B', '#A63827', '#A33527', '#EA2C44', '#945E51', '#ED2C45', '#ED2C47', '#D92D43', '#D62866', '#D72963', '#21D587', '#21D186', '#24D388', '#23D286', '#20D187', '#936052', '#20D387', '#0E8B8B', '#00FF34', '#02ED33', '#04EB32', '#29B948', '#33AD5C', '#0E9797', '#22D0B8', '#02E2F7', '#B9814D', '#C8B323', '#21D238', '#0E4458', '#BBC225', '#BDC123', '#BFC124', '#9A9922', '#31B6B1', '#03E1F8', '#23D385', '#8B5A64', '#52B8AA', '#55C5B3', '#55C3B4', '#0BBEBE', '#60958B', '#56C5B3', '#56C3B7', '#689E7C', '#5504EC', '#510BBB', '#A6666F', '#520DBB', '#520AB8', '#479AB0', '#3195D7', '#5494B3', '#296B98', '#469DAD', '#184AC1', '#174ABE', '#7D49B7']
+    -   variable: "cell_type_alt_alias"
+        datasets: [HCA]
+        order: ['Lamp5 Rosehip', 'Sst Chodl', 'Lamp5 Lhx6 1', 'Chandelier 1', 'Chandelier 2', 'Lamp5 Lhx6 2']
+        color: ['#8E5A63', '#ECD704', '#945E51', '#D62866', '#D72963', '#936052']
+    -   variable: "cell_type_designation"
+        datasets: [HCA]
+        order: ['Neuron 001', 'Neuron 010', 'Neuron 100', 'Neuron 101', 'Neuron 102', 'Neuron 103', 'Neuron 104', 'Neuron 105', 'Neuron 106', 'Neuron 107', 'Neuron 108', 'Neuron 109', 'Neuron 011', 'Neuron 110', 'Non-neuron 001', 'Non-neuron 002', 'Non-neuron 003', 'Non-neuron 004', 'Non-neuron 005', 'Non-neuron 006', 'Non-neuron 007', 'Non-neuron 008', 'Non-neuron 009', 'Neuron 012', 'Non-neuron 010', 'Neuron 013', 'Neuron 014', 'Neuron 015', 'Neuron 016', 'Neuron 017', 'Neuron 018', 'Neuron 019', 'Neuron 002', 'Neuron 020', 'Neuron 021', 'Neuron 022', 'Neuron 023', 'Neuron 024', 'Neuron 025', 'Neuron 026', 'Neuron 027', 'Neuron 028', 'Neuron 029', 'Neuron 003', 'Neuron 030', 'Neuron 031', 'Neuron 032', 'Neuron 033', 'Neuron 034', 'Neuron 035', 'Neuron 036', 'Neuron 037', 'Neuron 038', 'Neuron 039', 'Neuron 004', 'Neuron 040', 'Neuron 041', 'Neuron 042', 'Neuron 043', 'Neuron 044', 'Neuron 045', 'Neuron 046', 'Neuron 047', 'Neuron 048', 'Neuron 049', 'Neuron 005', 'Neuron 050', 'Neuron 051', 'Neuron 052', 'Neuron 053', 'Neuron 054', 'Neuron 055', 'Neuron 056', 'Neuron 057', 'Neuron 058', 'Neuron 059', 'Neuron 006', 'Neuron 060', 'Neuron 061', 'Neuron 062', 'Neuron 063', 'Neuron 064', 'Neuron 065', 'Neuron 066', 'Neuron 067', 'Neuron 068', 'Neuron 069', 'Neuron 007', 'Neuron 070', 'Neuron 071', 'Neuron 072', 'Neuron 073', 'Neuron 074', 'Neuron 075', 'Neuron 076', 'Neuron 077', 'Neuron 078', 'Neuron 079', 'Neuron 008', 'Neuron 080', 'Neuron 081', 'Neuron 082', 'Neuron 083', 'Neuron 084', 'Neuron 085', 'Neuron 086', 'Neuron 087', 'Neuron 088', 'Neuron 089', 'Neuron 009', 'Neuron 090', 'Neuron 091', 'Neuron 092', 'Neuron 093', 'Neuron 094', 'Neuron 095', 'Neuron 096', 'Neuron 097', 'Neuron 098', 'Neuron 099']
+        color: ['#8B5862', '#F1869C', '#7F48B8', '#7D45B8', '#0A4657', '#0D5A8B', '#0A75B1', '#14718F', '#3DAE5E', '#3DAD5E', '#3CAD5F', '#48CB80', '#9C28CC', '#2F91DA', '#312E27', '#352D27', '#353125', '#2E3E39', '#73B29E', '#71AF9A', '#604B47', '#A67C72', '#A77B6E', '#AE28E6', '#8BA38D', '#F1849C', '#E23EF0', '#B36C76', '#CC6FF1', '#CD6DF2', '#CB6FF3', '#CD6FF3', '#8E5864', '#D26ECB', '#E071FF', '#9256A6', '#B65FBF', '#D26ECA', '#D270CA', '#AC6FC5', '#CC6EF1', '#C667D9', '#AB6DC7', '#8E5A63', '#B563CC', '#E891D0', '#E170FE', '#D26AE6', '#CF6EC9', '#E693CE', '#D36FCA', '#ECD704', '#E89C04', '#E79C05', '#8A5860', '#D97807', '#996A0E', '#BF880B', '#CC7E09', '#8C2734', '#7C3B2B', '#BF670B', '#A63827', '#A33527', '#EA2C44', '#945E51', '#ED2C45', '#ED2C47', '#D92D43', '#D62866', '#D72963', '#21D587', '#21D186', '#24D388', '#23D286', '#20D187', '#936052', '#20D387', '#0E8B8B', '#00FF34', '#02ED33', '#04EB32', '#29B948', '#33AD5C', '#0E9797', '#22D0B8', '#02E2F7', '#B9814D', '#C8B323', '#21D238', '#0E4458', '#BBC225', '#BDC123', '#BFC124', '#9A9922', '#31B6B1', '#03E1F8', '#23D385', '#8B5A64', '#52B8AA', '#55C5B3', '#55C3B4', '#0BBEBE', '#60958B', '#56C5B3', '#56C3B7', '#689E7C', '#5504EC', '#510BBB', '#A6666F', '#520DBB', '#520AB8', '#479AB0', '#3195D7', '#5494B3', '#296B98', '#469DAD', '#184AC1', '#174ABE', '#7D49B7']
+    -   variable: "external_donor_name"
+        datasets: [HCA]
+        order: ['H200.1023', 'H200.1025', 'H200.1030']
+        color: ['#FF7373', '#3DCC3D', '#171799']
+
+panels:
+    -   name: "Bulk Datasets"
+        datasets: [BrainSpan, GTEx, BrainSeq, PsychENCODE]
+        description: ""
+    -   name: "Single Nucleus Datasets"
+        datasets: [HCA, Velmeshev]
+        description: ""
+
