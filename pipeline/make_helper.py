@@ -27,7 +27,7 @@ with open(sys.argv[1], 'r') as stream:
     for d in data_loaded["datasets"]: 
         metaSrc = os.path.join(d["dir"], d["meta"])
         shutil.copy2(metaSrc, metaDst)
-        metaFiles.append({"name": d["id"], "path": "resources/data/metadata/" + d["meta"], "samples": sum(1 for line in open(metaSrc))})
+        metaFiles.append({"name": d["id"], "path": "resources/data/metadata/" + d["meta"], "samples": sum(1 for line in open(metaSrc))-1})
     jsonData["meta_files"] = metaFiles
 
 if(outDir):
