@@ -16,12 +16,16 @@
 
 all: pipeline deploy
 
-setup: requirements.txt
-	pip3 install -q -r requirements.txt
-	npm install netlify-cli -g
+setup: environment.yaml
+	. "$$(conda info --base)/etc/profile.d/conda.sh" \
+	&& conda env update --prune -f environment.yaml || true \
+	&& conda activate bithub-env \
+	&& npm install netlify-cli -g \
 
 pipeline: input.yaml
-	python3 main.py
+	. "$$(conda info --base)/etc/profile.d/conda.sh" \
+	&& conda activate bithub-env \
+	&& python3 main.py \
 
 #	Use a simple python script to grab metadata and generate metadata.json
 deploy: input.yaml
@@ -41,9 +45,11 @@ deploy: input.yaml
 	cp -R -u -p ./data/netlify.toml "${output}"
 
 #	Deploy
-	@ cd "${output}";\
-	echo | netlify sites:create -n "${project}";\
-	echo | netlify deploy --site "${project}" --prod;\
+	. "$$(conda info --base)/etc/profile.d/conda.sh" \
+	&& conda activate bithub-env \
+	&& cd "${output}" \
+	&& echo | netlify sites:create -n "${project}" \
+	&& echo | netlify deploy --site "${project}" --prod \
 
 clean:
 	rm -rf __pycache__

@@ -1,6 +1,0 @@
-h5py
-matplotlib
-numpy
-sortedcontainers
-oyaml
-upsetplot

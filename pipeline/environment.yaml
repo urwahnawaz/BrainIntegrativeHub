@@ -1,0 +1,16 @@
+# run: conda env create --file environment.yml
+name: bithub-env
+channels:
+    - defaults
+    - conda-forge
+dependencies:
+    - python>=3.9
+    - nodejs>=17.9
+    - pip
+    - pip:
+        - h5py
+        - matplotlib
+        - numpy
+        - sortedcontainers
+        - oyaml
+        - upsetplot
