@@ -1,5 +1,6 @@
 from abstractsource import AbstractSource
-import csv, math, h5py, os
+from seekablecsvreader import SeekableCSVReader
+import csv, math, h5py, os, zlib, struct
 import numpy as np
 from array import array
 
@@ -17,24 +18,11 @@ class AbstractMetaIter(AbstractSource):
         self.nameLong = nameLong
         self.output = output
 
-    def getKeysOrdered(self, fileName):
-        heading = None
+    def getKeysOrdered(self, fileName, removeKeyDotPostfix):
         keys = []
-        numberedRowsOffset = -1
-        for line in csv.reader(open(fileName, 'r'), delimiter=','):
-            if not heading: 
-                heading = line[1:]
-                continue
-            if numberedRowsOffset == -1: 
-                if line[0] == "1": #This assumes actual matrix rows begin with ensembl ID, which should not be 1
-                    numberedRowsOffset = 1
-                    heading = heading[1:]
-                    print("Removing numbered rows from source file")
-                else:
-                    numberedRowsOffset = 0
-            key = line[numberedRowsOffset] if self.keyIsSymbol else line[numberedRowsOffset].split('.', 1)[0]
-            keys.append(key)
-        return heading, keys
+        reader = SeekableCSVReader(filename=fileName, removeKeyDotPostfix=removeKeyDotPostfix)
+        for line in reader: keys.append(line[0])
+        return reader.getHeading(), keys
 
     def intersectKeysOrdered(self, keys1, keys2):
         _auxset = set(keys1)
@@ -48,35 +36,18 @@ class AbstractMetaIter(AbstractSource):
         return list(filter(None, newList))
         
     def _writeHDF5Columns(self, fileName, hdf5Group, sampleToIndexFiltered, noneType="NA"):
-        heading = None
-        removed = None
         lines = []
-        keys = []
-        numberedRowsOffset = -1
-        print("Reading file " + os.path.join(self.directory, fileName))
-        for line in csv.reader(open(os.path.join(self.directory, fileName), 'r'), delimiter=','):
-            if not heading:
-                heading = line[1:]
-                removed = [False] * len(heading)
-                continue
-            if numberedRowsOffset == -1: 
-                if line[0] == "1": #This assumes actual metadata rows begin with sample ID, which should not be 1
-                    numberedRowsOffset = 1
-                    heading = heading[1:]
-                    removed = [False] * len(heading)
-                    print("Removing numbered rows from source file")
-                else:
-                    numberedRowsOffset = 0
-            lines.append(line[numberedRowsOffset+1:])
-            keys.append(line[numberedRowsOffset])
+        samples = []
 
-        if(len(lines) == 0): raise Exception("File was empty")
+        sampleReader = SeekableCSVReader(filename=os.path.join(self.directory, fileName))
+        heading = sampleReader.getHeading()
+        removed = [False] * len(heading)
 
-        lines = self.reorderListByKey(keys, lines, sampleToIndexFiltered)
+        for line in sampleReader:
+            lines.append(line[1:])
+            samples.append(line[0])
 
-        if(len(lines) == 0): raise Exception("File metadata/matrix keys didn't match when reordering")
-
-        for i in range(len(heading)): heading[i] = heading[i].strip()
+        lines = self.reorderListByKey(samples, lines, sampleToIndexFiltered)
 
         allTypes = [int, float, str]
         allDefaults = [0, 0.0, ""]
@@ -122,25 +93,25 @@ class AbstractMetaIter(AbstractSource):
 
 
     def writeHDF5Metadata(self, root, rows):
-        headingMeta, keysMeta = self.getKeysOrdered(os.path.join(self.directory, self.metadata))
-        headingMatrix, keysMatrix = self.getKeysOrdered(os.path.join(self.directory, self.matrices[0]["path"]))
+        headingMeta, keysMeta = self.getKeysOrdered(os.path.join(self.directory, self.metadata), False)
+        headingMatrix, keysMatrix = self.getKeysOrdered(os.path.join(self.directory, self.matrices[0]["path"]), not self.keyIsSymbol)
         samplesOrdered = self.intersectKeysOrdered(headingMatrix, keysMeta)
-        print(str(len(keysMatrix) * (len(samplesOrdered) * 4)) + " bytes")
-        keyToIndexFiltered = {}
-        tableIndices = []
+
+        keyToIndexFiltered = {} #map subsetted genes from this matrix to overall row order
+        tableIndices = [] #map rows in this subsetted matrix back to overall row indices
         tableIndex = 0
+
+        #Are there gaps in order index?
+        prev = -1
         for row in rows:
-            orderIndex = row.getOrder(self.id)
             metaIndex = row.getMeta(self.id)
-            if metaIndex != -1: 
+            if metaIndex >= 0: 
+                orderIndex = row.getOrder(self.id)
                 keyToIndexFiltered[keysMatrix[metaIndex]] = orderIndex
                 tableIndices.append(tableIndex)
+                prev = orderIndex
             tableIndex += 1
 
-        print(len(keysMatrix)) #why not same length? because unreliable are not in keyToIndexFiltered
-        print(len(keyToIndexFiltered))
-        print(str((max(keyToIndexFiltered.values())+1) * (len(samplesOrdered) * 4)) + " bytes")
-        
         sampleToIndexFiltered = {}
         for i in range(len(samplesOrdered)):
             sampleToIndexFiltered[samplesOrdered[i]] = i
@@ -156,12 +127,11 @@ class AbstractMetaIter(AbstractSource):
         matrixGroup = experimentGroup.create_group("matrices")
         matrixGroup.attrs.create("order", [m["type"] for m in self.matrices])
         lakeFileName = self.name + "_" + self.matrices[0]["type"]
-        datalakeMaxBytes = 2000000000
-        datalakeNames, shape = self._writeAsMatrix(os.path.join(self.directory, self.matrices[0]["path"]), keyToIndexFiltered, sampleToIndexFiltered, datalakeMaxBytes, lakeFileName, experimentGroup)
-        #shape = self._writeAsMatrix(os.path.join(self.directory, self.matrices[0]["path"]), keyToIndexFiltered, sampleToIndexFiltered, output_file if matrixGroup else None, experimentGroup)
-        ds = matrixGroup.create_dataset(self.matrices[0]["type"], data=h5py.Empty("S1"))
-        ds.attrs.create("datalake", datalakeNames)
-        ds.attrs.create("datalake-max", datalakeMaxBytes)
+        datalakeIndices, datalakeName, shape = self._writeAsMatrixCompressed(os.path.join(self.directory, self.matrices[0]["path"]), keyToIndexFiltered, sampleToIndexFiltered, lakeFileName, experimentGroup)
+        ds = matrixGroup.create_group(self.matrices[0]["type"])
+
+        ds.create_dataset("index", data=datalakeIndices, compression="gzip", compression_opts=9)
+        ds.attrs.create("path", datalakeName)
         ds.attrs.create("shape", shape)
         
         #Write indices
@@ -177,87 +147,66 @@ class AbstractMetaIter(AbstractSource):
         if self.customFilterColumn:
             experimentGroup.attrs.create("customFilterColumn", self.customFilterColumn) 
             if self.customFilterName: experimentGroup.attrs.create("customFilterName", self.customFilterName) 
-    
 
-    def _writeAsMatrix(self, fileName, keyToIndexFiltered, sampleToIndexFiltered, datalakeMaxSize, lakeFileName, scaledOutput, noneType="NA"):
-        #Writes matrix in overall row order
-        bytesPerRow = (len(sampleToIndexFiltered) * 4)
-        datalakeMaxSize = math.floor(datalakeMaxSize / bytesPerRow) * bytesPerRow #Round down so divisible by row bytes
-        
-        maxSize = (max(keyToIndexFiltered.values())+1) * bytesPerRow
-        datalakeNames = []
-        datalakeFiles = []
-        for i in range(math.ceil(float(maxSize) / datalakeMaxSize)):
-            datalakeName = lakeFileName + str(i+1) + ".matrix"
-            datalakeNames.append(datalakeName)
-            datalakeFiles.append(open(self.output + datalakeName, 'wb'))
-            datalakeFiles[-1].seek((maxSize % datalakeMaxSize) if maxSize < (i+1)*datalakeMaxSize else datalakeMaxSize)
-            array('f', [0] * len(sampleToIndexFiltered)).tofile(datalakeFiles[-1])
+    def _writeAsMatrixCompressed(self, fileName, keyToIndexFiltered, sampleToIndexFiltered, lakeFileName, scaledOutput, noneType="NA"):
+        datalakeName = lakeFileName + ".matrix"
 
-        heading = None
-        numberedRowsOffset = -1
-        logs = []
-        #Could read file line by line and call tell() on each line, then seek to out of order keys
-        #We already read this file anyway
-        for line in csv.reader(open(fileName, 'r'), delimiter=','):
-            if not heading: 
-                heading = line[1:]
-                continue
-            if numberedRowsOffset == -1: 
-                if line[0] == "1": #This assumes actual matrix rows begin with ensembl ID, which should not be 1
-                    numberedRowsOffset = 1
-                    heading = heading[1:]
-                    print("Removing numbered rows from source file")
-                else:
-                    numberedRowsOffset = 0
-            key = line[numberedRowsOffset] if self.keyIsSymbol else line[numberedRowsOffset].split('.', 1)[0]
-            index = keyToIndexFiltered.get(key, -1)
-            
-            if index >= 0:
-                fixedLine = self.reorderListByKey(heading, line[1 + numberedRowsOffset:], sampleToIndexFiltered)
+        with open(self.output + datalakeName, 'wb') as datalakeFile:
+            tells = []
+            logs = []
+            offset = 0
+            seen = [False] * len(keyToIndexFiltered)
+            matrixReader = SeekableCSVReader(filename=fileName, removeKeyDotPostfix=not self.keyIsSymbol)
+            for line in matrixReader:
+                key = line[0]
+                index = keyToIndexFiltered.get(key, -1)
+                if index >= 0 and not seen[index]:
+                    tells.append((index, matrixReader.getLineStartTell(), key))
+                    seen[index] = True
+
+            tells.sort()
+
+            datalakeIndices = []
+            totalBytesWritten = 0
+            debug = True
+            for tell in tells:
+                matrixReader.setLineStartTell(tell[1])
+                line = matrixReader.__next__()
+                fixedLine = self.reorderListByKey(matrixReader.getHeading(), line[1:], sampleToIndexFiltered)
                 for i in range(len(fixedLine)): fixedLine[i] = float(fixedLine[i])
                 if(scaledOutput): logs.append(np.mean([math.log2(abs(fixedLine[i]) + 0.01) for i in range(len(fixedLine))]))
-                if(datalakeMaxSize >= 0):
-                    totalIndex = index * (len(fixedLine) * 4)
-                    partNumber = math.floor(totalIndex / datalakeMaxSize)
-                    partIndex = totalIndex % datalakeMaxSize
-                    datalakeFiles[partNumber].seek(partIndex)
-                    array('f', fixedLine).tofile(datalakeFiles[partNumber]) #Subtle, but parts may not be divisible by line length so are underallocated, will be extended here regardless
+                datalakeIndices.append(totalBytesWritten)
+                totalBytesWritten += datalakeFile.write(zlib.compress(bytes().join((struct.pack('<f', val) for val in fixedLine))))
 
-        if(scaledOutput):
-            logMean = np.mean(logs)
-            logSd = np.std(logs)
-            scaled = np.array([((x - logMean) / logSd) for x in logs], dtype="f4")
-            scaledOutput.create_dataset("scaled", data=scaled, compression="gzip", compression_opts=9)
+                if debug:
+                    debug = False
+                    print(fixedLine)
+                    print(tell[2])
+                    print(totalBytesWritten)
 
-        for part in datalakeFiles:
-            part.close()
+            datalakeIndices.append(totalBytesWritten)
 
-        return datalakeNames, (len(keyToIndexFiltered), len(heading))
+            if(scaledOutput):
+                logMean = np.mean(logs)
+                logSd = np.std(logs)
+                scaled = np.array([((x - logMean) / logSd) for x in logs], dtype="f4")
+                scaledOutput.create_dataset("scaled", data=scaled, compression="gzip", compression_opts=9)
+
+        return datalakeIndices, datalakeName, (len(keyToIndexFiltered), len(sampleToIndexFiltered))
 
     def _getAsMatrix(self, fileName, keyToIndexFiltered, sampleToIndex, noneType="NA"):
         #Writes matrix in overall row order
-        heading = None
-        lines = [None] * len(keyToIndexFiltered)
-        numberedRowsOffset = -1
-        for line in csv.reader(open(fileName, 'r'), delimiter=','):
-            if not heading: 
-                heading = line[1:]
-                continue
-            if numberedRowsOffset == -1: 
-                if line[0] == "1": #This assumes actual matrix rows begin with ensembl ID, which should not be 1
-                    numberedRowsOffset = 1
-                    heading = heading[1:]
-                    print("Removing numbered rows from source file")
-                else:
-                    numberedRowsOffset = 0
-
-            key = line[numberedRowsOffset] if self.keyIsSymbol else line[numberedRowsOffset].split('.', 1)[0]
+        lines = [None] * (1 + max(keyToIndexFiltered.values()))
+        matrixReader = SeekableCSVReader(filename=fileName, removeKeyDotPostfix=not self.keyIsSymbol)
+        heading = matrixReader.getHeading()
+        lineLen = len(sampleToIndex if sampleToIndex else heading)
+        for line in matrixReader:
+            key = line[0]
             index = keyToIndexFiltered.get(key, -1)
             if index >= 0:
-                fromLine = line[1 + numberedRowsOffset:]
+                fromLine = line[1:]
                 if sampleToIndex:
-                    toLine = [-1] * len(sampleToIndex)
+                    toLine = [-1] * lineLen
                     for i in range(len(fromLine)):
                         subIndex = sampleToIndex.get(heading[i], -1)
                         if subIndex != -1:
@@ -269,7 +218,7 @@ class AbstractMetaIter(AbstractSource):
         mdata2 = []
         for line in lines:
             if(line): mdata2.append(tuple([(line[i] if line[i] != noneType else -1.0) for i in range(len(line))]))
-            else: mdata2.append(len(heading) * [-1])
+            else: mdata2.append([-1] * lineLen)
         return heading, mdata2
 
     #Be warned, this is a subset of variables, so just write them in HDF5 attrs and be done with it

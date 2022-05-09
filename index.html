@@ -16,6 +16,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/web-streams-polyfill@2.0.2/dist/ponyfill.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/streamsaver@2.0.3/StreamSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.0.4/pako.min.js"></script>
 
     <script src="https://d3js.org/colorbrewer.v1.min.js"></script>
     <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
@@ -31,8 +32,6 @@
 
     <script src="resources/js/plot.js"></script>
     <script src="resources/js/metaPanel.js"></script>
-    <script src="resources/js/metaPanelDual.js"></script>
-    <script src="resources/js/metaPanelCompact.js"></script>
     <script src="resources/js/plotControls.js"></script>
     <script src="resources/js/utility.js"></script>
 
@@ -438,7 +437,7 @@
             }
             document.getElementById("metadataCSVDownload").innerHTML = metadataCSVDownloadHTML;
 
-            await new Promise(resolve => setTimeout(resolve, 400));
+            await new Promise(resolve => setTimeout(resolve, 500));
             
             const response = await fetch(siteMeta.data_url + "/out.hdf5");
             const length = response.headers.get('Content-Length');
@@ -465,14 +464,7 @@
             let i = 0;
             for (let group of hdf5Panels.attrs.order) {
                 let groupObj = hdf5Panels.get(group);
-                if (MetaPanelDual.isDataDual(groupObj)) {
-                    metaPanels.push(new MetaPanelDual("allpanels", "allpanels" + (i), groupObj, group));
-                } else if (MetaPanelCompact.isDataCompact(groupObj)) {
-                    metaPanels.push(new MetaPanelCompact("allpanels", "allpanels" + (i), groupObj, group));
-                } else {
-                    metaPanels.push(new MetaPanel("allpanels", "allpanels" + (i), groupObj, group, undefined, siteMeta.data_url));
-                }
-                ++i;
+                metaPanels.push(new MetaPanel("allpanels", "allpanels" + (i++), groupObj, group, undefined, siteMeta.data_url));
             }
 
             hdf5Data = f.get("data");
@@ -759,7 +751,7 @@
 
             $("#myDisplay")[0].setAttribute('data-domain', total + " result" + (total != 1 ? "s" : ""));
 
-            $("thead > tr > th > span").click(function (arg) {
+            $("#my_table > thead > tr > th > span").click(function (arg) {
                 pageCurr = 0;
                 sortNewCol = undefined;
                 if (arg.target.id == "Datasets") {
@@ -780,7 +772,7 @@
                 makeTable();
             });
 
-            $("tbody > tr").click(function (arg) {
+            $("#my_table > tbody > tr").click(function (arg) {
                 if (getSelection().toString()) {
                     return; //user selected text, not a click
                 }

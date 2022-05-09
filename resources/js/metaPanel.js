@@ -1,7 +1,7 @@
 //Creates plot controls and plot for each hdf5 group.
 // One for metadata vs measure, one for measure vs measure if there are multiple
 class MetaPanel {
-    constructor(parentId, uniqueId, hdf5Group, name, names) {
+    constructor(parentId, uniqueId, hdf5Group, name, names, datalakeURL) {
         var self = this;
 
         self.suppressChanges = 0;
@@ -14,6 +14,8 @@ class MetaPanel {
         
         self.datasets = [];
         self.currIndex = undefined;
+
+        self.datalakeURL = datalakeURL
 
         self.hasAnyVariancePartition = false;
         for(let d of hdf5Group.keys) {
@@ -84,43 +86,20 @@ class MetaPanel {
         return cache.data;
     }
 
-    //Should centrallise caching and asynchronously hot load first page when makeTable is called
-    //OR open modal immediately but show circle spinning
-    _getMatrixRowChunkCached(datasetName, matrixName, row) {
-        var self = this;
-        let matrix = self.hdf5Group.get(datasetName + "/matrices/" + matrixName);
-        let chunks = matrix._dataobjects.chunks;
-        let rowLength = matrix.shape[1];
-        let chunkSize = chunks[0] * chunks[1];
-        if((chunkSize % rowLength) != 0) {
-            console.log(`cannot use chunk cache, rows span multiple chunks`);
-            return this._getMatrixRowCached(datasetName, matrixName, row);
-        }
-        let rowStart = row * rowLength;
-        let matrixSize =  matrix.shape[0] * matrix.shape[1];
-        let chunkIndex = Math.floor(rowStart / chunkSize);
-        let chunkStart = chunkIndex * chunkSize;
-        let cache = self.rowCache[datasetName][matrixName];
-        if(cache.id == chunkStart) {
-            console.log(`used cached chunk ${chunkIndex}`);
-        } else {
-            console.log("no cached chunk");
-            cache.data = matrix.value.slice(chunkStart, Math.min(chunkStart + chunkSize, matrixSize));
-            cache.id = chunkStart;
-        }
-        return cache.data.slice(rowStart - chunkStart, rowStart + rowLength - chunkStart);
-    }
 
     _getMatrixRowDataLakeCached(datasetName="BrainSeq", matrixName="RPKM", row=0, callback=console.log) {
+        var self = this
+
         let matrix = this.hdf5Group.get(datasetName + "/matrices/" + matrixName);
-        let bytesPerFloat = 4;
+
         let shape = matrix.attrs["shape"];
-        let datalakeMax = matrix.attrs["datalake-max"]; //will always be divisible by rows
+        let index = matrix.get("index").value;
 
-        let rowStart = (row+0) * shape[1];
-        let rowEnd = (row+1) * shape[1];
+        console.log(row);
+        console.log(index.length)
 
-        let currPart = Math.floor(rowStart * bytesPerFloat / datalakeMax);
+        let byteStart = index[row];
+        let byteEnd = index[row+1];
 
         function abortableFetch(request, opts) {
             const controller = new AbortController();
@@ -132,18 +111,25 @@ class MetaPanel {
             };
         }
 
+        function convertBlock(incomingData) { // incoming data is an ArrayBuffer
+            var i, l = incomingData.length; // length, we need this for the loop
+            var outputData = new Float32Array(incomingData.length); // create the Float32Array for output
+            for (i = 0; i < l; i++) {
+                outputData[i] = (incomingData[i] - 128) / 128.0; // convert audio to float
+            }
+            return outputData; // return the Float32Array
+        }
+
         let cache = this.rowCache[datasetName][matrixName];
         if(cache.id == row) {
             console.log(`used cached chunk ${row}`);
             callback(cache.data);
         } else {
-            let partStart = (rowStart * bytesPerFloat) % datalakeMax;
-            let partEnd = (rowEnd * bytesPerFloat) % datalakeMax
-            let f = abortableFetch("https://hopeful-austin-9ca901.netlify.app/" + matrix.attrs["datalake"][currPart], {
+            let f = abortableFetch(self.datalakeURL + "/" + matrix.attrs["path"], {
                 method: "GET",
                 cache: "force-cache",
                 headers: {
-                    "Range": `bytes=${partStart}-${partEnd-1}`,
+                    "Range": `bytes=${byteStart}-${byteEnd-1}`,
                 }
             });
 
@@ -155,10 +141,16 @@ class MetaPanel {
                 return res.arrayBuffer()
             })
             .then(buff => {
-                console.log(partEnd);
                 console.log(buff.byteLength);
-                console.log(`bytes=${partStart}-${partEnd-1}`)
-                let array = new Float32Array(buff.slice(0, partEnd));
+                console.log(`bytes=${byteStart}-${byteEnd-1}`)
+                let inflated = pako.inflate(buff);
+                
+                let dataView = new DataView(inflated.buffer);
+                const range = (start, stop, step = 1) => Array(Math.ceil((stop - start) / step)).fill(start).map((x, y) => x + y * step)
+                let array = range(0, inflated.byteLength / 4).map(idx => dataView.getFloat32(idx * 4, true));  
+
+                console.log("length of row is " + array.length + ", length should be " + shape[1])
+                console.log(array)
                 console.log("no cached chunk");
                 cache.data = array;
                 cache.id = row;

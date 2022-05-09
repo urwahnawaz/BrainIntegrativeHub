@@ -33,7 +33,7 @@ deploy: input.yaml
 
 	@if [ -z ${output} ]; then echo "error: output (i.e. output folder, ssd recommended) not defined in input.yaml"; exit 1; fi
 
-	@if [ -z ${project} ]; then echo "error: output (i.e. output folder, ssd recommended) not defined in input.yaml"; exit 1; fi
+	@if [ -z ${project} ]; then echo "error: project (i.e. netlify project name) not defined in input.yaml"; exit 1; fi
 
 	@if [ -z ${NETLIFY_AUTH_TOKEN} ]; then echo "error: netlifyToken (i.e. https://app.netlify.com/user/applications/personal) not defined in NETLIFY_AUTH_TOKEN or input.yaml)"; exit 1; fi
 

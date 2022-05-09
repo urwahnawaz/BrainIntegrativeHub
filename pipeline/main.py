@@ -31,7 +31,7 @@ def isUnreliable(circ, iters):
     ds, db = getCount(circ, iters)
     if(not circ.geneId): circ._error = "No geneId for symbol " + circ.gene
     elif ds <= 1: circ._error = "Only in one dataset"
-    return (ds <= 1 and db == 0) or not circ.geneId
+    return circ._error
     
 def shouldMerge(circ1, circ2):
     return circ1.geneId == circ2.geneId
@@ -68,8 +68,11 @@ def writeHDF5(circIters, iter, inputObj):
     #h5py.get_config().track_order = True
     root = h5py.File(inputObj["output"] + "out.hdf5",'w')
 
-    longestGene = len(max(iter, key=lambda x:len(x.gene)).gene)
-    longestEnsembl = len(max(iter, key=lambda x:len(x.geneId)).geneId)
+    longestGene = max((len(x.gene) if x.gene else 0) for x in iter)
+    longestEnsembl = max((len(x.geneId) if x.geneId else 0) for x in iter)
+
+    print(longestGene)
+    print(longestEnsembl)
 
     defaultVisible = [0, 1]
     defaultSearchable = [0, 1]
@@ -162,7 +165,6 @@ def annotate(circ):
     if(circ.gene): circ.gene = synonyms.get(circ.gene, circ.gene)
     if(circ.geneId): circ.gene = genes.get(circ.geneId, "")
     elif(circ.gene): circ.geneId = ids.get(circ.gene, "")
-
 
 if __name__ == '__main__':
     #annotateEnsemblNCBIInit()
