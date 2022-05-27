@@ -18,7 +18,7 @@ all: pipeline deploy
 
 setup: environment.yaml
 	. "$$(conda info --base)/etc/profile.d/conda.sh" \
-	&& conda env update --prune -f environment.yaml || true \
+	&& conda env create -f environment.yaml || true \
 	&& conda activate bithub-env \
 	&& npm install netlify-cli -g \
 
@@ -29,7 +29,7 @@ pipeline: input.yaml
 
 #	Use a simple python script to grab metadata and generate metadata.json
 deploy: input.yaml
-	$(eval helper := $(shell python3 make_helper.py input.yaml))
+	$(eval helper := $(shell . "$$(conda info --base)/etc/profile.d/conda.sh" && conda activate bithub-env && python3 make_helper.py input.yaml))
 	$(eval output := $(word 1, ${helper}))
 	$(eval project := $(word 2, ${helper}))
 	$(eval count := $(word 3, ${helper}))

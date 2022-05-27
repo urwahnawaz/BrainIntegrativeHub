@@ -202,9 +202,9 @@ class LMSPanelSet {
                             <div class="panel-description"></div>
                             <div class="col-md-2">
                                 <div>Select Y Axis</div>
-                                <select class="selectpicker" id="lmssetselect2"></select><br><br><br>
+                                <select class="selectpicker" data-live-search="true" id="lmssetselect2"></select><br><br><br>
                                 <div>Select X Axis</div>
-                                <select class="selectpicker" id="lmssetselect1"></select><br><br><br>
+                                <select class="selectpicker" data-live-search="true" id="lmssetselect1"></select><br><br><br>
                                 
                                 <div id="alertMain" class="alert alert-warning" role="alert" style="display: none;">
                                     <a id="alertMissingDownload">33/35</a><span id="alertInfo"></span>

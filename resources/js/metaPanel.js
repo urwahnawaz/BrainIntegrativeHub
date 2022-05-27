@@ -95,9 +95,6 @@ class MetaPanel {
         let shape = matrix.attrs["shape"];
         let index = matrix.get("index").value;
 
-        console.log(row);
-        console.log(index.length)
-
         let byteStart = index[row];
         let byteEnd = index[row+1];
 
@@ -109,15 +106,6 @@ class MetaPanel {
               abort: () => controller.abort(),
               ready: fetch(request, { ...opts, signal })
             };
-        }
-
-        function convertBlock(incomingData) { // incoming data is an ArrayBuffer
-            var i, l = incomingData.length; // length, we need this for the loop
-            var outputData = new Float32Array(incomingData.length); // create the Float32Array for output
-            for (i = 0; i < l; i++) {
-                outputData[i] = (incomingData[i] - 128) / 128.0; // convert audio to float
-            }
-            return outputData; // return the Float32Array
         }
 
         let cache = this.rowCache[datasetName][matrixName];

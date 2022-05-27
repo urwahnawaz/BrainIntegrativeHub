@@ -14,3 +14,5 @@ dependencies:
         - sortedcontainers
         - oyaml
         - upsetplot
+        - requests
+        - pyparsing

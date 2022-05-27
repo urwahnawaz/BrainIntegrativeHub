@@ -168,7 +168,7 @@ class AbstractMetaIter(AbstractSource):
 
             datalakeIndices = []
             totalBytesWritten = 0
-            debug = True
+            debug = False
             for tell in tells:
                 matrixReader.setLineStartTell(tell[1])
                 line = matrixReader.__next__()

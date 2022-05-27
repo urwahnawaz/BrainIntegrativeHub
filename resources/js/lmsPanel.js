@@ -151,9 +151,9 @@ class LMSPanel {
                             <br>
                             <div class="col-md-2">
                                 <div>Select Y Axis</div>
-                                <select class="selectpicker" id="lmsselect2"></select><br><br><br>
+                                <select class="selectpicker" data-live-search="true" id="lmsselect2"></select><br><br><br>
                                 <div>Select X Axis</div>
-                                <select class="selectpicker" id="lmsselect1"></select><br><br><br>
+                                <select class="selectpicker" data-live-search="true" id="lmsselect1"></select><br><br><br>
                             </div>
                             <div class="col-md-10">
                                 <div id="lmsplot"></div>

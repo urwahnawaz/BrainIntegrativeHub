@@ -1,3 +1,5 @@
+import io, csv
+
 class SeekableCSVReader():
     def __init__(self, filename, delim=',', removeKeyDotPostfix=False):
         print("Reading " + filename)
@@ -19,6 +21,7 @@ class SeekableCSVReader():
         #Read header correctly
         self.__next__()
         self.heading = self.currLine[1:]
+        for i in range(self.offset, len(self.heading)): self.heading[i] = self.heading[i].strip()
 
         #Prepare to read data
         self.removeKeyDotPostfix = removeKeyDotPostfix
@@ -48,11 +51,11 @@ class SeekableCSVReader():
     
     def _extractFields(self, string):
         if not string: return None
-        fields = string.split(self.delim)
+
+        fields = next(csv.reader(io.StringIO(string)))
         
-        for i in range(len(fields)): fields[i] = fields[i].strip(' "\'\t\r\n')
         return fields[self.offset:]
-        
+
     def __del__(self):
         print("Closing " + self.f.name)
         self.f.close()
@@ -60,14 +63,14 @@ class SeekableCSVReader():
 
 def print_test(r):
     print(r.getHeading())
-    count = 10
+    count = 20
     for line in r:
         if not count: break
-        print(line[0:5])
+        print(line)
         count -= 1
 
 if __name__ == "__main__":
     #r = SeekableCSVReader(filename="/mnt/e/ProjectsCurrent/NeuroIntegration/pipeline/data/FormattedData/HCA/HCA-exp.csv", removeKeyDotPostfix=False)
-    #r = SeekableCSVReader(filename="/mnt/e/ProjectsCurrent/NeuroIntegration/pipeline/data/FormattedData/BrainSpan/BrainSpan-exp.csv", removeKeyDotPostfix=False)
-    print_test(SeekableCSVReader(filename="/mnt/e/ProjectsCurrent/NeuroIntegration/pipeline/data/FormattedData/PsychENCODE/PsychEncode-exp.csv", removeKeyDotPostfix=True))
-    print_test(SeekableCSVReader(filename="/mnt/e/ProjectsCurrent/NeuroIntegration/pipeline/data/FormattedData/PsychENCODE/PsychEncode-metadata-subset.csv", removeKeyDotPostfix=False))
+    r = SeekableCSVReader(filename="/mnt/e/ProjectsCurrent/NeuroIntegration/pipeline/data/FormattedData/BrainSpan/BrainSpan-metadata.csv", removeKeyDotPostfix=False)
+    #print_test(SeekableCSVReader(filename="/mnt/e/ProjectsCurrent/NeuroIntegration/pipeline/data/FormattedData/PsychENCODE/PsychEncode-exp.csv", removeKeyDotPostfix=True))
+    print_test(r)

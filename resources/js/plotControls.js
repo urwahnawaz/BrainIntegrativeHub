@@ -143,36 +143,36 @@ class PlotControls {
         return /*html*/`
             <span class="hidable">
                 <div id="datasetlabel${this.elementId}">Select Dataset</div>
-                <select id="datasetselect${this.elementId}" class="selectpicker"></select>
+                <select id="datasetselect${this.elementId}" class="selectpicker" data-live-search="true"></select>
                 <br><br>
             </span>
             <span class="hidable" hidden>
                 <div id="customfilterlabel${this.elementId}"></div>
-                <select id="customfilterselect${this.elementId}" class="selectpicker"></select>
+                <select id="customfilterselect${this.elementId}" class="selectpicker" data-live-search="true"></select>
                 <br><br>
             </span>
             <span class="hidable">
                 <div>Select ${this.yAxisAlias}</div>
-                <select id="yaxisselect${this.elementId}" class="selectpicker">
+                <select id="yaxisselect${this.elementId}" class="selectpicker" data-live-search="true">
                 </select>
                 <br><br>
             </span>
             <span class="hidable">
                 <div>Select ${this.xAxisAlias}</div>
-                <select id="xaxisselect${this.elementId}" class="selectpicker">
+                <select id="xaxisselect${this.elementId}" class="selectpicker" data-live-search="true">
                 </select>
                 <br><br>
             </span>
             <span class="hidable">
                 <div>Select Scale</div>
-                <select id="scaleselect${this.elementId}" class="selectpicker">
+                <select id="scaleselect${this.elementId}" class="selectpicker" data-live-search="true">
                     <option>Linear</option>
                     <option>Log e</option>
                     <option>Log 10</option>
                 </select>
             <br><br>
             <div>Select ${this.coloringVariableAlias}</div>
-            <select id="coloringselect${this.elementId}" class="selectpicker">
+            <select id="coloringselect${this.elementId}" class="selectpicker" data-live-search="true">
             </select>
         `
     }
