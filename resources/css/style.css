@@ -4,7 +4,7 @@
   */
   --heatmap-color: #36057a;
   --button-color: #ACFFDC;
-  --navbar-color: #337ab7;
+  --navbar-color: #5f7c94;
   --heading-color: #2b6da4;
   --scatter-color: #a881a0;
   --scatter-highlight-color: #61389c;
@@ -60,11 +60,11 @@
 
 /*Default and inverted colors for certain buttons*/
 .MyBtnColored {
-  color: var(--button-color);
+  color: var(--navbar-color) !important;
 }
 
 .MyBtnColoredToggled {
-  color: white !important;
+  color: black !important;
   background-color: var(--button-color) !important;
 }
 
