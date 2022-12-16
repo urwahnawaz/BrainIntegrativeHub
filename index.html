@@ -39,15 +39,15 @@
 </head>
 
 <body>
-    <nav id="my_navbar" class="navbar navbar-default navbar-static-top" style="border:none;margin-bottom: 0px;">
+    <nav id="my_navbar" class="navbar navbar-default navbar-static-top" style="border:none;margin-bottom: 0px;padding:40px">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand">BITHub</a>
+                <a class="navbar-brand"><img style="max-height:50px;margin-top:-20px" src="resources/images/logo_alt.svg"  alt=""></a>
             </div>
             <ul class="nav navbar-nav">
-                <li class="active"><a id="about" href="javascript:;">About</a></li>
-                <li><a id="search" href="javascript:;">Search Genes</a></li>
-                <li><a id="download" href="javascript:;">Download</a></li>
+                <li class="active"><a id="about" href="javascript:;">Home</a></li>
+                <li><a id="search" href="javascript:;">Search</a></li>
+                <li><a id="download" href="javascript:;">Datasets</a></li>
             </ul>
         </div>
     </nav>
@@ -57,12 +57,15 @@
         <!-- Main Body -->
         <div class="container-fluid" style="padding: 0px;">
             <div class="jumbotron"
-                style="background-color:#fff;position:inherit;margin-bottom:0px;box-shadow: 0px 1px 10px 10px rgba(0,0,0,0.1);">
+                style="padding:30px;background-color:#fff;position:inherit;margin-bottom:0px;box-shadow: 0px 1px 10px 10px rgba(0,0,0,0.1);">
                 <div class="container">
-                    <h1 class="display-3">Welcome to BITHub</h1>
-                    <p> Developed by <a href="https://www.babs.unsw.edu.au/voineagu-lab" role="button">Voineagu Lab</a>,
+                    <h2 class="display-3" style="font-size:40px">Brain Transcriptome Integration Hub</h2>
+                    <h4 style="padding:30px">BITHub is a web-based resource that allows interactive exploration of bulk and single nucleus transcripts from the human brain, 
+                        including large-scale expression datasets and variance partition plots. It also allows users to load their own data and explore it in combination.
+                    </h4>
+                    <h4 style="text-align:right"> Developed at <a href="https://www.babs.unsw.edu.au/voineagu-lab" role="button">Voineagu Lab</a>,
                         data last updated<span id="last_updated_container" style="display:none"> <i id="last_updated"></i>.</span>
-                    </p>
+                    </h4>
                 </div>
             </div>
         </div>
@@ -71,27 +74,25 @@
             class="center-block" width="100%" src="resources/images/AdobeStock_94779358_scaled.jpeg"
             alt="Overview of python pipeline" />
 
-            <div class="row justify-content-md-center" style="padding:5px; position:absolute; margin-top:80px;width:80%;margin-left:10%;margin-right:10%;">
-                <div class="col-md-10" style="padding-left:0px;padding-right:0px;">
+            <div class="row justify-content-md-center" style="border-radius:30px;background-color:white;padding:5px;position:absolute; margin-top:80px;width:80%;margin-left:10%;margin-right:10%;">
+                <div class="col-md-10" style="padding-left:0px;padding-right:2px;">
                     <label id="myQuickDisplay" style="margin-bottom:0px;" data-domain="loading">
                         <input type="search" autocomplete="off" class="mySearch" id="myQuickInput">
                     </label>
                 </div>
-                <div class="col-md-2" style="padding-left:0px;padding-right:0px;">
+                <div class="col-md-2" style="padding-left:2px;padding-right:0px;">
                     <button id="my_quick_search_button" class="MyBtn" type="submit"><i class="fas fa-search"></i></button>
                 </div>
             </div>
 
         <div class="container-fluid" style="padding: 0px;">
             <div class="jumbotron"
-                style="padding:6%;background-color:#fff;position:relative;margin-top:180px;margin-bottom:0px;bottom:0px;box-shadow: 0px 1px 10px 10px rgba(0,0,0,0.1);">
+                style="padding:30px;background-color:#fff;position:relative;margin-top:180px;margin-bottom:0px;bottom:0px;box-shadow: 0px 1px 10px 10px rgba(0,0,0,0.1);">
                 <div class="panel panel-default" style="padding:50px;border-radius:0px;">
                     <div class="row" style="margin-bottom:50px;">
                         <div id="imgregion" class="col-md-7 text-center"></div>
                         <div class="col-md-5 text-center" style="vertical-align: middle;">
-                            <p>BITHub is a web-based resource that allows interactive exploration of bulk and single nucleus transcripts from the human brain, 
-                                including large-scale expression datasets and variance partition plots. NeuroCirc also allows users to upload their own data and 
-                                explore it in the integrative platform. </p>
+                            
                         </div>
                     </div>
 
@@ -201,36 +202,26 @@
             <div id="myDiv" style="display:none;" class="container-fluid">
                 <!--class animate-bottom-->
                 <div>
-                    <div class="well">
-                        <b> Upload </b> BITHub by comma delimited list of Gene Symbols or Ensembl Gene IDs. Select the
-                        search field from the drop-down menu on the right.
-                        <br>
-                        <b> To download the plot - </b> hover over the plot and select a format.
-                        <br>
-                        <b> Search using file </b> upload a file containing a line delimited list of Gene Symbols or
-                        Ensembl Gene IDs. (<a href="./resources/data/Ensembl-list-example.csv">Example</a>)
-                        <br>
-                    </div>
                     <div class="row">
                         <div class="col-md-1">
-                            <button id="my_upload_button" class="MyBtn MyBtnColored" type="submit">
+                            <button id="my_upload_button" class="MyBtn MyBtnColored" type="submit" data-trigger="hover" data-placement="bottom" title="Add" data-content="Load your own dataset to view in combination">
                                 <i class="fas fa-file-upload"></i>
                             </button>
                         </div>
                         <div class="col-md-1">
-                            <button id="my_showplot_button" class="MyBtn MyBtnColored MyBtnColoredToggled" type="submit">
+                            <button id="my_showplot_button" class="MyBtn MyBtnColored" type="submit" data-trigger="hover" data-placement="bottom" title="Plot" data-content="Toggle visibility of the search distribution plot">
                                 <i class="fas fa-chart-line"></i>
                             </button>
                         </div>
 
                         <div class="col-md-6">
                             <label id="myDisplay" data-domain="">
-                                <input type="search" autocomplete="off" class="mySearch" id="myInput">
+                                <input type="search" autocomplete="off" class="mySearch" id="myInput" data-trigger="hover" data-placement="bottom" title="Search Terms" data-content="Enter a single or comma delimited list of Gene Symbols/Ensembl Gene IDs">
                             </label>
                         </div>
                         <div class="col-md-1">
                             <input type="file" id="inputData" style="opacity:0;display:contents;" accept=".csv, .tsv, .txt">
-                            <button id="inputDataLabel" class="MyBtn MyBtnColored" type="submit">
+                            <button id="inputDataLabel" class="MyBtn MyBtnColored" type="submit" data-trigger="hover" data-placement="bottom" title="Search File" data-content="Alternatively, upload a line delimited list of Gene Symbols/Ensembl Gene IDs">
                                 <i id="inputDataIcon" class="fas fa-file-csv" aria-hidden="true"></i>
                             </button>
                         </div>
@@ -245,7 +236,7 @@
                     </div>
                 </div>
 
-                <div id="searchsetplot" data-toggle="collapse" class="collapse in" aria-expanded="true"></div>
+                <div id="searchsetplot" data-toggle="collapse" class="collapse" aria-expanded="false"></div>
 
                 <!-- Main Table -->
                 <span id="my_table_select_group" style="margin-left: 15px; margin-top: 15px;">
@@ -515,6 +506,13 @@
             //$("#myQuickDisplay")[0].setAttribute('data-domain', matrix[0].length + " results");
             if(quickSearchTerm) executeQuickSearch();
             else makeTable();
+
+            $('[data-trigger="hover"]').popover({
+                delay: {
+                "show": 800,
+                "hide": 100
+                }
+            });
         })();
 
         $("#my_showplot_button").click(function (event) {
@@ -610,6 +608,8 @@
             params.set("page", event.target.id);
             window.history.replaceState({}, "", decodeURIComponent(`${window.location.pathname}?${params}`));
 
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
             prevPageId = event.target.id;
         }
 
@@ -618,10 +618,17 @@
         $("#download").click(switchPage);
 
         function updateSearch() {
+            let shouldTogglePlot = false
+            let isPlotExpanded = $("#searchsetplot").attr("aria-expanded") === "true"
+
             if (!searchEntries && searchTerm) {
                 let realSearchCols = searchCols.filter(c => c >= 0);
                 let delim = searchFile ? /\r?\n/ : /,/;
-                searchEntries = searchDeliminatedMultiple(searchTerm, realSearchCols.map(r => matrix[r]), delim);
+                let isMultiSearch;
+                [searchEntries, isMultiSearch] = searchDeliminatedMultiple(searchTerm, realSearchCols.map(r => matrix[r]), delim);
+
+                //Hide plot if single search
+                shouldTogglePlot = (isPlotExpanded ^ isMultiSearch)
 
                 //Find all indices from string
                 searchEntriesFound = 0;
@@ -635,7 +642,10 @@
                 else $("#myDisplay")[0].setAttribute('data-domain', matrix[0].length + " transcripts");
             } else if (!searchTerm) {
                 lmsSetPanel.setMultiple([], 0);
+                shouldTogglePlot = isPlotExpanded
             };
+
+            if(shouldTogglePlot) $("#my_showplot_button").click()
         }
 
         function makeTable() {
@@ -705,8 +715,22 @@
             }
 
             if (searchEntries) {
-                indices = searchEntries.map(v => v.row).filter(v => v != -1);
-                indices.sort();
+                //Exacts are always at the start, keep this convention when displaying "unsorted"
+                let exacts = 0
+                for(; exacts<searchEntries.length; ++exacts) {
+                    if(!searchEntries[exacts].exact) break
+                }
+                console.log(exacts)
+
+                //Obtain non-exact indices and sort them
+                let nonExactIndices = searchEntries.slice(exacts, searchEntries.length).filter(v => v.row != -1).map(v => v.row);
+                nonExactIndices.sort(); 
+
+                //Add unsorted exacts at start
+                let exactIndices = searchEntries.slice(0, exacts).filter(v => v.row != -1).map(v => v.row)
+
+                indices = exactIndices.concat(nonExactIndices)
+
             } else {
                 indices = new Array(matrix[0].length);
                 for (var i = 0; i < matrix[0].length; ++i) indices[i] = i;
@@ -1060,7 +1084,7 @@
                     r.attr("height", 0)
                         .attr("y", start_y)
                         .transition()
-                        .duration(400 + i * 5)
+                        .duration(300 + i * 5)
                         .attr("y", end_y)
                         .attr("height", end_h);
                 });
@@ -1080,7 +1104,7 @@
                     let end_w = r.attr("width");
                     r.attr("width", 0)
                         .transition()
-                        .duration(800 + i * 5)
+                        .duration(400 + i * 5)
                         .attr("width", end_w);
                 });
         });

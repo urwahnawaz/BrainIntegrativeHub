@@ -2,12 +2,12 @@
 :root {
   /*Blue/Green color scheme https://coolors.co/ffffff-4b90cc-337ab7-2b6da4-169379-009b41
   */
-  --heatmap-color: #009b41;
-  --button-color: #009b41;
+  --heatmap-color: #36057a;
+  --button-color: #ACFFDC;
   --navbar-color: #337ab7;
   --heading-color: #2b6da4;
-  --scatter-color: #4b90cc;
-  --scatter-highlight-color: #00e04f;
+  --scatter-color: #a881a0;
+  --scatter-highlight-color: #61389c;
   --variance-partition-color: #2b6da4;
 
   /*Magenta/Teal/Blue color scheme https://coolors.co/ffffff-4b90cc-337ab7-2b6da4-169379-009b41
@@ -94,6 +94,11 @@
   height: 40px;
   text-overflow: ellipsis;
   overflow: hidden;
+  border-radius: 30px;
+}
+
+#my_quick_search_button {
+  border-radius: 30px;
 }
 
 #myDisplay,
@@ -358,7 +363,7 @@ table>tbody>tr>td.yes.database {
 .progress {
   border-radius: 0px;
   position: relative;
-  top: 50px;
+  top: 130px;
   height: 5px;
   z-index: -9999999;
   background-color: rgba(255, 0, 0, 0);

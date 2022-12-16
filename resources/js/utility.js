@@ -50,7 +50,8 @@ function searchDeliminated(string, array, delim=/\r,/, keepOrder=false) {
 
 function searchDeliminatedMultiple(string, arrays, delim=/,/) {
     let entries = [];
-    if(delim.test(string)) {
+    let isMultiSearch = delim.test(string)
+    if(isMultiSearch) {
         let terms = string.split(delim).map(v => v.trim()).filter(v => v);
 
         let aIndices = [];
@@ -80,15 +81,21 @@ function searchDeliminatedMultiple(string, arrays, delim=/,/) {
 
         while(j<terms.length) entries.push({row: -1, label: terms[j++]});
     } else {
+        //Single gene was searched for
         let lowerSearchTerm = searchTerm.trim().toLowerCase();
         for(let j=0; j<arrays[0].length; ++j) {
             for(let i=0; i<arrays.length; ++i) {
-                if(arrays[i][j].trim().toLowerCase().includes(lowerSearchTerm)) {
-                    entries.push({row: j, label: searchTerm});
-                    break;
+                let lowerCurr = arrays[i][j].trim().toLowerCase();
+                if(lowerCurr.includes(lowerSearchTerm)) {
+                    if(lowerCurr == lowerSearchTerm) {
+                        //Exact match, put at start
+                        entries.unshift({row: j, label: lowerCurr, exact: true})
+                    } else {
+                        entries.push({row: j, label: lowerCurr});
+                    }
                 }
             }
         }
     }
-    return entries;
+    return [entries, isMultiSearch];
 }
