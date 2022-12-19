@@ -66,3 +66,6 @@ SMDPMPRT,DuplicationRateMapped,Yes,Sequencing metrics
 SME2PCTS,Percentage_IntragenicEnd_2_Reads,Yes,Sequencing metrics
 SUBJID,DonorID,No,Phenotype
 DTHHRDY,HardyScale,Yes,Phenotype
+NA,Regions,Yes,Sample charactertics
+,Diagnosis,Yes,Phenotype
+,Period,Yes,Phenotype
