@@ -123,6 +123,7 @@
                 <thead>
                     <tr>
                         <th scope="col">Dataset</th>
+                        <th scope="col">Expression File</th>
                         <th scope="col">Metadata File</th>
                         <th scope="col">Samples</th>
                     </tr>
@@ -427,6 +428,7 @@
                 metadataCSVDownloadHTML += /*html*/`
                 <tr>
                     <th scope="row">${meta_file.name}</th>
+                    <td><a href="${siteMeta.data_url + '/' + meta_file.data}">${meta_file.data}</a></td>
                     <td><a href="${meta_file.path}">${meta_file.path.split('/').pop()}</a></td>
                     <td>${meta_file.samples}</td>
                 </tr>

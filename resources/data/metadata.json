@@ -3,35 +3,41 @@
     {
       "name": "BrainSpan",
       "path": "resources/data/metadata/BrainSpan-metadata.csv",
+      "data": "BrainSpan_RPKM.csv.gz",
       "samples": 524
     },
     {
       "name": "GTEx",
       "path": "resources/data/metadata/GTEx-metadata-subset.csv",
+      "data": "GTEx_TPM.csv.gz",
       "samples": 2642
     },
     {
       "name": "BrainSeq",
       "path": "resources/data/metadata/BrainSeq-metadata-subset.csv",
+      "data": "BrainSeq_RPKM.csv.gz",
       "samples": 900
     },
     {
       "name": "PsychENCODE",
       "path": "resources/data/metadata/PsychEncode-metadata-subset.csv",
-      "samples": 1428
+      "data": "PsychENCODE_TPM.csv.gz",
+      "samples": 1866
     },
     {
       "name": "HCA",
       "path": "resources/data/metadata/HCA-metadata_fixed.csv",
+      "data": "HCA_CPM.csv.gz",
       "samples": 47194
     },
     {
       "name": "Velmeshev",
       "path": "resources/data/metadata/Velmeshev-metadata.csv",
+      "data": "Velmeshev_CPM.csv.gz",
       "samples": 81216
     }
   ],
   "data_url": "https://hopeful-austin-9ca901.netlify.app",
   "count": 59090,
-  "last_updated": "May 2022"
+  "last_updated": "December 2022"
 }

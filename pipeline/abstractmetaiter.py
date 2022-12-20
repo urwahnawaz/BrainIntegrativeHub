@@ -1,6 +1,6 @@
 from abstractsource import AbstractSource
 from seekablecsvreader import SeekableCSVReader
-import csv, math, h5py, os, zlib, struct
+import csv, math, h5py, os, zlib, struct, gzip
 import numpy as np
 from array import array
 
@@ -47,6 +47,8 @@ class AbstractMetaIter(AbstractSource):
         for line in sampleReader:
             lines.append(line[1:])
             samples.append(line[0])
+
+        print(fileName)
 
         lines = self.reorderListByKey(samples, lines, sampleToIndexFiltered)
 
@@ -167,37 +169,45 @@ class AbstractMetaIter(AbstractSource):
         datalakeName = lakeFileName + ".matrix"
 
         with open(self.output + datalakeName, 'wb') as datalakeFile:
-            tells = []
-            logs = []
-            offset = 0
-            seen = [False] * len(keyToIndexFiltered)
-            matrixReader = SeekableCSVReader(filename=fileName, removeKeyDotPostfix=not self.keyIsSymbol)
-            for line in matrixReader:
-                key = line[0]
-                index = keyToIndexFiltered.get(key, -1)
-                if index >= 0 and not seen[index]:
-                    tells.append((index, matrixReader.getLineStartTell(), key))
-                    seen[index] = True
+            with open(self.output + lakeFileName + ".csv", 'w', newline='') as csvFile:
+                csvwriter = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                tells = []
+                logs = []
+                offset = 0
+                seen = [False] * len(keyToIndexFiltered)
+                matrixReader = SeekableCSVReader(filename=fileName, removeKeyDotPostfix=not self.keyIsSymbol)
+                for line in matrixReader:
+                    key = line[0]
+                    index = keyToIndexFiltered.get(key, -1)
+                    if index >= 0 and not seen[index]:
+                        tells.append((index, matrixReader.getLineStartTell(), key))
+                        seen[index] = True
 
-            tells.sort()
+                tells.sort()
 
-            datalakeIndices = []
-            totalBytesWritten = 0
-            debug = False
-            for tell in tells:
-                matrixReader.setLineStartTell(tell[1])
-                line = matrixReader.__next__()
-                fixedLine = self.reorderListByKey(matrixReader.getHeading(), line[1:], sampleToIndexFiltered)
-                for i in range(len(fixedLine)): fixedLine[i] = float(fixedLine[i])
-                if(scaledOutput): logs.append(np.mean([math.log2(abs(fixedLine[i]) + 0.01) for i in range(len(fixedLine))]))
-                datalakeIndices.append(totalBytesWritten)
-                totalBytesWritten += datalakeFile.write(zlib.compress(bytes().join((struct.pack('<f', val) for val in fixedLine))))
+                csvwriter.writerow([''] + matrixReader.getHeading())
 
-                if debug:
-                    debug = False
-                    print(fixedLine)
-                    print(tell[2])
-                    print(totalBytesWritten)
+                datalakeIndices = []
+                totalBytesWritten = 0
+                debug = False
+                for tell in tells:
+                    matrixReader.setLineStartTell(tell[1])
+                    line = matrixReader.__next__()
+                    fixedLine = self.reorderListByKey(matrixReader.getHeading(), line[1:], sampleToIndexFiltered)
+                    floatLine = []
+                    for i in range(len(fixedLine)): floatLine.append(float(fixedLine[i]))
+                    if(scaledOutput): logs.append(np.mean([math.log2(abs(floatLine[i]) + 0.01) for i in range(len(floatLine))]))
+                    datalakeIndices.append(totalBytesWritten)
+                    totalBytesWritten += datalakeFile.write(zlib.compress(bytes().join((struct.pack('<f', val) for val in floatLine))))
+
+                    if debug:
+                        debug = False
+                        print(floatLine)
+                        print(tell[2])
+                        print(totalBytesWritten)
+
+                    # Also write CSV
+                    csvwriter.writerow([line[0]] + fixedLine)
 
             datalakeIndices.append(totalBytesWritten)
 
@@ -206,6 +216,12 @@ class AbstractMetaIter(AbstractSource):
                 logSd = np.std(logs)
                 scaled = np.array([((x - logMean) / logSd) for x in logs], dtype="f4")
                 scaledOutput.create_dataset("scaled", data=scaled, compression="gzip", compression_opts=9)
+
+        # Compress CSV and delete uncompressed
+        with open(self.output + lakeFileName + ".csv", 'rb') as f_in, gzip.open(self.output + lakeFileName + ".csv.gz", 'wb') as f_out:
+            f_out.writelines(f_in)
+        os.remove(self.output + lakeFileName + ".csv")
+        
 
         return datalakeIndices, datalakeName, (len(keyToIndexFiltered), len(sampleToIndexFiltered))
 
