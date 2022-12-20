@@ -45,15 +45,15 @@
                 <a class="navbar-brand"><img style="max-height:50px;margin-top:-20px" src="resources/images/logo_alt.svg"  alt=""></a>
             </div>
             <ul class="nav navbar-nav">
-                <li class="active"><a id="about" href="javascript:;">Home</a></li>
+                <li class="active"><a id="home" href="javascript:;">Home</a></li>
                 <li><a id="search" href="javascript:;">Search</a></li>
-                <li><a id="download" href="javascript:;">Datasets</a></li>
+                <li><a id="datasets" href="javascript:;">Datasets</a></li>
             </ul>
         </div>
     </nav>
 
-    <!--------------------------------------- ABOUT PAGE-------------------------------------->
-    <div id="pageAbout" style="background-color: #eee; position: relative; z-index: 100">
+    <!--------------------------------------- HOME PAGE-------------------------------------->
+    <div id="pageHome" style="background-color: #eee; position: relative; z-index: 100">
         <!-- Main Body -->
         <div class="container-fluid" style="padding: 0px;">
             <div class="jumbotron"
@@ -108,15 +108,14 @@
         </div>
     </div>
 
-    <!--------------------------------------- DOWNLOAD PAGE-------------------------------------->
-    <div id="pageDownload" class="container-fluid" style="padding:0px;display:none">
+    <!--------------------------------------- DATASETS PAGE-------------------------------------->
+    <div id="pageDatasets" class="container-fluid" style="padding:0px;display:none">
         <div class="jumbotron" style="background-color:#fff;padding-left:50px;padding-right:50px;">
             <div class="well">
-                <b> Download metadata files in CSV format.</b> Note that some columns may be renamed or subsetted from
+                <b> Download expression and metadata files in CSV format.</b> Note that some columns may be renamed or subsetted from
                 the dataset's original publication.
                 <br>
-                Currently, expression matrices must be downloaded directly from source.
-
+                Expression numbers are left in their original string form, but are both columns and rows have been re-ordered for consistent indexing.
             </div>
 
             <table class="table">
@@ -352,7 +351,7 @@
         let lmsPanel = undefined;
         let lmsSetPanel = undefined;
 
-        let prevPageId = "about";
+        let prevPageId = "home";
 
         function findGetParameter(parameterName) {
             var result = null, tmp = [];
@@ -422,7 +421,7 @@
             $("#last_updated").text(siteMeta.last_updated);
             $("#last_updated_container").fadeIn();
 
-            //DOWNLOAD PAGE
+            //DATASETS PAGE
             let metadataCSVDownloadHTML = "";
             for(let meta_file of siteMeta.meta_files) {
                 metadataCSVDownloadHTML += /*html*/`
@@ -601,16 +600,16 @@
             $("#" + prevPageId).parent().removeClass("active");
             $("#" + event.target.id).parent().addClass("active");
 
-            let isAboutPage = event.target.id === "about";
-            document.getElementById("pageAbout").style.display = isAboutPage ? "block" : "none";
+            let isHomePage = event.target.id === "home";
+            document.getElementById("pageHome").style.display = isHomePage ? "block" : "none";
 
             let isSearchPage = event.target.id === "search";
             document.getElementById("pageSearch").style.display = isSearchPage ? "block" : "none";
             if (!isSearchPage || !isLoading) document.getElementById("my_navbar").classList.add("navbar-static-top");
             else document.getElementById("my_navbar").classList.add("navbar-fixed-top");
 
-            let isDownloadPage = event.target.id === "download";
-            document.getElementById("pageDownload").style.display = isDownloadPage ? "block" : "none";
+            let isDatasetsPage = event.target.id === "datasets";
+            document.getElementById("pageDatasets").style.display = isDatasetsPage ? "block" : "none";
 
             const params = new URLSearchParams(window.location.search);
             params.set("page", event.target.id);
@@ -621,9 +620,9 @@
             prevPageId = event.target.id;
         }
 
-        $("#about").click(switchPage);
+        $("#home").click(switchPage);
         $("#search").click(switchPage);
-        $("#download").click(switchPage);
+        $("#datasets").click(switchPage);
 
         function updateSearch() {
             let shouldTogglePlot = false
@@ -1041,7 +1040,7 @@
             writer.close();
         });
 
-        //--------------------------------------- ABOUT PAGE--------------------------------------
+        //--------------------------------------- HOME PAGE--------------------------------------
         /*window.addEventListener('scroll', function() {
             $('#background').css('margin-top', $(window).scrollTop() * -.55);
         }, { passive: true});*/
