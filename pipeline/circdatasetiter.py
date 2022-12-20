@@ -6,8 +6,8 @@ from circrow import CircRow
 from seekablecsvreader import SeekableCSVReader
 
 class CircDatasetIter(AbstractMetaIter):
-    def __init__(self, name, nameLong, directory, matrices, metadata, qtl, isBrainDataset, url, annotationAccuracy, customFilterName, customFilterColumn, customMetadataCategoryOrders, variancePartition, keyIsSymbol, output):
-        super().__init__(name, nameLong, directory, matrices, metadata, qtl, customFilterName, customFilterColumn, customMetadataCategoryOrders, variancePartition, keyIsSymbol, output)
+    def __init__(self, name, nameLong, directory, matrices, metadata, qtl, isBrainDataset, url, annotationAccuracy, customFilterName, customFilterColumn, customMetadataCategoryOrders, variancePartition, keyIsSymbol, output, annot):
+        super().__init__(name, nameLong, directory, matrices, metadata, qtl, customFilterName, customFilterColumn, customMetadataCategoryOrders, variancePartition, keyIsSymbol, output, annot)
 
         if(len(matrices) != 1): raise Exception("Single matrix only must be supplied for " + name + " dataset (see input.yaml)")
 

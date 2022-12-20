@@ -5,7 +5,7 @@ import numpy as np
 from array import array
 
 class AbstractMetaIter(AbstractSource):
-    def __init__(self, name, nameLong, directory, matrices, metadata, qtl, customFilterName, customFilterColumn, customMetadataCategoryOrders, variancePartition, keyIsSymbol, output):
+    def __init__(self, name, nameLong, directory, matrices, metadata, qtl, customFilterName, customFilterColumn, customMetadataCategoryOrders, variancePartition, keyIsSymbol, output, annot):
         super().__init__(name, directory)
         self.matrices = matrices
         self.metadata = metadata
@@ -17,6 +17,7 @@ class AbstractMetaIter(AbstractSource):
         self.keyIsSymbol = keyIsSymbol
         self.nameLong = nameLong
         self.output = output
+        self.annot = annot
 
     def getKeysOrdered(self, fileName, removeKeyDotPostfix):
         keys = []
@@ -35,7 +36,7 @@ class AbstractMetaIter(AbstractSource):
             if index >= 0: newList[index] = currList[i]
         return list(filter(None, newList))
         
-    def _writeHDF5Columns(self, fileName, hdf5Group, sampleToIndexFiltered, noneType="NA"):
+    def _writeHDF5Columns(self, fileName, hdf5Group, sampleToIndexFiltered, headingToType, noneType="NA"):
         lines = []
         samples = []
 
@@ -53,6 +54,10 @@ class AbstractMetaIter(AbstractSource):
         allDefaults = [0, 0.0, ""]
         allTypesNp = ["i4", "f4", "S"]
         for i in range(len(lines[0])):
+            if headingToType and heading[i] not in headingToType:
+                removed[i] = True
+                continue
+
             for k in range(len(allTypes)):
                 try:
                     # Attempt to parse all as this type
@@ -90,9 +95,19 @@ class AbstractMetaIter(AbstractSource):
             else:
                 removed[i] = True
         hdf5Group.attrs.create("order", [heading[j] for j in range(len(heading)) if not removed[j]])
+        if headingToType: hdf5Group.attrs.create("type", [headingToType[heading[j]] for j in range(len(heading)) if not removed[j]])
 
 
     def writeHDF5Metadata(self, root, rows):
+        headingToType = {}
+        if self.annot:
+            with open(os.path.join(self.directory, self.annot), newline='') as f:
+                annotReader = csv.reader(f, delimiter=',', quotechar='|')
+                next(annotReader)
+                for row in annotReader:
+                    if row[2] == 'Yes':
+                        headingToType[row[1]] = row[3]
+        
         headingMeta, keysMeta = self.getKeysOrdered(os.path.join(self.directory, self.metadata), False)
         headingMatrix, keysMatrix = self.getKeysOrdered(os.path.join(self.directory, self.matrices[0]["path"]), not self.keyIsSymbol)
         samplesOrdered = self.intersectKeysOrdered(headingMatrix, keysMeta)
@@ -121,7 +136,7 @@ class AbstractMetaIter(AbstractSource):
 
         #Write metadata
         samples = experimentGroup.create_group("samples")
-        self._writeHDF5Columns(self.metadata, samples, sampleToIndexFiltered)
+        self._writeHDF5Columns(self.metadata, samples, sampleToIndexFiltered, headingToType)
 
         #Write matrix
         matrixGroup = experimentGroup.create_group("matrices")

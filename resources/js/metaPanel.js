@@ -191,7 +191,11 @@ class MetaPanel {
     }
 
     _setXAxis(controls, matrices, samples, plot) {
-        controls.setXAxis(samples.attrs["order"], samples.attrs["order"][0]);
+        if(samples.attrs["type"] && true) {
+            controls.setXAxisGroups(samples.attrs["order"], samples.attrs["type"]);
+        } else {
+            controls.setXAxis(samples.attrs["order"], samples.attrs["order"][0]);
+        }
     }
 
     _onPlotChange(controls, plot) {

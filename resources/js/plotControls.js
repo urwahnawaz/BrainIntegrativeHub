@@ -71,6 +71,13 @@ class PlotControls {
         
     }
 
+    setXAxisGroups(names, groups, defaultName) {
+        console.log('setting groups')
+        console.log(groups)
+        this._setOptionsGroups('xaxisselect' + this.elementId, names, groups, defaultName);
+        this.onChange();
+    }
+
     setYAxis(names, defaultName) {
         this._setOptions('yaxisselect' + this.elementId, names, defaultName);
         this.onChange();
@@ -127,6 +134,35 @@ class PlotControls {
         if(defaultName) $("#" + id).val(defaultName);
         $("#" + id).selectpicker("refresh");
         
+    }
+
+    _setOptionsGroups(id, names, groups, defaultName=undefined) {
+        this._hideSingleOptions(id, names.length == 1);
+        $("#" + id).empty();
+
+        let groupSet = {}
+        for(let i=0; i<names.length; ++i) {
+            if(!groupSet[groups[i]]) groupSet[groups[i]] = []
+            groupSet[groups[i]].push(names[i])
+        }
+
+        var groups = Object.keys(groupSet);
+        groups.sort();
+        for (let group of groups) {
+            let subnames = groupSet[group]
+            $('#' + id).append(`<optgroup label="${group}">${subnames.map(x => `<option value="${x}">${x}</option>`)}</optgroup>`)
+        }
+
+        console.log(defaultName)
+        console.log(groupSet[groups[0]][0])
+
+        if(!defaultName && names.length > 0 && groups) defaultName = groupSet[groups[0]][0]
+        if(!defaultName && names.length > 0) defaultName = names[0];
+        if(defaultName && !names.includes(defaultName)) names.unshift(defaultName);
+        
+        $("#" + id).selectpicker("refresh");
+        if(defaultName) $("#" + id).val(defaultName);
+        $("#" + id).selectpicker("refresh");
     }
 
     _setOptionsToggle(id, obj) {

@@ -179,7 +179,8 @@ if __name__ == '__main__':
                 d_id = dataset["id"]
                 custom = dataset.get("customFilter", None)
                 orders = list(filter(lambda x: d_id in x["datasets"], inputObj.get("customMetadataCategoryOrders", [])))
-                circIters.append(CircDatasetIter(d_id, dataset.get("name", ""), dataset["dir"], dataset.get("matrices", list()), dataset.get("meta", None), dataset.get("qtl", None), dataset.get("isBrain", False), dataset.get("url", ""), dataset.get("annotationAccuracy", 0), custom.get("name", "") if custom else "", custom.get("column", "") if custom else "", orders, dataset.get("variancePartition", None), dataset.get("keyIsSymbol", False), inputObj.get("output")))
+
+                circIters.append(CircDatasetIter(d_id, dataset.get("name", ""), dataset["dir"], dataset.get("matrices", list()), dataset.get("meta", None), dataset.get("qtl", None), dataset.get("isBrain", False), dataset.get("url", ""), dataset.get("annotationAccuracy", 0), custom.get("name", "") if custom else "", custom.get("column", "") if custom else "", orders, dataset.get("variancePartition", None), dataset.get("keyIsSymbol", False), inputObj.get("output"), dataset.get('annot', None)))
         
         except yaml.YAMLError as exc:
             print(exc)
