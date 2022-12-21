@@ -70,8 +70,8 @@
             </div>
         </div>
 
-        <img id="background" style="filter:blur(8px);-webkit-filter: blur(8px);position:fixed;top:0px;z-index:-1;padding-left:0px;padding-right:0px;"
-            class="center-block" width="100%" src="resources/images/AdobeStock_94779358_scaled.jpeg"
+        <img id="background" style="filter:blur(8px);-webkit-filter: blur(8px);position:fixed;top:0px;z-index:-1;padding-left:0px;padding-right:0px;width: 110%;transform: translateX(-20px);"
+            class="center-block" width="100%" src="resources/images/adnajpeg_c1+2+3+4_scaled.jpeg"
             alt="Overview of python pipeline" />
 
             <div class="row justify-content-md-center" style="border-radius:30px;background-color:white;padding:5px;position:absolute; margin-top:80px;width:80%;margin-left:10%;margin-right:10%;">
@@ -84,51 +84,175 @@
                     <button id="my_quick_search_button" class="MyBtn" type="submit"><i class="fas fa-search"></i></button>
                 </div>
             </div>
-
-        <div class="container-fluid" style="padding: 0px;">
-            <div class="jumbotron"
-                style="padding:30px;background-color:#fff;position:relative;margin-top:180px;margin-bottom:0px;bottom:0px;box-shadow: 0px 1px 10px 10px rgba(0,0,0,0.1);">
-                <div class="panel panel-default" style="padding:50px;border-radius:0px;">
-                    <div class="row" style="margin-bottom:50px;">
-                        <div id="imgregion" class="col-md-7 text-center"></div>
-                        <div class="col-md-5 text-center" style="vertical-align: middle;">
-                            
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div id="imgage" class="col-md-6 text-center"></div>
-                        <div id="imgtotal" class="col-md-6 text-center"></div>
-                    </div>
-                    <div class="row text-center">
-
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <!--------------------------------------- DATASETS PAGE-------------------------------------->
-    <div id="pageDatasets" class="container-fluid" style="padding:0px;display:none">
-        <div class="jumbotron" style="background-color:#fff;padding-left:50px;padding-right:50px;">
-            <div class="well">
-                <b> Download expression and metadata files in CSV format.</b> Note that some columns may be renamed or subsetted from
-                the dataset's original publication.
-                <br>
-                Expression numbers are left in their original string form, but are both columns and rows have been re-ordered for consistent indexing.
-            </div>
+    <!--------------------------------------- DATASET PAGE-------------------------------------->
+    <div id="pageDatasets" class="container-fluid" style="padding:0px;max-width: 1400px;">
+        <div>
+            <div class="jumbotron" style="background-color:#fff;padding-left:24px;padding-right:24px;grid-column: 2;">
+                <div id ="dataset-summary" style="background-color:#fff;font-family: 
+                'Nexa', sans-serif; font-weight: 700; color: black;">
+                    <h1 style="font-size:45px">Overview of BITHub </h1>
+    
+                    <h2 style="font-size:35px">Dataset Summary</h2>
+    
+                    <p>We manually curated gene expression datasets of the human brain from single-nucleus and bulk RNA-seq studies. 
+                    The bulk datasets total up to 5,550 samples across 31 brain structures and snRNA-seq datasets totalling up to 128, 410 cells across 9 brain cell-types. </p>
+    
+                    <div>
+                        <div>
+                            <div>
+                                <div class="row" height="100" style="justify-items: center">
+                                    <!-- <div id="imgage" class="col-md-6 text-center"></div> -->
+                                    <div id="imgtotal" class="col-md-12 text-center"></div>
+                                </div>
+                                <div class="row text-center">
+            
+                                </div>
+                            </div>
+                        </div>
+                
+            
+                       
+                        <div class="well">
+                            <b> Download expression and metadata files in CSV format.</b> Note that some columns may be renamed or subsetted from
+                            the dataset's original publication.
+                            <br>
+                            Expression numbers are left in their original string form, but are both columns and rows have been re-ordered for consistent indexing.
+                        </div>
+        
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Dataset</th>
+                                    <th scope="col">Expression File</th>
+                                    <th scope="col">Metadata File</th>
+                                    <th scope="col">Samples</th>
+                                </tr>
+                            </thead>
+                            <tbody id="metadataCSVDownload"></tbody>
+                        </table>
+                    </div>
 
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">Dataset</th>
-                        <th scope="col">Expression File</th>
-                        <th scope="col">Metadata File</th>
-                        <th scope="col">Samples</th>
-                    </tr>
-                </thead>
-                <tbody id="metadataCSVDownload"></tbody>
-            </table>
+                <h1 style="font-size:45px">Data pre-processing</h1>
+                <h2 style="font-size:35px">Data download and metadata pre-processing </h2>
+                <p> Datasets were downloaded from their respective portals as described in Table x. The metadata annotations were updated with consistent and human readable labeling for column names (Supplementary Tables). 
+                    New columns specifying ‘Age Intervals’, ‘Regions’, ‘Diagnosis’ and ‘Period’ were also added to all bulk datasets. </p>
+    
+                <p> Samples were binned into age intervals as specified in the BrainSpan Developmental Transcriptome Technical White Paper
+                     for all datasets for samples with ages &lt; 20 years old where ages >20 years were binned in 10 year intervals. </p>
+    
+                     <div>
+                        <div>
+                            <div>
+                                <div class="row" style="margin-bottom:50px;">
+                                    <div id="imgage" style="max-width: 500px;"></div>
+                                    <div class="col-md-5 text-center" style="vertical-align: middle;">
+                                        
+                                    </div>
+                                </div>
+            
+                                </div>
+                            </div>
+                        </div>
+                
+    
+                    <br>
+                    
+                    <p>An additional column ‘Numeric Ages’ was added for BrainSpan, BrainSeq and PsychEncode datasets where pcw and neonatal ages were converted to numeric ages: </p>
+                    
+                    <br>
+                    
+                    <p>X = -(40 - pcw) /52 </p> 
+                    
+                    <br>
+                    
+                    <p>X = mos / 12 </p> 
+                    
+                    <br>
+    
+                    <p>Prenatal or postnatal tags were assigned to samples depending on their numeric age where numeric age &lt; 0 was labeled as prenatal and numeric age &gt; 0 as postnatal. </p>
+                    
+                    <br>
+                    
+                    <p>BrainSpan data currently lacks annotations reporting the RNA Integrity Number (RIN) of samples processed. 
+                    To address this, Feng et al (2015) developed an mRNA Integrity Number value based on quantitative modeling of the 3’ bias of read coverage,
+                    and applied this to the BrainSpan RNA-seq data. To centralize this information, the mRIN statistics calculated in Feng et al were also added to the BrainSpan metadata annotations for BITHub. 
+                    . </p>
+    
+                    <h2 style="font-size:35px">Variance partition analysis </h2>
+                    <p>VariancePartition was used for mixed linear analysis  to estimate the proportion of variance explained by the selected covariates on each gene. 
+                         Highly correlated covariates cannot be included in the model, and so as a result covariates that were not strongly correlated for each dataset were selected 
+                         to the the varianceParititon analysis on filtered genes. 
+                         For filtering, the expression cut-off was selected at 1 RPKM/TPM/CPM  in at least 10% of the samples. </p>
+    
+                         <br>
+                    </div>
+    
+    
+                    <div id="overview" style="background-color:#fff;font-family: 
+                    'Nexa', sans-serif; font-weight: 700; color: black;">
+                        <h1 style="font-size:45px">Overview of Functionalities </h1>
+    
+                        <p> BITHub implements multiple functionalities and can generate z-score distribution of genes in multiple datasets 
+                            for cross-comparison. Additionally, users can investigate expression properties of specific genes against multiple
+                             metadata annotations, including technical, biological and sample specific variables. </p>
+    
+                        <h2 style="font-size:35px"> Input Data</h2>
+                        <p> To compare the expression of a given gene or gene sets across different datasets, 
+                            use the quick search bar in the homepage by either entering the gene symbol or Ensembl IDs.
+                             Comma separated values (.csv) containing a list of genes can also be uploaded and searched for. 
+                            </p>
+                            <br>
+    
+                        <h2 style="font-size:35px">Search Results</h2>
+                        <p>Once a query has been sent to the interface, the user will be directed to the Search page with the results.
+                         The gene or genes of interest will be shown in a table with their Ensembl ID, Gene Symbol and a heatmap. 
+                         The heatmap denotes the relative expression of the gene amongst datasets and if that gene is present in the given dataset. 
+                         The user can then navigate directly to the corresponding gene page and explore its expression properties for each dataset. 
+                        </p>
+    
+                        <h3>Compare gene expression across datasets</h3>
+                        <p>The panel of the search results show a scatter plot with z-score transformed mean of every gene in the dataset. X-axis shows dataset 1, and the y-axis shows dataset 2. 
+                            The dataset of interest can be selected using the drop down menu on the right. 
+                            The gene or genes of interest are highlighted in green. </p>
+                            <br>
+    
+                        <img src="/resources/images/example1.png">
+    
+                        <p> To allow the direct comparison of gene expression across different datasets, we have provided a scatterplot listing z-score log2 mean transformed values of gene expression.
+                             This plot shows all genes in a given dataset with the gene of interest highlighted in green. Users can use this plot to determine how well a gene is expressed amongst any two datasets
+                            </p>
+    
+                        <h3>Interactive exploration of metadata variables</h3>
+                        <h3>Bulk datasets and Single cell datasets</h3>
+                        <p>For each gene, BITHub displays interactive plots that allow the full exploration of gene expression values (CPM/TPM/RPKM - depending on the original dataset normalization) 
+                            in the bulk and single-nucleus datasets. By selecting metadata variables, users have the ability to determine how gene expression of interest varies with any metadata properties 
+                            such as phenotype (e.g Age, Sex ), sample characterics or sequencing metrics.  Users also have the ability to filter the data based on region by selecting their region of
+                             interest from the ‘Select Brain Region’ drop down menu. </p>
+    
+                        <img src="/resources/images/example3.png">
+                        <img src="/resources/images/example2.png">
+    
+                        <h3>Variance Parition</h3>
+                        <p>Our database incorporates results from varianceParition into our database. The bar-graph for the variance partition shows the fraction of variance explained against selected
+                             metadata variables. The varianceParition results are currently only available for the bulk datasets and cannot be filtered by region.
+     
+                            If this panel shows ‘No variance partition’, this is because the gene was likely filtered out in the variancePartition analysis pipeline
+                            </p>
+
+                        <h3>Saving the results </h3>
+                        <p>For each panel, the data displayed can be downloaded as a .csv file, and the corresponging plot as an image file (either .svg or .png).</p>
+    
+    
+    
+    
+                    
+                     </div>
+                </div>
+    
+                
+            </div>
         </div>
     </div>
 
@@ -1040,7 +1164,7 @@
             writer.close();
         });
 
-        //--------------------------------------- HOME PAGE--------------------------------------
+        //--------------------------------------- ABOUT PAGE--------------------------------------
         /*window.addEventListener('scroll', function() {
             $('#background').css('margin-top', $(window).scrollTop() * -.55);
         }, { passive: true});*/
@@ -1074,7 +1198,7 @@
         });
 
         //Load and animate age dist plot
-        d3.xml("resources/images/BITHub_Bulk_age_dist.svg", function (xml) {
+        d3.xml("resources/images/bulk_distribution.svg", function (xml) {
             var importedNode = document.importNode(xml.documentElement, true);
             let svg = d3.select("#imgage")
                 .each(function () {
@@ -1098,7 +1222,7 @@
         });
 
         //Load and animate total plot
-        d3.xml("resources/images/BIThub_bulk_total.svg", function (xml) {
+        d3.xml("resources/images/bulk_total.svg", function (xml) {
             var importedNode = document.importNode(xml.documentElement, true);
             let svg = d3.select("#imgtotal")
                 .each(function () {
