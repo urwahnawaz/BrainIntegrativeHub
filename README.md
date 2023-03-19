@@ -12,9 +12,11 @@ Here, we present the Brain Integrative Transcriptome Hub (BITHub), a web resourc
 
 # Datasets 
 
+All scripts for pre-processing data are in the `pre-processing` folder. Please read the `pre-processinng/README.md` for more information on how to use the script to pre-process files. 
+
 ## Data collection 
 
-Both processed bulk and single-nucleus RNA-seq human brain transcriptomic datasets were retrieved from their respective portals as highlighted in Table 1. As the metadata annotation was heterogeneous across the datasets, rigorous harmonization was performed. For each dataset, columns specifying Age Intervals, Regions, Diagnosis and Period were also added. 
+Both processed bulk and single-nucleus RNA-seq human brain transcriptomic datasets were retrieved from their respective portals as highlighted in Table 1. As the metadata annotation was heterogeneous across the datasets, rigorous harmonization was performed. For each dataset, columns specifying Age Intervals, Regions, Diagnosis and Period were also added.
 
 | Dataset   | Description | n | Original file |
 | ------------- | ------------- | ------------- | ------------- |
