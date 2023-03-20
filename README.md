@@ -57,6 +57,7 @@ Prenatal or postnatal tags were assigned to samples depending on their numeric a
 
 
 Ontology and nomenclature of brain regions 
+
 The brain structures were divided into 4 main categories (regions): Cortex, Subcortex, Cerebellum and Spinal Cord. 
 
 
@@ -94,8 +95,8 @@ For each gene, BITHub displays interactive plots that allow the full exploration
 
 
 
-![alt-text](https://github.com/unawaz1996/bithub/blob/for-integration/resources/images/example3.png)
-![alt-text](https://github.com/unawaz1996/bithub/blob/for-integration/resources/images/example2.png)
+![alt-text](https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/example2.png)
+![alt-text](https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/example3.png)
 <br>
 
 - varianceParition 
