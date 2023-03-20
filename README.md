@@ -12,7 +12,7 @@ Here, we present the Brain Integrative Transcriptome Hub (BITHub), a web resourc
 
 # Datasets 
 
-All scripts for pre-processing data are in the `pre-processing` folder. Please read the `pre-processinng/README.md` for more information on how to use the script to pre-process files. 
+All scripts for pre-processing data are in the `R/preprocess` folder. Please read the [`R/preprocess/README.md`](https://github.com/VoineaguLabUNSW/BITHub/blob/master/R/preprocess/README.md) for more information on how to use the script to pre-process files. 
 
 ## Data collection 
 
