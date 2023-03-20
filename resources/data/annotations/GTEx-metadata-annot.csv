@@ -1,7 +1,7 @@
 OriginalMetadataColumnName,BITColumnName,Include (Yes/No) - Interest,Type
 SAMPID,SampleID,Yes,Sample charactertics
 SMRIN,RIN,Yes,Sequencing metrics
-SMTSISCH,TotalIschemicTime,Yes,Sequencing metrics
+SMTSISCH,PMI,Yes,Sequencing metrics
 AGE,AgeInterval,Yes,Phenotype
 SEX,Sex,Yes,Phenotype
 SMATSSCR,AutolysisScore,Yes,Sample charactertics
@@ -66,6 +66,3 @@ SMDPMPRT,DuplicationRateMapped,Yes,Sequencing metrics
 SME2PCTS,Percentage_IntragenicEnd_2_Reads,Yes,Sequencing metrics
 SUBJID,DonorID,No,Phenotype
 DTHHRDY,HardyScale,Yes,Phenotype
-NA,Regions,Yes,Sample charactertics
-,Diagnosis,Yes,Phenotype
-,Period,Yes,Phenotype
