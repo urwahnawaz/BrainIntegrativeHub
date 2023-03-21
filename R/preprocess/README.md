@@ -1,5 +1,6 @@
 # Pre-processing of RNA-seq datasets 
 
+## Bulk RNA-seq
 In order to preprocess the raw RNA-seq datafiles: 
 
 On terminal:
@@ -90,5 +91,8 @@ outdir = file.path("/home/neuro/Documents/BrainData/Bulk/GTEx/Formatted")
 clean_and_format(dir,"GTEx", outdir)
 ```
 
+## PsychEncode 
 
+Retriving and preprocessing files from PsychEncode will require access to the Synapse Portal for the metadata files. 
+The expression matrix can be downloaded from 
 
