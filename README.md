@@ -45,7 +45,7 @@ Both processed bulk and single-nucleus RNA-seq human brain transcriptomic datase
 | GTEx  | The Genotype-Tissue Expression database contains 2,642 samples of the human postmortem brain in postnatal ages (age <20; range 20 to 79 years across 13 brain regions. All samples have been collected from non-diseased individuals   | 2642  | GTEx v8 <br> https://gtexportal.org/home/datasets <br><br> Expression matrix <br> GTEx_Analysis_2017-06-05_v8_RNASeQCv1.1.9_gene_tpm.gct.gz <br> <br> Metadata files <br> GTEx_Analysis_v8_Annotations_SubjectPhenotypesDS.txt <br> GTEx_Analysis_v8_Annotations_SampleAttributesDS.txt |
 | PsychEncode | The PsychEncode dataset contains data of the dorsolateral prefrontal cortex from human postmortem tissues from prenatal (age <0; range 4 to 40 pcw) and postnatal samples. Samples include controls and individuals with diagnosis of Bipolar Disorder, ASD, Schizophrenia and Affective disorder.   | 1428 | Content Cell  |
 | Human Cell Atlas  | Content Cell  | 1428 | Content Cell  |
-| Velmeshev et al  | Content Cell  | 1428 | Content Cell  |
+| Velmeshev et al  | Velmeshev et al generated over ~120,000 single-nuclei from 48 post-mortem tissue samples from the prefrontal cortex, anterior cingulate and insular cortical regions. Donors included 16 control subjects and 11 patients with ASD. All samples are postnatal  | 1428 | Cells UCSC <br> https://cells.ucsc.edu/?ds=autism <br> <br> Matrix: <br> exprMatrix.tsv.gz <br> Values in matrix are: 10x UMI counts from cellranger, log2-transformed <br><br> Raw count matrix: <br> rawMatrix.zip <br><br> Matrix with raw read counts, includes a copy of the meta data <br><br> Cell meta annotations: <br> meta.tsv |
 
 
 
