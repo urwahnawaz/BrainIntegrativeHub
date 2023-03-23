@@ -149,6 +149,7 @@ BITHub incorporates results from varianceParition.  The bar-graph for the varian
 
 * Removing a specific annotation for overview of properties 
 
+<img width="1434" alt="image"  src="https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/BITHub-selection.mov">
 
 
 
