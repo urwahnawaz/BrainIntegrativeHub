@@ -75,29 +75,62 @@ To allow direct comparison of datasets with different normalizations, datasets h
 BITHub implements multiple functionalities and can generate z-score distribution of genes in multiple datasets for cross-comparison. Additionally, users can investigate expression properties of specific genes against multiple metadata annotations, including technical, biological and sample specific variables. 
 
 ## Input Data
-To compare the expression of a given gene or gene sets across different datasets, use the quick search bar in the homepage by either entering the gene symbol or Ensembl IDs. Comma separated values (.csv) containing a list of genes can also be uploaded and searched for. 
+To compare the expression of a given gene or gene sets across different datasets, use the quick search bar in the homepage by either entering the gene symbol or Ensembl IDs. Comma separated values (.csv) containing a list of genes can also be uploaded and searched for. The search page also provides the user the option to upload a new dataset to BITHub. 
 
-<img width="1420" alt="image" src="https://user-images.githubusercontent.com/30397183/227104556-09bd6811-3024-4b62-b4c7-924c9370ec8a.png">
+<img width="1434" alt="image" src="https://user-images.githubusercontent.com/30397183/227104661-76ba6d81-f9ea-4bac-9913-355b55b9fe44.png">
+
 
 
  
 ## Search Results 
-Once a query has been sent to the interface, the user will be directed to the Search page with the results. The gene or genes of interest will be shown in a table with their Ensembl ID, Gene Symbol and a heatmap. The heatmap denotes the relative expression of the gene amongst datasets and if that gene is present in the given dataset. The user can then navigate directly to the corresponding gene page and explore its expression properties for each dataset. 
+Once a query has been sent to the interface, the user will be directed to the Search page with the results. The gene or genes of interest will be shown in a table with their Ensembl ID, Gene Symbol and a heatmap. The heatmap denotes the relative expression of the gene amongst datasets and if that gene is present in the given dataset. The user can then navigate directly to the corresponding gene page and explore its expression properties for each dataset. Search results can be downloaded as. .csv file. 
 
-## Compare gene expression across datasets 
+* Detection in Brain Datasets 
 
+
+* Gene expression across datasets 
 
 The panel of the search results show a scatter plot with z-score transformed mean of every gene in the dataset. X-axis shows dataset 1, and the y-axis shows dataset 2. The dataset of interest can be selected using the drop down menu on the right. The gene or genes of interest are highlighted in green. 
 To allow the direct comparison of gene expression across different datasets, we have provided a scatterplot listing z-score log2 mean transformed values of gene expression. This plot shows all genes in a given dataset with the gene of interest highlighted in green. Users can use this plot to determine how well a gene is expressed amongst any two datasets.
 
 
+* Exploring gene expression relationship with metadata variables in bulk datasets
+
+For each gene, BITHub displays interactive plots that allow the full exploration of gene expression values (CPM/TPM/RPKM - depending on the original dataset normalization) in the bulk and single-nucleus datasets. By selecting metadata variables, users have the ability to determine how gene expression of interest varies with any metadata properties such as phenotype (e.g Age, Sex ), sample characterics or sequencing metrics.  Users also have the ability to filter the data based on region by selecting their region of interest from the ‘Select Brain Region’ drop down menu. 
+
+
+
+* Exploring impact of cellular composition on gene expression 
+
+For bulk datasets, BITHub provides information of cell-type deconvolution from the original study. Users can explore these proeprties by selecting the cell-types from the metadata panel under Sample Characertics.
+
+
+
+Currently BITHub only provides these composition estimates for BrainSeq and PsychEncode data. However, we are working on a pipeline to standardize deconvolution estimates for these datasets. 
+
+
+* Drivers of variation 
+
+BITHub incorporates results from varianceParition.  The bar-graph for the variance partition shows the fraction of variance explained against selected metadata variables. The varianceParition results are currently only available for the bulk datasets. 
+
+
+* Exploring single-cell properties 
+
+
+
+* Removing a specific annotation for overview of properties 
+
+
+
+
+
+
+
 ![alt-text](https://github.com/unawaz1996/bithub/blob/for-integration/resources/images/example1.png)
 <br>
 
- 
-### Interactive exploration of metadata variables
- - Bulk datasets and Single cell datasets
-For each gene, BITHub displays interactive plots that allow the full exploration of gene expression values (CPM/TPM/RPKM - depending on the original dataset normalization) in the bulk and single-nucleus datasets. By selecting metadata variables, users have the ability to determine how gene expression of interest varies with any metadata properties such as phenotype (e.g Age, Sex ), sample characterics or sequencing metrics.  Users also have the ability to filter the data based on region by selecting their region of interest from the ‘Select Brain Region’ drop down menu. 
+
+
 
 
 
@@ -105,7 +138,6 @@ For each gene, BITHub displays interactive plots that allow the full exploration
 ![alt-text](https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/example3.png)
 <br>
 
-- varianceParition 
 
 
 <br>
