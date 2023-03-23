@@ -49,9 +49,11 @@ The user also has the option to upload their own datasets which are then integra
 
 ## Metadata annotation
 
-As the metadata annotation was heterogeneous across the datasets, rigorous harmonization was performed. For each dataset, columns specifying Age Intervals, Regions, Diagnosis and Period were also added.
+As the metadata annotation was heterogeneous across the datasets, rigorous harmonization was performed. For each dataset, columns specifying `Age Intervals`, `Regions`, `Diagnosis` and `Period` were also added.
+
 <br> 
-Developmental Ages 
+
+*Developmental Ages*
 <br>
 Samples were binned into age intervals that were used to define developmental stages. For all samples < 20 years old, the binning was performed based on the BrainSpan Technical White Paper (Kang el al, 2011), whereas samples  20 years were binned in 10 year intervals. 
 
@@ -77,22 +79,22 @@ Prenatal or postnatal tags were assigned to samples depending on their numeric a
 
 Ontology and nomenclature of brain regions <br>
 
-The brain structures were divided into 4 main categories (regions): Cortex, Subcortex, Cerebellum and Spinal Cord. 
+The brain structures were divided into 4 main categories (regions):` Cortex`, `Subcortex`, `Cerebellum` and `Spinal Cord`. 
 
 
 ## Determining drivers of variation
 
-VariancePartition was used for mixed linear analysis to estimate the proportion of variance explained by the selected covariates on each gene.  Highly correlated covariates cannot be included in the model, and so as a result covariates that were not strongly correlated for each dataset were selected to the the varianceParititon analysis on filtered genes. For filtering, the expression cut-off was selected at 1 RPKM/TPM/CPM  in at least 10% of the samples
+`variancePartition` was used for mixed linear analysis to estimate the proportion of variance explained by the selected covariates on each gene.  Highly correlated covariates cannot be included in the model, and so as a result covariates that were not strongly correlated for each dataset were selected to the the varianceParititon analysis on filtered genes. For filtering, the expression cut-off was selected at 1 RPKM/TPM/CPM  in at least 10% of the samples
 
 ## Normalization 
-To allow direct comparison of datasets with different normalizations, datasets have z-score transformed mean log2 expression values. 
+To allow direct comparison of datasets with different normalizations, datasets have `z-score transformed mean log2 expression values`. 
 
 
 # Data exploration 
 BITHub implements multiple functionalities and can generate z-score distribution of genes in multiple datasets for cross-comparison. Additionally, users can investigate expression properties of specific genes against multiple metadata annotations, including technical, biological and sample specific variables. 
 
 ## Input Data
-To compare the expression of a given gene or gene sets across different datasets, use the quick search bar in the homepage by either entering the gene symbol or Ensembl IDs. Comma separated values (.csv) containing a list of genes can also be uploaded and searched for. The search page also provides the user the option to upload a new dataset to BITHub. 
+To compare the expression of a given gene or gene sets across different datasets, use the quick search bar in the homepage by either entering the gene symbol or Ensembl IDs. Comma separated values (`.csv`) containing a list of genes can also be uploaded and searched for. The search page also provides the user the option to upload a new dataset to BITHub. 
 
 <img width="1434" alt="image" src="https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/BITHub-search.png">
 
@@ -164,7 +166,7 @@ BITHub incorporates results from varianceParition.  The bar-graph for the varian
 
 
 ## Saving the results
-For each panel, the data displayed can be downloaded as a .csv file, and the corresponging plot as an image file (either .svg or .png).
+For each panel, the data displayed can be downloaded as a `.csv` file, and the corresponging plot as an image file (either `.svg` or `.png`).
 
 ## Running the pipeline
 This is NOT necessary for end users but is included for future work.
