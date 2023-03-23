@@ -90,7 +90,7 @@ Users can explore the following properties on BITHub:
 
 * Detection in Brain Datasets 
 
-![alt-text](https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/BITHub-detection.png)
+<img width="1434" alt="image" src="https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/BITHub-detection.png">
 
 
 
@@ -99,7 +99,7 @@ Users can explore the following properties on BITHub:
 The panel of the search results show a scatter plot with z-score transformed mean of every gene in the dataset. X-axis shows dataset 1, and the y-axis shows dataset 2. The dataset of interest can be selected using the drop down menu on the right. The gene or genes of interest are highlighted in green. 
 To allow the direct comparison of gene expression across different datasets, we have provided a scatterplot listing z-score log2 mean transformed values of gene expression. This plot shows all genes in a given dataset with the gene of interest highlighted in green. Users can use this plot to determine how well a gene is expressed amongst any two datasets.
 
-![alt-text](https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/Pax6-example-multiple-datasets.png)
+<img width="1434" alt="image" src="https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/Pax6-example-multiple-datasets.png">
 
 
 * Gene expression across datasets for multiple genes 
@@ -110,16 +110,13 @@ To allow the direct comparison of gene expression across different datasets, we 
 
 For each gene, BITHub displays interactive plots that allow the full exploration of gene expression values (CPM/TPM/RPKM - depending on the original dataset normalization) in the bulk and single-nucleus datasets. By selecting metadata variables, users have the ability to determine how gene expression of interest varies with any metadata properties such as phenotype (e.g Age, Sex ), sample characterics or sequencing metrics.  Users also have the ability to filter the data based on region by selecting their region of interest from the ‘Select Brain Region’ drop down menu. 
 
-![alt-text](https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/Pax6-bulk-example.png)
+<img width="1434" alt="image" src="https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/Pax6-bulk-example.png">
 
 * Exploring impact of cellular composition on gene expression 
 
 For bulk datasets, BITHub provides information of cell-type deconvolution from the original study. Users can explore these proeprties by selecting the cell-types from the metadata panel under Sample Characertics.
 
-![alt-text](https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/Cell-type-composition-example.png)
-
-
-
+<img width="1434" alt="image" src= "https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/Cell-type-composition-example.png">
 
 
 Currently BITHub only provides these composition estimates for BrainSeq and PsychEncode data. However, we are working on a pipeline to standardize deconvolution estimates for these datasets. 
@@ -129,12 +126,12 @@ Currently BITHub only provides these composition estimates for BrainSeq and Psyc
 
 BITHub incorporates results from varianceParition.  The bar-graph for the variance partition shows the fraction of variance explained against selected metadata variables. The varianceParition results are currently only available for the bulk datasets. 
 
-![alt-text]()
+<img width="1434" alt="image" src="https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/Pax6-varPart.png">
 
 
 * Exploring single-cell properties 
 
-![alt-text]()
+<img width="1434" alt="image" src="https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/snRNAseq-pax6.png">
 
 
 * Removing a specific annotation for overview of properties 
