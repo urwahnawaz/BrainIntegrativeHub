@@ -1,6 +1,6 @@
 # What is BITHub? 
 
-Brain Integrative Transcriptome Hub (BITHub)is a web resource that aggregates gene-expression data from the human brain across multiple consortia, and allows direct comparison of gene expression in an interactive manner.
+Brain Integrative Transcriptome Hub (BITHub) is a web resource that aggregates gene-expression data from the human brain across multiple consortia, and allows direct comparison of gene expression in an interactive manner.
 
 
 <br>
