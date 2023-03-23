@@ -77,7 +77,7 @@ BITHub implements multiple functionalities and can generate z-score distribution
 ## Input Data
 To compare the expression of a given gene or gene sets across different datasets, use the quick search bar in the homepage by either entering the gene symbol or Ensembl IDs. Comma separated values (.csv) containing a list of genes can also be uploaded and searched for. The search page also provides the user the option to upload a new dataset to BITHub. 
 
-<img width="1434" alt="image" src="https://user-images.githubusercontent.com/30397183/227104661-76ba6d81-f9ea-4bac-9913-355b55b9fe44.png">
+<img width="1434" alt="image" src="https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/BITHub-search.png">
 
 
 
@@ -85,24 +85,40 @@ To compare the expression of a given gene or gene sets across different datasets
 ## Search Results 
 Once a query has been sent to the interface, the user will be directed to the Search page with the results. The gene or genes of interest will be shown in a table with their Ensembl ID, Gene Symbol and a heatmap. The heatmap denotes the relative expression of the gene amongst datasets and if that gene is present in the given dataset. The user can then navigate directly to the corresponding gene page and explore its expression properties for each dataset. Search results can be downloaded as. .csv file. 
 
+Users can explore the following properties on BITHub: 
+
+
 * Detection in Brain Datasets 
 
+![alt-text](https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/BITHub-detection.png)
 
-* Gene expression across datasets 
+
+
+* Gene expression across datasets for single gene
 
 The panel of the search results show a scatter plot with z-score transformed mean of every gene in the dataset. X-axis shows dataset 1, and the y-axis shows dataset 2. The dataset of interest can be selected using the drop down menu on the right. The gene or genes of interest are highlighted in green. 
 To allow the direct comparison of gene expression across different datasets, we have provided a scatterplot listing z-score log2 mean transformed values of gene expression. This plot shows all genes in a given dataset with the gene of interest highlighted in green. Users can use this plot to determine how well a gene is expressed amongst any two datasets.
+
+![alt-text](https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/Pax6-example-multiple-datasets.png)
+
+
+* Gene expression across datasets for multiple genes 
+
 
 
 * Exploring gene expression relationship with metadata variables in bulk datasets
 
 For each gene, BITHub displays interactive plots that allow the full exploration of gene expression values (CPM/TPM/RPKM - depending on the original dataset normalization) in the bulk and single-nucleus datasets. By selecting metadata variables, users have the ability to determine how gene expression of interest varies with any metadata properties such as phenotype (e.g Age, Sex ), sample characterics or sequencing metrics.  Users also have the ability to filter the data based on region by selecting their region of interest from the ‘Select Brain Region’ drop down menu. 
 
-
+![alt-text](https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/Pax6-bulk-example.png)
 
 * Exploring impact of cellular composition on gene expression 
 
 For bulk datasets, BITHub provides information of cell-type deconvolution from the original study. Users can explore these proeprties by selecting the cell-types from the metadata panel under Sample Characertics.
+
+![alt-text](https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/Cell-type-composition-example.png)
+
+
 
 
 
@@ -113,9 +129,12 @@ Currently BITHub only provides these composition estimates for BrainSeq and Psyc
 
 BITHub incorporates results from varianceParition.  The bar-graph for the variance partition shows the fraction of variance explained against selected metadata variables. The varianceParition results are currently only available for the bulk datasets. 
 
+![alt-text]()
+
 
 * Exploring single-cell properties 
 
+![alt-text]()
 
 
 * Removing a specific annotation for overview of properties 
@@ -123,28 +142,10 @@ BITHub incorporates results from varianceParition.  The bar-graph for the varian
 
 
 
-
-
-
-![alt-text](https://github.com/unawaz1996/bithub/blob/for-integration/resources/images/example1.png)
 <br>
 
 
 
-
-
-
-![alt-text](https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/example2.png)
-![alt-text](https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/example3.png)
-<br>
-
-
-
-<br>
-
-Our database incorporates results from varianceParition into our database. The bar-graph for the variance partition shows the fraction of variance explained against selected metadata variables. The varianceParition results are currently only available for the bulk datasets and cannot be filtered by region.
- 
-If this panel shows ‘No variance partition’, this is because the gene was likely filtered out in the variancePartition analysis pipeline
 
 
 ## Saving the results
