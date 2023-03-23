@@ -10,6 +10,22 @@ Brain Integrative Transcriptome Hub (BITHub)is a web resource that aggregates ge
 
 <br>
 
+- [Datasets](#datasets)
+  * [Data collection](#data-collection)
+  * [Metadata annotation](#metadata-annotation)
+  * [Determining drivers of variation](#determining-drivers-of-variation)
+  * [Normalization](#normalization)
+- [Data exploration](#data-exploration)
+  * [Input Data](#input-data)
+  * [Search Results](#search-results)
+  * [Saving the results](#saving-the-results)
+  * [Running the pipeline](#running-the-pipeline)
+    + [Dependancies](#dependancies)
+    + [Output](#output)
+
+
+
+<br>
 
 
 # Datasets 
