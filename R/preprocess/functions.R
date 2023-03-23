@@ -27,7 +27,7 @@ num_to_round = function(age){
 clean_and_format = function(dir ,dataset, outdir){
   
   message(paste0("Now formatting the ", dataset, " dataset"))
-  annot= read.csv(paste0("../../resources/data/annotations/", dataset,"-metadata-annot.csv"))
+  annot= read.csv(paste0("../annotations/", dataset,"-metadata-annot.csv"))
   
   if (dataset == c("GTEx")) {
     message("Retriving files for GTEx")
@@ -70,7 +70,7 @@ clean_and_format = function(dir ,dataset, outdir){
     exp = read.csv(file.path(dir, "expression_matrix.csv"), header= FALSE, row.names= 1)
     rows.metadata = read.csv(file.path(dir, "rows_metadata.csv"))
     
-    bspan.mRIN = readxl::read_xlsx("../../resources/data/annotations/ncomms8816-s2.xlsx", skip = 1) %>% 
+    bspan.mRIN = readxl::read_xlsx("../annotations/ncomms8816-s2.xlsx", skip = 1) %>% 
       as.data.frame() %>% dplyr::select("sample name", "mRIN", "z-score", "P-value")
     
     message("Changing BrainSpan column names to BITHub column names")
@@ -107,7 +107,7 @@ clean_and_format = function(dir ,dataset, outdir){
     
     
     ## Add from additional excel file retrived from Allen Brain Atlas  
-    md.excel = read_excel("../../resources/data/annotations/BrainSpan-additional.xlsx",sheet =2, col_names = TRUE, skip =1) %>% 
+    md.excel = read_excel("../annotations/BrainSpan-additional.xlsx",sheet =2, col_names = TRUE, skip =1) %>% 
       as.data.frame() %>% mutate_at(.vars = "AllenInstituteID", .funs = gsub, pattern = "\\.", replacement = "\\_") %>%
       mutate_at(.vars = "Age", .funs = gsub, pattern = "PCW", replacement = "_pcw") %>% 
       mutate_at(.vars = "Age", .funs = gsub, pattern = "M", replacement = "_mos") %>%
@@ -122,7 +122,7 @@ clean_and_format = function(dir ,dataset, outdir){
     
     
     ## Process sheet 2
-    md.excel = read_excel("../../resources/data/annotations/BrainSpan-additional.xlsx", sheet = 1, col_names = TRUE) %>% 
+    md.excel = read_excel("../annotations/BrainSpan-additional.xlsx", sheet = 1, col_names = TRUE) %>% 
       as.data.frame() %>% 
       mutate_at(.vars="Internal ID", .funs = gsub, pattern = "\\.", replacement = "\\_") %>% 
       dplyr::rename("Braincode" = "External ID")
