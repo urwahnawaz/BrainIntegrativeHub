@@ -122,7 +122,7 @@ To allow the direct comparison of gene expression across different datasets, we 
 
 * Gene expression across datasets for multiple genes 
 
-
+<img width="1434" alt="image" src="https://github.com/VoineaguLabUNSW/BITHub/blob/master/resources/images/Multiple-genes.png">
 
 * Exploring gene expression relationship with metadata variables in bulk datasets
 
