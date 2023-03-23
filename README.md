@@ -31,7 +31,7 @@ All scripts for pre-processing data are in the `R/preprocess` folder. Please rea
 
 ## Data collection 
 
-Both processed bulk and single-nucleus RNA-seq human brain transcriptomic datasets were retrieved from their respective portals as highlighted in Table 1. As the metadata annotation was heterogeneous across the datasets, rigorous harmonization was performed. For each dataset, columns specifying Age Intervals, Regions, Diagnosis and Period were also added.
+Both processed bulk and single-nucleus RNA-seq human brain transcriptomic datasets were retrieved from their respective portals as highlighted in Table 1. 
 
 | Dataset   | Description | n | Original file |
 | ------------- | ------------- | ------------- | ------------- |
@@ -48,6 +48,9 @@ The user also has the option to upload their own datasets which are then integra
 
 
 ## Metadata annotation
+
+As the metadata annotation was heterogeneous across the datasets, rigorous harmonization was performed. For each dataset, columns specifying Age Intervals, Regions, Diagnosis and Period were also added.
+<br> 
 Developmental Ages 
 <br>
 Samples were binned into age intervals that were used to define developmental stages. For all samples < 20 years old, the binning was performed based on the BrainSpan Technical White Paper (Kang el al, 2011), whereas samples  20 years were binned in 10 year intervals. 
