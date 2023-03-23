@@ -71,11 +71,15 @@ VariancePartition was used for mixed linear analysis to estimate the proportion 
 To allow direct comparison of datasets with different normalizations, datasets have z-score transformed mean log2 expression values. 
 
 
-# Overview of Functionalities 
+# Data exploration 
 BITHub implements multiple functionalities and can generate z-score distribution of genes in multiple datasets for cross-comparison. Additionally, users can investigate expression properties of specific genes against multiple metadata annotations, including technical, biological and sample specific variables. 
 
 ## Input Data
 To compare the expression of a given gene or gene sets across different datasets, use the quick search bar in the homepage by either entering the gene symbol or Ensembl IDs. Comma separated values (.csv) containing a list of genes can also be uploaded and searched for. 
+
+<img width="1420" alt="image" src="https://user-images.githubusercontent.com/30397183/227104556-09bd6811-3024-4b62-b4c7-924c9370ec8a.png">
+
+
  
 ## Search Results 
 Once a query has been sent to the interface, the user will be directed to the Search page with the results. The gene or genes of interest will be shown in a table with their Ensembl ID, Gene Symbol and a heatmap. The heatmap denotes the relative expression of the gene amongst datasets and if that gene is present in the given dataset. The user can then navigate directly to the corresponding gene page and explore its expression properties for each dataset. 
