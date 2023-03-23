@@ -49,6 +49,7 @@ The user also has the option to upload their own datasets which are then integra
 
 ## Metadata annotation
 Developmental Ages 
+<br>
 Samples were binned into age intervals that were used to define developmental stages. For all samples < 20 years old, the binning was performed based on the BrainSpan Technical White Paper (Kang el al, 2011), whereas samples  20 years were binned in 10 year intervals. 
 
 To allow comparison on a consistent scale, all ages were converted to years (numeric age). 
@@ -71,7 +72,7 @@ where 12 represents the total number of months in a year.
 Prenatal or postnatal tags were assigned to samples depending on their numeric age where numeric age < 0 was labeled as prenatal and numeric age < 0 as postnatal.
 
 
-Ontology and nomenclature of brain regions 
+Ontology and nomenclature of brain regions <br>
 
 The brain structures were divided into 4 main categories (regions): Cortex, Subcortex, Cerebellum and Spinal Cord. 
 
