@@ -5,7 +5,7 @@ In order to preprocess the raw RNA-seq datafiles:
 On terminal:
 
 ```
-git clone https://github.com/VoineaguLabUNSW/BITHub.git
+git clone https://github.com/unawaz1996/brain_transcriptome.git
 
 cd brain_transcriptome/preprocessing 
 ```
