@@ -33,7 +33,7 @@ All scripts for pre-processing data are in the `R/preprocess` folder. Please rea
 
 Both processed bulk and single-nucleus RNA-seq human brain transcriptomic datasets were retrieved from their respective portals as highlighted in Table 1. 
 
-| Dataset   | Description | n | Original file |
+| Dataset   | Description | nSamples | Original file |
 | ------------- | ------------- | ------------- | ------------- |
 | BrainSeq  | RNA-seq data of the human postmortem brain including hippocampus and dorsolateral prefrontal cortex. Collado-Torres et al used RiboZero libraries on 900 tissue samples from 551 individuals (including 286 with schizophrenia). Prenatal  (age < 0; range, 14 to 22 post-conception weeks) and postnatal (age ≥ 18 years; range, 18 to 96 years) samples were used in this work. | 900 | [BrainSeq Phase II](https://eqtl.brainseq.org/phase2/) <br><br> [Expression matrix and metadata](https://s3.us-east-2.amazonaws.com/libd-brainseq2/rse_gene_unfiltered.Rdata) |
 | BrainSpan  | Samples collected and analyzed by Kang et al across multiple brain structures including 11 neocortical areas, cerebellar cortex, mediodorsal nucleus of the thalamus, striatum, amygdala, and hippocampus. Samples included prenatal (age < 0; range, 8 to 38 post-conception weeks) and postnatal (age ≥ 4 mos ; range, 4 mos to 41 years) phenotypes of the normal human brain   | 524  | [BrainSpan Developmental Atlas](https://www.brainspan.org/static/download.html) <br><br> [Expression matrix and metadata](http://www.brainspan.org/api/v2/well_known_file_download/267666525) <br><br> Additional metadata information <br> [Allen Brain Atlas](https://help.brain-map.org/download/attachments/3506181/Human_Brain_Seq_Stages.pdf?)  <br><br> mRIN: <br> Feng et al (2015)|
